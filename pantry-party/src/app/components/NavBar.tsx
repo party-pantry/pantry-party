@@ -17,7 +17,7 @@ const NavBar: React.FC = () => {
         <>
         <Navbar expand="lg" fixed="top" bg="primary" variant="dark" className="custom-navbar">
             <Container>
-                <Navbar.Brand as={Link} href="/">Party Pantry</Navbar.Brand>
+                <Navbar.Brand as={Link} href="/">Pantry Party</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
