@@ -55,3 +55,9 @@ body {
   justify-content: center;
   gap: 1rem;
 }
+
+/* Footer */
+.custom-footer {
+  color: white;
+  text-align: center;
+}
