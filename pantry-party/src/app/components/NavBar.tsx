@@ -15,7 +15,7 @@ const NavBar: React.FC = () => {
 
     return (
         <>
-        <Navbar expand="lg" fixed="top" bg="primary" className="custom-navbar">
+        <Navbar expand="lg" fixed="top" bg="primary" variant="dark" className="custom-navbar">
             <Container>
                 <Navbar.Brand as={Link} href="/">Party Pantry</Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
