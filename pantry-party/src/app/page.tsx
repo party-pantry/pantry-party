@@ -9,15 +9,9 @@ export default function Home() {
         <h5>Easily track and manage your pantry items across multiple kitches and storage spaces.</h5>
         <Button>Get Started</Button>
       </div>
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", height: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }} className="mb-5">
         <h1>Features</h1>
         <FeaturesSection />
-      </div>
-      <div style={{ display: "flex", height: "100vh" }}>
-        <h1>Testimonials?</h1>
-      </div>
-      <div style={{ display: "flex", height: "100vh" }}>
-        <h1>How It Works</h1>
       </div>
     </Container>
   );

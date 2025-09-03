@@ -21,6 +21,9 @@ const NavBar: React.FC = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
+                        <Nav.Link as={Link} href="/">My Kitchen</Nav.Link>
+                        <Nav.Link as={Link} href="/">Shopping List</Nav.Link>
+                        <Nav.Link as={Link} href="/">Recipes</Nav.Link>
                         <NavDropdown 
                         id="login-dropdown"  
                         title={
