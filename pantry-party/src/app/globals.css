@@ -28,13 +28,48 @@ body {
 }
 
 /* Navbar */
-
 #login-dropdown::after {
   display: none !important;
 }
 
 .drop-down::after {
   display: none !important;
+}
+
+.nav-link-icon {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+.nav-link-icon,
+#login-dropdown {
+  color: rgba(255,255,255,0.7);
+  transition: color 0.5s ease, opacity 0.5s ease;
+}
+
+.nav-link-icon:hover,
+.nav-link-icon.active,
+#login-dropdown:hover,
+#login-dropdown.show {
+  color: rgba(255, 255, 255, 1);
+  opacity: 1;
+}
+
+.nav-link-icon .nav-link-text {
+  max-width: 0;
+  opacity: 0;
+  white-space: nowrap;
+  transform: translateX(-10px);
+  transition: all 0.5s ease;
+}
+
+.nav-link-icon:hover .nav-link-text {
+  max-width: 200px;
+  opacity: 1;
+  transform: translateX(0);
 }
 
 /* Modal */

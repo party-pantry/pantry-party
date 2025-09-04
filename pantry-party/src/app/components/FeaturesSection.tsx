@@ -5,7 +5,7 @@ import FeatureCard from './FeatureCard';
 
 const features = [
     { 
-        title: "Multi-Location Management", 
+        title: "Multiple Location Management", 
         description: "Manage fridges, freezers, and spice racks across multiple kitchens", 
         image: "https://dummyimage.com/200x200/" 
     },
