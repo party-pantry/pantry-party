@@ -12,14 +12,12 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/*
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
-*/
 
 body {
   background: var(--background);
@@ -28,14 +26,6 @@ body {
 }
 
 /* Navbar */
-#login-dropdown::after {
-  display: none !important;
-}
-
-.drop-down::after {
-  display: none !important;
-}
-
 .nav-link-icon {
   display: flex;
   align-items: center;
@@ -70,6 +60,35 @@ body {
   max-width: 200px;
   opacity: 1;
   transform: translateX(0);
+}
+
+#login-dropdown::after {
+  display: none !important;
+}
+
+.drop-down::after {
+  display: none !important;
+}
+
+.nav-dropdown {
+  position: relative;
+}
+
+.navbar .dropdown-menu {
+  display: block !important;
+  position: absolute;
+  transform-origin: top;
+  transform: scaleY(0);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.navbar .dropdown.show .dropdown-menu {
+  transform: scaleY(1);
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* Modal */

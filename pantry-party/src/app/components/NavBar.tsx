@@ -36,6 +36,8 @@ const NavBar: React.FC = () => {
                         </Nav.Link>
                         <NavDropdown
                         id="login-dropdown"
+                        className="nav-dropdown"
+                        renderMenuOnMount={true}
                         show={dropdownOpen}
                         onToggle={(isOpen) => setDropdownOpen(isOpen)}
                         title={
