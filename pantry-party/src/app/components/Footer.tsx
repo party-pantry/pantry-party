@@ -1,5 +1,5 @@
 import { Container, Row, Col } from 'react-bootstrap';
-import { Github } from 'react-bootstrap-icons';
+import { Github } from "lucide-react";
 import Link from 'next/link';
 
 const Footer: React.FC = () => {

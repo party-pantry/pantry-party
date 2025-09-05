@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-import { PersonFill, CaretDownFill } from 'react-bootstrap-icons';
+import { Refrigerator, ListCheck, ChefHat, User, ChevronUp, ChevronDown } from "lucide-react";
 import {useState } from 'react';
 import SignInModal from '../components/SignInModal';
 import SignUpModal from '../components/SignUpModal';
@@ -12,6 +12,7 @@ const NavBar: React.FC = () => {
     const [showSignIn, setShowSignIn] = useState(false);
     const [showSignUp, setShowSignUp] = useState(false);
     const [showSignOut, setShowSignOut] = useState(false);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     return (
         <>
@@ -21,15 +22,28 @@ const NavBar: React.FC = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                        <Nav.Link as={Link} href="/">My Kitchen</Nav.Link>
-                        <Nav.Link as={Link} href="/">Shopping List</Nav.Link>
-                        <Nav.Link as={Link} href="/">Recipes</Nav.Link>
-                        <NavDropdown 
-                        id="login-dropdown"  
+                        <Nav.Link as={Link} href="/" className="nav-link-icon">
+                            <Refrigerator />
+                            <span className="nav-link-text">My Kitchen</span>
+                        </Nav.Link>
+                        <Nav.Link as={Link} href="/" className="nav-link-icon">
+                            <ListCheck />
+                            <span className="nav-link-text">Shopping List</span>
+                        </Nav.Link>
+                        <Nav.Link as={Link} href="/" className="nav-link-icon">
+                            <ChefHat />
+                            <span className="nav-link-text">Recipes</span>
+                        </Nav.Link>
+                        <NavDropdown
+                        id="login-dropdown"
+                        className="nav-dropdown"
+                        renderMenuOnMount={true}
+                        show={dropdownOpen}
+                        onToggle={(isOpen) => setDropdownOpen(isOpen)}
                         title={
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <PersonFill size={18} />
-                                <CaretDownFill size={12} />
+                                <User />
+                                {dropdownOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                             </span>
                         }>
                             <NavDropdown.Item onClick={() => setShowSignIn(true)}>Sign In</NavDropdown.Item>
