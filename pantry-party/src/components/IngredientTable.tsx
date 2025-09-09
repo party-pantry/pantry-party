@@ -1,6 +1,7 @@
 import React from "react";
 import IngredientRow from "./IngredientRow";
 
+// Properties of an ingredient item in table
 type Item = {
   id: number;
   name: string;
@@ -14,6 +15,7 @@ interface Props {
   items: Item[];
 }
 
+// Mockup UI of what list of ingredients table could look like
 const IngredientTable: React.FC<Props> = ({ items }) => {
   return (
     <table className="w-full border-collapse bg-white shadow-md rounded">
