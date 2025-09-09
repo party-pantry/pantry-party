@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
   Refrigerator,
@@ -32,7 +33,14 @@ const NavBar: React.FC = () => {
       >
         <Container>
           <Navbar.Brand as={Link} href="/">
-            Pantry Party
+          <Image
+              src="/pantry-party.png"
+              alt="Pantry Party Logo"
+              width={72}
+              height={72}
+              className="me-2"
+            />
+           
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
