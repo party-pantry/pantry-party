@@ -4,6 +4,7 @@ import { Container, Button } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import AddItemModal from "../../components/AddItemModal";
+import KitchenFilterButton from "../../components/KitchenFilterButton";
 
 type Item = {
   id: number;
@@ -63,20 +64,20 @@ const MyKitchen = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "left",
-          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
           height: "10vh",
           paddingTop: 5,
         }}
       >
         <Button
-          style={{ justifyContent: "left", width: "125px" }}
+          style={{ width: "125px" }}
           variant="success"
           onClick={() => setShowAddModal(true)}
         >
           <strong>Add Item +</strong>
         </Button>
+        <KitchenFilterButton />
       </div>
 
       {/* Mockup Ingredient Table */}
