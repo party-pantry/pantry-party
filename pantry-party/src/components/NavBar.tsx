@@ -22,7 +22,7 @@ const NavBar: React.FC = () => {
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="ms-auto">
-                        <Nav.Link as={Link} href="/" className="nav-link-icon">
+                        <Nav.Link as={Link} href="/my-kitchen" className="nav-link-icon">
                             <Refrigerator />
                             <span className="nav-link-text">My Kitchen</span>
                         </Nav.Link>
