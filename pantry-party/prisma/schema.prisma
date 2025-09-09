@@ -19,4 +19,67 @@ model User {
   email     String   @unique
   name      String?
   password  String
+  houses    House[]
+}
+
+model House {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String
+  address   String?
+  storages  Storage[]
+
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Storage {
+  id        Int      @id @default(autoincrement())
+  houseId   Int
+  name      String?
+  type      String
+  stocks    Stock[]
+
+  house     House    @relation(fields: [houseId], references: [id]) 
+}
+
+model Ingredient {
+  id        Int      @id @default(autoincrement())
+  name      String
+  stocks    Stock[]
+}
+
+enum Unit {
+  OUNCE
+  POUND
+  GRAM
+  KILOGRAM
+  MILILITER
+  LITER
+  FLUID_OUNCE
+  CUP
+  PINT
+  QUART
+  GALLON
+  TEASPOON
+  TABLESPOON
+  BAG
+  CAN
+  BOTTLE
+  BOX
+  PIECE
+  SACK
+}
+
+model Stock {
+  id            Int      @id @default(autoincrement())
+  ingredientId  Int?
+  storageId     Int
+  custom_name   String?
+  quantity      Float
+  unit          Unit
+
+  ingredient    Ingredient? @relation(fields: [ingredientId], references: [id])
+  storage       Storage     @relation(fields: [storageId], references: [id])
+  @@unique      ([ingredientId, storageId])
+  @@unique      ([custom_name, storageId])  
 }
