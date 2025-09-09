@@ -1,5 +1,5 @@
 import { Container, Button, Image } from "react-bootstrap";
-import FeaturesSection from "./components/FeaturesSection";
+import FeaturesSection from "../components/FeaturesSection";
 
 export default function Home() {
   return (
