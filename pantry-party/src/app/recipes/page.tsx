@@ -121,7 +121,7 @@ const Recipes = () => {
                   </div>
 
                   <div className="mb-2">
-                    <small className="text-success fw-bold">✅ You have:</small>
+                    <small className="text-success fw-bold">You have:</small>
                     <div>
                       {recipe.availableIngredients.map((ingredient, index) => (
                         <Badge key={index} bg="success" className="me-1 mb-1">
@@ -132,7 +132,7 @@ const Recipes = () => {
                   </div>
 
                   <div>
-                    <small className="text-danger fw-bold">🛒 You need:</small>
+                    <small className="text-danger fw-bold">You need:</small>
                     <div>
                       {recipe.missingIngredients.map((ingredient, index) => (
                         <Badge
