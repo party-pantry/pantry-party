@@ -26,7 +26,7 @@ const MyKitchen = () => {
 		id: 2,
 		name: "Chicken Breast",
 		image: "🍗",
-		quantity: "3",
+		quantity: "5",
 		updated: "Sep 8, 2025",
 		status: "Low Stock",
 		},
