@@ -33,7 +33,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
     }
 
     return (
-        <DropdownButton title={<strong>Filter</strong>} variant="success" style={{ width: "125px" }} align="end">
+        <DropdownButton title={<strong>Filter</strong>} variant="outline-dark" style={{ width: "125px" }} align="end">
             <Form style={{ width: "250px"}} onSubmit={(e) => { e.preventDefault(); handleApply(); }}>
                 <Form.Group className="m-3">
                     <Form.Control

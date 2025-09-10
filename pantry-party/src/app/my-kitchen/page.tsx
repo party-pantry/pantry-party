@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Row } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import StorageContainer from "../../components/StorageContainer"; 
@@ -15,6 +15,7 @@ type Item = {
   quantity: string;
   updated: string;
   status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
+  category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
 };
 
 const MyKitchen = () => {
@@ -38,6 +39,7 @@ const MyKitchen = () => {
       quantity: "20",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "fridge",
     },
     {
       id: 2,
@@ -46,6 +48,7 @@ const MyKitchen = () => {
       quantity: "5",
       updated: "Sep 8, 2025",
       status: "Low Stock",
+      category: "freezer",
     },
     {
       id: 3,
@@ -54,6 +57,7 @@ const MyKitchen = () => {
       quantity: "0",
       updated: "Sep 8, 2025",
       status: "Out of Stock",
+      category: "fridge",
     },
     {
       id: 4,
@@ -62,6 +66,7 @@ const MyKitchen = () => {
       quantity: "2",
       updated: "Sep 8, 2025",
       status: "Low Stock",
+      category: "fridge",
     },
     {
       id: 5,
@@ -70,6 +75,7 @@ const MyKitchen = () => {
       quantity: "1",
       updated: "Sep 8, 2025",
       status: "Low Stock",
+      category: "fridge",
     },
     {
       id: 6,
@@ -78,6 +84,7 @@ const MyKitchen = () => {
       quantity: "15",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "fridge",
     },
     {
       id: 7,
@@ -86,6 +93,7 @@ const MyKitchen = () => {
       quantity: "3",
       updated: "Sep 8, 2025",
       status: "Low Stock",
+      category: "fridge",
     },
     {
       id: 8,
@@ -94,6 +102,7 @@ const MyKitchen = () => {
       quantity: "10",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "fridge",
     },
     {
       id: 9,
@@ -102,6 +111,7 @@ const MyKitchen = () => {
       quantity: "0",
       updated: "Sep 8, 2025",
       status: "Out of Stock",
+      category: "fridge",
     },
     {
       id: 10,
@@ -110,6 +120,7 @@ const MyKitchen = () => {
       quantity: "2",
       updated: "Sep 8, 2025",
       status: "Low Stock",
+      category: "fridge",
     },
     {
       id: 11,
@@ -118,6 +129,7 @@ const MyKitchen = () => {
       quantity: "25",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "pantry",
     },
     {
       id: 12,
@@ -126,6 +138,7 @@ const MyKitchen = () => {
       quantity: "6",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "pantry",
     },
     {
       id: 13,
@@ -134,6 +147,7 @@ const MyKitchen = () => {
       quantity: "1",
       updated: "Jul 8, 2025",
       status: "Expired",
+      category: "fridge",
     },
     {
       id: 14,
@@ -142,6 +156,7 @@ const MyKitchen = () => {
       quantity: "12",
       updated: "Sep 8, 2025",
       status: "Good",
+      category: "fridge",
     },
     {
       id: 15,
@@ -150,6 +165,7 @@ const MyKitchen = () => {
       quantity: "1",
       updated: "June 1, 2024",
       status: "Expired",
+      category: "freezer",
     },
   ]);
 
@@ -199,34 +215,49 @@ const MyKitchen = () => {
     return searchMatch && statusMatch && quantityMatch;
   })
 
+  // Types of filteredItems
+  const fridgeItems = filteredItems.filter(item => item.category === "fridge");
+  const pantryItems = filteredItems.filter(item => item.category === "pantry");
+  const freezerItems = filteredItems.filter(item => item.category === "freezer");
+  const spicerackItems = filteredItems.filter(item => item.category === "spice rack");
+  const otherItems = filteredItems.filter(item => item.category === "other");
+
+
+
   return (
     <Container style={{ marginTop: 100 }}>
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          height: "10vh",
-          paddingTop: 5,
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "30vh",
+          marginBottom: "5px",
         }}
       >
-        <Button
-          style={{ width: "125px" }}
-          variant="success"
-          onClick={() => setShowAddModal(true)}
-        >
-          <strong>Add Item +</strong>
-        </Button>
-        <KitchenFilterButton
-          onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
-        />
+        <h1 className="fs-1">My Kitchen</h1>
+        <h6>Here you can see what is in your kitchen</h6>
+        <hr />
+        
       </div>
+      <Row className="justify-content-end mb-4">
+          <KitchenFilterButton
+            onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
+          />
+          <Button
+            style={{ width: "125px" }}
+            variant="success"
+            onClick={() => setShowAddModal(true)}
+          >
+            <strong>Add Item +</strong>
+          </Button>
+      </Row>
       
       
       {/* Mockup Ingredient Table */}
       <div
         style={{
-          display: "flex",
+          // display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
@@ -235,30 +266,20 @@ const MyKitchen = () => {
       > 
       {/* Multiple storage spaces for a single location (aka. one home) */}
          <StorageContainer id="1" title="Fridge 1">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
         </StorageContainer>
-        <StorageContainer id="1" title="Fridge 2">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        <StorageContainer id="2" title="Fridge 2">
+          <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
         </StorageContainer>
-        <StorageContainer id="1" title="Pantry 1">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        <StorageContainer id="3" title="Freezer 1">
+          <IngredientTable items={freezerItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        </StorageContainer>
+        <StorageContainer id="4" title="Pantry 1">
+          <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
         </StorageContainer>
       </div>
      
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          textAlign: "center",
-          height: "50vh",
-          marginBottom: "200px",
-        }}
-      >
-        <h1>My Kitchen</h1>
-        <h2>Here you can see what is in your kitchen (for single location)</h2>
-      </div>
+      
 
       <AddItemModal
         show={showAddModal}

@@ -11,6 +11,7 @@ interface Props {
     image: string;
     quantity: string;
     status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
+    category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
   }) => void;
 }
 
@@ -20,6 +21,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
     image: "",
     quantity: "",
     status: "Good" as const,
+    category: "other" as const,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,7 +31,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
         ...formData,
         image: formData.image || "🍽️",
       });
-      setFormData({ name: "", image: "", quantity: "", status: "Good" });
+      setFormData({ name: "", image: "", quantity: "", status: "Good", category: "other" });
       onHide();
     }
   };
