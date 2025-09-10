@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Button } from "react-bootstrap";
+import { Container, Button, Row } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import StorageContainer from "../../components/StorageContainer"; 
@@ -204,23 +204,29 @@ const MyKitchen = () => {
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          height: "10vh",
-          paddingTop: 5,
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "30vh",
+          marginBottom: "5px",
         }}
       >
-        <Button
-          style={{ width: "125px" }}
-          variant="success"
-          onClick={() => setShowAddModal(true)}
-        >
-          <strong>Add Item +</strong>
-        </Button>
-        <KitchenFilterButton
-          onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
-        />
+        <h1 className="fs-1">My Kitchen</h1>
+        <h6>Here you can see what is in your kitchen</h6>
+        <hr />
+        
       </div>
+      <Row className="justify-content-end mb-4">
+          <KitchenFilterButton
+            onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
+          />
+          <Button
+            style={{ width: "125px" }}
+            variant="success"
+            onClick={() => setShowAddModal(true)}
+          >
+            <strong>Add Item +</strong>
+          </Button>
+      </Row>
       
       
       {/* Mockup Ingredient Table */}
@@ -245,20 +251,7 @@ const MyKitchen = () => {
         </StorageContainer>
       </div>
      
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          textAlign: "center",
-          height: "50vh",
-          marginBottom: "200px",
-        }}
-      >
-        <h1>My Kitchen</h1>
-        <h2>Here you can see what is in your kitchen (for single location)</h2>
-      </div>
+      
 
       <AddItemModal
         show={showAddModal}
