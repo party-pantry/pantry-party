@@ -3,6 +3,7 @@
 import { Container, Button } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
+import StorageContainer from "../../components/StorageContainer"; 
 import AddItemModal from "../../components/AddItemModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
@@ -220,7 +221,8 @@ const MyKitchen = () => {
           onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
         />
       </div>
-
+      
+      
       {/* Mockup Ingredient Table */}
       <div
         style={{
@@ -228,13 +230,21 @@ const MyKitchen = () => {
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
-          textAlign: "center",
           marginBottom: "50px",
         }}
-      >
-        <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+      > 
+      {/* Multiple storage spaces for a single location (aka. one home) */}
+         <StorageContainer id="1" title="Fridge 1">
+          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        </StorageContainer>
+        <StorageContainer id="1" title="Fridge 2">
+          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        </StorageContainer>
+        <StorageContainer id="1" title="Pantry 1">
+          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+        </StorageContainer>
       </div>
-
+     
       <div
         style={{
           display: "flex",
