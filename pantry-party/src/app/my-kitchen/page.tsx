@@ -4,6 +4,7 @@ import { Container, Button } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import AddItemModal from "../../components/AddItemModal";
+import KitchenFilterButton from "../../components/KitchenFilterButton";
 
 type Item = {
   id: number;
@@ -16,6 +17,11 @@ type Item = {
 
 const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [filters, setFilters] = useState<{
+    search: string;
+    quantity?: number;
+    status: Item["status"][];
+  }>({ search: "", quantity: undefined, status: [] });
 
   // Example test data of items in kitchen
   const [items, setItems] = useState<Item[]>([
@@ -43,6 +49,102 @@ const MyKitchen = () => {
       updated: "Sep 8, 2025",
       status: "Out of Stock",
     },
+    {
+      id: 4,
+      name: "Milk",
+      image: "🥛",
+      quantity: "2",
+      updated: "Sep 8, 2025",
+      status: "Low Stock",
+    },
+    {
+      id: 5,
+      name: "Bread",
+      image: "🍞",
+      quantity: "1",
+      updated: "Sep 8, 2025",
+      status: "Low Stock",
+    },
+    {
+      id: 6,
+      name: "Carrots",
+      image: "🥕",
+      quantity: "15",
+      updated: "Sep 8, 2025",
+      status: "Good",
+    },
+    {
+      id: 7,
+      name: "Cheese",
+      image: "🧀",
+      quantity: "3",
+      updated: "Sep 8, 2025",
+      status: "Low Stock",
+    },
+    {
+      id: 8,
+      name: "Apples",
+      image: "🍎",
+      quantity: "10",
+      updated: "Sep 8, 2025",
+      status: "Good",
+    },
+    {
+      id: 9,
+      name: "Spinach",
+      image: "🥬",
+      quantity: "0",
+      updated: "Sep 8, 2025",
+      status: "Out of Stock",
+    },
+    {
+      id: 10,
+      name: "Butter",
+      image: "🧈",
+      quantity: "2",
+      updated: "Sep 8, 2025",
+      status: "Low Stock",
+    },
+    {
+      id: 11,
+      name: "Rice",
+      image: "🍚",
+      quantity: "25",
+      updated: "Sep 8, 2025",
+      status: "Good",
+    },
+    {
+      id: 12,
+      name: "Banana",
+      image: "🍌",
+      quantity: "6",
+      updated: "Sep 8, 2025",
+      status: "Good",
+    },
+    {
+      id: 13,
+      name: "Yogurt",
+      image: "🥣",
+      quantity: "1",
+      updated: "Jul 8, 2025",
+      status: "Expired",
+    },
+    {
+      id: 14,
+      name: "Potatoes",
+      image: "🥔",
+      quantity: "12",
+      updated: "Sep 8, 2025",
+      status: "Good",
+    },
+    {
+      id: 15,
+      name: "Chicken Strips",
+      image: "🐥",
+      quantity: "1",
+      updated: "June 1, 2024",
+      status: "Expired",
+    },
   ]);
 
   const handleAddItem = (newItem: Omit<Item, "id" | "updated">) => {
@@ -58,25 +160,40 @@ const MyKitchen = () => {
     setItems((prev) => [...prev, item]);
   };
 
+  const filteredItems = items.filter(item => {
+    const searchMatch = filters.search ?
+    item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+
+    const statusMatch = filters.status.length > 0 ?
+    filters.status.includes(item.status) : true;
+
+    const quantityMatch = filters.quantity != null && filters.quantity != undefined
+    ? Number(item.quantity) <= filters.quantity : true;
+
+    return searchMatch && statusMatch && quantityMatch;
+  })
+
   return (
     <Container style={{ marginTop: 100 }}>
       <div
         style={{
           display: "flex",
-          justifyContent: "center",
-          alignItems: "left",
-          flexDirection: "column",
+          justifyContent: "space-between",
+          alignItems: "center",
           height: "10vh",
           paddingTop: 5,
         }}
       >
         <Button
-          style={{ justifyContent: "left", width: "125px" }}
+          style={{ width: "125px" }}
           variant="success"
           onClick={() => setShowAddModal(true)}
         >
           <strong>Add Item +</strong>
         </Button>
+        <KitchenFilterButton
+          onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
+        />
       </div>
 
       {/* Mockup Ingredient Table */}
@@ -87,11 +204,10 @@ const MyKitchen = () => {
           alignItems: "center",
           flexDirection: "column",
           textAlign: "center",
-          height: "50vh",
           marginBottom: "50px",
         }}
       >
-        <IngredientTable items={items} />
+        <IngredientTable items={filteredItems} />
       </div>
 
       <div
