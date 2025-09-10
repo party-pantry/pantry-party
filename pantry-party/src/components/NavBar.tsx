@@ -49,7 +49,7 @@ const NavBar: React.FC = () => {
                 <Refrigerator />
                 <span className="nav-link-text">My Kitchen</span>
               </Nav.Link>
-              <Nav.Link as={Link} href="/" className="nav-link-icon">
+              <Nav.Link as={Link} href="/shopping-list" className="nav-link-icon">
                 <ListCheck />
                 <span className="nav-link-text">Shopping List</span>
               </Nav.Link>
