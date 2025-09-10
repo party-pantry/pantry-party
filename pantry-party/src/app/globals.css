@@ -115,3 +115,8 @@ body {
   color: white;
   text-align: center;
 }
+
+/* Border thickness for cards */
+.custom-card-border {
+  border-width: 3px;
+}

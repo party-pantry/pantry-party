@@ -1,43 +1,53 @@
 "use client";
 
 import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+interface Item {
+  id: number;
+  name: string;
+  image: string;
+  quantity: string;
+  updated: string;
+  status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
+  category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
+}
 
 interface Props {
   show: boolean;
   onHide: () => void;
-  onAddItem: (item: {
-    name: string;
-    image: string;
-    quantity: string;
-    status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
-    category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
-  }) => void;
+  itemToEdit: Item | null;
+  onUpdateItem: (item: Item) => void;
 }
 
-const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    quantity: "",
-    status: "Good" as const,
-    category: "fridge" as const,
-  });
+const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem }) => {
+  const [formData, setFormData] = useState<Item | null>(null);
+
+  useEffect(() => {
+    if (itemToEdit) {
+      setFormData(itemToEdit);
+    }
+  }, [itemToEdit]);
+
+  if (!formData) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.quantity) {
-      onAddItem({
+      onUpdateItem({
         ...formData,
-        image: formData.image || "🍽️",
+        updated: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        }),
       });
-      setFormData({ name: "", image: "", quantity: "", status: "Good", category: "fridge" });
-      onHide();
     }
   };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+  const handleChange = (field: keyof Item, value: string) => {
+    // if previous state exists, copy existing fields and overwrite changed field, else null
+    setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
   };
 
   return (
@@ -54,7 +64,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
         closeButton
       />
       <Modal.Body className="text-center">
-        <h4>Add New Item</h4>
+        <h4>Edit Item</h4>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="itemName">
             <Form.Control
@@ -98,7 +108,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
           </Row>
 
           <Button variant="success" type="submit">
-            Add Item
+            Save Changes
           </Button>
         </Form>
       </Modal.Body>
@@ -106,4 +116,4 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
   );
 };
 
-export default AddItemModal;
+export default EditItemModal;
