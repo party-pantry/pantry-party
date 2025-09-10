@@ -33,9 +33,17 @@ const IngredientTable: React.FC<Props> = ({ items }) => {
         </tr>
       </thead>
       <tbody>
-        {items.map((item) => (
+        {items.length === 0 ? (
+          <tr>
+            <td colSpan={7} className="p-6 text-center">
+              No items found.
+            </td>
+          </tr>
+        ) : (
+          items.map((item) => (
           <IngredientRow key={item.id} {...item} />
-        ))}
+          ))
+        )}
       </tbody>
     </table>
   );
