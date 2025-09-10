@@ -19,9 +19,9 @@ const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [filters, setFilters] = useState<{
     search: string;
-    quantity: number;
+    quantity?: number;
     status: Item["status"][];
-  }>({ search: "", quantity: 0, status: [] });
+  }>({ search: "", quantity: undefined, status: [] });
 
   // Example test data of items in kitchen
   const [items, setItems] = useState<Item[]>([
