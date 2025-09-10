@@ -9,6 +9,7 @@ import AddItemModal from "../../components/AddItemModal";
 import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
+import { on } from "events";
 
 type Item = {
   id: number;
@@ -301,10 +302,16 @@ const MyKitchen = () => {
           <StorageContainer id="4" title="Pantry 1">
             <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
           </StorageContainer>
+          {pantryArray.map((pantry) => (
+            <StorageContainer key={pantry.id} id={pantry.id.toString()} title={pantry.name}>
+              <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+            </StorageContainer>
+          ))}
           <Button
             style={{ width: "150px", backgroundColor: "#028383ff"}}
+            onClick={() => setShowPantryModal(true)}
           >
-            <strong>Add Storage +</strong>
+              <strong>Add Storage +</strong>
           </Button>
         </HomeTabSelection>
       </div>
