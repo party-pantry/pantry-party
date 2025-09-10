@@ -7,6 +7,8 @@ interface Props {
   quantity: string;
   updated: string;
   status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
+  onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 }
 
 const statusColors: Record<Props["status"], string> = {
@@ -17,11 +19,14 @@ const statusColors: Record<Props["status"], string> = {
 };
 
 const IngredientRow: React.FC<Props> = ({
+  id,
   name,
   image,
   quantity,
   updated,
   status,
+  onDelete,
+  onEdit,
 }) => {
   return (
     <tr className="border-b">
@@ -38,8 +43,18 @@ const IngredientRow: React.FC<Props> = ({
         </span>
       </td>
       <td className="p-3 flex gap-2">
-        <button className="text-gray-600 hover:text-blue-600">✏️</button>
-        <button className="text-gray-600 hover:text-red-600">🗑️</button>
+        <button 
+          className="text-gray-600 hover:text-blue-600"
+          onClick={() => onEdit(id)}
+        >
+          ✏️
+        </button>
+        <button
+          className="text-gray-600 hover:text-red-600"
+          onClick={() => onDelete(id)}
+        >
+          🗑️
+        </button>
       </td>
     </tr>
   );

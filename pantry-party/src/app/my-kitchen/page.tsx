@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import AddItemModal from "../../components/AddItemModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
+import EditItemModal from "../../components/EditItemModal";
 
 type Item = {
   id: number;
@@ -17,6 +18,10 @@ type Item = {
 
 const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
+
   const [filters, setFilters] = useState<{
     search: string;
     quantity?: number;
@@ -160,6 +165,26 @@ const MyKitchen = () => {
     setItems((prev) => [...prev, item]);
   };
 
+  const handleDeleteItem = (id: number) => {
+    setItems((prev) => prev.filter(item => item.id !== id));
+  };
+
+  const handleEditItem = (id: number) => {
+    const foundItem = items.find((item) => item.id === id);
+    if (foundItem) {
+      setItemToEdit(foundItem);
+      setShowEditModal(true);
+    }
+  }
+
+  const handleUpdateItem = (updatedItem: Item) => {
+    setItems((prev) => 
+      prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
+    );
+    setShowEditModal(false);
+    setItemToEdit(null);
+  }
+
   const filteredItems = items.filter(item => {
     const searchMatch = filters.search ?
     item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
@@ -207,7 +232,7 @@ const MyKitchen = () => {
           marginBottom: "50px",
         }}
       >
-        <IngredientTable items={filteredItems} />
+        <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
       </div>
 
       <div
@@ -229,6 +254,12 @@ const MyKitchen = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={handleAddItem}
+      />
+      <EditItemModal
+        show={showEditModal}
+        onHide={() => setShowEditModal(false)}
+        itemToEdit={itemToEdit}
+        onUpdateItem={handleUpdateItem}
       />
     </Container>
   );
