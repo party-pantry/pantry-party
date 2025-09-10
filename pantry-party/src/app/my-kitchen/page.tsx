@@ -3,8 +3,9 @@
 import { Container, Button } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
-import StorageContainer from "../../components/StorageContainer"; 
+import StorageContainer from "../../components/StorageContainer";
 import AddItemModal from "../../components/AddItemModal";
+import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
 
@@ -17,8 +18,15 @@ type Item = {
   status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
 };
 
+type Storage = {
+  id: number;
+  name: string;
+  type: string;
+}
+
 const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPantryModal, setShowPantryModal] = useState(false);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
@@ -152,6 +160,8 @@ const MyKitchen = () => {
       status: "Expired",
     },
   ]);
+  
+  const [pantryArray, setPantryArray] = useState<Storage[]>([]);
 
   const handleAddItem = (newItem: Omit<Item, "id" | "updated">) => {
     const item: Item = {
@@ -167,7 +177,7 @@ const MyKitchen = () => {
   };
 
   const handleDeleteItem = (id: number) => {
-    setItems((prev) => prev.filter(item => item.id !== id));
+    setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleEditItem = (id: number) => {
@@ -176,28 +186,39 @@ const MyKitchen = () => {
       setItemToEdit(foundItem);
       setShowEditModal(true);
     }
-  }
+  };
 
   const handleUpdateItem = (updatedItem: Item) => {
-    setItems((prev) => 
+    setItems((prev) =>
       prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
     setShowEditModal(false);
     setItemToEdit(null);
-  }
+  };
 
-  const filteredItems = items.filter(item => {
-    const searchMatch = filters.search ?
-    item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+  const filteredItems = items.filter((item) => {
+    const searchMatch = filters.search
+      ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+      : true;
 
-    const statusMatch = filters.status.length > 0 ?
-    filters.status.includes(item.status) : true;
+    const statusMatch =
+      filters.status.length > 0 ? filters.status.includes(item.status) : true;
 
-    const quantityMatch = filters.quantity != null && filters.quantity != undefined
-    ? Number(item.quantity) <= filters.quantity : true;
+    const quantityMatch =
+      filters.quantity != null && filters.quantity != undefined
+        ? Number(item.quantity) <= filters.quantity
+        : true;
 
     return searchMatch && statusMatch && quantityMatch;
-  })
+  });
+
+  const handleAddPantry = (newPantry: { name: string; type: string }) => {
+    const pantry: Storage = {
+      ...newPantry,
+      id: Math.max(...pantryArray.map((p) => p.id), 0) + 1,
+    };
+    setPantryArray((prev) => [...prev, pantry]);
+  };
 
   return (
     <Container style={{ marginTop: 100 }}>
@@ -218,11 +239,24 @@ const MyKitchen = () => {
           <strong>Add Item +</strong>
         </Button>
         <KitchenFilterButton
-          onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
+          onApply={(filters) =>
+            setFilters({
+              ...filters,
+              status: filters.status as Item["status"][],
+            })
+          }
         />
       </div>
-      
-      
+      <div>
+        <Button
+          style={{ width: "126px"}}
+          variant="success"
+          onClick={() => setShowPantryModal(true)}
+        >
+          <strong>Add Pantry +</strong>
+        </Button>
+      </div>
+
       {/* Mockup Ingredient Table */}
       <div
         style={{
@@ -232,19 +266,42 @@ const MyKitchen = () => {
           flexDirection: "column",
           marginBottom: "50px",
         }}
-      > 
-      {/* Multiple storage spaces for a single location (aka. one home) */}
-         <StorageContainer id="1" title="Fridge 1">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+      >
+        {/* Multiple storage spaces for a single location (aka. one home) */}
+       
+        <StorageContainer id="1" title="Fridge 1">
+          <IngredientTable
+            items={filteredItems}
+            onDelete={handleDeleteItem}
+            onEdit={handleEditItem}
+          />
         </StorageContainer>
         <StorageContainer id="1" title="Fridge 2">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          <IngredientTable
+            items={filteredItems}
+            onDelete={handleDeleteItem}
+            onEdit={handleEditItem}
+          />
         </StorageContainer>
         <StorageContainer id="1" title="Pantry 1">
-          <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          <IngredientTable
+            items={filteredItems}
+            onDelete={handleDeleteItem}
+            onEdit={handleEditItem}
+          />
         </StorageContainer>
+
+         {pantryArray.map((pantry: Storage) => (
+          <StorageContainer key={pantry.id} id={pantry.id.toString()} title={pantry.name}>
+            <IngredientTable
+              items={filteredItems}
+              onDelete={handleDeleteItem}
+              onEdit={handleEditItem}
+            />
+          </StorageContainer>
+          ))}
       </div>
-     
+
       <div
         style={{
           display: "flex",
@@ -264,6 +321,11 @@ const MyKitchen = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={handleAddItem}
+      />
+      <AddPantryModal
+        show={showPantryModal}
+        onHide={() => setShowPantryModal(false)}
+        onAddPantry={handleAddPantry}
       />
       <EditItemModal
         show={showEditModal}
