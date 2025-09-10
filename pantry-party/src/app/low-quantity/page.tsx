@@ -19,7 +19,13 @@ const items: Item[] = [
 ];
 
 export default function Page() {
-  const restockThreshold = 5;
+  const getStockStatus = (quantity: number) => {
+    if (quantity === 0) return "Out of Stock";
+    if (quantity <= 2) return "Low Stock";
+    return "Full Stock";
+  };
+
+  const itemsToRestock = items.filter(item => item.quantity <= 2);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
@@ -31,20 +37,18 @@ export default function Page() {
             </th>
             <th className="p-2 text-left">Items</th>
             <th className="p-2 text-left">Quantity</th>
-            <th className="p-2 text-left">Need to be Restock</th>
+            <th className="p-2 text-left">Amount of Stocks</th>
           </tr>
         </thead>
         <tbody>
-          {items.map((item, index) => (
+          {itemsToRestock.map((item, index) => (
             <tr key={index} className="border-b last:border-b-0">
               <td className="p-2">
                 <input type="checkbox" />
               </td>
               <td className="p-2">{item.name}</td>
               <td className="p-2">{item.quantity}</td>
-              <td className="p-2">
-                {item.quantity <= restockThreshold ? "Yes" : "No"}
-              </td>
+              <td className="p-2">{getStockStatus(item.quantity)}</td>
             </tr>
           ))}
         </tbody>
