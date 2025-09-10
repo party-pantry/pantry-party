@@ -6,8 +6,10 @@ import IngredientTable from "../../components/IngredientTable";
 import StorageContainer from "../../components/StorageContainer"; 
 import HomeTabSelection from "../../components/HomeTabSelection";
 import AddItemModal from "../../components/AddItemModal";
+import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
+import { on } from "events";
 
 type Item = {
   id: number;
@@ -19,8 +21,15 @@ type Item = {
   category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
 };
 
+type Storage = {
+  id: number;
+  name: string;
+  type: string;
+}
+
 const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showPantryModal, setShowPantryModal] = useState(false);
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
@@ -169,6 +178,8 @@ const MyKitchen = () => {
       category: "freezer",
     },
   ]);
+  
+  const [pantryArray, setPantryArray] = useState<Storage[]>([]);
 
   const handleAddItem = (newItem: Omit<Item, "id" | "updated">) => {
     const item: Item = {
@@ -184,7 +195,7 @@ const MyKitchen = () => {
   };
 
   const handleDeleteItem = (id: number) => {
-    setItems((prev) => prev.filter(item => item.id !== id));
+    setItems((prev) => prev.filter((item) => item.id !== id));
   };
 
   const handleEditItem = (id: number) => {
@@ -193,28 +204,39 @@ const MyKitchen = () => {
       setItemToEdit(foundItem);
       setShowEditModal(true);
     }
-  }
+  };
 
   const handleUpdateItem = (updatedItem: Item) => {
-    setItems((prev) => 
+    setItems((prev) =>
       prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
     );
     setShowEditModal(false);
     setItemToEdit(null);
-  }
+  };
 
-  const filteredItems = items.filter(item => {
-    const searchMatch = filters.search ?
-    item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+  const filteredItems = items.filter((item) => {
+    const searchMatch = filters.search
+      ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+      : true;
 
-    const statusMatch = filters.status.length > 0 ?
-    filters.status.includes(item.status) : true;
+    const statusMatch =
+      filters.status.length > 0 ? filters.status.includes(item.status) : true;
 
-    const quantityMatch = filters.quantity != null && filters.quantity != undefined
-    ? Number(item.quantity) <= filters.quantity : true;
+    const quantityMatch =
+      filters.quantity != null && filters.quantity != undefined
+        ? Number(item.quantity) <= filters.quantity
+        : true;
 
     return searchMatch && statusMatch && quantityMatch;
-  })
+  });
+
+  const handleAddPantry = (newPantry: { name: string; type: string }) => {
+    const pantry: Storage = {
+      ...newPantry,
+      id: Math.max(...pantryArray.map((p) => p.id), 0) + 1,
+    };
+    setPantryArray((prev) => [...prev, pantry]);
+  };
 
   // Types of filteredItems
   const fridgeItems = filteredItems.filter(item => item.category === "fridge");
@@ -238,14 +260,12 @@ const MyKitchen = () => {
           marginBottom: "5px",
         }}
       >
+
         <h1 className="fs-1">My Kitchen</h1>
         <h6>Here you can see what is in your kitchen</h6>
         <hr />
         
       </div>
-      
-      
-      
       {/* Mockup Ingredient Table */}
       <div
         style={{
@@ -282,10 +302,16 @@ const MyKitchen = () => {
           <StorageContainer id="4" title="Pantry 1">
             <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
           </StorageContainer>
+          {pantryArray.map((pantry) => (
+            <StorageContainer key={pantry.id} id={pantry.id.toString()} title={pantry.name}>
+              <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+            </StorageContainer>
+          ))}
           <Button
             style={{ width: "150px", backgroundColor: "#028383ff"}}
+            onClick={() => setShowPantryModal(true)}
           >
-            <strong>Add Storage +</strong>
+              <strong>Add Storage +</strong>
           </Button>
         </HomeTabSelection>
       </div>
@@ -295,6 +321,11 @@ const MyKitchen = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={handleAddItem}
+      />
+      <AddPantryModal
+        show={showPantryModal}
+        onHide={() => setShowPantryModal(false)}
+        onAddPantry={handleAddPantry}
       />
       <EditItemModal
         show={showEditModal}

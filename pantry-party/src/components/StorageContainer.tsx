@@ -7,6 +7,8 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
+//TODO: Add type prop for StorageContainer
+
 interface StorageContainerProps {
   // Might be good to have an id prop to keep track of containers
   id?: string;
