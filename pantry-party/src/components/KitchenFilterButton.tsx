@@ -9,6 +9,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
     const [status, setStatus] = useState<string[]>([]);
 
     const handleStatusChange = (option: string) => {
+        // If option is selected, remove it from array, else add it
         setStatus(prev =>
             prev.includes(option)
             ? prev.filter(s => s !== option)
@@ -33,7 +34,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
 
     return (
         <DropdownButton title={<strong>Filter</strong>} variant="success" style={{ width: "125px" }} align="end">
-            <Form style={{ width: "250px"}}>
+            <Form style={{ width: "250px"}} onSubmit={(e) => { e.preventDefault(); handleApply(); }}>
                 <Form.Group className="m-3">
                     <Form.Control
                         placeholder="Search..."

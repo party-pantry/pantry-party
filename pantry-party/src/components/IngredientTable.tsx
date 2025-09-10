@@ -13,10 +13,12 @@ type Item = {
 
 interface Props {
   items: Item[];
+  onDelete: (id: number) => void;
+  onEdit: (id: number) => void;
 }
 
 // Mockup UI of what list of ingredients table could look like
-const IngredientTable: React.FC<Props> = ({ items }) => {
+const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
   return (
     <table className="w-full border-collapse bg-white shadow-md rounded">
       <thead className="bg-gray-100">
@@ -41,7 +43,7 @@ const IngredientTable: React.FC<Props> = ({ items }) => {
           </tr>
         ) : (
           items.map((item) => (
-          <IngredientRow key={item.id} {...item} />
+          <IngredientRow key={item.id} {...item} onDelete={onDelete} onEdit={onEdit} />
           ))
         )}
       </tbody>
