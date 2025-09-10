@@ -1,3 +1,9 @@
+//** This component is a card that represents each storage space. A single storage space will include
+//   an IngredientsTable (list of ingredients in the storage space. 
+//   Note: a single location (i.e. home) can have multiple storage spaces 
+//   (i.e. fridge, freezer, pantry, spice rack, etc.) 
+// */
+
 import React from 'react';
 import { Card } from 'react-bootstrap';
 
@@ -28,7 +34,8 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
             style={{ 
                 backgroundColor: "#03a9a9ff"
             }}
-        >{children}</Card.Body>
+            >{children}
+        </Card.Body>
     </Card>
     );
 };

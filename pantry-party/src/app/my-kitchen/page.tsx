@@ -4,6 +4,7 @@ import { Container, Button, Row } from "react-bootstrap";
 import React, { useState } from "react";
 import IngredientTable from "../../components/IngredientTable";
 import StorageContainer from "../../components/StorageContainer"; 
+import HomeTabSelection from "../../components/HomeTabSelection";
 import AddItemModal from "../../components/AddItemModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
@@ -219,8 +220,10 @@ const MyKitchen = () => {
   const fridgeItems = filteredItems.filter(item => item.category === "fridge");
   const pantryItems = filteredItems.filter(item => item.category === "pantry");
   const freezerItems = filteredItems.filter(item => item.category === "freezer");
-  const spicerackItems = filteredItems.filter(item => item.category === "spice rack");
-  const otherItems = filteredItems.filter(item => item.category === "other");
+
+  // To use when items of category spice rack or other are added:
+  // const spicerackItems = filteredItems.filter(item => item.category === "spice rack");
+  // const otherItems = filteredItems.filter(item => item.category === "other");
 
 
 
@@ -240,18 +243,7 @@ const MyKitchen = () => {
         <hr />
         
       </div>
-      <Row className="justify-content-end mb-4">
-          <KitchenFilterButton
-            onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
-          />
-          <Button
-            style={{ width: "125px" }}
-            variant="success"
-            onClick={() => setShowAddModal(true)}
-          >
-            <strong>Add Item +</strong>
-          </Button>
-      </Row>
+      
       
       
       {/* Mockup Ingredient Table */}
@@ -265,21 +257,39 @@ const MyKitchen = () => {
         }}
       > 
       {/* Multiple storage spaces for a single location (aka. one home) */}
-         <StorageContainer id="1" title="Fridge 1">
-          <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-        </StorageContainer>
-        <StorageContainer id="2" title="Fridge 2">
-          <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-        </StorageContainer>
-        <StorageContainer id="3" title="Freezer 1">
-          <IngredientTable items={freezerItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-        </StorageContainer>
-        <StorageContainer id="4" title="Pantry 1">
-          <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-        </StorageContainer>
+        <HomeTabSelection title="Home 1" id="1">
+          <Row className="justify-content-end mb-4">
+            <KitchenFilterButton
+              onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
+            />
+            <Button
+              style={{ width: "125px" }}
+              variant="success"
+              onClick={() => setShowAddModal(true)}
+            >
+              <strong>Add Item +</strong>
+            </Button>
+          </Row>
+          <StorageContainer id="1" title="Fridge 1">
+            <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          </StorageContainer>
+          <StorageContainer id="2" title="Fridge 2">
+            <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          </StorageContainer>
+          <StorageContainer id="3" title="Freezer 1">
+            <IngredientTable items={freezerItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          </StorageContainer>
+          <StorageContainer id="4" title="Pantry 1">
+            <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
+          </StorageContainer>
+          <Button
+            style={{ width: "150px", backgroundColor: "#028383ff"}}
+          >
+            <strong>Add Storage +</strong>
+          </Button>
+        </HomeTabSelection>
       </div>
-     
-      
+
 
       <AddItemModal
         show={showAddModal}
