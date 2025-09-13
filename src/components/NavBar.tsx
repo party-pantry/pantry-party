@@ -14,9 +14,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import SignInModal from "../components/SignInModal";
-import SignUpModal from "../components/SignUpModal";
-import SignOutModal from "../components/SignOutModal";
+import SignInModal from "./SignInModal";
+import SignUpModal from "./SignUpModal";
+import SignOutModal from "./SignOutModal";
 
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
