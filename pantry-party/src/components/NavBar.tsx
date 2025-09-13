@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
   Refrigerator,
+  CircleAlert,
+  CopyCheck, 
   ListCheck,
   ChefHat,
   User,
@@ -56,6 +58,14 @@ const NavBar: React.FC = () => {
               <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
                 <ChefHat />
                 <span className="nav-link-text">Recipes</span>
+              </Nav.Link>
+              <Nav.Link as={Link} href="/low-quantity" className="nav-link-icon">
+                <CircleAlert />
+                <span className="nav-link-text">Low-quantity</span>
+              </Nav.Link>
+              <Nav.Link as={Link} href="/PopupPage" className="nav-link-icon">
+                <CopyCheck />
+                <span className="nav-link-text">Popup</span>
               </Nav.Link>
               <NavDropdown
                 id="login-dropdown"
