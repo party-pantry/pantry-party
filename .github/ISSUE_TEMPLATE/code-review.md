@@ -1,7 +1,7 @@
 ---
-name: Review
-about: Use this template to create a new review
-title: 'Review: '
+name: Review 01
+about: First review for pantry-party
+title: 'Review 01: '
 labels: 'Review'
 assignees: ''
 
@@ -35,9 +35,9 @@ assignees: ''
 * [Typescript](../blob/main/checklists/ts-checklist.md)
 * [UI](../blob/main/checklists/ui-checklist.md)
 
-## Due date
+## Review date
 
-Day, Month Day Time
+9/16
 
 ## For more information
 
