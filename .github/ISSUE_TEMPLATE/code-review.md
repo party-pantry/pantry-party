@@ -21,8 +21,8 @@ assignees: ''
 
 (Please list the files to be reviewed here. It would be great to provide the URL to each file in the review branch.)
 
-* [file1](https://github.com/party-pantry/pantry-party/blob/main/src/app/shopping-list/page.tsx)
-* [file2](https://github.com/party-pantry/pantry-party/blob/main/src/components/AddItemModal.tsx)
+* [shopping-list/page.tsx](https://github.com/party-pantry/pantry-party/blob/main/src/app/shopping-list/page.tsx)
+* [components/AddItemModal.tsx](https://github.com/party-pantry/pantry-party/blob/main/src/components/AddItemModal.tsx)
 
 ## Checklists
 
