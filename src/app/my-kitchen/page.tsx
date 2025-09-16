@@ -9,7 +9,7 @@ import AddItemModal from "../../components/AddItemModal";
 import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
-import { on } from "events";
+// import { on } from "events";
 
 type Item = {
   id: number;

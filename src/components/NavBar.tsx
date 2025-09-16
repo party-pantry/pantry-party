@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
   Refrigerator,
+  CircleAlert,
+  CopyCheck, 
   ListCheck,
   ChefHat,
   User,
@@ -12,9 +14,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import SignInModal from "../components/SignInModal";
-import SignUpModal from "../components/SignUpModal";
-import SignOutModal from "../components/SignOutModal";
+import SignInModal from "./SignInModal";
+import SignUpModal from "./SignUpModal";
+import SignOutModal from "./SignOutModal";
 
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -56,6 +58,14 @@ const NavBar: React.FC = () => {
               <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
                 <ChefHat />
                 <span className="nav-link-text">Recipes</span>
+              </Nav.Link>
+              <Nav.Link as={Link} href="/low-quantity" className="nav-link-icon">
+                <CircleAlert />
+                <span className="nav-link-text">Low-quantity</span>
+              </Nav.Link>
+              <Nav.Link as={Link} href="/pop-up" className="nav-link-icon">
+                <CopyCheck />
+                <span className="nav-link-text">Popup</span>
               </Nav.Link>
               <NavDropdown
                 id="login-dropdown"
