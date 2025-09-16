@@ -63,7 +63,7 @@ const NavBar: React.FC = () => {
                 <CircleAlert />
                 <span className="nav-link-text">Low-quantity</span>
               </Nav.Link>
-              <Nav.Link as={Link} href="/PopupPage" className="nav-link-icon">
+              <Nav.Link as={Link} href="/pop-up" className="nav-link-icon">
                 <CopyCheck />
                 <span className="nav-link-text">Popup</span>
               </Nav.Link>
