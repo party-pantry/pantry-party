@@ -14,6 +14,43 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Unit {
+  OUNCE
+  POUND
+  GRAM
+  KILOGRAM
+  MILILITER
+  LITER
+  FLUID_OUNCE
+  CUP
+  PINT
+  QUART
+  GALLON
+  TEASPOON
+  TABLESPOON
+  BAG
+  CAN
+  BOTTLE
+  BOX
+  PIECE
+  SACK
+}
+
+enum Status {
+  GOOD
+  LOW_STOCK
+  OUT_OF_STOCK
+  EXPIRED
+}
+
+enum Category {
+  FRIDGE
+  PANTRY
+  FREEZER
+  SPICE_RACK
+  OTHER
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -48,28 +85,6 @@ model Ingredient {
   stocks    Stock[]
 }
 
-enum Unit {
-  OUNCE
-  POUND
-  GRAM
-  KILOGRAM
-  MILILITER
-  LITER
-  FLUID_OUNCE
-  CUP
-  PINT
-  QUART
-  GALLON
-  TEASPOON
-  TABLESPOON
-  BAG
-  CAN
-  BOTTLE
-  BOX
-  PIECE
-  SACK
-}
-
 model Stock {
   id            Int      @id @default(autoincrement())
   ingredientId  Int?
@@ -77,6 +92,10 @@ model Stock {
   custom_name   String?
   quantity      Float
   unit          Unit
+  last_updated  DateTime @default(now()) @updatedAt
+  status        Status   @default(GOOD)
+  category      Category 
+
 
   ingredient    Ingredient? @relation(fields: [ingredientId], references: [id])
   storage       Storage     @relation(fields: [storageId], references: [id])
