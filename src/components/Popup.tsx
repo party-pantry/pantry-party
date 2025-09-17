@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const Popup: React.FC = () => {
+const PopUp: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Form state
@@ -116,4 +116,4 @@ const Popup: React.FC = () => {
   );
 }
 
-export default Popup;
+export default PopUp;
