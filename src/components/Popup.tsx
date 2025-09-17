@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export default function Popup() {
+const Popup: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   // Form state
@@ -115,3 +115,5 @@ export default function Popup() {
     </div>
   );
 }
+
+export default Popup;
