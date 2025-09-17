@@ -1,4 +1,4 @@
-name: ci-CookingCompass
+name: ci-Party-Pantry
 on:
   push:
     branches: [main, master]
