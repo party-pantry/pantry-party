@@ -13,7 +13,7 @@ test('Recipes Page: visible', async ({ page }) => {
 });
 
 test('Recipe cards, buttons visible', async ({ page }) => {
-  await page.goto('http://localhost:3000/my-recipes');
+  await page.goto('http://localhost:3000/recipes');
   // Recipe cards visible with buttons
   await expect(page.getByText('🍳Tomato Scrambled EggsEasyA')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Add Missing to Shopping List' }).first()).toBeVisible();

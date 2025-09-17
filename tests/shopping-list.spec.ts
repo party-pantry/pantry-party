@@ -10,81 +10,52 @@ await page.getByRole('link', { name: 'Shopping List' }).click();
 await expect(page.getByText('Shopping ListKeep track of what you need to buyAdd Item +3Items to Buy1Items')).toBeVisible();
 });
 
-test('Adding an item to list form', async ({ page }) => {
+test('Adding an item to shopping list form', async ({ page }) => {
   await page.goto('http://localhost:3000/shopping-list');
-  // Checking tabs for multiple locations (homes)
-  await expect(page.getByRole('link', { name: 'Home 1' })).toBeVisible();
-  await page.getByRole('link', { name: 'Home 2' }).click();
-  await page.getByRole('link', { name: 'Home 3' }).click();
-  await page.getByRole('link', { name: 'Home 1' }).click();
-  
-  // Filling out and submitting the form to add an ingredient
+  // Adding a new shopping list item
+  await expect(page.getByRole('button', { name: 'Add Item +' })).toBeVisible();
   await page.getByRole('button', { name: 'Add Item +' }).click();
-  await page.getByRole('textbox', { name: 'Item Name' }).click();
-  await page.getByRole('textbox', { name: 'Item Name' }).fill('Bread');
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').fill('15');
-  await page.getByRole('button', { name: 'Add Item', exact: true }).click();
-
-  // Verifying result submission in table
-  await expect(page.getByRole('cell', { name: 'Bread' }).nth(1)).toBeVisible();
-  await expect(page.getByRole('cell', { name: '15' }).nth(1)).toBeVisible();
-  await expect(page.locator('body')).toContainText('Good');
+  await page.getByRole('textbox', { name: 'Enter item name' }).click();
+  await page.getByRole('textbox', { name: 'Enter item name' }).fill('Bacon');
+  await page.getByRole('textbox', { name: 'e.g., 2 lbs' }).click();
+  await page.getByRole('textbox', { name: 'e.g., 2 lbs' }).fill('3 packs');
+  await page.locator('div').filter({ hasText: /^CategoryProduceMeatDairyPantryOther$/ }).getByRole('combobox').selectOption('Meat');
+  await page.locator('div').filter({ hasText: /^PriorityHighMediumLow$/ }).getByRole('combobox').selectOption('High');
+  await page.getByRole('button', { name: 'Add to List' }).click();
+  // Checking results
+  await expect(page.getByText('Bacon3 packs • Added Sep 16, 2025MeatHigh×')).toBeVisible();
 });
 
-test('Adding a storage space form', async ({ page }) => {
-  await page.goto('http://localhost:3000/my-kitchen');
-  await page.getByRole('button', { name: 'Add Storage +' }).click();
-  await page.getByRole('textbox', { name: 'Storage Name' }).click();
-  await page.getByRole('textbox', { name: 'Storage Name' }).fill('Fridge 3');
-  await page.getByRole('textbox', { name: 'Storage Type' }).click();
-  await page.getByRole('textbox', { name: 'Storage Type' }).fill('Fridge');
-  await page.getByRole('button', { name: 'Add Pantry' }).click();
-  await expect(page.locator('div').filter({ hasText: /^Fridge 3$/ })).toBeVisible();
-  // New fridge is populated
-  await page.locator('div:nth-child(6) > .p-4').click();
-  await page.locator('div:nth-child(6) > .p-4 > .w-full > tbody > tr:nth-child(5) > td > input').check();
-
+test('Checking off items in list', async ({ page }) => {
+  await page.goto('http://localhost:3000/shopping-list');
+  await expect(page.locator('body')).toContainText('Items to Buy (3)');
+  await expect(page.locator('body')).toContainText('3');
+  await expect(page.getByText('Milk1 gallon • Added Sep 9, 2025DairyHigh×')).toBeVisible();
+  // Checking off items
+  await page.locator('div').filter({ hasText: /^Milk1 gallon • Added Sep 9, 2025DairyHigh×$/ }).getByRole('checkbox').click();
+  await expect(page.getByText('Chicken Breast2 lbs • Added Sep 9, 2025MeatHigh×')).toBeVisible();
+  await page.locator('div').filter({ hasText: /^Chicken Breast2 lbs • Added Sep 9, 2025MeatHigh×$/ }).getByRole('checkbox').click();
+  // Seeing updated results in dashboard
+  await expect(page.locator('body')).toContainText('1');
+  await expect(page.locator('body')).toContainText('Items to Buy (1)');
+  await expect(page.locator('div').filter({ hasText: /^Recently Purchased \(3\)$/ })).toBeVisible();
+  await expect(page.locator('body')).toContainText('Recently Purchased (3)');
+  await expect(page.getByText('Milk1 gallon×')).toBeVisible();
+  await expect(page.getByText('Chicken Breast2 lbs×')).toBeVisible();
 });
 
-test('Editing and Deleting an item', async ({ page }) => {
-  await page.goto('http://localhost:3000/my-kitchen');
-  // Edit an item in a storage location
-  await page.locator('.text-gray-600').first().click();
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').fill('15');
-  await page.locator('#itemStatus').selectOption('Low Stock');
-  await page.getByRole('button', { name: 'Save Changes' }).click();
-  
-  // Verify results from editing
-  await expect(page.locator('body')).toContainText('15');
-  await expect(page.locator('body')).toContainText('Low Stock');
-  // Delete an item
-  await page.locator('tr:nth-child(2) > .p-3.flex > .text-gray-600.hover\\:text-red-600').first().click();
+test('Rechecking and deleting items', async ({ page }) => {
+  await page.goto('http://localhost:3000/shopping-list');
+  await expect(page.locator('body')).toContainText('Recently Purchased (1)');
+  // Add a recently purchased item back to the shopping list
+  await page.getByText('Bananas').click();
+  await page.getByRole('checkbox').nth(3).uncheck();
+  await expect(page.locator('body')).toContainText('Items to Buy (4)');
+  // Delete an item from the shopping list
+  await expect(page.locator('body')).toContainText('4');
+  await expect(page.locator('body')).toContainText('Recently Purchased (0)');
+  await page.locator('div').filter({ hasText: /^Bread2 loaves • Added Sep 9, 2025PantryMedium×$/ }).getByRole('checkbox').click();
+  await page.locator('div').filter({ hasText: /^DairyHigh×$/ }).getByRole('button').click();
+  await page.locator('div').filter({ hasText: /^MeatHigh×$/ }).getByRole('button').click();
+  await page.getByRole('button', { name: '×' }).nth(1).click();
 });
-
-test('Filtering Ingredients Table', async ({ page }) => {
-  await page.goto('http://localhost:3000/my-kitchen');
-  // Filter is invisible and options are applicable
-  await page.getByRole('button', { name: 'Filter' }).click();
-  await page.getByRole('textbox', { name: 'Search...' }).click();
-  await page.getByRole('textbox', { name: 'Search...' }).fill('ba');
-  await page.getByRole('slider').fill('14');
-  await page.locator('div').filter({ hasText: /^Low Stock$/ }).getByRole('checkbox').check();
-  await page.locator('div').filter({ hasText: /^Out of Stock$/ }).getByRole('checkbox').check();
-  await page.locator('div').filter({ hasText: /^Expired$/ }).getByRole('checkbox').check();
-  await page.getByRole('button', { name: 'Apply' }).click();
-  await expect(page.getByRole('cell', { name: 'No items found.' }).first()).toBeVisible();
-  await page.locator('div').filter({ hasText: /^Expired$/ }).getByRole('checkbox').uncheck();
-  await page.getByRole('slider').fill('21');
-  await page.getByRole('textbox', { name: 'Search...' }).click();
-  await page.getByRole('textbox', { name: 'Search...' }).fill('b');
-  await page.getByRole('button', { name: 'Apply' }).click();
-  // Check results of filtering
-  await expect(page.getByRole('cell', { name: 'Bread' }).first()).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'Butter' }).first()).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
-  // Reset filter
-  await page.getByRole('button', { name: 'Reset' }).click();
-});
-
