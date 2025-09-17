@@ -32,16 +32,18 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
     return (
     <div style={{ position: "absolute", top: "60px", left: "640px" }}>
       <div className="d-flex align-items-center gap-2">
-            <div className="d-flex align-items-center">
-                <Search size={30} className="me-1" />
-                <Form.Control
-                    placeholder="Search..."
-                    value={search}
-                    style={{ maxWidth: "250px" }}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-            </div>
-
+        <div className="position-relative" style={{ maxWidth: "250px" }}>
+                    <Search
+                        size={18}
+                        className="position-absolute top-50 translate-middle-y ms-2 text-muted"
+                    />
+                    <Form.Control
+                        placeholder="Search..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        style={{ paddingLeft: "2rem" }}
+                    />
+                </div>
             <DropdownButton
                 title={
                     <div className="d-flex align-items-center gap-1"> 
