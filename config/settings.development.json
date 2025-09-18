@@ -1,0 +1,101 @@
+{
+    "defaultUsers": [
+        {
+            "id": 1,
+            "email": "email@example.com",
+            "name": "Test User",
+            "password": "password",
+            "houses": [1]
+        }
+    ],
+  "defaultHouses": [
+    {
+      "id": 1,
+      "name": "Main House",
+      "address": "123 Test St",
+      "storages": [1, 2, 3]
+    }
+  ],
+
+  "defaultStorages": [
+    {
+      "id": 1,
+      "houseId": 1,
+      "name": "Kitchen Fridge",
+      "type": "FRIDGE"
+    },
+    {
+      "id": 2,
+      "houseId": 1,
+      "name": "Pantry Closet",
+      "type": "PANTRY"
+    },
+    {
+      "id": 3,
+      "houseId": 1,
+      "name": "Freezer Chest",
+      "type": "FREEZER"
+    }
+  ],
+
+  "defaultIngredients": [
+    { "id": 1, "name": "Milk", "price": 8 },
+    { "id": 2, "name": "Eggs", "price": 8 },
+    { "id": 3, "name": "Rice", "price": 12 },
+    { "id": 4, "name": "Chicken Breast", "price": 15 },
+    { "id": 5, "name": "Salt", "price": 3 }
+  ],
+
+  "defaultStocks": [
+    {
+      "id": 1,
+      "ingredientId": 1,
+      "storageId": 1,
+      "quantity": 1,
+      "unit": "GALLON",
+      "status": "LOW_STOCK",
+      "category": "FRIDGE",
+      "last_updated": "2025-09-18T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "ingredientId": 2,
+      "storageId": 1,
+      "quantity": 12,
+      "unit": "PIECE",
+      "status": "GOOD",
+      "category": "FRIDGE",
+      "last_updated": "2025-09-18T00:00:00.000Z"
+    },
+    {
+      "id": 3,
+      "ingredientId": 3,
+      "storageId": 2,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "PANTRY",
+      "last_updated": "2025-09-18T00:00:00.000Z"
+    },
+    {
+      "id": 4,
+      "ingredientId": 4,
+      "storageId": 3,
+      "quantity": 10,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "FREEZER",
+      "last_updated": "2025-09-18T00:00:00.000Z"
+    },
+    {
+      "id": 5,
+      "ingredientId": 5,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "SPICE_RACK",
+      "last_updated": "2025-09-18T00:00:00.000Z"
+    }
+  ]
+}
