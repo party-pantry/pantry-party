@@ -1,5 +1,3 @@
-<!-- This is a template when making a code review issue for pantry-party. -->
-
 ---
 name: Review 01
 about: First review for pantry-party
@@ -10,7 +8,7 @@ assignees: ''
 ---
 
 (Delete all text in parentheses when filling out this template, including this text.)
-
+<!-- This is a template when making a code review issue for pantry-party. -->
 ## Overview
 
 (Provide an introduction to this review. What are the goals? What should reviewers keep in mind as they do it?)
