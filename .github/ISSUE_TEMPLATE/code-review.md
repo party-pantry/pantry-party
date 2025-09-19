@@ -1,7 +1,7 @@
 ---
-name: Review 01
-about: First review for pantry-party
-title: 'Review 01: '
+name: Code review issue
+about: Use this template to create a new review issue for pantry-party.
+title: 'Review ##: '
 labels: 'Review'
 assignees: ''
 
