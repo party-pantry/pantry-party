@@ -18,12 +18,14 @@ import SignInModal from "./SignInModal";
 import SignUpModal from "./SignUpModal";
 import SignOutModal from "./SignOutModal";
 
+
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  
   return (
     <>
       <Navbar
@@ -100,6 +102,7 @@ const NavBar: React.FC = () => {
                   Sign Out
                 </NavDropdown.Item>
               </NavDropdown>
+              {/* session ? () : () */}
             </Nav>
           </Navbar.Collapse>
         </Container>
