@@ -33,9 +33,14 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
     });
 
     const onSubmit = async (data: SignUpData) => {
-        await createUser(data); 
-
-        await signIn('credentials', { callbackUrl: '/my-kitchen', redirect: true, ...data });
+        await createUser(data);
+        // Use email as identifier for immediate sign-in after registration
+        await signIn('credentials', {
+            identifier: data.email,
+            password: data.password,
+            callbackUrl: '/my-kitchen',
+            redirect: true,
+        });
     };
 
     return (
