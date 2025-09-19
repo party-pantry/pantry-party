@@ -17,6 +17,7 @@ import { useState } from "react";
 import SignInModal from "./SignInModal";
 import SignUpModal from "./SignUpModal";
 import SignOutModal from "./SignOutModal";
+import { useSession } from "next-auth/react";
 
 
 const NavBar: React.FC = () => {
@@ -24,8 +25,8 @@ const NavBar: React.FC = () => {
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: session } = useSession();
 
-  
   return (
     <>
       <Navbar
@@ -92,17 +93,21 @@ const NavBar: React.FC = () => {
                   </span>
                 }
               >
+                {session ? (
+                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>
+                  Sign Out
+                </NavDropdown.Item>
+                ): (
+                  <>
                 <NavDropdown.Item onClick={() => setShowSignIn(true)}>
                   Sign In
                 </NavDropdown.Item>
                 <NavDropdown.Item onClick={() => setShowSignUp(true)}>
                   Sign Up
                 </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => setShowSignOut(true)}>
-                  Sign Out
-                </NavDropdown.Item>
+                </>
+                )}
               </NavDropdown>
-              {/* session ? () : () */}
             </Nav>
           </Navbar.Collapse>
         </Container>

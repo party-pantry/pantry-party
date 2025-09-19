@@ -4,7 +4,6 @@ import { SessionProvider } from "next-auth/react";
 
 export default function Home() {
   return (
-    <SessionProvider>
       <Container>
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", textAlign: "center", height: "100vh" }}>
           <h1>The Fun Way To Stock Your Pantry</h1>
@@ -16,6 +15,5 @@ export default function Home() {
           <FeaturesSection />
         </div>
       </Container>
-    </SessionProvider>
   );
 }
