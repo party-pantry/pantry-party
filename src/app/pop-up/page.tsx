@@ -1,4 +1,4 @@
-import Popup from "../../components/PopUp";
+import Popup from "../../components/Popup";
 
 export default function PopupDemoPage() {
   return (

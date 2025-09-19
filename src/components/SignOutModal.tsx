@@ -1,5 +1,6 @@
 'use client';
 
+import { signOut } from 'next-auth/react';
 import { Modal, Button } from 'react-bootstrap';
 
 interface Props {
@@ -17,7 +18,7 @@ const SignOutModal: React.FC<Props> = ({ show, onHide }) => {
                     <h4>Are You Sure You Want To Sign Out?</h4>
                     <div className="sign-out-buttons">
                         <Button variant="danger" style={{ width: "125px" }}>No</Button>
-                        <Button variant="primary" style={{ width: "125px" }}>Yes, Sign Out</Button>
+                        <Button variant="primary" style={{ width: "125px" }} onClick={() => signOut({ callbackUrl: '/', redirect: true })}>Yes, Sign Out</Button>
                     </div>
                 </Modal.Body>
             </Modal>
