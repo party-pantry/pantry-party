@@ -40,10 +40,10 @@
 
   "defaultIngredients": [
     { "id": 1, "name": "Milk", "price": 8 },
-    { "id": 2, "name": "Eggs", "price": 8 },
-    { "id": 3, "name": "Rice", "price": 12 },
+    { "id": 2, "name": "Eggs", "price": 10 },
+    { "id": 3, "name": "Rice", "price": 10 },
     { "id": 4, "name": "Chicken Breast", "price": 15 },
-    { "id": 5, "name": "Salt", "price": 3 }
+    { "id": 5, "name": "Salt", "price": 2 }
   ],
 
   "defaultStocks": [
