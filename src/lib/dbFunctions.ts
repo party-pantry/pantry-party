@@ -11,12 +11,21 @@ export async function createUser(credentials: {
   password: string;
 }) {
   const password = await hash(credentials.password, 10);
-  // Check if user with this email already exists
-  const existingUser = await prisma.user.findUnique({
-    where: { email: credentials.email },
+  // Check if user with this email or username already exists
+  const existingUser = await prisma.user.findFirst({
+    where: {
+      OR: [
+        { email: credentials.email },
+        { username: credentials.username },
+      ],
+    },
   });
   if (existingUser) {
-    throw new Error("Email already in use");
+    if (existingUser.email === credentials.email) {
+      throw new Error("Email already in use");
+    } else {
+      throw new Error("Username already in use");
+    }
   }
   await prisma.user.create({
     data: {
