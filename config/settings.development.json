@@ -1,0 +1,6 @@
+{
+  "defaultUsers": [
+    { "email": "john@foo.com", "password": "changeme" },
+    { "email": "user1@hawaii.edu", "password": "iLoveOrganizingMyPantry" }
+  ]
+}
