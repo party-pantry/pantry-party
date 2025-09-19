@@ -3,7 +3,7 @@
         {
             "id": 1,
             "email": "email@example.com",
-            "name": "Test User",
+            "username": "Test User",
             "password": "password",
             "houses": [1]
         }
