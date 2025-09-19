@@ -8,16 +8,21 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Email and Password",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "john@test.com" },
+        identifier: { label: "Username or Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) return null;
+        if (!credentials?.identifier || !credentials?.password) return null;
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+        // try to find user by email or username using findFirst
+        const user = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { email: credentials.identifier },
+              { username: credentials.identifier },
+            ],
+          },
         });
-
         if (!user) return null;
 
         // checking if password matches in database

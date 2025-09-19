@@ -10,7 +10,7 @@ interface Props {
 }
 
 const SignInModal: React.FC<Props> = ({ show, onHide }) => {
-    const [email, setEmail] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
 
@@ -18,8 +18,10 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
         e.preventDefault();
 
         const result = await signIn("credentials", {
-            email,
+            identifier,
             password,
+            callbackUrl: '/my-kitchen',
+            redirect: true,
         });
 
         if (result?.error){
@@ -40,9 +42,9 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
                             <Form.Control
                                 className="text-center" 
                                 type="text" 
-                                placeholder="Username/Email"
-                                value={email} 
-                                onChange={(e) => setEmail(e.target.value)} />
+                                placeholder="Username or Email"
+                                value={identifier} 
+                                onChange={(e) => setIdentifier(e.target.value)} />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="password">
                             <Form.Control
