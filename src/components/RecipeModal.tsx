@@ -59,111 +59,102 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
         </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body style={{ maxHeight: "70vh", overflowY: "auto" }}>
+      <Modal.Body style={{ maxHeight: "70vh", overflowY: "auto", padding: "1.5rem" }}>
         {/* Recipe Overview */}
-        <Row className="mb-4">
-          <Col md={8}>
-            <p className="text-dark">{recipe.description}</p>
-          </Col>
-          <Col md={4}>
-            <Card className="border-0 bg-light">
-              <Card.Body className="p-3">
-                <div className="d-flex justify-content-between mb-2">
-                  <small className="text-muted">Prep Time:</small>
-                  <strong>{mockDetailedRecipe.prepTime}</strong>
-                </div>
-                <div className="d-flex justify-content-between mb-2">
-                  <small className="text-muted">Cook Time:</small>
-                  <strong>{recipe.cookTime}</strong>
-                </div>
-                <div className="d-flex justify-content-between">
-                  <small className="text-muted">Servings:</small>
-                  <strong>{mockDetailedRecipe.servings}</strong>
-                </div>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+        <div className="mb-4">
+          <p className="text-dark fs-6 mb-3">{recipe.description}</p>
+
+          <Card className="border-0 bg-light mb-4">
+            <Card.Body className="p-3">
+              <Row className="text-center">
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{mockDetailedRecipe.prepTime}</div>
+                  <small className="text-muted">Prep Time</small>
+                </Col>
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{recipe.cookTime}</div>
+                  <small className="text-muted">Cook Time</small>
+                </Col>
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{mockDetailedRecipe.servings}</div>
+                  <small className="text-muted">Servings</small>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </div>
 
         {/* Ingredients Section */}
-        <Row className="mb-4">
-          <Col md={6}>
-            <h5 className="mb-3">Ingredients</h5>
-            <ListGroup variant="flush">
-              {mockDetailedRecipe.ingredients.map((ingredient, index) => (
-                <ListGroup.Item
-                  key={index}
-                  className={`d-flex justify-content-between align-items-center border-0 px-0 ${
-                    !ingredient.available ? "text-muted" : ""
-                  }`}
-                >
-                  <div>
-                    <span className={!ingredient.available ? "text-decoration-line-through" : ""}>
-                      {ingredient.amount} {ingredient.unit} {ingredient.name}
-                    </span>
-                    {!ingredient.available && (
-                      <Badge bg="outline-danger" text="danger" className="ms-2" style={{ fontSize: "0.7rem" }}>
-                        Need to buy
-                      </Badge>
-                    )}
-                  </div>
-                  {ingredient.available && (
-                    <Badge bg="success" style={{ fontSize: "0.7rem" }}>
-                      ✓
+        <div className="mb-4">
+          <h5 className="mb-3 text-dark">Ingredients</h5>
+          <div className="mb-3">
+            {mockDetailedRecipe.ingredients.map((ingredient, index) => (
+              <div
+                key={index}
+                className="d-flex justify-content-between align-items-center py-2 border-bottom"
+              >
+                <div>
+                  <span className={`text-dark ${!ingredient.available ? "text-decoration-line-through text-muted" : ""}`}>
+                    {ingredient.amount} {ingredient.unit} {ingredient.name}
+                  </span>
+                  {!ingredient.available && (
+                    <Badge bg="outline-danger" text="danger" className="ms-2" style={{ fontSize: "0.65rem" }}>
+                      Need to buy
                     </Badge>
                   )}
-                </ListGroup.Item>
-              ))}
-            </ListGroup>
-          </Col>
-
-          {/* Nutrition Info */}
-          <Col md={6}>
-            <h5 className="mb-3">Nutrition Info</h5>
-            <Card className="border-0 bg-light">
-              <Card.Body className="p-3">
-                <div className="text-center mb-3">
-                  <h3 className="text-primary mb-1">{mockDetailedRecipe.nutritionInfo.calories}</h3>
-                  <small className="text-muted">Calories per serving</small>
                 </div>
-                <Row className="text-center">
-                  <Col>
-                    <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.protein}</div>
-                    <small className="text-muted">Protein</small>
-                  </Col>
-                  <Col>
-                    <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.carbs}</div>
-                    <small className="text-muted">Carbs</small>
-                  </Col>
-                  <Col>
-                    <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.fat}</div>
-                    <small className="text-muted">Fat</small>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
+                {ingredient.available && (
+                  <Badge bg="success" style={{ fontSize: "0.65rem" }}>
+                    ✓
+                  </Badge>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Nutrition Info */}
+        <div className="mb-4">
+          <h5 className="mb-3 text-dark">Nutrition Info</h5>
+          <Card className="border-0 bg-light">
+            <Card.Body className="p-3">
+              <div className="text-center mb-3">
+                <h4 className="text-primary mb-1">{mockDetailedRecipe.nutritionInfo.calories}</h4>
+                <small className="text-muted">Calories per serving</small>
+              </div>
+              <Row className="text-center">
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.protein}</div>
+                  <small className="text-muted">Protein</small>
+                </Col>
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.carbs}</div>
+                  <small className="text-muted">Carbs</small>
+                </Col>
+                <Col xs={4}>
+                  <div className="fw-bold text-dark">{mockDetailedRecipe.nutritionInfo.fat}</div>
+                  <small className="text-muted">Fat</small>
+                </Col>
+              </Row>
+            </Card.Body>
+          </Card>
+        </div>
 
         {/* Instructions Section */}
         <div>
-          <h5 className="mb-3">Instructions</h5>
-          <div className="d-grid gap-3">
+          <h5 className="mb-3 text-dark">Instructions</h5>
+          <div className="d-grid gap-2">
             {mockDetailedRecipe.instructions.map((instruction, index) => (
-              <Card key={index} className="border">
-                <Card.Body className="p-3">
-                  <div className="d-flex align-items-start">
-                    <Badge
-                      bg="primary"
-                      className="me-3 mt-1"
-                      style={{ minWidth: "30px", height: "30px", fontSize: "0.9rem" }}
-                    >
-                      {index + 1}
-                    </Badge>
-                    <p className="mb-0 text-dark">{instruction}</p>
-                  </div>
-                </Card.Body>
-              </Card>
+              <div key={index} className="d-flex align-items-start p-3 border rounded">
+                <Badge
+                  bg="primary"
+                  className="me-3 d-flex align-items-center justify-content-center"
+                  style={{ minWidth: "28px", height: "28px", fontSize: "0.8rem", borderRadius: "50%" }}
+                >
+                  {index + 1}
+                </Badge>
+                <p className="mb-0 text-dark">{instruction}</p>
+              </div>
             ))}
           </div>
         </div>
