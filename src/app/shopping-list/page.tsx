@@ -1,27 +1,14 @@
 "use client";
 import React, { useState } from "react";
+import { Container, Card, Row, Col, Button, Form } from "react-bootstrap";
 import {
-  Container,
-  Card,
-  Row,
-  Col,
-  Badge,
-  Button,
-  Form,
-  Modal,
-} from "react-bootstrap";
+  ShoppingItem,
+  sortItemsByPriority,
+} from "../../utils/shoppingListUtils";
+import ShoppingItemCard from "../../components/ShoppingItemCard";
+import PurchasedItemCard from "../../components/PurchasedItemCard";
 
-type ShoppingItem = {
-  id: number;
-  name: string;
-  quantity: string;
-  category: "Produce" | "Meat" | "Dairy" | "Pantry" | "Other";
-  priority: "High" | "Medium" | "Low";
-  purchased: boolean;
-  addedDate: string;
-};
-
-const ShoppingList = () => {
+const ShoppingList: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
@@ -70,13 +57,15 @@ const ShoppingList = () => {
     },
   ]);
 
-  const handleAddItem = (e: React.FormEvent) => {
+  // Object destructuring for better readability
+  const handleAddItem = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (!newItem.name || !newItem.quantity) return;
+    const { name, quantity } = newItem;
+    if (!name || !quantity) return;
 
     const item: ShoppingItem = {
       ...newItem,
-      id: Math.max(...shoppingItems.map((i) => i.id), 0) + 1,
+      id: Math.max(...shoppingItems.map(({ id }) => id), 0) + 1,
       purchased: false,
       addedDate: new Date().toLocaleDateString("en-US", {
         month: "short",
@@ -95,7 +84,8 @@ const ShoppingList = () => {
     setShowAddForm(false);
   };
 
-  const togglePurchased = (id: number) => {
+  // Arrow functions with proper typing
+  const togglePurchased = (id: number): void => {
     setShoppingItems((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, purchased: !item.purchased } : item
@@ -103,34 +93,8 @@ const ShoppingList = () => {
     );
   };
 
-  const removeItem = (id: number) => {
+  const removeItem = (id: number): void => {
     setShoppingItems((prev) => prev.filter((item) => item.id !== id));
-  };
-
-  const getPriorityColor = (priority: ShoppingItem["priority"]) => {
-    switch (priority) {
-      case "High":
-        return "danger";
-      case "Medium":
-        return "warning";
-      case "Low":
-        return "secondary";
-    }
-  };
-
-  const getCategoryColor = (category: ShoppingItem["category"]) => {
-    switch (category) {
-      case "Produce":
-        return "success";
-      case "Meat":
-        return "danger";
-      case "Dairy":
-        return "info";
-      case "Pantry":
-        return "warning";
-      case "Other":
-        return "secondary";
-    }
   };
 
   const unpurchasedItems = shoppingItems.filter((item) => !item.purchased);
@@ -286,53 +250,14 @@ const ShoppingList = () => {
                 </p>
               ) : (
                 <div className="d-grid gap-3">
-                  {unpurchasedItems
-                    .sort((a, b) => {
-                      const priorityOrder = { High: 3, Medium: 2, Low: 1 };
-                      return (
-                        priorityOrder[b.priority] - priorityOrder[a.priority]
-                      );
-                    })
-                    .map((item) => (
-                      <Card key={item.id} className="border">
-                        <Card.Body className="p-3">
-                          <div className="d-flex align-items-center justify-content-between">
-                            <div className="d-flex align-items-center">
-                              <Form.Check
-                                type="checkbox"
-                                checked={item.purchased}
-                                onChange={() => togglePurchased(item.id)}
-                                className="me-3"
-                              />
-                              <div>
-                                <div className="fw-bold text-dark">
-                                  {item.name}
-                                </div>
-                                <small className="text-dark">
-                                  {item.quantity} • Added {item.addedDate}
-                                </small>
-                              </div>
-                            </div>
-                            <div className="d-flex align-items-center gap-2">
-                              <Badge bg={getCategoryColor(item.category)}>
-                                {item.category}
-                              </Badge>
-                              <Badge bg={getPriorityColor(item.priority)}>
-                                {item.priority}
-                              </Badge>
-                              <Button
-                                variant="outline-danger"
-                                size="sm"
-                                onClick={() => removeItem(item.id)}
-                                style={{ width: "32px", height: "32px" }}
-                              >
-                                ×
-                              </Button>
-                            </div>
-                          </div>
-                        </Card.Body>
-                      </Card>
-                    ))}
+                  {sortItemsByPriority(unpurchasedItems).map((item) => (
+                    <ShoppingItemCard
+                      key={item.id}
+                      item={item}
+                      onTogglePurchased={togglePurchased}
+                      onRemove={removeItem}
+                    />
+                  ))}
                 </div>
               )}
             </Card.Body>
@@ -355,36 +280,12 @@ const ShoppingList = () => {
               ) : (
                 <div className="d-grid gap-2">
                   {purchasedItems.map((item) => (
-                    <Card key={item.id} className="border">
-                      <Card.Body className="p-2">
-                        <div className="d-flex align-items-center justify-content-between">
-                          <div className="d-flex align-items-center">
-                            <Form.Check
-                              type="checkbox"
-                              checked={item.purchased}
-                              onChange={() => togglePurchased(item.id)}
-                              className="me-2"
-                            />
-                            <div className="text-decoration-line-through opacity-75">
-                              <div className="fw-bold text-dark">
-                                {item.name}
-                              </div>
-                              <small className="text-dark">
-                                {item.quantity}
-                              </small>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline-danger"
-                            size="sm"
-                            onClick={() => removeItem(item.id)}
-                            style={{ width: "28px", height: "28px" }}
-                          >
-                            ×
-                          </Button>
-                        </div>
-                      </Card.Body>
-                    </Card>
+                    <PurchasedItemCard
+                      key={item.id}
+                      item={item}
+                      onTogglePurchased={togglePurchased}
+                      onRemove={removeItem}
+                    />
                   ))}
                 </div>
               )}
