@@ -81,11 +81,17 @@ const Recipes = () => {
 
   return (
     <Container style={{ marginTop: 100, marginBottom: 50 }}>
-      <div className="text-center mb-5">
-        <h1>Recipe Suggestions</h1>
-        <p className="lead">
-          Find recipes based on ingredients you already have!
-        </p>
+      {/* Header */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        flexDirection: "column",
+        height: "30vh",
+        marginBottom: "5px"
+      }}>
+        <h1 className="fs-1">Recipe Suggestions</h1>
+        <h6>Find recipes based on ingredients you already have!</h6>
+        <hr />
       </div>
 
       <Row>
