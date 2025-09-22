@@ -4,7 +4,7 @@ import { useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { createUser } from '../lib/dbFunctions';
+import { createUser } from '../../lib/dbFunctions';
 import { signIn } from 'next-auth/react';
 // Component imports
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';

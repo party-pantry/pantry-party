@@ -3,33 +3,6 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/authOptions";
 
-// GET data about all houses, storages, stocks, and ingredients for the logged-in user
-export async function GET() {
-    try {
-      const session = await getServerSession(authOptions);
-
-      console.log("Session", session);
-
-      if (!session?.user?.email) {
-        return NextResponse.json({error: "Unauthorized"}, {status: 401});
-      }
-
-      const user = await prisma.user.findUnique({
-        where: { email: session.user.email },
-        include: { houses: { include: { storages: true } } },
-      });
-
-      if (!user) {
-        return NextResponse.json({ error: "User Not Found" }, { status: 404 });
-      } 
-
-      return NextResponse.json(user.houses ?? []);
-    } catch (error) {
-      console.error('GET error', error);
-      return NextResponse.json({ error: 'Failed to fetch kitchen data' }, { status: 500 });
-    }
-}
-
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.email) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

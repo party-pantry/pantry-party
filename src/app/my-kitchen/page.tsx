@@ -2,7 +2,7 @@
 
 import { Container, Button, Row } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import IngredientTable from "../../components/IngredientTable";
+import IngredientTable from "../../components/kitchen-components/IngredientTable";
 import StorageContainer from "../../components/StorageContainer";
 import HomeTabSelection from "../../components/HomeTabSelection";
 import AddItemModal from "../../components/AddItemModal";

@@ -13,9 +13,9 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useState } from "react";
-import SignInModal from "./SignInModal";
-import SignUpModal from "./SignUpModal";
-import SignOutModal from "./SignOutModal";
+import SignInModal from "../auth-components/SignInModal";
+import SignUpModal from "../auth-components/SignUpModal";
+import SignOutModal from "../auth-components/SignOutModal";
 import { useSession } from "next-auth/react";
 
 
