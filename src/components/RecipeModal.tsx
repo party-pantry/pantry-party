@@ -1,5 +1,5 @@
 import React from "react";
-import { Modal, Button, Badge, Row, Col, Card, ListGroup } from "react-bootstrap";
+import { Modal, Button, Badge, Row, Col, Card } from "react-bootstrap";
 import { Recipe, getDifficultyVariant, getMatchPercentage } from "../utils/recipeUtils";
 
 interface RecipeModalProps {

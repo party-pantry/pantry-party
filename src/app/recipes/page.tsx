@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import { Container, Card, Row, Col, Badge, Button } from "react-bootstrap";
 import {
   Recipe,
-  getDifficultyVariant,
   getMatchPercentage,
 } from "../../utils/recipeUtils";
 import RecipeModal from "../../components/RecipeModal";
