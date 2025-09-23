@@ -55,6 +55,25 @@ const MyKitchen = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
 
+  const shelfLifeDays = 7;
+
+  // time function
+  const getTimeLeft = (lastUpdated: string, shelfLifeDays: number) => {
+    const updatedDate = new Date(lastUpdated);
+    const expirationDate = new Date(updatedDate);
+    expirationDate.setDate(expirationDate.getDate() + shelfLifeDays);
+
+    const now = new Date();
+    const diff = expirationDate.getTime() - now.getTime();
+
+    if (diff <= 0) return "Expired";
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+
+    return `${days}d ${hours}h left`;
+  };
+
   const [filters, setFilters] = useState<{
     search: string;
     status: string[];
@@ -117,6 +136,7 @@ const MyKitchen = () => {
             ? "Out of Stock"
             : "Expired" as "Good" | "Low Stock" | "Out of Stock" | "Expired",
         category: stock.category.toLowerCase(),
+        timeLeft: getTimeLeft(stock.last_updated, shelfLifeDays),
       }))
       .filter((item) => {
         const searchMatch = filters.search
