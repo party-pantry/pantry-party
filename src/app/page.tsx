@@ -1,21 +1,18 @@
-import { Col, Container, Image, Row } from 'react-bootstrap';
+import { Container, Button } from "react-bootstrap";
+import FeaturesSection from "../components/FeaturesSection";
 
-/** The Home page. */
-const Home = () => (
-  <main>
-    <Container id="landing-page" fluid className="py-3">
-      <Row className="align-middle text-center">
-        <Col xs={4}>
-          <Image src="next.svg" width="150px" alt="" />
-        </Col>
-
-        <Col xs={8} className="d-flex flex-column justify-content-center">
-          <h1>Welcome to this template</h1>
-          <p>Now get to work and modify this app!</p>
-        </Col>
-      </Row>
-    </Container>
-  </main>
-);
-
-export default Home;
+export default function Home() {
+  return (
+      <Container>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection: "column", textAlign: "center", height: "100vh" }}>
+          <h1>The Fun Way To Stock Your Pantry</h1>
+          <h5>Easily track and manage your pantry items across multiple kitches and storage spaces.</h5>
+          <Button>Get Started</Button>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }} className="mb-5">
+          <h1>Features</h1>
+          <FeaturesSection />
+        </div>
+      </Container>
+  );
+}

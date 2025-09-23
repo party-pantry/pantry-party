@@ -1,71 +1,123 @@
-/* eslint-disable react/jsx-indent, @typescript-eslint/indent */
+"use client";
 
-'use client';
-
-import { useSession } from 'next-auth/react';
-import { usePathname } from 'next/navigation';
-import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap';
-import { BoxArrowRight, Lock, PersonFill, PersonPlusFill } from 'react-bootstrap-icons';
+import Link from "next/link";
+import Image from "next/image";
+import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import {
+  Refrigerator,
+  ListCheck,
+  ChefHat,
+  User,
+  ChevronUp,
+  ChevronDown,
+} from "lucide-react";
+import { useState } from "react";
+import SignInModal from "./SignInModal";
+import SignUpModal from "./SignUpModal";
+import SignOutModal from "./SignOutModal";
+import { useSession } from "next-auth/react";
 
 const NavBar: React.FC = () => {
-  const { data: session } = useSession();
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: session, status } = useSession();
   const currentUser = session?.user?.email;
-  const userWithRole = session?.user as { email: string; randomKey: string };
-  const role = userWithRole?.randomKey;
-  const pathName = usePathname();
+
   return (
-    <Navbar bg="light" expand="lg">
-      <Container>
-        <Navbar.Brand href="/">Next.js Application Template</Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto justify-content-start">
-            {currentUser
-              ? [
-                  <Nav.Link id="add-stuff-nav" href="/add" key="add" active={pathName === '/add'}>
-                    Add Stuff
-                  </Nav.Link>,
-                  <Nav.Link id="list-stuff-nav" href="/list" key="list" active={pathName === '/list'}>
-                    List Stuff
-                  </Nav.Link>,
-                ]
-              : ''}
-            {currentUser && role === 'ADMIN' ? (
-              <Nav.Link id="admin-stuff-nav" href="/admin" key="admin" active={pathName === '/admin'}>
-                Admin
-              </Nav.Link>
-            ) : (
-              ''
-            )}
-          </Nav>
-          <Nav>
-            {session ? (
-              <NavDropdown id="login-dropdown" title={currentUser}>
-                <NavDropdown.Item id="login-dropdown-sign-out" href="/api/auth/signout">
-                  <BoxArrowRight />
-                  Sign Out
-                </NavDropdown.Item>
-                <NavDropdown.Item id="login-dropdown-change-password" href="/auth/change-password">
-                  <Lock />
-                  Change Password
-                </NavDropdown.Item>
+    <>
+      <Navbar
+        expand="lg"
+        fixed="top"
+        bg="primary"
+        variant="dark"
+        className="custom-navbar"
+      >
+        <Container>
+          <Navbar.Brand as={Link} href="/">
+            <Image
+              src="/pantry-party.png"
+              alt="Pantry Party Logo"
+              width={72}
+              height={72}
+              className="me-2"
+            />
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="ms-auto">
+              {status == "authenticated" && (
+                <>
+                  <Nav.Link
+                    as={Link}
+                    href="/my-kitchen"
+                    className="nav-link-icon"
+                  >
+                    <Refrigerator />
+                    <span className="nav-link-text">My Kitchen</span>
+                  </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    href="/shopping-list"
+                    className="nav-link-icon"
+                  >
+                    <ListCheck />
+                    <span className="nav-link-text">Shopping List</span>
+                  </Nav.Link>
+                  <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
+                    <ChefHat />
+                    <span className="nav-link-text">Recipes</span>
+                  </Nav.Link>
+                </>
+              )}
+              <NavDropdown
+                id="login-dropdown"
+                className="nav-dropdown"
+                renderMenuOnMount={true}
+                show={dropdownOpen}
+                onToggle={(isOpen) => setDropdownOpen(isOpen)}
+                title={
+                  <span
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                    }}
+                  >
+                    <User />
+                    {dropdownOpen ? (
+                      <ChevronUp size={15} />
+                    ) : (
+                      <ChevronDown size={15} />
+                    )}
+                  </span>
+                }
+              >
+                {status == "authenticated" ? (
+                  <NavDropdown.Item onClick={() => setShowSignOut(true)}>
+                    Sign Out
+                  </NavDropdown.Item>
+                ) : (
+                  <>
+                    <NavDropdown.Item onClick={() => setShowSignIn(true)}>
+                      Sign In
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => setShowSignUp(true)}>
+                      Sign Up
+                    </NavDropdown.Item>
+                  </>
+                )}
               </NavDropdown>
-            ) : (
-              <NavDropdown id="login-dropdown" title="Login">
-                <NavDropdown.Item id="login-dropdown-sign-in" href="/auth/signin">
-                  <PersonFill />
-                  Sign in
-                </NavDropdown.Item>
-                <NavDropdown.Item id="login-dropdown-sign-up" href="/auth/signup">
-                  <PersonPlusFill />
-                  Sign up
-                </NavDropdown.Item>
-              </NavDropdown>
-            )}
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+
+      <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
+      <SignUpModal show={showSignUp} onHide={() => setShowSignUp(false)} />
+      <SignOutModal show={showSignOut} onHide={() => setShowSignOut(false)} />
+    </>
   );
 };
 

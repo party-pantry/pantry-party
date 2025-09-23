@@ -41,5 +41,3 @@ Are there ESLint errors or warnings that should be removed?
 ### ES-02: Consider modifying our standards.
 
 Based upon your review of code, should we be modifying the set of ESLint rules?
-
-
