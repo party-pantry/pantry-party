@@ -82,7 +82,7 @@ body {
   opacity: 0;
   transition: transform 0.25s ease, opacity 0.25s ease;
   pointer-events: none;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .navbar .dropdown.show .dropdown-menu {
@@ -119,4 +119,9 @@ body {
 /* Border thickness for cards */
 .custom-card-border {
   border-width: 3px;
+}
+
+/* Kitchen Filter Button */
+#kitchen-filter-dropdown::after {
+  display: none !important;
 }

@@ -30,7 +30,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
     };
 
     return (
-    <div style={{ position: "absolute", top: "60px", left: "640px" }}>
+    <div style={{ position: "absolute", top: "74px", left: "470px" }}>
       <div className="d-flex align-items-center gap-2">
         <div className="position-relative" style={{ maxWidth: "250px" }}>
                     <Search
@@ -45,6 +45,8 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
                     />
                 </div>
             <DropdownButton
+                id="kitchen-filter-dropdown"
+
                 title={
                     <div className="d-flex align-items-center gap-1"> 
                         <Filter size={18} />
