@@ -1,14 +1,14 @@
 ---
-name: Code review issue
-about: Use this template to create a new review issue for pantry-party.
-title: 'Review ##: '
+name: Review
+about: Use this template to create a new review
+title: 'Review: '
 labels: 'Review'
 assignees: ''
 
 ---
 
 (Delete all text in parentheses when filling out this template, including this text.)
-<!-- This is a template when making a code review issue for pantry-party. -->
+
 ## Overview
 
 (Provide an introduction to this review. What are the goals? What should reviewers keep in mind as they do it?)
@@ -21,8 +21,8 @@ assignees: ''
 
 (Please list the files to be reviewed here. It would be great to provide the URL to each file in the review branch.)
 
-* [file1]()
-* [file2]()
+* file1
+* file2
 
 ## Checklists
 
@@ -35,10 +35,10 @@ assignees: ''
 * [Typescript](../blob/main/checklists/ts-checklist.md)
 * [UI](../blob/main/checklists/ui-checklist.md)
 
-## Review date
+## Due date
 
-(enter due date)
+Day, Month Day Time
 
-## More information
+## For more information
 
 The review process is documented at: [IDPM Review](http://courses.ics.hawaii.edu/ics414s25/morea/review/reading-idpm-review.html)

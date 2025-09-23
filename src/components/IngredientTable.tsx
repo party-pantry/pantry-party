@@ -1,5 +1,6 @@
-import React from "react";
-import IngredientRow from "./IngredientRow";
+/* eslint-disable jsx-a11y/control-has-associated-label */
+import React from 'react';
+import IngredientRow from './IngredientRow';
 
 // Properties of an ingredient item in table
 type Item = {
@@ -8,7 +9,7 @@ type Item = {
   image: string;
   quantity: string;
   updated: string;
-  status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
+  status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
 };
 
 interface Props {
@@ -18,37 +19,35 @@ interface Props {
 }
 
 // Mockup UI of what list of ingredients table could look like
-const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
-  return (
-    <table className="w-full border-collapse bg-white shadow-md rounded">
-      <thead className="bg-gray-100">
+const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
+  <table className="w-full border-collapse bg-white shadow-md rounded">
+    <thead className="bg-gray-100">
+      <tr>
+        <th className="p-3 text-left">
+          <input type="checkbox" />
+        </th>
+        <th className="p-3 text-left">Items</th>
+        <th className="p-3 text-left">Image</th>
+        <th className="p-3 text-left">Quantity</th>
+        <th className="p-3 text-left">Last Updated</th>
+        <th className="p-3 text-left">Status</th>
+        <th className="p-3 text-left">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      {items.length === 0 ? (
         <tr>
-          <th className="p-3 text-left">
-            <input type="checkbox" />
-          </th>
-          <th className="p-3 text-left">Items</th>
-          <th className="p-3 text-left">Image</th>
-          <th className="p-3 text-left">Quantity</th>
-          <th className="p-3 text-left">Last Updated</th>
-          <th className="p-3 text-left">Status</th>
-          <th className="p-3 text-left">Action</th>
+          <td colSpan={7} className="p-6 text-center">
+            No items found.
+          </td>
         </tr>
-      </thead>
-      <tbody>
-        {items.length === 0 ? (
-          <tr>
-            <td colSpan={7} className="p-6 text-center">
-              No items found.
-            </td>
-          </tr>
-        ) : (
-          items.map((item) => (
+      ) : (
+        items.map((item) => (
           <IngredientRow key={item.id} {...item} onDelete={onDelete} onEdit={onEdit} />
-          ))
-        )}
-      </tbody>
-    </table>
-  );
-};
+        ))
+      )}
+    </tbody>
+  </table>
+);
 
 export default IngredientTable;

@@ -1,12 +1,10 @@
-import PopUp from "../../components/PopUp";
+import Popup from '../../components/Popup';
 
-const PopupDemoPage = () => {
+export default function PopupDemoPage() {
   return (
     <main>
       <h1 className="text-2xl font-bold text-center mt-6">Popup Demo Page</h1>
-      <PopUp />
+      <Popup />
     </main>
   );
 }
-
-export default PopupDemoPage;
