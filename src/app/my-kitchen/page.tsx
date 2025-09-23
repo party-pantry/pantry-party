@@ -152,6 +152,7 @@ const MyKitchen = () => {
           marginBottom: "50px",
         }}
       >
+      {/* Map houses from db */}
         {houses.map((house) => (
           <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
             <Row className="justify-content-end mb-4">
