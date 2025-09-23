@@ -1,16 +1,16 @@
 "use client";
 
 import { Container, Button, Row } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import IngredientTable from "../../components/IngredientTable";
-import StorageContainer from "../../components/StorageContainer"; 
+import StorageContainer from "../../components/StorageContainer";
 import HomeTabSelection from "../../components/HomeTabSelection";
 import AddItemModal from "../../components/AddItemModal";
 import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
-// import { on } from "events";
 
+// Types
 type Item = {
   id: number;
   name: string;
@@ -21,233 +21,112 @@ type Item = {
   category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
 };
 
+type Stock = {
+  id: number;
+  quantity: number;
+  unit: string;
+  status: "GOOD" | "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRED";
+  category: string;
+  last_updated: string;
+  ingredient: {
+    id: number;
+    name: string;
+    image?: string;
+  };
+};
+
 type Storage = {
   id: number;
   name: string;
   type: string;
-}
+  stocks: Stock[];
+};
+
+type House = {
+  id: number;
+  name: string;
+  storages: Storage[];
+};
 
 const MyKitchen = () => {
+  const [houses, setHouses] = useState<House[]>([]);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
-
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
 
   const [filters, setFilters] = useState<{
     search: string;
-    quantity?: number;
-    status: Item["status"][];
-  }>({ search: "", quantity: undefined, status: [] });
+    status: string[];
+  }>({ search: "", status: [] });
 
-  // Example test data of items in kitchen
-  const [items, setItems] = useState<Item[]>([
-    {
-      id: 1,
-      name: "Tomatoes",
-      image: "🍅",
-      quantity: "20",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "fridge",
-    },
-    {
-      id: 2,
-      name: "Chicken Breast",
-      image: "🍗",
-      quantity: "5",
-      updated: "Sep 8, 2025",
-      status: "Low Stock",
-      category: "freezer",
-    },
-    {
-      id: 3,
-      name: "Egg",
-      image: "🥚",
-      quantity: "0",
-      updated: "Sep 8, 2025",
-      status: "Out of Stock",
-      category: "fridge",
-    },
-    {
-      id: 4,
-      name: "Milk",
-      image: "🥛",
-      quantity: "2",
-      updated: "Sep 8, 2025",
-      status: "Low Stock",
-      category: "fridge",
-    },
-    {
-      id: 5,
-      name: "Bread",
-      image: "🍞",
-      quantity: "1",
-      updated: "Sep 8, 2025",
-      status: "Low Stock",
-      category: "fridge",
-    },
-    {
-      id: 6,
-      name: "Carrots",
-      image: "🥕",
-      quantity: "15",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "fridge",
-    },
-    {
-      id: 7,
-      name: "Cheese",
-      image: "🧀",
-      quantity: "3",
-      updated: "Sep 8, 2025",
-      status: "Low Stock",
-      category: "fridge",
-    },
-    {
-      id: 8,
-      name: "Apples",
-      image: "🍎",
-      quantity: "10",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "fridge",
-    },
-    {
-      id: 9,
-      name: "Spinach",
-      image: "🥬",
-      quantity: "0",
-      updated: "Sep 8, 2025",
-      status: "Out of Stock",
-      category: "fridge",
-    },
-    {
-      id: 10,
-      name: "Butter",
-      image: "🧈",
-      quantity: "2",
-      updated: "Sep 8, 2025",
-      status: "Low Stock",
-      category: "fridge",
-    },
-    {
-      id: 11,
-      name: "Rice",
-      image: "🍚",
-      quantity: "25",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "pantry",
-    },
-    {
-      id: 12,
-      name: "Banana",
-      image: "🍌",
-      quantity: "6",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "pantry",
-    },
-    {
-      id: 13,
-      name: "Yogurt",
-      image: "🥣",
-      quantity: "1",
-      updated: "Jul 8, 2025",
-      status: "Expired",
-      category: "fridge",
-    },
-    {
-      id: 14,
-      name: "Potatoes",
-      image: "🥔",
-      quantity: "12",
-      updated: "Sep 8, 2025",
-      status: "Good",
-      category: "fridge",
-    },
-    {
-      id: 15,
-      name: "Chicken Strips",
-      image: "🐥",
-      quantity: "1",
-      updated: "June 1, 2024",
-      status: "Expired",
-      category: "freezer",
-    },
-  ]);
-  
-  const [pantryArray, setPantryArray] = useState<Storage[]>([]);
-
-  const handleAddItem = (newItem: Omit<Item, "id" | "updated">) => {
-    const item: Item = {
-      ...newItem,
-      id: Math.max(...items.map((i) => i.id), 0) + 1,
-      updated: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }),
-    };
-    setItems((prev) => [...prev, item]);
-  };
-
-  const handleDeleteItem = (id: number) => {
-    setItems((prev) => prev.filter((item) => item.id !== id));
-  };
+  useEffect(() => {
+    async function fetchHouses() {
+      const res = await fetch("/api/kitchen");
+      const data = await res.json();
+      setHouses(data);
+    }
+    fetchHouses();
+  }, []);
 
   const handleEditItem = (id: number) => {
-    const foundItem = items.find((item) => item.id === id);
+    // Flatten all stocks into items
+    const allItems: Item[] = houses.flatMap((house) =>
+      house.storages.flatMap((storage) =>
+        storage.stocks.map((stock) => ({
+          id: stock.id,
+          name: stock.ingredient.name,
+          image: stock.ingredient.image || "",
+          quantity: `${stock.quantity} ${stock.unit}`,
+          updated: new Date(stock.last_updated).toLocaleDateString("en-US"),
+          status:
+            stock.status === "GOOD"
+              ? "Good"
+              : stock.status === "LOW_STOCK"
+              ? "Low Stock"
+              : stock.status === "OUT_OF_STOCK"
+              ? "Out of Stock"
+              : "Expired",
+          category: (stock.category.toLowerCase() as "fridge" | "pantry" | "freezer" | "spice rack" | "other"),
+        }))
+      )
+    );
+
+    const foundItem = allItems.find((item) => item.id === id);
     if (foundItem) {
       setItemToEdit(foundItem);
       setShowEditModal(true);
     }
   };
 
-  const handleUpdateItem = (updatedItem: Item) => {
-    setItems((prev) =>
-      prev.map((item) => (item.id === updatedItem.id ? updatedItem : item))
-    );
-    setShowEditModal(false);
-    setItemToEdit(null);
+  // Apply filters to all stocks
+  const getFilteredStocks = (stocks: Stock[]) => {
+    return stocks
+      .map((stock) => ({
+        id: stock.id,
+        name: stock.ingredient.name,
+        image: stock.ingredient.image || "",
+        quantity: `${stock.quantity} ${stock.unit}`,
+        updated: new Date(stock.last_updated).toLocaleDateString("en-US"),
+        status:
+          stock.status === "GOOD"
+            ? "Good"
+            : stock.status === "LOW_STOCK"
+            ? "Low Stock"
+            : stock.status === "OUT_OF_STOCK"
+            ? "Out of Stock"
+            : "Expired" as "Good" | "Low Stock" | "Out of Stock" | "Expired",
+        category: stock.category.toLowerCase(),
+      }))
+      .filter((item) => {
+        const searchMatch = filters.search
+          ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+          : true;
+        const statusMatch =
+          filters.status.length > 0 ? filters.status.includes(item.status) : true;
+        return searchMatch && statusMatch;
+      });
   };
-
-  const filteredItems = items.filter((item) => {
-    const searchMatch = filters.search
-      ? item.name.toLowerCase().includes(filters.search.toLowerCase())
-      : true;
-
-    const statusMatch =
-      filters.status.length > 0 ? filters.status.includes(item.status) : true;
-
-    const quantityMatch =
-      filters.quantity != null && filters.quantity != undefined
-        ? Number(item.quantity) <= filters.quantity
-        : true;
-
-    return searchMatch && statusMatch && quantityMatch;
-  });
-
-  const handleAddPantry = (newPantry: { name: string; type: string }) => {
-    const pantry: Storage = {
-      ...newPantry,
-      id: Math.max(...pantryArray.map((p) => p.id), 0) + 1,
-    };
-    setPantryArray((prev) => [...prev, pantry]);
-  };
-
-  // Types of filteredItems
-  const fridgeItems = filteredItems.filter(item => item.category === "fridge");
-  const pantryItems = filteredItems.filter(item => item.category === "pantry");
-  const freezerItems = filteredItems.filter(item => item.category === "freezer");
-
-  // To use when items of category spice rack or other are added:
-  // const spicerackItems = filteredItems.filter(item => item.category === "spice rack");
-  // const otherItems = filteredItems.filter(item => item.category === "other");
-
-
 
   return (
     <Container style={{ marginTop: 100 }}>
@@ -260,78 +139,72 @@ const MyKitchen = () => {
           marginBottom: "5px",
         }}
       >
-
         <h1 className="fs-1">My Kitchen</h1>
         <h6>Here you can see what is in your kitchen</h6>
         <hr />
-        
       </div>
-      {/* Mockup Ingredient Table */}
+
       <div
         style={{
-          // display: "flex",
           justifyContent: "center",
           alignItems: "center",
           flexDirection: "column",
           marginBottom: "50px",
         }}
-      > 
-      {/* Multiple storage spaces for a single location (aka. one home) */}
-        <HomeTabSelection title="Home 1" id="1">
-          <Row className="justify-content-end mb-4">
-            <KitchenFilterButton
-              onApply={(filters) => setFilters({ ...filters, status: filters.status as Item["status"][], })}
-            />
-            <Button
-              style={{ width: "125px" }}
-              variant="success"
-              onClick={() => setShowAddModal(true)}
-            >
-              <strong>Add Item +</strong>
-            </Button>
-          </Row>
-          <StorageContainer id="1" title="Fridge 1">
-            <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-          </StorageContainer>
-          <StorageContainer id="2" title="Fridge 2">
-            <IngredientTable items={fridgeItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-          </StorageContainer>
-          <StorageContainer id="3" title="Freezer 1">
-            <IngredientTable items={freezerItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-          </StorageContainer>
-          <StorageContainer id="4" title="Pantry 1">
-            <IngredientTable items={pantryItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-          </StorageContainer>
-          {pantryArray.map((pantry) => (
-            <StorageContainer key={pantry.id} id={pantry.id.toString()} title={pantry.name}>
-              <IngredientTable items={filteredItems} onDelete={handleDeleteItem} onEdit={handleEditItem} />
-            </StorageContainer>
-          ))}
-          <Button
-            style={{ width: "150px", backgroundColor: "#028383ff"}}
-            onClick={() => setShowPantryModal(true)}
-          >
-              <strong>Add Storage +</strong>
-          </Button>
-        </HomeTabSelection>
-      </div>
+      >
+      {/* Map houses from db */}
+        {houses.map((house) => (
+          <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
+            <Row className="justify-content-end mb-4">
+              <KitchenFilterButton
+                onApply={(appliedFilters) =>
+                  setFilters({ ...filters, status: appliedFilters.status })
+                }
+              />
+              <Button
+                style={{ width: "125px" }}
+                variant="success"
+                onClick={() => setShowAddModal(true)}
+              >
+                <strong>Add Item +</strong>
+              </Button>
+            </Row>
 
+            {house.storages.map((storage) => (
+              <StorageContainer key={storage.id} id={storage.id.toString()} title={storage.name}>
+                <IngredientTable
+                  items={getFilteredStocks(storage.stocks)}
+                  onDelete={() => {}}
+                  onEdit={handleEditItem}
+                />
+              </StorageContainer>
+            ))}
+
+            <Button
+              style={{ width: "150px", backgroundColor: "#028383ff" }}
+              onClick={() => setShowPantryModal(true)}
+            >
+              <strong>Add Storage +</strong>
+            </Button>
+          </HomeTabSelection>
+        ))}
+      </div>
 
       <AddItemModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
-        onAddItem={handleAddItem}
+        onAddItem={() => {}}
       />
       <AddPantryModal
         show={showPantryModal}
         onHide={() => setShowPantryModal(false)}
-        onAddPantry={handleAddPantry}
+        onAddPantry={() => {}}
       />
       <EditItemModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
         itemToEdit={itemToEdit}
-        onUpdateItem={handleUpdateItem}
+        onUpdateItem={() => {}}
       />
     </Container>
   );
