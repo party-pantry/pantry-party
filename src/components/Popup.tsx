@@ -1,15 +1,21 @@
-"use client";
+/* eslint-disable react/button-has-type */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint no-use-before-define: 0 */
 
-import { useState } from "react";
+'use client';
+
+import { useState } from 'react';
 
 export default function Popup() {
   const [isOpen, setIsOpen] = useState(false);
 
   // Form state
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [price, setPrice] = useState("");
-  const [storage, setStorage] = useState("");
+  const [name, setName] = useState('');
+  const [quantity, setQuantity] = useState('');
+  const [price, setPrice] = useState('');
+  const [storage, setStorage] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

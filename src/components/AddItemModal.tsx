@@ -1,7 +1,9 @@
-"use client";
+/* eslint-disable react/prop-types */
 
-import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+'use client';
+
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { useState } from 'react';
 
 interface Props {
   show: boolean;
@@ -10,18 +12,18 @@ interface Props {
     name: string;
     image: string;
     quantity: string;
-    status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
-    category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
+    status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
+    category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
   }) => void;
 }
 
 const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    image: "",
-    quantity: "",
-    status: "Good" as const,
-    category: "fridge" as const,
+    name: '',
+    image: '',
+    quantity: '',
+    status: 'Good' as const,
+    category: 'fridge' as const,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -29,9 +31,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
     if (formData.name && formData.quantity) {
       onAddItem({
         ...formData,
-        image: formData.image || "🍽️",
+        image: formData.image || '🍽️',
       });
-      setFormData({ name: "", image: "", quantity: "", status: "Good", category: "fridge" });
+      setFormData({ name: '', image: '', quantity: '', status: 'Good', category: 'fridge' });
       onHide();
     }
   };
@@ -50,7 +52,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
       contentClassName="custom-modal"
     >
       <Modal.Header
-        style={{ borderBottom: "none", paddingBottom: "0px" }}
+        style={{ borderBottom: 'none', paddingBottom: '0px' }}
         closeButton
       />
       <Modal.Body className="text-center">
@@ -62,7 +64,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
               type="text"
               placeholder="Item Name"
               value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              onChange={(e) => handleChange('name', e.target.value)}
               required
             />
           </Form.Group>
@@ -75,7 +77,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
                   type="number"
                   placeholder="Quantity"
                   value={formData.quantity}
-                  onChange={(e) => handleChange("quantity", e.target.value)}
+                  onChange={(e) => handleChange('quantity', e.target.value)}
                   min="0"
                   required
                 />
@@ -86,7 +88,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
                 <Form.Select
                   className="text-center"
                   value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
+                  onChange={(e) => handleChange('status', e.target.value)}
                 >
                   <option value="Good">Good</option>
                   <option value="Low Stock">Low Stock</option>

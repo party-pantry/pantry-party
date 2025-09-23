@@ -1,10 +1,10 @@
-import React from "react";
-import { Card, Badge, Button, Form } from "react-bootstrap";
+import React from 'react';
+import { Card, Badge, Button, Form } from 'react-bootstrap';
 import {
   ShoppingItem,
   getCategoryVariant,
   getPriorityVariant,
-} from "../utils/shoppingListUtils";
+} from '../utils/shoppingListUtils';
 
 interface ShoppingItemCardProps {
   item: ShoppingItem;
@@ -30,7 +30,10 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           <div>
             <div className="fw-bold text-dark">{item.name}</div>
             <small className="text-dark">
-              {item.quantity} • Added {item.addedDate}
+              {item.quantity}
+              {' '}
+              • Added
+              {item.addedDate}
             </small>
           </div>
         </div>
@@ -41,7 +44,7 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
             variant="outline-danger"
             size="sm"
             onClick={() => onRemove(item.id)}
-            style={{ width: "32px", height: "32px" }}
+            style={{ width: '32px', height: '32px' }}
           >
             ×
           </Button>

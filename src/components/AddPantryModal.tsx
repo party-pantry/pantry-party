@@ -1,7 +1,9 @@
-"use client";
+/* eslint-disable react/prop-types */
 
-import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+'use client';
+
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { useState } from 'react';
 
 interface Props {
   show: boolean;
@@ -11,15 +13,15 @@ interface Props {
 
 const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
   const [formData, setFormData] = useState({
-    name: "",
-    type: "",
+    name: '',
+    type: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.type) {
       onAddPantry({ ...formData });
-      setFormData({ name: "", type: "" });
+      setFormData({ name: '', type: '' });
       onHide();
     }
   };
@@ -38,7 +40,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
       contentClassName="custom-modal"
     >
       <Modal.Header
-        style={{ borderBottom: "none", paddingBottom: "0px" }}
+        style={{ borderBottom: 'none', paddingBottom: '0px' }}
         closeButton
       />
       <Modal.Body className="text-center">
@@ -49,7 +51,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
               className="text-center"
               placeholder="Storage Name"
               value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              onChange={(e) => handleChange('name', e.target.value)}
               required
             />
           </Form.Group>
@@ -61,7 +63,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
                   className="text-center"
                   placeholder="Storage Type"
                   value={formData.type}
-                  onChange={(e) => handleChange("type", e.target.value)}
+                  onChange={(e) => handleChange('type', e.target.value)}
                   required
                 />
               </Form.Group>
