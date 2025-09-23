@@ -5,6 +5,7 @@
 import { prisma } from "./prisma";
 import { hash } from "bcryptjs";
 
+/* Create a new user that does not exist in the database */
 export async function createUser(credentials: {
   username: string;
   email: string;
@@ -34,4 +35,19 @@ export async function createUser(credentials: {
       password: password,
     },
   });
+}
+
+/* Create a new house */
+
+// TODO: implement optional houseAddress
+export async function addHouse(houseName: string, userId: number) {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+  await prisma.house.create({
+    data: {
+      name: houseName,
+      userId: Number(userId),
+    }
+  })
 }

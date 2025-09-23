@@ -9,6 +9,7 @@ import AddItemModal from "../../components/AddItemModal";
 import AddPantryModal from "../../components/AddPantryModal";
 import KitchenFilterButton from "../../components/KitchenFilterButton";
 import EditItemModal from "../../components/EditItemModal";
+import { useSession } from "next-auth/react";
 
 // Types
 type Item = {
@@ -55,20 +56,25 @@ const MyKitchen = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
 
+  const userId = (useSession().data?.user as { id?: number })?.id;
+
   const [filters, setFilters] = useState<{
     search: string;
     status: string[];
   }>({ search: "", status: [] });
 
   useEffect(() => {
+    // Ensure userId is available
+    if (!userId) return; 
+
     async function fetchHouses() {
-      const res = await fetch("/api/kitchen");
+      const res = await fetch(`/api/kitchen?userId=${userId}`);
       const data = await res.json();
       setHouses(data);
     }
     fetchHouses();
   }, []);
-
+  
   const handleEditItem = (id: number) => {
     // Flatten all stocks into items
     const allItems: Item[] = houses.flatMap((house) =>

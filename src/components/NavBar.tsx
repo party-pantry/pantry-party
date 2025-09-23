@@ -16,6 +16,7 @@ import SignInModal from "./SignInModal";
 import SignUpModal from "./SignUpModal";
 import SignOutModal from "./SignOutModal";
 import { useSession } from "next-auth/react";
+import NewHouseModal from "./NewHouseModal";
 
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -24,6 +25,9 @@ const NavBar: React.FC = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { data: session, status } = useSession();
   const currentUser = session?.user?.email;
+
+  /* Temporary settings */
+  const [houseModal, setHouseModal] = useState(false);
 
   return (
     <>
@@ -46,6 +50,14 @@ const NavBar: React.FC = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
+            <Nav>
+              <Nav.Item onClick={() => setHouseModal(true)} className="nav-link-icon">
+                New House
+              </Nav.Item>
+            </Nav>
+            <Nav className="mx-3">
+              <Nav.Item className="nav-separator">|</Nav.Item>
+            </Nav>
             <Nav className="ms-auto">
               {status == "authenticated" && (
                 <>
@@ -114,6 +126,10 @@ const NavBar: React.FC = () => {
         </Container>
       </Navbar>
 
+      <NewHouseModal
+        show={houseModal}
+        handleClose={() => setHouseModal(false)}
+      />
       <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
       <SignUpModal show={showSignUp} onHide={() => setShowSignUp(false)} />
       <SignOutModal show={showSignOut} onHide={() => setShowSignOut(false)} />
