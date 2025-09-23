@@ -33,6 +33,9 @@ enum Unit {
   BOX
   PIECE
   SACK
+  LOAVES
+  BUNDLES
+  PACKAGE
 }
 
 enum Status {
