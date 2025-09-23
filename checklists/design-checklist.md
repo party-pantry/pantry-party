@@ -37,3 +37,4 @@ Does the code conform to the Agile Maxim of "Do not Repeat Yourself"? The same c
 ### DE-08: Ensure reusable code is exported or made available in the appropriate place.
 
 Are there reusable services, functions and components that are not made available for reuse? Are they in a `utilities` directory?
+

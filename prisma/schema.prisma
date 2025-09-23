@@ -10,98 +10,36 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // for local development
   url      = env("DATABASE_URL")
+  // for Vercel
+  // url       = env("POSTGRES_PRISMA_URL")
+  // directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
-enum Unit {
-  OUNCE
-  POUND
-  GRAM
-  KILOGRAM
-  MILILITER
-  LITER
-  FLUID_OUNCE
-  CUP
-  PINT
-  QUART
-  GALLON
-  TEASPOON
-  TABLESPOON
-  BAG
-  CAN
-  BOTTLE
-  BOX
-  PIECE
-  SACK
-  LOAVES
-  BUNDLES
-  PACKAGE
-}
-
-enum Status {
-  GOOD
-  LOW_STOCK
-  OUT_OF_STOCK
-  EXPIRED
-}
-
-enum Category {
-  FRIDGE
-  PANTRY
-  FREEZER
-  SPICE_RACK
-  OTHER
+enum Role {
+  USER
+  ADMIN
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String   @unique
-  password  String
-  houses    House[]
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+  role     Role   @default(USER)
 }
 
-model House {
-  id        Int      @id @default(autoincrement())
-  userId    Int
+enum Condition {
+  excellent
+  good
+  fair
+  poor
+}
+
+model Stuff {
+  id        Int       @id @default(autoincrement())
   name      String
-  address   String?
-  storages  Storage[]
-
-  user      User     @relation(fields: [userId], references: [id])
-}
-
-model Storage {
-  id        Int      @id @default(autoincrement())
-  houseId   Int
-  name      String?
-  type      Category
-  stocks    Stock[]
-
-  house     House    @relation(fields: [houseId], references: [id]) 
-}
-
-model Ingredient {
-  id        Int      @id @default(autoincrement())
-  name      String
-  price     Int?
-  stocks    Stock[]
-}
-
-model Stock {
-  id            Int      @id @default(autoincrement())
-  ingredientId  Int?
-  storageId     Int
-  custom_name   String?
-  quantity      Float
-  unit          Unit
-  last_updated  DateTime @default(now()) @updatedAt
-  status        Status   @default(GOOD)
-  category      Category 
-
-
-  ingredient    Ingredient? @relation(fields: [ingredientId], references: [id])
-  storage       Storage     @relation(fields: [storageId], references: [id])
-  @@unique      ([ingredientId, storageId])
-  @@unique      ([custom_name, storageId])  
+  quantity  Int
+  condition Condition @default(good)
+  owner     String
 }
