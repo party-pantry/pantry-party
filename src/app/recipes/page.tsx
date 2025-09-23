@@ -1,19 +1,26 @@
 "use client";
 
+import React, { useState } from "react";
 import { Container, Card, Row, Col, Badge, Button } from "react-bootstrap";
+import {
+  Recipe,
+  getMatchPercentage,
+} from "../../utils/recipeUtils";
+import RecipeModal from "../../components/RecipeModal";
 
-type Recipe = {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  availableIngredients: string[];
-  missingIngredients: string[];
-  description: string;
-};
+const Recipes: React.FC = () => {
+  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
-const Recipes = () => {
+  const handleViewRecipe = (recipe: Recipe): void => {
+    setSelectedRecipe(recipe);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = (): void => {
+    setShowModal(false);
+    setSelectedRecipe(null);
+  };
   const mockRecipes: Recipe[] = [
     {
       id: 1,
@@ -60,12 +67,6 @@ const Recipes = () => {
     },
   ];
 
-  const getMatchPercentage = (recipe: Recipe) => {
-    const total =
-      recipe.availableIngredients.length + recipe.missingIngredients.length;
-    return Math.round((recipe.availableIngredients.length / total) * 100);
-  };
-
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy":
@@ -81,11 +82,19 @@ const Recipes = () => {
 
   return (
     <Container style={{ marginTop: 100, marginBottom: 50 }}>
-      <div className="text-center mb-5">
-        <h1>Recipe Suggestions</h1>
-        <p className="lead">
-          Find recipes based on ingredients you already have!
-        </p>
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "30vh",
+          marginBottom: "5px",
+        }}
+      >
+        <h1 className="fs-1">Recipe Suggestions</h1>
+        <h6>Find recipes based on ingredients you already have!</h6>
+        <hr />
       </div>
 
       <Row>
@@ -149,7 +158,11 @@ const Recipes = () => {
                 </div>
 
                 <div className="d-grid gap-2">
-                  <Button variant="primary" size="sm">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    onClick={() => handleViewRecipe(recipe)}
+                  >
                     View Recipe
                   </Button>
                   <Button variant="outline-secondary" size="sm">
@@ -162,16 +175,11 @@ const Recipes = () => {
         ))}
       </Row>
 
-      <div className="text-center mt-5">
-        <h3>Can&apos;t find what you&apos;re looking for?</h3>
-        <p>
-          Try adding more ingredients to your kitchen or browse all recipes.
-        </p>
-        <Button variant="outline-primary" className="me-2">
-          Browse All Recipes
-        </Button>
-        <Button variant="success">Add More Ingredients</Button>
-      </div>
+      <RecipeModal
+        recipe={selectedRecipe}
+        show={showModal}
+        onHide={handleCloseModal}
+      />
     </Container>
   );
 };

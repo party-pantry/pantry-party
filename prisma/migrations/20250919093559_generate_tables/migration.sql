@@ -1,6 +1,22 @@
 -- CreateEnum
 CREATE TYPE "public"."Unit" AS ENUM ('OUNCE', 'POUND', 'GRAM', 'KILOGRAM', 'MILILITER', 'LITER', 'FLUID_OUNCE', 'CUP', 'PINT', 'QUART', 'GALLON', 'TEASPOON', 'TABLESPOON', 'BAG', 'CAN', 'BOTTLE', 'BOX', 'PIECE', 'SACK');
 
+-- CreateEnum
+CREATE TYPE "public"."Status" AS ENUM ('GOOD', 'LOW_STOCK', 'OUT_OF_STOCK', 'EXPIRED');
+
+-- CreateEnum
+CREATE TYPE "public"."Category" AS ENUM ('FRIDGE', 'PANTRY', 'FREEZER', 'SPICE_RACK', 'OTHER');
+
+-- CreateTable
+CREATE TABLE "public"."User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "username" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateTable
 CREATE TABLE "public"."House" (
     "id" SERIAL NOT NULL,
@@ -16,7 +32,7 @@ CREATE TABLE "public"."Storage" (
     "id" SERIAL NOT NULL,
     "houseId" INTEGER NOT NULL,
     "name" TEXT,
-    "type" TEXT NOT NULL,
+    "type" "public"."Category" NOT NULL,
 
     CONSTRAINT "Storage_pkey" PRIMARY KEY ("id")
 );
@@ -25,6 +41,7 @@ CREATE TABLE "public"."Storage" (
 CREATE TABLE "public"."Ingredient" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "price" INTEGER,
 
     CONSTRAINT "Ingredient_pkey" PRIMARY KEY ("id")
 );
@@ -37,9 +54,18 @@ CREATE TABLE "public"."Stock" (
     "custom_name" TEXT,
     "quantity" DOUBLE PRECISION NOT NULL,
     "unit" "public"."Unit" NOT NULL,
+    "last_updated" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" "public"."Status" NOT NULL DEFAULT 'GOOD',
+    "category" "public"."Category" NOT NULL,
 
     CONSTRAINT "Stock_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_username_key" ON "public"."User"("username");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Stock_ingredientId_storageId_key" ON "public"."Stock"("ingredientId", "storageId");

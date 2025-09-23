@@ -5,8 +5,6 @@ import Image from "next/image";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import {
   Refrigerator,
-  CircleAlert,
-  CopyCheck, 
   ListCheck,
   ChefHat,
   User,
@@ -17,12 +15,15 @@ import { useState } from "react";
 import SignInModal from "./SignInModal";
 import SignUpModal from "./SignUpModal";
 import SignOutModal from "./SignOutModal";
+import { useSession } from "next-auth/react";
 
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { data: session, status } = useSession();
+  const currentUser = session?.user?.email;
 
   return (
     <>
@@ -35,38 +36,41 @@ const NavBar: React.FC = () => {
       >
         <Container>
           <Navbar.Brand as={Link} href="/">
-          <Image
+            <Image
               src="/pantry-party.png"
               alt="Pantry Party Logo"
               width={72}
               height={72}
               className="me-2"
             />
-           
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              <Nav.Link as={Link} href="/my-kitchen" className="nav-link-icon">
-                <Refrigerator />
-                <span className="nav-link-text">My Kitchen</span>
-              </Nav.Link>
-              <Nav.Link as={Link} href="/shopping-list" className="nav-link-icon">
-                <ListCheck />
-                <span className="nav-link-text">Shopping List</span>
-              </Nav.Link>
-              <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
-                <ChefHat />
-                <span className="nav-link-text">Recipes</span>
-              </Nav.Link>
-              <Nav.Link as={Link} href="/low-quantity" className="nav-link-icon">
-                <CircleAlert />
-                <span className="nav-link-text">Low-quantity</span>
-              </Nav.Link>
-              <Nav.Link as={Link} href="/pop-up" className="nav-link-icon">
-                <CopyCheck />
-                <span className="nav-link-text">Popup</span>
-              </Nav.Link>
+              {status == "authenticated" && (
+                <>
+                  <Nav.Link
+                    as={Link}
+                    href="/my-kitchen"
+                    className="nav-link-icon"
+                  >
+                    <Refrigerator />
+                    <span className="nav-link-text">My Kitchen</span>
+                  </Nav.Link>
+                  <Nav.Link
+                    as={Link}
+                    href="/shopping-list"
+                    className="nav-link-icon"
+                  >
+                    <ListCheck />
+                    <span className="nav-link-text">Shopping List</span>
+                  </Nav.Link>
+                  <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
+                    <ChefHat />
+                    <span className="nav-link-text">Recipes</span>
+                  </Nav.Link>
+                </>
+              )}
               <NavDropdown
                 id="login-dropdown"
                 className="nav-dropdown"
@@ -90,15 +94,20 @@ const NavBar: React.FC = () => {
                   </span>
                 }
               >
-                <NavDropdown.Item onClick={() => setShowSignIn(true)}>
-                  Sign In
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => setShowSignUp(true)}>
-                  Sign Up
-                </NavDropdown.Item>
-                <NavDropdown.Item onClick={() => setShowSignOut(true)}>
-                  Sign Out
-                </NavDropdown.Item>
+                {status == "authenticated" ? (
+                  <NavDropdown.Item onClick={() => setShowSignOut(true)}>
+                    Sign Out
+                  </NavDropdown.Item>
+                ) : (
+                  <>
+                    <NavDropdown.Item onClick={() => setShowSignIn(true)}>
+                      Sign In
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => setShowSignUp(true)}>
+                      Sign Up
+                    </NavDropdown.Item>
+                  </>
+                )}
               </NavDropdown>
             </Nav>
           </Navbar.Collapse>
