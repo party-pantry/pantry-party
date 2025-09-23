@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { DropdownButton, Form, Button } from 'react-bootstrap';
-import { Search, Filter } from 'lucide-react';
 
 const statusOptions = ["Good", "Low Stock", "Out of Stock", "Expired"];
 
@@ -15,81 +14,79 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
             prev.includes(option)
             ? prev.filter(s => s !== option)
             : [...prev, option]
-        );
+        )
     }
 
     const handleReset = () => {
         setSearch("");
         setQuantity(25);
         setStatus([]);
-        if (onApply) onApply({ search: "", quantity: 25, status: [] });
-    };
+        if (onApply) {
+            onApply({ search: "", quantity: 25, status: [] });
+        }
+    }
 
     const handleApply = () => {
-        if (onApply) onApply({ search, quantity, status });
-    };
+        if (onApply) {
+            onApply({ search, quantity, status });
+        }
+    }
 
     return (
-    <div style={{ position: "absolute", top: "74px", left: "470px" }}>
-      <div className="d-flex align-items-center gap-2">
-        <div className="position-relative" style={{ maxWidth: "250px" }}>
-                    <Search
-                        size={18}
-                        className="position-absolute top-50 translate-middle-y ms-2 text-muted"
-                    />
+        <DropdownButton title={<strong>Filter</strong>} variant="outline-dark" 
+            style={{ width: "125px" }} align="end" drop='down' flip={false}
+        >
+            <Form style={{ width: "250px"}} onSubmit={(e) => { e.preventDefault(); handleApply(); }}>
+                <Form.Group className="m-3">
                     <Form.Control
                         placeholder="Search..."
+                        className="mx-auto mb-3"
                         value={search}
+                        style={{ width: "90%" }}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={{ paddingLeft: "2rem" }}
                     />
-                </div>
-            <DropdownButton
-                id="kitchen-filter-dropdown"
-
-                title={
-                    <div className="d-flex align-items-center gap-1"> 
-                        <Filter size={18} />
-                        <span>Filter</span>
+                    <Form.Label>Quantity {'<='} {quantity}</Form.Label>
+                    <Form.Range
+                        min={0}
+                        max={50}
+                        value={quantity}
+                        onChange={(e) => setQuantity(Number(e.target.value))}
+                    />
+                    <Form.Text> Status </Form.Text>
+                    {statusOptions.map((option) => (
+                        <Form.Check 
+                            key={option}
+                            type="checkbox"
+                            label={option}
+                            name="status"
+                            onChange={() => handleStatusChange(option)}
+                            checked={status.includes(option)}
+                        />
+                    ))}
+                    <div className="mt-3" style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                    }}>
+                        <Button 
+                            variant="danger"
+                            style={{ width: "100px"}}
+                            onClick={handleReset}
+                        >
+                            Reset
+                        </Button>
+                        <Button 
+                            variant="primary" 
+                            style={{ width: "100px"}} 
+                            onClick={handleApply}
+                        >
+                            Apply
+                        </Button>
                     </div>
-                }
-                variant="outline-dark"
-                align="end"
-                drop="down"
-                flip={false}
-            >
-                <Form.Label className="d-block mt-2 mb-1">Quantity {"<="} {quantity}</Form.Label>
-                <Form.Range
-                    min={0}
-                    max={50}
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                    className="mb-2"
-                />
-                <Form.Text className="d-block mb-1">Status</Form.Text>
-                {statusOptions.map((option) => (
-                    <Form.Check
-                        key={option}
-                        type="checkbox"
-                        label={option}
-                        name="status"
-                        onChange={() => handleStatusChange(option)}
-                        checked={status.includes(option)}
-                        className="mb-1"
-                    />
-                ))}
-                <div className="mt-3 d-flex justify-content-between" style={{ gap: "10px" }}>
-                    <Button variant="danger" onClick={handleReset}>
-                        Reset
-                    </Button>
-                    <Button variant="primary" onClick={handleApply}>
-                        Apply
-                    </Button>
-                </div>
-            </DropdownButton>
-        </div>
-      </div>
-    );
-};
+                </Form.Group>
+            </Form>
+        </DropdownButton>
+    )
+}
 
 export default KitchenFilterButton;
