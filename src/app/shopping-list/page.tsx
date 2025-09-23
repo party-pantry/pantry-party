@@ -1,23 +1,20 @@
 "use client";
 import React, { useState } from "react";
+import { Container, Card, Row, Col, Button, Form } from "react-bootstrap";
+import {
+  ShoppingItem,
+  sortItemsByPriority,
+} from "../../utils/shoppingListUtils";
+import ShoppingItemCard from "../../components/ShoppingItemCard";
+import PurchasedItemCard from "../../components/PurchasedItemCard";
 
-type ShoppingItem = {
-  id: number;
-  name: string;
-  quantity: string;
-  category: "Produce" | "Meat" | "Dairy" | "Pantry" | "Other";
-  priority: "High" | "Medium" | "Low";
-  purchased: boolean;
-  addedDate: string;
-};
-
-const ShoppingList = () => {
+const ShoppingList: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
     name: "",
     quantity: "",
     category: "Other" as ShoppingItem["category"],
-    priority: "Medium" as ShoppingItem["priority"]
+    priority: "Medium" as ShoppingItem["priority"],
   });
 
   // Example shopping list data
@@ -29,7 +26,7 @@ const ShoppingList = () => {
       category: "Dairy",
       priority: "High",
       purchased: false,
-      addedDate: "Sep 9, 2025"
+      addedDate: "Sep 9, 2025",
     },
     {
       id: 2,
@@ -38,7 +35,7 @@ const ShoppingList = () => {
       category: "Pantry",
       priority: "Medium",
       purchased: false,
-      addedDate: "Sep 9, 2025"
+      addedDate: "Sep 9, 2025",
     },
     {
       id: 3,
@@ -47,7 +44,7 @@ const ShoppingList = () => {
       category: "Produce",
       priority: "Low",
       purchased: true,
-      addedDate: "Sep 8, 2025"
+      addedDate: "Sep 8, 2025",
     },
     {
       id: 4,
@@ -56,257 +53,247 @@ const ShoppingList = () => {
       category: "Meat",
       priority: "High",
       purchased: false,
-      addedDate: "Sep 9, 2025"
-    }
+      addedDate: "Sep 9, 2025",
+    },
   ]);
 
-  const handleAddItem = (e: React.FormEvent) => {
+  // Object destructuring for better readability
+  const handleAddItem = (e: React.FormEvent): void => {
     e.preventDefault();
-    if (!newItem.name || !newItem.quantity) return;
+    const { name, quantity } = newItem;
+    if (!name || !quantity) return;
 
     const item: ShoppingItem = {
       ...newItem,
-      id: Math.max(...shoppingItems.map(i => i.id), 0) + 1,
+      id: Math.max(...shoppingItems.map(({ id }) => id), 0) + 1,
       purchased: false,
       addedDate: new Date().toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",
-        year: "numeric"
-      })
+        year: "numeric",
+      }),
     };
 
-    setShoppingItems(prev => [...prev, item]);
-    setNewItem({ name: "", quantity: "", category: "Other", priority: "Medium" });
+    setShoppingItems((prev) => [...prev, item]);
+    setNewItem({
+      name: "",
+      quantity: "",
+      category: "Other",
+      priority: "Medium",
+    });
     setShowAddForm(false);
   };
 
-  const togglePurchased = (id: number) => {
-    setShoppingItems(prev => 
-      prev.map(item => 
+  // Arrow functions with proper typing
+  const togglePurchased = (id: number): void => {
+    setShoppingItems((prev) =>
+      prev.map((item) =>
         item.id === id ? { ...item, purchased: !item.purchased } : item
       )
     );
   };
 
-  const removeItem = (id: number) => {
-    setShoppingItems(prev => prev.filter(item => item.id !== id));
+  const removeItem = (id: number): void => {
+    setShoppingItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const getPriorityColor = (priority: ShoppingItem["priority"]) => {
-    switch (priority) {
-      case "High": return "bg-red-100 text-red-800 border-red-200";
-      case "Medium": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Low": return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const getCategoryColor = (category: ShoppingItem["category"]) => {
-    switch (category) {
-      case "Produce": return "bg-green-100 text-green-800 border-green-200";
-      case "Meat": return "bg-red-100 text-red-800 border-red-200";
-      case "Dairy": return "bg-blue-100 text-blue-800 border-blue-200";
-      case "Pantry": return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case "Other": return "bg-gray-100 text-gray-800 border-gray-200";
-    }
-  };
-
-  const unpurchasedItems = shoppingItems.filter(item => !item.purchased);
-  const purchasedItems = shoppingItems.filter(item => item.purchased);
+  const unpurchasedItems = shoppingItems.filter((item) => !item.purchased);
+  const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-8 mt-16">
+    <Container style={{ marginTop: 100, marginBottom: 50 }}>
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-4xl font-bold text-gray-800">Shopping List</h1>
-          <p className="text-gray-600 mt-2">Keep track of what you need to buy</p>
-        </div>
-        <button 
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
-        >
-          {showAddForm ? "Cancel" : "Add Item +"}
-        </button>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          height: "30vh",
+          marginBottom: "5px",
+        }}
+      >
+        <h1 className="fs-1">Shopping List</h1>
+        <h6>Keep track of what you need to buy</h6>
+        <hr />
       </div>
+
+      <Row className="justify-content-end mb-4">
+        <Button
+          variant={showAddForm ? "outline-secondary" : "success"}
+          onClick={() => setShowAddForm(!showAddForm)}
+          style={{ width: "125px" }}
+        >
+          <strong>{showAddForm ? "Cancel" : "Add Item +"}</strong>
+        </Button>
+      </Row>
 
       {/* Add Item Form */}
       {showAddForm && (
-        <div className="bg-white p-6 rounded-lg shadow-md mb-8 border">
-          <form onSubmit={handleAddItem}>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Item Name</label>
-                <input
-                  type="text"
-                  placeholder="Enter item name"
-                  value={newItem.name}
-                  onChange={(e) => setNewItem({...newItem, name: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
-                <input
-                  type="text"
-                  placeholder="e.g., 2 lbs"
-                  value={newItem.quantity}
-                  onChange={(e) => setNewItem({...newItem, quantity: e.target.value})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                <select
-                  value={newItem.category}
-                  onChange={(e) => setNewItem({...newItem, category: e.target.value as ShoppingItem["category"]})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="Produce">Produce</option>
-                  <option value="Meat">Meat</option>
-                  <option value="Dairy">Dairy</option>
-                  <option value="Pantry">Pantry</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
-                <select
-                  value={newItem.priority}
-                  onChange={(e) => setNewItem({...newItem, priority: e.target.value as ShoppingItem["priority"]})}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="High">High</option>
-                  <option value="Medium">Medium</option>
-                  <option value="Low">Low</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="px-6 py-2 bg-blue-600 text-white rounded-md font-semibold hover:bg-blue-700 transition-colors"
-              >
-                Add to List
-              </button>
-            </div>
-          </form>
-        </div>
+        <Card className="mb-4 shadow-sm">
+          <Card.Body>
+            <Form onSubmit={handleAddItem}>
+              <Row className="g-3 align-items-end">
+                <Col md={3}>
+                  <Form.Label>Item Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter item name"
+                    value={newItem.name}
+                    onChange={(e) =>
+                      setNewItem({ ...newItem, name: e.target.value })
+                    }
+                    required
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label>Quantity</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g., 2 lbs"
+                    value={newItem.quantity}
+                    onChange={(e) =>
+                      setNewItem({ ...newItem, quantity: e.target.value })
+                    }
+                    required
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label>Category</Form.Label>
+                  <Form.Select
+                    value={newItem.category}
+                    onChange={(e) =>
+                      setNewItem({
+                        ...newItem,
+                        category: e.target.value as ShoppingItem["category"],
+                      })
+                    }
+                  >
+                    <option value="Produce">Produce</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Pantry">Pantry</option>
+                    <option value="Other">Other</option>
+                  </Form.Select>
+                </Col>
+                <Col md={2}>
+                  <Form.Label>Priority</Form.Label>
+                  <Form.Select
+                    value={newItem.priority}
+                    onChange={(e) =>
+                      setNewItem({
+                        ...newItem,
+                        priority: e.target.value as ShoppingItem["priority"],
+                      })
+                    }
+                  >
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </Form.Select>
+                </Col>
+                <Col md={3}>
+                  <Button type="submit" variant="primary" className="w-100">
+                    <strong>Add to List</strong>
+                  </Button>
+                </Col>
+              </Row>
+            </Form>
+          </Card.Body>
+        </Card>
       )}
 
       {/* Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white p-6 rounded-lg shadow-md text-center border">
-          <h3 className="text-3xl font-bold text-blue-600">{unpurchasedItems.length}</h3>
-          <p className="text-gray-600">Items to Buy</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md text-center border">
-          <h3 className="text-3xl font-bold text-green-600">{purchasedItems.length}</h3>
-          <p className="text-gray-600">Items Purchased</p>
-        </div>
-        <div className="bg-white p-6 rounded-lg shadow-md text-center border">
-          <h3 className="text-3xl font-bold text-red-600">
-            {unpurchasedItems.filter(item => item.priority === "High").length}
-          </h3>
-          <p className="text-gray-600">High Priority Items</p>
-        </div>
-      </div>
+      <Row className="mb-4">
+        <Col md={4}>
+          <Card className="text-center shadow-sm">
+            <Card.Body>
+              <h3 className="text-primary fs-2">{unpurchasedItems.length}</h3>
+              <Card.Text className="text-dark">Items to Buy</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          <Card className="text-center shadow-sm">
+            <Card.Body>
+              <h3 className="text-success fs-2">{purchasedItems.length}</h3>
+              <Card.Text className="text-dark">Items Purchased</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={4}>
+          <Card className="text-center shadow-sm">
+            <Card.Body>
+              <h3 className="text-danger fs-2">
+                {
+                  unpurchasedItems.filter((item) => item.priority === "High")
+                    .length
+                }
+              </h3>
+              <Card.Text className="text-dark">High Priority Items</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
 
       {/* Shopping List Items */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <Row>
         {/* Items to Buy */}
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow-md border">
-            <div className="p-4 border-b">
-              <h5 className="text-xl font-semibold">Items to Buy ({unpurchasedItems.length})</h5>
-            </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
+        <Col lg={8}>
+          <Card className="shadow-sm">
+            <Card.Header>
+              <h5 className="mb-0">Items to Buy ({unpurchasedItems.length})</h5>
+            </Card.Header>
+            <Card.Body style={{ maxHeight: "500px", overflowY: "auto" }}>
               {unpurchasedItems.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No items in your shopping list!</p>
+                <p className="text-muted text-center py-4">
+                  No items in your shopping list!
+                </p>
               ) : (
-                <div className="space-y-4">
-                  {unpurchasedItems
-                    .sort((a, b) => {
-                      const priorityOrder = { "High": 3, "Medium": 2, "Low": 1 };
-                      return priorityOrder[b.priority] - priorityOrder[a.priority];
-                    })
-                    .map(item => (
-                      <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
-                        <div className="flex items-center">
-                          <input
-                            type="checkbox"
-                            checked={item.purchased}
-                            onChange={() => togglePurchased(item.id)}
-                            className="mr-3 w-5 h-5"
-                          />
-                          <div>
-                            <div className="font-semibold">{item.name}</div>
-                            <div className="text-sm text-gray-500">
-                              {item.quantity} • Added {item.addedDate}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getCategoryColor(item.category)}`}>
-                            {item.category}
-                          </span>
-                          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPriorityColor(item.priority)}`}>
-                            {item.priority}
-                          </span>
-                          <button
-                            onClick={() => removeItem(item.id)}
-                            className="w-8 h-8 text-red-500 hover:bg-red-100 rounded-full flex items-center justify-center"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Purchased Items */}
-        <div>
-          <div className="bg-white rounded-lg shadow-md border">
-            <div className="p-4 border-b">
-              <h5 className="text-xl font-semibold">Recently Purchased ({purchasedItems.length})</h5>
-            </div>
-            <div className="p-4 max-h-96 overflow-y-auto">
-              {purchasedItems.length === 0 ? (
-                <p className="text-gray-500 text-center py-8">No purchased items yet!</p>
-              ) : (
-                <div className="space-y-4">
-                  {purchasedItems.map(item => (
-                    <div key={item.id} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          checked={item.purchased}
-                          onChange={() => togglePurchased(item.id)}
-                          className="mr-3 w-5 h-5"
-                        />
-                        <div className="opacity-70 line-through">
-                          <div className="font-semibold">{item.name}</div>
-                          <div className="text-sm text-gray-500">{item.quantity}</div>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="w-6 h-6 text-red-500 hover:bg-red-100 rounded-full flex items-center justify-center text-sm"
-                      >
-                        ×
-                      </button>
-                    </div>
+                <div className="d-grid gap-3">
+                  {sortItemsByPriority(unpurchasedItems).map((item) => (
+                    <ShoppingItemCard
+                      key={item.id}
+                      item={item}
+                      onTogglePurchased={togglePurchased}
+                      onRemove={removeItem}
+                    />
                   ))}
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Card.Body>
+          </Card>
+        </Col>
+
+        {/* Purchased Items */}
+        <Col lg={4}>
+          <Card className="shadow-sm">
+            <Card.Header>
+              <h5 className="mb-0">
+                Recently Purchased ({purchasedItems.length})
+              </h5>
+            </Card.Header>
+            <Card.Body style={{ maxHeight: "500px", overflowY: "auto" }}>
+              {purchasedItems.length === 0 ? (
+                <p className="text-muted text-center py-4">
+                  No purchased items yet!
+                </p>
+              ) : (
+                <div className="d-grid gap-2">
+                  {purchasedItems.map((item) => (
+                    <PurchasedItemCard
+                      key={item.id}
+                      item={item}
+                      onTogglePurchased={togglePurchased}
+                      onRemove={removeItem}
+                    />
+                  ))}
+                </div>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

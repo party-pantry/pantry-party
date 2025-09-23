@@ -1,6 +1,5 @@
 import { Container, Button } from "react-bootstrap";
 import FeaturesSection from "../components/FeaturesSection";
-import { SessionProvider } from "next-auth/react";
 
 export default function Home() {
   return (

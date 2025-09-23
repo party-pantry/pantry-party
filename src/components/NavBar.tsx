@@ -24,7 +24,8 @@ const NavBar: React.FC = () => {
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const currentUser = session?.user?.email;
 
   return (
     <>
@@ -49,6 +50,8 @@ const NavBar: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
+              {status == "authenticated" && 
+              <>
               <Nav.Link as={Link} href="/my-kitchen" className="nav-link-icon">
                 <Refrigerator />
                 <span className="nav-link-text">My Kitchen</span>
@@ -61,10 +64,8 @@ const NavBar: React.FC = () => {
                 <ChefHat />
                 <span className="nav-link-text">Recipes</span>
               </Nav.Link>
-              <Nav.Link as={Link} href="/low-quantity" className="nav-link-icon">
-                <CircleAlert />
-                <span className="nav-link-text">Low-quantity</span>
-              </Nav.Link>
+              </>
+              }
               <NavDropdown
                 id="login-dropdown"
                 className="nav-dropdown"
@@ -88,7 +89,7 @@ const NavBar: React.FC = () => {
                   </span>
                 }
               >
-                {session ? (
+                {status == "authenticated" ? (
                    <NavDropdown.Item onClick={() => setShowSignOut(true)}>
                   Sign Out
                 </NavDropdown.Item>
