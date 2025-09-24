@@ -197,8 +197,8 @@ const MyKitchen = () => {
                 onApply={(appliedFilters) => setFilters({ ...filters, status: appliedFilters.status })}
               />
               <Button
-                style={{ width: '125px' }}
-                variant="success"
+                style={{ width: '125px', backgroundColor: '#3A5B4F', color: 'white' }}
+                variant=""
                 onClick={() => setShowAddModal(true)}
               >
                 <strong>Add Item +</strong>
@@ -227,7 +227,7 @@ const MyKitchen = () => {
             ))}
             <Button
               className="mt-1"
-              style={{ width: '150px', backgroundColor: '#028383ff' }}
+              style={{ width: '150px', backgroundColor: '#3A5B4F', borderColor: '#3A5B4F' }}
               onClick={() => setShowPantryModal(true)}
             >
               <strong>Add Storage +</strong>

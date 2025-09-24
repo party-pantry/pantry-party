@@ -21,7 +21,7 @@ interface StorageContainerProps {
 const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children, feature }) => (
   <Card
     id={id}
-    border="info"
+    border=""
     className="shadow-lg  mb-5"
     style={{ borderRadius: '2rem', overflow: 'hidden' }}
   >
@@ -30,9 +30,9 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
             or style={{ borderRadius: "2rem" }} */
         }
     <Card.Header
-      className="fs-4 fw-bold text-white ml"
+      className="fs-4 fw-bold text-white ml pb-0"
       style={{
-        backgroundColor: '#028383ff',
+        backgroundColor: '#3A5B4F',
       }}
     >
       <Row>
@@ -46,9 +46,9 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
 
     </Card.Header>
     <Card.Body
-      className="p-4 mb-0 d-flex flex-col"
+      className="p-4 pt-1 mb-0 d-flex flex-col"
       style={{
-        backgroundColor: '#03a9a9ff',
+        backgroundColor: '#3A5B4F',
       }}
     >
       {children}

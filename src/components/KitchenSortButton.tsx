@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
+import { ArrowUpAZ, ArrowDownAZ, ChartColumnIncreasing, ChartColumnDecreasing } from 'lucide-react';
 import { Button } from 'react-bootstrap';
 
 type SortDirection = 'asc' | 'desc';
@@ -22,10 +22,16 @@ const KitchenSortButton: React.FC<KitchenSortButtonProps> = ({ onSort, label }) 
   return (
     // eslint-disable-next-line react/button-has-type
     <Button
+      style={{ width: '125px', backgroundColor: '#3A5B4F', borderColor: '#3A5B4F', color: 'white' }}
       onClick={toggleSort}
       className="d-flex align-items-center justify-content-center w-auto"
     >
-      {label && <span className="me-2">{label}</span>}
+      {direction === 'asc' ? (
+        <ChartColumnIncreasing size={15} />
+      ) : (
+        <ChartColumnDecreasing size={15} />
+      )}
+      {label && <span className="ml-1 me-2">{label}</span>}
       {direction === 'asc' ? (
         <ArrowUpAZ size={28} />
       ) : (

@@ -129,3 +129,20 @@ body {
 .bg-primary {
   background-color: #3A5B4F !important; /* SaddleBrown */
 }
+
+.card-header {
+  border-bottom: none;
+}
+
+.custom-nav-link .nav-link {
+  color: #000000;
+}
+
+.custom-nav-link .nav-link:hover {
+  color: #DDF3F0;
+}
+
+#nav-tabs-kitchen {
+  background-color: #DDF3F0;
+}
+
