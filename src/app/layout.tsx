@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
 import NavBar from '../components/NavBar';
 import Footer from '../components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -15,6 +15,19 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
   subsets: ['latin'],
 });
+
+const lato = Lato({
+  variable: "--font-lato",
+  subsets: ["latin"],
+  weight: ["400", "700"], // adjust as needed
+});
+
+const nunitoSans = Nunito_Sans({
+  variable: "--font-nunito-sans",
+  subsets: ["latin"],
+  weight: ["400", "600"], // adjust as needed
+});
+
 
 export const metadata: Metadata = {
   title: 'Pantry Party',
