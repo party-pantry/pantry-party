@@ -120,3 +120,7 @@ body {
 .custom-card-border {
   border-width: 3px;
 }
+
+.bg-primary {
+  background-color: #3A5B4F !important; /* SaddleBrown */
+}
