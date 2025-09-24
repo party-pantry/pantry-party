@@ -17,10 +17,10 @@ interface HomeTabSelectionProps {
 }
 
 const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({ id, title, children }) => (
-  <Card id={id} border="success" className="shadow-lg  mb-5">
+  <Card id={id} border="" className="shadow-lg  mb-5">
     <Card.Header
       style={{
-        backgroundColor: '#08981bff',
+        backgroundColor: '#2C776D',
       }}
     >
       <Nav variant="tabs" defaultActiveKey="#first">
@@ -42,7 +42,12 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({ id, title, children
         </Nav.Item>
       </Nav>
     </Card.Header>
-    <Card.Body className="p-4 mb-0">
+    <Card.Body
+      className="p-4 mb-0"
+      style={{
+        backgroundColor: '#DDF3F0',
+      }}
+    >
       {children}
     </Card.Body>
   </Card>

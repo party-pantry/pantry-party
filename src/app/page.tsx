@@ -34,16 +34,16 @@ export default function Home() {
               and storage spaces
             </h5>
             <Button
-              variant='outline-primary'
-              size='sm'
+              variant="outline-primary"
+              size="sm"
               onClick={() => setShowSignIn(true)}
               style={{ marginRight: '12px' }}
             >
               Sign In
             </Button>
             <Button
-              variant='primary'
-              size='sm'
+              variant="primary"
+              size="sm"
               onClick={() => setShowSignUp(true)}
             >
               Sign Up
@@ -51,8 +51,8 @@ export default function Home() {
           </div>
           <div style={{ flex: 1, textAlign: 'center' }}>
             <Image
-              src='/landing.jpg'
-              alt='Image of food items'
+              src="/landing.jpg"
+              alt="Image of food items"
               width={1100}
               height={600}
               priority
@@ -66,7 +66,7 @@ export default function Home() {
             alignItems: 'center',
             textAlign: 'center',
           }}
-          className='mb-5'
+          className="mb-5"
         >
           <h1>Features</h1>
           <FeaturesSection />
