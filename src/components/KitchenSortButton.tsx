@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ArrowUpAZ, ArrowDownAZ } from 'lucide-react';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 
 type SortDirection = 'asc' | 'desc';
 
@@ -23,26 +23,15 @@ const KitchenSortButton: React.FC<KitchenSortButtonProps> = ({ onSort, label }) 
     // eslint-disable-next-line react/button-has-type
     <Button
       onClick={toggleSort}
-      className=""
+      className="d-flex align-items-center justify-content-center w-auto"
     >
-      {/* <Row>
-        {label && <span>{label}</span>}
-        {direction === 'asc' ? (
-          <ArrowUpAZ className="w-4 h-10" />
-        ) : (
-          <ArrowDownAZ className="w-4 h-10" />
-        )}
-      </Row> */}
-      <Row className="align-items-center">
-        {label && <Col xs="2">{label}</Col>}
-        <Col xs="auto">
-          {direction === 'asc' ? (
-            <ArrowUpAZ className="w-4 h-4" />
-          ) : (
-            <ArrowDownAZ className="w-4 h-4" />
-          )}
-        </Col>
-      </Row>
+      {label && <span className="me-2">{label}</span>}
+      {direction === 'asc' ? (
+        <ArrowUpAZ size={28} />
+      ) : (
+        <ArrowDownAZ size={28} />
+      )}
+
     </Button>
   );
 };

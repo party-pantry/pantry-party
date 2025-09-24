@@ -5,7 +5,7 @@
 // */
 
 import React from 'react';
-import { Card } from 'react-bootstrap';
+import { Card, Col, Row } from 'react-bootstrap';
 
 // TODO: Add type prop for StorageContainer
 
@@ -15,9 +15,10 @@ interface StorageContainerProps {
   id?: string;
   title: string;
   children: React.ReactNode;
+  feature: React.ReactNode;
 }
 
-const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children }) => (
+const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children, feature }) => (
   <Card
     id={id}
     border="info"
@@ -34,7 +35,15 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
         backgroundColor: '#028383ff',
       }}
     >
-      <h2 className="ml-4 mb-0 mt-2">{title}</h2>
+      <Row>
+        <Col>
+          <h2 className="ml-4 mb-0 mt-2">{title}</h2>
+        </Col>
+        <Col className="d-flex justify-content-end align-items-center mt-2 mr-2">
+          {feature}
+        </Col>
+      </Row>
+
     </Card.Header>
     <Card.Body
       className="p-4 mb-0 d-flex flex-col"
