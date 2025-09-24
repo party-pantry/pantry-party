@@ -4,7 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
 
 export const authOptions: NextAuthOptions = {
- session: {
+  session: {
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
@@ -13,8 +13,8 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'Email and Password',
       credentials: {
-        identifier: { label: "Username or Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        identifier: { label: 'Username or Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) return null;
@@ -30,8 +30,8 @@ export const authOptions: NextAuthOptions = {
         if (!user) return null;
 
         const validPassword = await compare(
-        credentials.password,
-        user.password
+          credentials.password,
+          user.password,
         );
         if (!validPassword) return null;
 
@@ -44,16 +44,14 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          randomKey: token.randomKey,
-        },
-      };
-    },
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.id,
+        randomKey: token.randomKey,
+      },
+    }),
     jwt: ({ token, user }) => {
       if (user) {
         const u = user as unknown as any;

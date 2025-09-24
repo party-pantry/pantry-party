@@ -48,7 +48,7 @@ const NavBar: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              {currentUser&& (
+              {currentUser && (
                 <>
                   <Nav.Link
                     as={Link}

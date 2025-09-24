@@ -75,7 +75,7 @@ const getUnit = (unit: string): Unit => {
     default:
       return Unit.PIECE;
   }
-}
+};
 
 const getStatus = (status: string): Status => {
   switch (status) {
@@ -90,16 +90,15 @@ const getStatus = (status: string): Status => {
     default:
       return Status.EXPIRED;
   }
-}
-
+};
 
 async function main() {
   // Clear tables and reset IDs
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Stock" RESTART IDENTITY CASCADE;`);
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Ingredient" RESTART IDENTITY CASCADE;`);
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Storage" RESTART IDENTITY CASCADE;`);
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "House" RESTART IDENTITY CASCADE;`);
-  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "User" RESTART IDENTITY CASCADE;`);
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Stock" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Ingredient" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Storage" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "House" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "User" RESTART IDENTITY CASCADE;');
 
   console.log('Seeding database...');
 
@@ -118,7 +117,7 @@ async function main() {
           email: user.email,
           username: user.username,
           password,
-        }
+        },
       });
     }),
   );
@@ -126,10 +125,7 @@ async function main() {
   // Seed Houses
   await Promise.all(
     config.defaultHouses.map(async (house) => {
-
-      const ownerUser = config.defaultUsers.find(user => 
-        user.houses.includes(house.id)
-      );
+      const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
       if (!ownerUser) {
         console.error(`No owner found for house ${house.name} (id: ${house.id})`);
         return;
@@ -143,18 +139,17 @@ async function main() {
         create: {
           name: house.name,
           address: house.address,
-          user: { 
-            connect: { id: ownerUser.id }
+          user: {
+            connect: { id: ownerUser.id },
           },
         },
       });
-    })
+    }),
   );
 
   // Seed Storages
   await Promise.all(
     config.defaultStorages.map(async (storage) => {
-
       console.log(`Seeding storage: ${storage.name} with id: ${storage.id}`);
 
       await prisma.storage.upsert({
@@ -166,13 +161,12 @@ async function main() {
           type: getCategory(storage.type),
         },
       });
-    })
+    }),
   );
 
   // Seed Ingredients
   await Promise.all(
     config.defaultIngredients.map(async (ingredient) => {
-
       console.log(`Seeding ingredient: ${ingredient.name} with id: ${ingredient.id}`);
 
       await prisma.ingredient.upsert({
@@ -180,25 +174,24 @@ async function main() {
         update: {},
         create: {
           name: ingredient.name,
-          price: ingredient.price
+          price: ingredient.price,
         },
       });
-    })
+    }),
   );
 
   // Seed Stocks
   await Promise.all(
     config.defaultStocks.map(async (stock) => {
-
       console.log(`Seeding stock with id: ${stock.id}`);
 
       await prisma.stock.upsert({
-        where: { 
+        where: {
           ingredientId_storageId: {
             ingredientId: stock.ingredientId,
             storageId: stock.storageId,
           },
-         },
+        },
         update: {
         },
         create: {
@@ -210,9 +203,9 @@ async function main() {
           status: getStatus(stock.status),
           last_updated: new Date(stock.last_updated),
         },
-      })
-    })
-  )
+      });
+    }),
+  );
   console.log('Database seeded successfully!');
 }
 
