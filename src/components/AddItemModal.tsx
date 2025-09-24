@@ -1,7 +1,9 @@
-"use client";
+/* eslint-disable react/prop-types */
 
-import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useState } from "react";
+'use client';
+
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { useState } from 'react';
 
 interface Props {
 	show: boolean;

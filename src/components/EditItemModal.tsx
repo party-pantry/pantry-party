@@ -1,7 +1,9 @@
-"use client";
+/* eslint-disable react/prop-types */
 
-import { Modal, Form, Button, Row, Col } from "react-bootstrap";
-import { useState, useEffect } from "react";
+'use client';
+
+import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { useState, useEffect } from 'react';
 
 interface Item {
   id: number;
@@ -9,8 +11,8 @@ interface Item {
   image: string;
   quantity: string;
   updated: string;
-  status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
-  category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
+  status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
+  category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
 }
 
 interface Props {
@@ -36,10 +38,10 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem
     if (formData.name && formData.quantity) {
       onUpdateItem({
         ...formData,
-        updated: new Date().toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
+        updated: new Date().toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
         }),
       });
     }
@@ -60,7 +62,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem
       contentClassName="custom-modal"
     >
       <Modal.Header
-        style={{ borderBottom: "none", paddingBottom: "0px" }}
+        style={{ borderBottom: 'none', paddingBottom: '0px' }}
         closeButton
       />
       <Modal.Body className="text-center">
@@ -72,7 +74,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem
               type="text"
               placeholder="Item Name"
               value={formData.name}
-              onChange={(e) => handleChange("name", e.target.value)}
+              onChange={(e) => handleChange('name', e.target.value)}
               required
             />
           </Form.Group>
@@ -85,7 +87,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem
                   type="number"
                   placeholder="Quantity"
                   value={formData.quantity}
-                  onChange={(e) => handleChange("quantity", e.target.value)}
+                  onChange={(e) => handleChange('quantity', e.target.value)}
                   min="0"
                   required
                 />
@@ -96,7 +98,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem
                 <Form.Select
                   className="text-center"
                   value={formData.status}
-                  onChange={(e) => handleChange("status", e.target.value)}
+                  onChange={(e) => handleChange('status', e.target.value)}
                 >
                   <option value="Good">Good</option>
                   <option value="Low Stock">Low Stock</option>

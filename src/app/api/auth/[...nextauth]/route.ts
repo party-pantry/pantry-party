@@ -1,15 +1,17 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
-import { compare } from "bcryptjs";
+/* eslint-disable arrow-body-style */
+
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import { prisma } from '@/lib/prisma';
+import { compare } from 'bcryptjs';
 
 const handler = NextAuth({
   providers: [
     CredentialsProvider({
-      name: "Email and Password",
+      name: 'Email and Password',
       credentials: {
-        identifier: { label: "Username or Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        identifier: { label: 'Username or Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.identifier || !credentials?.password) return null;
@@ -28,7 +30,7 @@ const handler = NextAuth({
         // checking if password matches in database
         const validPassword = await compare(
           credentials.password,
-          user.password
+          user.password,
         );
         if (!validPassword) return null;
 
@@ -41,7 +43,7 @@ const handler = NextAuth({
     }),
   ],
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
     session: ({ session, token }) => {
