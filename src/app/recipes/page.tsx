@@ -1,12 +1,14 @@
-"use client";
+/* eslint-disable react/no-array-index-key */
 
-import React, { useState } from "react";
-import { Container, Card, Row, Col, Badge, Button } from "react-bootstrap";
+'use client';
+
+import React, { useState } from 'react';
+import { Container, Card, Row, Col, Badge, Button } from 'react-bootstrap';
 import {
   Recipe,
   getMatchPercentage,
-} from "../../utils/recipeUtils";
-import RecipeModal from "../../components/RecipeModal";
+} from '../../utils/recipeUtils';
+import RecipeModal from '../../components/RecipeModal';
 
 const Recipes: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
@@ -24,59 +26,59 @@ const Recipes: React.FC = () => {
   const mockRecipes: Recipe[] = [
     {
       id: 1,
-      name: "Tomato Scrambled Eggs",
-      image: "🍳",
-      cookTime: "15 min",
-      difficulty: "Easy",
-      availableIngredients: ["Tomatoes", "Eggs"],
-      missingIngredients: ["Salt", "Oil"],
+      name: 'Tomato Scrambled Eggs',
+      image: '🍳',
+      cookTime: '15 min',
+      difficulty: 'Easy',
+      availableIngredients: ['Tomatoes', 'Eggs'],
+      missingIngredients: ['Salt', 'Oil'],
       description:
-        "A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.",
+        'A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.',
     },
     {
       id: 2,
-      name: "Chicken Breast Salad",
-      image: "🥗",
-      cookTime: "20 min",
-      difficulty: "Easy",
-      availableIngredients: ["Chicken Breast", "Tomatoes"],
-      missingIngredients: ["Lettuce", "Dressing"],
+      name: 'Chicken Breast Salad',
+      image: '🥗',
+      cookTime: '20 min',
+      difficulty: 'Easy',
+      availableIngredients: ['Chicken Breast', 'Tomatoes'],
+      missingIngredients: ['Lettuce', 'Dressing'],
       description:
-        "Healthy and protein-rich salad with grilled chicken and fresh vegetables.",
+        'Healthy and protein-rich salad with grilled chicken and fresh vegetables.',
     },
     {
       id: 3,
-      name: "Chicken Tomato Pasta",
-      image: "🍝",
-      cookTime: "30 min",
-      difficulty: "Medium",
-      availableIngredients: ["Chicken Breast", "Tomatoes"],
-      missingIngredients: ["Pasta", "Garlic", "Onion"],
-      description: "Delicious pasta with tender chicken and rich tomato sauce.",
+      name: 'Chicken Tomato Pasta',
+      image: '🍝',
+      cookTime: '30 min',
+      difficulty: 'Medium',
+      availableIngredients: ['Chicken Breast', 'Tomatoes'],
+      missingIngredients: ['Pasta', 'Garlic', 'Onion'],
+      description: 'Delicious pasta with tender chicken and rich tomato sauce.',
     },
     {
       id: 4,
-      name: "Mediterranean Bowl",
-      image: "🍲",
-      cookTime: "25 min",
-      difficulty: "Medium",
-      availableIngredients: ["Chicken Breast", "Tomatoes"],
-      missingIngredients: ["Rice", "Olives", "Feta Cheese"],
+      name: 'Mediterranean Bowl',
+      image: '🍲',
+      cookTime: '25 min',
+      difficulty: 'Medium',
+      availableIngredients: ['Chicken Breast', 'Tomatoes'],
+      missingIngredients: ['Rice', 'Olives', 'Feta Cheese'],
       description:
-        "A healthy Mediterranean-inspired bowl with fresh ingredients.",
+        'A healthy Mediterranean-inspired bowl with fresh ingredients.',
     },
   ];
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Easy":
-        return "success";
-      case "Medium":
-        return "warning";
-      case "Hard":
-        return "danger";
+      case 'Easy':
+        return 'success';
+      case 'Medium':
+        return 'warning';
+      case 'Hard':
+        return 'danger';
       default:
-        return "secondary";
+        return 'secondary';
     }
   };
 
@@ -85,11 +87,11 @@ const Recipes: React.FC = () => {
       {/* Header */}
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          height: "30vh",
-          marginBottom: "5px",
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          height: '30vh',
+          marginBottom: '5px',
         }}
       >
         <h1 className="fs-1">Recipe Suggestions</h1>
@@ -104,7 +106,7 @@ const Recipes: React.FC = () => {
               <Card.Body>
                 <div className="d-flex justify-content-between align-items-start mb-2">
                   <Card.Title className="mb-0">
-                    <span style={{ fontSize: "2rem", marginRight: "10px" }}>
+                    <span style={{ fontSize: '2rem', marginRight: '10px' }}>
                       {recipe.image}
                     </span>
                     {recipe.name}
@@ -119,13 +121,19 @@ const Recipes: React.FC = () => {
                 </Card.Text>
 
                 <div className="mb-3">
-                  <small className="text-muted">⏱️ {recipe.cookTime}</small>
+                  <small className="text-muted">
+                    ⏱️
+                    {recipe.cookTime}
+                  </small>
                 </div>
 
                 <div className="mb-3">
                   <div className="d-flex justify-content-between align-items-center mb-2">
                     <small className="fw-bold">
-                      Match: {getMatchPercentage(recipe)}%
+                      Match:
+                      {' '}
+                      {getMatchPercentage(recipe)}
+                      %
                     </small>
                   </div>
 

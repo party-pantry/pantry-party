@@ -1,6 +1,7 @@
-import React from "react";
-import { Modal, Button, Badge, Row, Col, Card } from "react-bootstrap";
-import { Recipe, getDifficultyVariant, getMatchPercentage } from "../utils/recipeUtils";
+/* eslint-disable react/no-array-index-key */
+import React from 'react';
+import { Modal, Button, Badge, Row, Col, Card } from 'react-bootstrap';
+import { Recipe, getDifficultyVariant, getMatchPercentage } from '../utils/recipeUtils';
 
 interface RecipeModalProps {
   recipe: Recipe | null;
@@ -15,28 +16,28 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
   const mockDetailedRecipe = {
     ...recipe,
     servings: 4,
-    prepTime: "10 min",
+    prepTime: '10 min',
     ingredients: [
-      { name: "Large Eggs", amount: "4", unit: "pieces", available: true },
-      { name: "Fresh Tomatoes", amount: "2", unit: "medium", available: true },
-      { name: "Salt", amount: "1", unit: "tsp", available: false },
-      { name: "Olive Oil", amount: "2", unit: "tbsp", available: false },
-      { name: "Black Pepper", amount: "1/4", unit: "tsp", available: false },
+      { name: 'Large Eggs', amount: '4', unit: 'pieces', available: true },
+      { name: 'Fresh Tomatoes', amount: '2', unit: 'medium', available: true },
+      { name: 'Salt', amount: '1', unit: 'tsp', available: false },
+      { name: 'Olive Oil', amount: '2', unit: 'tbsp', available: false },
+      { name: 'Black Pepper', amount: '1/4', unit: 'tsp', available: false },
     ],
     instructions: [
-      "Heat olive oil in a non-stick pan over medium heat.",
-      "Dice the tomatoes into small pieces and add to the pan.",
-      "Cook tomatoes for 2-3 minutes until they start to soften.",
-      "Beat the eggs in a bowl and season with salt and pepper.",
-      "Pour the beaten eggs into the pan with tomatoes.",
-      "Gently scramble the eggs, stirring frequently until cooked through.",
-      "Remove from heat and serve immediately while hot.",
+      'Heat olive oil in a non-stick pan over medium heat.',
+      'Dice the tomatoes into small pieces and add to the pan.',
+      'Cook tomatoes for 2-3 minutes until they start to soften.',
+      'Beat the eggs in a bowl and season with salt and pepper.',
+      'Pour the beaten eggs into the pan with tomatoes.',
+      'Gently scramble the eggs, stirring frequently until cooked through.',
+      'Remove from heat and serve immediately while hot.',
     ],
     nutritionInfo: {
       calories: 285,
-      protein: "18g",
-      carbs: "8g",
-      fat: "20g",
+      protein: '18g',
+      carbs: '8g',
+      fat: '20g',
     },
   };
 
@@ -44,7 +45,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
     <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
         <Modal.Title className="d-flex align-items-center gap-3">
-          <span style={{ fontSize: "2rem" }}>{recipe.image}</span>
+          <span style={{ fontSize: '2rem' }}>{recipe.image}</span>
           <div>
             <h4 className="mb-1">{recipe.name}</h4>
             <div className="d-flex gap-2 align-items-center">
@@ -52,14 +53,15 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
                 {recipe.difficulty}
               </Badge>
               <small className="text-muted">
-                {getMatchPercentage(recipe)}% match
+                {getMatchPercentage(recipe)}
+                % match
               </small>
             </div>
           </div>
         </Modal.Title>
       </Modal.Header>
 
-      <Modal.Body style={{ maxHeight: "70vh", overflowY: "auto", padding: "1.5rem" }}>
+      <Modal.Body style={{ maxHeight: '70vh', overflowY: 'auto', padding: '1.5rem' }}>
         {/* Recipe Overview */}
         <div className="mb-4">
           <p className="text-dark fs-6 mb-3">{recipe.description}</p>
@@ -94,17 +96,23 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
                 className="d-flex justify-content-between align-items-center py-2 border-bottom"
               >
                 <div>
-                  <span className={`text-dark ${!ingredient.available ? "text-decoration-line-through text-muted" : ""}`}>
-                    {ingredient.amount} {ingredient.unit} {ingredient.name}
+                  <span
+                    className={`text-dark ${!ingredient.available ? 'text-decoration-line-through text-muted' : ''}`}
+                  >
+                    {ingredient.amount}
+                    {' '}
+                    {ingredient.unit}
+                    {' '}
+                    {ingredient.name}
                   </span>
                   {!ingredient.available && (
-                    <Badge bg="outline-danger" text="danger" className="ms-2" style={{ fontSize: "0.65rem" }}>
+                    <Badge bg="outline-danger" text="danger" className="ms-2" style={{ fontSize: '0.65rem' }}>
                       Need to buy
                     </Badge>
                   )}
                 </div>
                 {ingredient.available && (
-                  <Badge bg="success" style={{ fontSize: "0.65rem" }}>
+                  <Badge bg="success" style={{ fontSize: '0.65rem' }}>
                     ✓
                   </Badge>
                 )}
@@ -149,7 +157,7 @@ const RecipeModal: React.FC<RecipeModalProps> = ({ recipe, show, onHide }) => {
                 <Badge
                   bg="primary"
                   className="me-3 d-flex align-items-center justify-content-center"
-                  style={{ minWidth: "28px", height: "28px", fontSize: "0.8rem", borderRadius: "50%" }}
+                  style={{ minWidth: '28px', height: '28px', fontSize: '0.8rem', borderRadius: '50%' }}
                 >
                   {index + 1}
                 </Badge>
