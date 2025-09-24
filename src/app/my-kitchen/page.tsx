@@ -1,4 +1,4 @@
-"use client";
+/* eslint-disable no-nested-ternary */
 
 import { Container, Button, Row } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
@@ -18,15 +18,15 @@ type Item = {
   image: string;
   quantity: string;
   updated: string;
-  status: "Good" | "Low Stock" | "Out of Stock" | "Expired";
-  category: "fridge" | "pantry" | "freezer" | "spice rack" | "other";
+  status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
+  category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
 };
 
 type Stock = {
   id: number;
   quantity: number;
   unit: string;
-  status: "GOOD" | "LOW_STOCK" | "OUT_OF_STOCK" | "EXPIRED";
+  status: 'GOOD' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'EXPIRED';
   category: string;
   last_updated: string;
   ingredient: {
@@ -61,7 +61,7 @@ const MyKitchen = () => {
   const [filters, setFilters] = useState<{
     search: string;
     status: string[];
-  }>({ search: "", status: [] });
+  }>({ search: '', status: [] });
 
   useEffect(() => {
     // Ensure userId is available
@@ -69,6 +69,7 @@ const MyKitchen = () => {
 
     async function fetchHouses() {
       const res = await fetch(`/api/kitchen?userId=${userId}`);
+
       const data = await res.json();
       setHouses(data);
     }
@@ -77,26 +78,23 @@ const MyKitchen = () => {
   
   const handleEditItem = (id: number) => {
     // Flatten all stocks into items
-    const allItems: Item[] = houses.flatMap((house) =>
-      house.storages.flatMap((storage) =>
-        storage.stocks.map((stock) => ({
-          id: stock.id,
-          name: stock.ingredient.name,
-          image: stock.ingredient.image || "",
-          quantity: `${stock.quantity} ${stock.unit}`,
-          updated: new Date(stock.last_updated).toLocaleDateString("en-US"),
-          status:
-            stock.status === "GOOD"
-              ? "Good"
-              : stock.status === "LOW_STOCK"
-              ? "Low Stock"
-              : stock.status === "OUT_OF_STOCK"
-              ? "Out of Stock"
-              : "Expired",
-          category: (stock.category.toLowerCase() as "fridge" | "pantry" | "freezer" | "spice rack" | "other"),
-        }))
-      )
-    );
+    // eslint-disable-next-line max-len
+    const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
+      id: stock.id,
+      name: stock.ingredient.name,
+      image: stock.ingredient.image || '',
+      quantity: `${stock.quantity} ${stock.unit}`,
+      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+      status:
+            stock.status === 'GOOD'
+              ? 'Good'
+              : stock.status === 'LOW_STOCK'
+                ? 'Low Stock'
+                : stock.status === 'OUT_OF_STOCK'
+                  ? 'Out of Stock'
+                  : 'Expired',
+      category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
+    }))));
 
     const foundItem = allItems.find((item) => item.id === id);
     if (foundItem) {
@@ -106,43 +104,40 @@ const MyKitchen = () => {
   };
 
   // Apply filters to all stocks
-  const getFilteredStocks = (stocks: Stock[]) => {
-    return stocks
-      .map((stock) => ({
-        id: stock.id,
-        name: stock.ingredient.name,
-        image: stock.ingredient.image || "",
-        quantity: `${stock.quantity} ${stock.unit}`,
-        updated: new Date(stock.last_updated).toLocaleDateString("en-US"),
-        status:
-          stock.status === "GOOD"
-            ? "Good"
-            : stock.status === "LOW_STOCK"
-            ? "Low Stock"
-            : stock.status === "OUT_OF_STOCK"
-            ? "Out of Stock"
-            : "Expired" as "Good" | "Low Stock" | "Out of Stock" | "Expired",
-        category: stock.category.toLowerCase(),
-      }))
-      .filter((item) => {
-        const searchMatch = filters.search
-          ? item.name.toLowerCase().includes(filters.search.toLowerCase())
-          : true;
-        const statusMatch =
-          filters.status.length > 0 ? filters.status.includes(item.status) : true;
-        return searchMatch && statusMatch;
-      });
-  };
+  const getFilteredStocks = (stocks: Stock[]) => stocks
+    .map((stock) => ({
+      id: stock.id,
+      name: stock.ingredient.name,
+      image: stock.ingredient.image || '',
+      quantity: `${stock.quantity} ${stock.unit}`,
+      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+      status:
+          stock.status === 'GOOD'
+            ? 'Good'
+            : stock.status === 'LOW_STOCK'
+              ? 'Low Stock'
+              : stock.status === 'OUT_OF_STOCK'
+                ? 'Out of Stock'
+                : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
+      category: stock.category.toLowerCase(),
+    }))
+    .filter((item) => {
+      const searchMatch = filters.search
+        ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+        : true;
+      const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
+      return searchMatch && statusMatch;
+    });
 
   return (
     <Container style={{ marginTop: 100 }}>
       <div
         style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          height: "30vh",
-          marginBottom: "5px",
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          height: '30vh',
+          marginBottom: '5px',
         }}
       >
         <h1 className="fs-1">My Kitchen</h1>
@@ -152,22 +147,21 @@ const MyKitchen = () => {
 
       <div
         style={{
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          marginBottom: "50px",
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+          marginBottom: '50px',
         }}
       >
+        {/* Map houses from db */}
         {houses.map((house) => (
           <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
             <Row className="justify-content-end mb-4">
               <KitchenFilterButton
-                onApply={(appliedFilters) =>
-                  setFilters({ ...filters, status: appliedFilters.status })
-                }
+                onApply={(appliedFilters) => setFilters({ ...filters, status: appliedFilters.status })}
               />
               <Button
-                style={{ width: "125px" }}
+                style={{ width: '125px' }}
                 variant="success"
                 onClick={() => setShowAddModal(true)}
               >
@@ -186,7 +180,7 @@ const MyKitchen = () => {
             ))}
 
             <Button
-              style={{ width: "150px", backgroundColor: "#028383ff" }}
+              style={{ width: '150px', backgroundColor: '#028383ff' }}
               onClick={() => setShowPantryModal(true)}
             >
               <strong>Add Storage +</strong>

@@ -66,6 +66,12 @@ const getUnit = (unit: string): Unit => {
       return Unit.PIECE;
     case 'SACK':
       return Unit.SACK;
+    case 'LOAVES':
+      return Unit.LOAVES;
+    case 'BUNDLES':
+      return Unit.BUNDLES;
+    case 'PACKAGE':
+      return Unit.PACKAGE;
     default:
       return Unit.PIECE;
   }
@@ -88,6 +94,13 @@ const getStatus = (status: string): Status => {
 
 
 async function main() {
+  // Clear tables and reset IDs
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Stock" RESTART IDENTITY CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Ingredient" RESTART IDENTITY CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "Storage" RESTART IDENTITY CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "House" RESTART IDENTITY CASCADE;`);
+  await prisma.$executeRawUnsafe(`TRUNCATE TABLE "User" RESTART IDENTITY CASCADE;`);
+
   console.log('Seeding database...');
 
   // Seed Users
@@ -180,8 +193,14 @@ async function main() {
       console.log(`Seeding stock with id: ${stock.id}`);
 
       await prisma.stock.upsert({
-        where: { id: stock.id },
-        update: {},
+        where: { 
+          ingredientId_storageId: {
+            ingredientId: stock.ingredientId,
+            storageId: stock.storageId,
+          },
+         },
+        update: {
+        },
         create: {
           ingredientId: stock.ingredientId,
           storageId: stock.storageId,

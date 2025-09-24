@@ -1,5 +1,6 @@
+/* eslint-disable jsx-a11y/control-has-associated-label */
 // app/page.tsx
-import React from "react";
+import React from 'react';
 
 type Item = {
   name: string;
@@ -7,22 +8,22 @@ type Item = {
 };
 
 const items: Item[] = [
-  { name: "Tomatoes", quantity: 3, },
-  { name: "Chicken Breast", quantity: 5, },
-  { name: "Egg", quantity: 0, },
-  { name: "Milk", quantity: 2, },
-  { name: "Bread", quantity: 1, },
-  { name: "Carrots", quantity: 0, },
-  { name: "Cheese", quantity: 0,  },
-  { name: "Apples", quantity: 0, },
-  { name: "Spinach", quantity: 0, },
+  { name: 'Tomatoes', quantity: 3 },
+  { name: 'Chicken Breast', quantity: 5 },
+  { name: 'Egg', quantity: 0 },
+  { name: 'Milk', quantity: 2 },
+  { name: 'Bread', quantity: 1 },
+  { name: 'Carrots', quantity: 0 },
+  { name: 'Cheese', quantity: 0 },
+  { name: 'Apples', quantity: 0 },
+  { name: 'Spinach', quantity: 0 },
 ];
 
 export default function Page() {
   const getStockStatus = (quantity: number) => {
-    if (quantity === 0) return "Out of Stock";
-    if (quantity <= 2) return "Low Stock";
-    return "Full Stock";
+    if (quantity === 0) return 'Out of Stock';
+    if (quantity <= 2) return 'Low Stock';
+    return 'Full Stock';
   };
 
   const itemsToRestock = items.filter(item => item.quantity <= 2);
@@ -42,6 +43,7 @@ export default function Page() {
         </thead>
         <tbody>
           {itemsToRestock.map((item, index) => (
+            // eslint-disable-next-line react/no-array-index-key
             <tr key={index} className="border-b last:border-b-0">
               <td className="p-2">
                 <input type="checkbox" />

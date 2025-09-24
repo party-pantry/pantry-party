@@ -1,28 +1,21 @@
-import { prisma } from '../../../lib/prisma';
 import { NextResponse } from 'next/server';
+import { prisma } from '../../../lib/prisma';
 
-export async function GET(req: Request) {
-    try {
-      const userId = req.headers.get('userId');
-      if (!userId) {
-        return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
-      }
+// eslint-disable-next-line import/prefer-default-export
+export async function GET() {
+  try {
+    const houses = await prisma.house.findMany({
+      where: { userId: 1 }, // implement session userId when auth is added
+      include: {
+        storages: {
+          include: { stocks: { include: { ingredient: true } } },
+        },
+      },
+    });
 
-      const houses = await prisma.house.findMany({
-      where: { userId: Number(userId) }, 
-        include: {
-          storages: {
-            include: { stocks: { include: { ingredient: true } } }
-          }
-        }
-      });
-
-      return NextResponse.json(houses);
-
-    } catch (error) {
-      console.error('Request error', error);
-      return NextResponse.json({ error: 'Failed to fetching stocks' }, { status: 500 });
-    }
+    return NextResponse.json(houses);
+  } catch (error) {
+    console.error('Request error', error);
+    return NextResponse.json({ error: 'Failed to fetching stocks' }, { status: 500 });
+  }
 }
-
-  

@@ -5,7 +5,7 @@ export type Recipe = {
   name: string;
   image: string;
   cookTime: string;
-  difficulty: "Easy" | "Medium" | "Hard";
+  difficulty: 'Easy' | 'Medium' | 'Hard';
   availableIngredients: string[];
   missingIngredients: string[];
   description: string;
@@ -31,11 +31,11 @@ export type NutritionInfo = {
 };
 
 // Bootstrap variant mapping for difficulty levels
-export const getDifficultyVariant = (difficulty: Recipe["difficulty"]): string => {
+export const getDifficultyVariant = (difficulty: Recipe['difficulty']): string => {
   const difficultyMap = {
-    Easy: "success",
-    Medium: "warning",
-    Hard: "danger",
+    Easy: 'success',
+    Medium: 'warning',
+    Hard: 'danger',
   } as const;
   return difficultyMap[difficulty];
 };
