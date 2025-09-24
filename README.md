@@ -1,5 +1,11 @@
 # Party-pantry
 
+[![ci-pantry-party](https://github.com/party-pantry/pantry-party/actions/workflows/ci.yml/badge.svg)](https://github.com/party-pantry/pantry-party/actions/workflows/ci.yml)
+
+
+For details, please see https://party-pantry.github.io/.
+
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -38,13 +44,5 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
 
-[![ci-pantry-party](https://github.com/party-pantry/pantry-party/actions/workflows/ci.yml/badge.svg)](https://github.com/party-pantry/pantry-party/actions/workflows/ci.yml)
 
-
-
-For details, please see http://ics-software-engineering.github.io/nextjs-application-template/.
-
-[![ci-nextjs-application-template](https://github.com/ics-software-engineering/nextjs-application-template/actions/workflows/ci.yml/badge.svg)](https://github.com/ics-software-engineering/nextjs-application-template/actions/workflows/ci.yml)
-
-For details, please see http://ics-software-engineering.github.io/nextjs-application-template/.
 
