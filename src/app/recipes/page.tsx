@@ -83,7 +83,7 @@ const Recipes: React.FC = () => {
   };
 
   return (
-    <Container style={{ marginTop: 100, marginBottom: 50 }}>
+    <Container style={{ marginBottom: 50 }}>
       {/* Header */}
       <div
         style={{
