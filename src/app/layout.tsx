@@ -28,7 +28,6 @@ const nunitoSans = Nunito_Sans({
   weight: ["400", "600"], // adjust as needed
 });
 
-
 export const metadata: Metadata = {
   title: 'Pantry Party',
   description: 'Platform for managing and organizing your pantry items across multiple kitchens and storage spaces.',
@@ -43,7 +42,7 @@ export default function RootLayout({
     <SessionProviderWrapper>
       <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
         >
           <NavBar />
           {children}
