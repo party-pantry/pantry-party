@@ -11,6 +11,7 @@ import AddItemModal from '../../components/AddItemModal';
 import AddPantryModal from '../../components/AddPantryModal';
 import KitchenFilterButton from '../../components/KitchenFilterButton';
 import EditItemModal from '../../components/EditItemModal';
+import KitchenSortButton from '../../components/KitchenSortButton';
 
 // Types
 type Item = {
@@ -62,6 +63,9 @@ const MyKitchen = () => {
     status: string[];
   }>({ search: '', status: [] });
 
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  // Fetch the houses from the db
   useEffect(() => {
     async function fetchHouses() {
       const res = await fetch('/api/kitchen');
@@ -71,10 +75,29 @@ const MyKitchen = () => {
     fetchHouses();
   }, []);
 
-  const handleEditItem = (id: number) => {
-    // Flatten all stocks into items
-    // eslint-disable-next-line max-len
-    const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
+  // // Flatten all stocks into items
+  // const handleEditItem = (id: number) => {
+  //   // eslint-disable-next-line max-len
+  //   const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
+  //     id: stock.id,
+  //     name: stock.ingredient.name,
+  //     image: stock.ingredient.image || '',
+  //     quantity: `${stock.quantity} ${stock.unit}`,
+  //     updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+  //     status:
+  //           stock.status === 'GOOD'
+  //             ? 'Good'
+  //             : stock.status === 'LOW_STOCK'
+  //               ? 'Low Stock'
+  //               : stock.status === 'OUT_OF_STOCK'
+  //                 ? 'Out of Stock'
+  //                 : 'Expired',
+  //     category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
+  //   }))));
+
+  // Flatten all stocks into Items
+  const getDisplayedItems = (): Item[] => {
+    const allItems: Item[] = houses.flatMap(house => house.storages.flatMap(storage => storage.stocks.map(stock => ({
       id: stock.id,
       name: stock.ingredient.name,
       image: stock.ingredient.image || '',
@@ -88,41 +111,74 @@ const MyKitchen = () => {
                 : stock.status === 'OUT_OF_STOCK'
                   ? 'Out of Stock'
                   : 'Expired',
-      category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
+      category: stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other',
     }))));
 
-    const foundItem = allItems.find((item) => item.id === id);
+    // const foundItem = allItems.find((item) => item.id === id);
+    //   if (foundItem) {
+    //     setItemToEdit(foundItem);
+    //     setShowEditModal(true);
+    //   }
+    // };
+
+    // Apply filters
+    const filtered = allItems.filter(item => {
+      const searchMatch = filters.search ? item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+      const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
+      return searchMatch && statusMatch;
+    });
+
+    // Apply sorting by name
+    const sorted = filtered.sort(
+      (a, b) => (sortDirection === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)),
+    );
+    return sorted;
+  };
+
+  const handleEditItem = (id: number) => {
+    const foundItem = getDisplayedItems().find(item => item.id === id);
     if (foundItem) {
       setItemToEdit(foundItem);
       setShowEditModal(true);
     }
   };
 
-  // Apply filters to all stocks
-  const getFilteredStocks = (stocks: Stock[]) => stocks
-    .map((stock) => ({
-      id: stock.id,
-      name: stock.ingredient.name,
-      image: stock.ingredient.image || '',
-      quantity: `${stock.quantity} ${stock.unit}`,
-      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
-      status:
-          stock.status === 'GOOD'
-            ? 'Good'
-            : stock.status === 'LOW_STOCK'
-              ? 'Low Stock'
-              : stock.status === 'OUT_OF_STOCK'
-                ? 'Out of Stock'
-                : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
-      category: stock.category.toLowerCase(),
-    }))
-    .filter((item) => {
-      const searchMatch = filters.search
-        ? item.name.toLowerCase().includes(filters.search.toLowerCase())
-        : true;
-      const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
-      return searchMatch && statusMatch;
-    });
+  // const handleSort = (direction: 'asc' | 'desc') => {
+  //   const sorted = [...sortedItems].sort((a, b) => (direction === 'asc'
+  //     ? a.name.localeCompare(b.name)
+  //     : b.name.localeCompare(a.name)));
+  //   setSortedItems(sorted);
+  // };
+
+  // const handleSort = (direction: 'asc' | 'desc') => {
+  //   setSortDirection(direction);
+  // };
+
+  // // Apply filters to all stocks
+  // const getFilteredStocks = (stocks: Stock[]) => stocks
+  //   .map((stock) => ({
+  //     id: stock.id,
+  //     name: stock.ingredient.name,
+  //     image: stock.ingredient.image || '',
+  //     quantity: `${stock.quantity} ${stock.unit}`,
+  //     updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+  //     status:
+  //         stock.status === 'GOOD'
+  //           ? 'Good'
+  //           : stock.status === 'LOW_STOCK'
+  //             ? 'Low Stock'
+  //             : stock.status === 'OUT_OF_STOCK'
+  //               ? 'Out of Stock'
+  //               : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
+  //     category: stock.category.toLowerCase(),
+  //   }))
+  //   .filter((item) => {
+  //     const searchMatch = filters.search
+  //       ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+  //       : true;
+  //     const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
+  //     return searchMatch && statusMatch;
+  //   });
 
   return (
     <Container style={{ marginTop: 100 }}>
@@ -152,6 +208,7 @@ const MyKitchen = () => {
         {houses.map((house) => (
           <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
             <Row className="justify-content-end mb-4">
+              <KitchenSortButton label="Sort" onSort={dir => setSortDirection(dir)} />
               <KitchenFilterButton
                 onApply={(appliedFilters) => setFilters({ ...filters, status: appliedFilters.status })}
               />
@@ -167,7 +224,7 @@ const MyKitchen = () => {
             {house.storages.map((storage) => (
               <StorageContainer key={storage.id} id={storage.id.toString()} title={storage.name}>
                 <IngredientTable
-                  items={getFilteredStocks(storage.stocks)}
+                  items={getDisplayedItems()}
                   onDelete={() => {}}
                   onEdit={handleEditItem}
                 />
