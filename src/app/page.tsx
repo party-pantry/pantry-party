@@ -28,6 +28,10 @@ export default function Home() {
           <div style={{ flex: "1 1 400px", minWidth: "300px", textAlign: "left" }}>
             <h1 style={{ marginBottom: '24px' }}>
               <strong>The Fun Way To Stock Your Pantry</strong>
+        >
+          <div style={{ flex: 1, textAlign: 'left' }}>
+            <h1 style={{ marginBottom: '24px' }}>
+              The Fun Way To Stock Your Pantry
             </h1>
             <h5 style={{ marginBottom: '24px' }}>
               Easily track and manage your pantry items across multiple kitchens
@@ -60,7 +64,6 @@ export default function Home() {
             />
           </div>
         </div>
-        
         <div
           style={{
             display: 'flex',
