@@ -33,11 +33,13 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({ id, title, children
         <Nav.Item>
           <Nav.Link href="#third">Home 3</Nav.Link>
         </Nav.Item>
-        <PlusCircle
-          size={32}
-          className=" ml-auto"
-          style={{ cursor: 'pointer', color: '#ffffffff' }}
-        />
+        <Nav.Item className="ms-auto d-flex align-items-center">
+          <PlusCircle
+            size={32}
+            className=" ml-auto"
+            style={{ cursor: 'pointer', color: '#ffffffff' }}
+          />
+        </Nav.Item>
       </Nav>
     </Card.Header>
     <Card.Body className="p-4 mb-0">

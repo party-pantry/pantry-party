@@ -20,7 +20,7 @@ interface Props {
 
 // Mockup UI of what list of ingredients table could look like
 const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
-  <table className="w-full border-collapse bg-white shadow-md rounded">
+  <table className="w-full h-full border-collapse bg-white shadow-md rounded">
     <thead className="bg-gray-100">
       <tr>
         <th className="p-3 text-left">

@@ -1,11 +1,10 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import { DropdownButton, Form, Button } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Search, Filter } from 'lucide-react';
 
 const statusOptions = ['Good', 'Low Stock', 'Out of Stock', 'Expired'];
 
-// eslint-disable-next-line max-len, react/require-default-props
+// eslint-disable-next-line react/require-default-props
 const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quantity: number, status: string[] }) => void }> = ({ onApply }) => {
   const [quantity, setQuantity] = useState(25);
   const [search, setSearch] = useState('');
@@ -22,42 +21,36 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
     setSearch('');
     setQuantity(25);
     setStatus([]);
-    if (onApply) onApply({ search: '', quantity: 25, status: [] });
+    if (onApply) {
+      onApply({ search: '', quantity: 25, status: [] });
+    }
   };
 
   const handleApply = () => {
-    if (onApply) onApply({ search, quantity, status });
+    if (onApply) {
+      onApply({ search, quantity, status });
+    }
   };
 
   return (
-    <div style={{ position: 'absolute', top: '74px', left: '470px' }}>
-      <div className="d-flex align-items-center gap-2">
-        <div className="position-relative" style={{ maxWidth: '250px' }}>
-          <Search
-            size={18}
-            className="position-absolute top-50 translate-middle-y ms-2 text-muted"
-          />
+    <DropdownButton
+      title={<strong>Filter</strong>}
+      variant="outline-dark"
+      style={{ width: '125px' }}
+      align="end"
+      drop="down"
+      flip={false}
+    >
+      <Form style={{ width: '250px' }} onSubmit={(e) => { e.preventDefault(); handleApply(); }}>
+        <Form.Group className="m-3">
           <Form.Control
             placeholder="Search..."
+            className="mx-auto mb-3"
             value={search}
+            style={{ width: '90%' }}
             onChange={(e) => setSearch(e.target.value)}
-            style={{ paddingLeft: '2rem' }}
           />
-        </div>
-        <DropdownButton
-          id="kitchen-filter-dropdown"
-          title={(
-            <div className="d-flex align-items-center gap-1">
-              <Filter size={18} />
-              <span>Filter</span>
-            </div>
-                  )}
-          variant="outline-dark"
-          align="end"
-          drop="down"
-          flip={false}
-        >
-          <Form.Label className="d-block mt-2 mb-1">
+          <Form.Label>
             Quantity
             {'<='}
             {' '}
@@ -68,9 +61,8 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
             max={50}
             value={quantity}
             onChange={(e) => setQuantity(Number(e.target.value))}
-            className="mb-2"
           />
-          <Form.Text className="d-block mb-1">Status</Form.Text>
+          <Form.Text> Status </Form.Text>
           {statusOptions.map((option) => (
             <Form.Check
               key={option}
@@ -79,20 +71,34 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
               name="status"
               onChange={() => handleStatusChange(option)}
               checked={status.includes(option)}
-              className="mb-1"
             />
           ))}
-          <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
-            <Button variant="danger" onClick={handleReset}>
+          <div
+            className="mt-3"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <Button
+              variant="danger"
+              style={{ width: '100px' }}
+              onClick={handleReset}
+            >
               Reset
             </Button>
-            <Button variant="primary" onClick={handleApply}>
+            <Button
+              variant="primary"
+              style={{ width: '100px' }}
+              onClick={handleApply}
+            >
               Apply
             </Button>
           </div>
-        </DropdownButton>
-      </div>
-    </div>
+        </Form.Group>
+      </Form>
+    </DropdownButton>
   );
 };
 

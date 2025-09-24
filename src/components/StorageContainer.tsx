@@ -37,7 +37,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
       <h2 className="ml-4 mb-0 mt-2">{title}</h2>
     </Card.Header>
     <Card.Body
-      className="p-4 mb-0"
+      className="p-4 mb-0 d-flex flex-col"
       style={{
         backgroundColor: '#03a9a9ff',
       }}

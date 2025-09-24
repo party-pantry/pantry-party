@@ -73,21 +73,23 @@ const MyKitchen = () => {
 
   const handleEditItem = (id: number) => {
     // Flatten all stocks into items
-    const allItems: Item[] = houses.flatMap((house) =>
-      // eslint-disable-next-line implicit-arrow-linebreak
-      house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
-        id: stock.id,
-        name: stock.ingredient.name,
-        image: stock.ingredient.image || '',
-        quantity: `${stock.quantity} ${stock.unit}`,
-        updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
-        status:
-          stock.status === 'GOOD' ? 'Good'
-            : stock.status === 'LOW_STOCK' ? 'Low Stock'
-              : stock.status === 'OUT_OF_STOCK' ? 'Out of Stock'
-                : 'Expired',
-        category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
-      }))));
+    // eslint-disable-next-line max-len
+    const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
+      id: stock.id,
+      name: stock.ingredient.name,
+      image: stock.ingredient.image || '',
+      quantity: `${stock.quantity} ${stock.unit}`,
+      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+      status:
+            stock.status === 'GOOD'
+              ? 'Good'
+              : stock.status === 'LOW_STOCK'
+                ? 'Low Stock'
+                : stock.status === 'OUT_OF_STOCK'
+                  ? 'Out of Stock'
+                  : 'Expired',
+      category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
+    }))));
 
     const foundItem = allItems.find((item) => item.id === id);
     if (foundItem) {
