@@ -40,8 +40,8 @@ const features = [
 const FeaturesSection: React.FC = () => (
   <Container className="text-center my-5">
     <Row className="g-4 justify-content-center">
-      {features.map((feature, index) => (
-        <Col md={4} sm={6} xs={12} key={index} className="d-flex justify-content-center">
+      {features.map((feature) => (
+        <Col md={4} sm={6} xs={12} key={feature.title} className="d-flex justify-content-center">
           <FeatureCard title={feature.title} description={feature.description} icon={feature.icon} />
         </Col>
       ))}

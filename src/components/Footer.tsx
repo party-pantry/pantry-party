@@ -11,8 +11,8 @@ const Footer: React.FC = () => (
         <Col>
           <h5>Quick Links</h5>
           <ul className="list-unstyled">
-            <li><a href="/#home" className="text-white text-decoration-none">Home</a></li>
-            <li><a href="/#features" className="text-white text-decoration-none">Features</a></li>
+            <li><Link href="/#home" className="text-white text-decoration-none">Home</Link></li>
+            <li><Link href="/#features" className="text-white text-decoration-none">Features</Link></li>
           </ul>
         </Col>
       </Row>
