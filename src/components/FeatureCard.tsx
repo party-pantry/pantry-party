@@ -4,17 +4,17 @@ import { Card } from 'react-bootstrap';
 interface Props {
   title: string;
   description: string;
-  image: string;
+  icon: React.ReactNode
 }
 
-const FeatureCard: React.FC<Props> = ({ title, description, image }) => (
-  <Card style={{ width: '20rem' }}>
-    <Card.Img variant="top" src={image} style={{ width: '100%', height: '200px', objectFit: 'cover' }} />
-    <Card.Body>
-      <Card.Title>
+const FeatureCard: React.FC<Props> = ({ title, description, icon }) => (
+  <Card className="feature-card">
+    <div className="feature-icon-circle">{icon}</div>
+    <Card.Body className="text-center">
+      <Card.Title className="feature-title">
         {title}
       </Card.Title>
-      <Card.Text>
+      <Card.Text className="feature-description">
         {description}
       </Card.Text>
     </Card.Body>
