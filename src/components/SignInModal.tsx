@@ -5,7 +5,6 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -48,10 +47,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
 
   return (
     <Modal show={show} onHide={onHide} centered>
-      <Modal.Header
-        style={{ borderBottom: 'none', paddingBottom: '0px' }}
-        closeButton
-      />
+      <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
       <Modal.Body className="text-center">
         <h5 className="text-center mb-4">
           <strong>Welcome Back to the Party!</strong>
@@ -83,10 +79,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
               onChange={(e) => setPassword(e.target.value)}
               isInvalid={!!error}
             />
-            <InputGroup.Text
-              className="custom-input-group-text toggle-icon"
-              onClick={togglePasswordVisibility}
-            >
+            <InputGroup.Text className="custom-input-group-text toggle-icon" onClick={togglePasswordVisibility}>
               {passwordVisible ? <EyeOff /> : <Eye />}
             </InputGroup.Text>
 
@@ -97,7 +90,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           </InputGroup>
 
           {/* Sign in button */}
-          <Button variant="dark" type="submit">
+          <Button variant="success" type="submit">
             <strong>Sign in</strong>
           </Button>
           {/* error message */}

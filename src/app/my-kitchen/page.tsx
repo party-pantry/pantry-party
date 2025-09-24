@@ -65,9 +65,7 @@ const MyKitchen = () => {
   });
 
   // Sort direction per storage (keyed by storage.id)
-  const [sortDirections, setSortDirections] = useState<
-  Record<number, 'asc' | 'desc'>
-  >({});
+  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
 
   // Fetch kitchen data
   useEffect(() => {
@@ -81,27 +79,26 @@ const MyKitchen = () => {
 
   // Flatten all stocks into items
   const handleEditItem = (id: number) => {
-    const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
-      id: stock.id,
-      name: stock.ingredient.name,
-      image: stock.ingredient.image || '',
-      quantity: `${stock.quantity} ${stock.unit}`,
-      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
-      status:
-        stock.status === 'GOOD'
-          ? 'Good'
-          : stock.status === 'LOW_STOCK'
-            ? 'Low Stock'
-            : stock.status === 'OUT_OF_STOCK'
-              ? 'Out of Stock'
-              : 'Expired',
-      category: stock.category.toLowerCase() as
-            | 'fridge'
-            | 'pantry'
-            | 'freezer'
-            | 'spice rack'
-            | 'other',
-    }))));
+    const allItems: Item[] = houses.flatMap((house) =>
+      house.storages.flatMap((storage) =>
+        storage.stocks.map((stock) => ({
+          id: stock.id,
+          name: stock.ingredient.name,
+          image: stock.ingredient.image || '',
+          quantity: `${stock.quantity} ${stock.unit}`,
+          updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+          status:
+            stock.status === 'GOOD'
+              ? 'Good'
+              : stock.status === 'LOW_STOCK'
+                ? 'Low Stock'
+                : stock.status === 'OUT_OF_STOCK'
+                  ? 'Out of Stock'
+                  : 'Expired',
+          category: stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other',
+        })),
+      ),
+    );
 
     const foundItem = allItems.find((item) => item.id === id);
     if (foundItem) {
@@ -134,30 +131,19 @@ const MyKitchen = () => {
             : stock.status === 'OUT_OF_STOCK'
               ? 'Out of Stock'
               : 'Expired',
-      category: stock.category.toLowerCase() as
-        | 'fridge'
-        | 'pantry'
-        | 'freezer'
-        | 'spice rack'
-        | 'other',
+      category: stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other',
     }));
 
     // Apply filters
     const filtered = allItems.filter((item) => {
-      const searchMatch = filters.search
-        ? item.name.toLowerCase().includes(filters.search.toLowerCase())
-        : true;
-      const statusMatch = filters.status.length > 0
-        ? filters.status.includes(item.status)
-        : true;
+      const searchMatch = filters.search ? item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+      const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
       return searchMatch && statusMatch;
     });
 
     // Sorting (by name)
     const direction = sortDirections[storage.id] || 'asc';
-    return filtered.sort((a, b) => (direction === 'asc'
-      ? a.name.localeCompare(b.name)
-      : b.name.localeCompare(a.name)));
+    return filtered.sort((a, b) => (direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
   };
 
   return (
@@ -187,11 +173,7 @@ const MyKitchen = () => {
         }}
       >
         {houses.map((house) => (
-          <HomeTabSelection
-            key={house.id}
-            id={house.id.toString()}
-            title={house.name}
-          >
+          <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
             <Row className="justify-content-end mb-3 pr-4">
               <KitchenFilterButton
                 onApply={(appliedFilters) => setFilters({ ...filters, status: appliedFilters.status })}
@@ -210,19 +192,10 @@ const MyKitchen = () => {
                 id={storage.id.toString()}
                 title={storage.name}
                 /* Sorting for every storage space */
-                feature={(
-                  <KitchenSortButton
-                    label="Sort"
-                    onSort={() => handleSort(storage.id)}
-                  />
-              )}
+                feature={<KitchenSortButton label="Sort" onSort={() => handleSort(storage.id)} />}
               >
                 {/* Table of items */}
-                <IngredientTable
-                  items={getDisplayedStocks(storage)}
-                  onDelete={() => {}}
-                  onEdit={handleEditItem}
-                />
+                <IngredientTable items={getDisplayedStocks(storage)} onDelete={() => {}} onEdit={handleEditItem} />
               </StorageContainer>
             ))}
             <Button
@@ -237,16 +210,8 @@ const MyKitchen = () => {
       </div>
 
       {/* Modals */}
-      <AddItemModal
-        show={showAddModal}
-        onHide={() => setShowAddModal(false)}
-        onAddItem={() => {}}
-      />
-      <AddPantryModal
-        show={showPantryModal}
-        onHide={() => setShowPantryModal(false)}
-        onAddPantry={() => {}}
-      />
+      <AddItemModal show={showAddModal} onHide={() => setShowAddModal(false)} onAddItem={() => {}} />
+      <AddPantryModal show={showPantryModal} onHide={() => setShowPantryModal(false)} onAddPantry={() => {}} />
       <EditItemModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
