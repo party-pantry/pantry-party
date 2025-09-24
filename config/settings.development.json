@@ -1,7 +1,6 @@
 {
     "defaultUsers": [
         {
-            "id": 1,
             "email": "email@example.com",
             "username": "Test User",
             "password": "changeme",
@@ -10,7 +9,6 @@
     ],
   "defaultHouses": [
     {
-      "id": 1,
       "name": "Main House",
       "address": "123 Test St",
       "storages": [1, 2, 3, 4]
@@ -19,54 +17,43 @@
 
   "defaultStorages": [
     {
-      "id": 1,
-      "houseId": 1,
       "name": "Kitchen Fridge",
       "type": "FRIDGE"
     },
     {
-      "id": 2,
-      "houseId": 1,
       "name": "Pantry Closet",
       "type": "PANTRY"
     },
     {
-      "id": 3,
-      "houseId": 1,
       "name": "Freezer Chest",
       "type": "FREEZER"
     },
     {
-      "id": 4,
-      "houseId": 1,
       "name": "Spice Rack",
       "type": "SPICE_RACK"
     }
   ],
 
   "defaultIngredients": [
-    { "id": 1, "name": "Milk", "price": 8 },
-    { "id": 2, "name": "Eggs", "price": 10 },
-    { "id": 3, "name": "Rice", "price": 10 },
-    { "id": 4, "name": "Chicken Breast", "price": 15 },
-    { "id": 5, "name": "Salt", "price": 2 },
-    { "id": 6, "name": "Bread", "price": 6 },
-    { "id": 7, "name": "Bananas", "price": 5 },
-    { "id": 8, "name": "Yougurt", "price": 4 },
-    { "id": 9, "name": "Pepper", "price": 2 },
-    { "id": 10, "name": "Olive Oil", "price": 4 },
-    { "id": 11, "name": "Ice Cream", "price": 7 },
-    { "id": 12, "name": "Swiss Cheese", "price": 5 },
-    { "id": 13, "name": "Lettuce", "price": 4 },
-    { "id": 14, "name": "Tomato", "price": 6 },
-    { "id": 15, "name": "Cereal", "price": 5 }
+    { "name": "Milk", "price": 8 },
+    { "name": "Eggs", "price": 10 },
+    { "name": "Rice", "price": 10 },
+    { "name": "Chicken Breast", "price": 15 },
+    { "name": "Salt", "price": 2 },
+    { "name": "Bread", "price": 6 },
+    { "name": "Bananas", "price": 5 },
+    { "name": "Yougurt", "price": 4 },
+    { "name": "Pepper", "price": 2 },
+    { "name": "Olive Oil", "price": 4 },
+    { "name": "Ice Cream", "price": 7 },
+    { "name": "Swiss Cheese", "price": 5 },
+    { "name": "Lettuce", "price": 4 },
+    { "name": "Tomato", "price": 6 },
+    { "name": "Cereal", "price": 5 }
   ],
 
   "defaultStocks": [
     {
-      "id": 1,
-      "ingredientId": 1,
-      "storageId": 1,
       "quantity": 1,
       "unit": "GALLON",
       "status": "LOW_STOCK",
@@ -74,9 +61,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 2,
-      "ingredientId": 2,
-      "storageId": 1,
       "quantity": 12,
       "unit": "PIECE",
       "status": "GOOD",
@@ -84,9 +68,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 3,
-      "ingredientId": 3,
-      "storageId": 2,
       "quantity": 5,
       "unit": "POUND",
       "status": "LOW_STOCK",
@@ -94,9 +75,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 4,
-      "ingredientId": 4,
-      "storageId": 3,
       "quantity": 10,
       "unit": "POUND",
       "status": "LOW_STOCK",
@@ -104,9 +82,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 5,
-      "ingredientId": 5,
-      "storageId": 4,
       "quantity": 1,
       "unit": "POUND",
       "status": "GOOD",
@@ -114,9 +89,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 6,
-      "ingredientId": 6,
-      "storageId": 2,
       "quantity": 7,
       "unit": "LOAVES",
       "status": "GOOD",
@@ -124,9 +96,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 7,
-      "ingredientId": 7,
-      "storageId": 2,
       "quantity": 5,
       "unit": "BUNDLES",
       "status": "GOOD",
@@ -134,9 +103,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 8,
-      "ingredientId": 8,
-      "storageId": 1,
       "quantity": 2,
       "unit": "BOX",
       "status": "LOW_STOCK",
@@ -144,9 +110,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 9,
-      "ingredientId": 9,
-      "storageId": 4,
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
@@ -154,9 +117,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 10,
-      "ingredientId": 10,
-      "storageId": 2,
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
@@ -164,9 +124,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 11,
-      "ingredientId": 11,
-      "storageId": 3,
       "quantity": 0,
       "unit": "PINT",
       "status": "OUT_OF_STOCK",
@@ -174,9 +131,6 @@
       "last_updated": "2025-09-20T00:00:00.000Z"
     },
     {
-      "id": 12,
-      "ingredientId": 12,
-      "storageId": 1,
       "quantity": 2,
       "unit": "PACKAGE",
       "status": "LOW_STOCK",
@@ -184,9 +138,6 @@
       "last_updated": "2025-09-19T00:00:00.000Z"
     },
     {
-      "id": 13,
-      "ingredientId": 13,
-      "storageId": 1,
       "quantity": 6,
       "unit": "BUNDLES",
       "status": "GOOD",
@@ -194,9 +145,6 @@
       "last_updated": "2025-09-21T00:00:00.000Z"
     },
     {
-      "id": 14,
-      "ingredientId": 14,
-      "storageId": 1,
       "quantity": 2,
       "unit": "BUNDLES",
       "status": "LOW_STOCK",
@@ -204,9 +152,6 @@
       "last_updated": "2025-09-18T00:00:00.000Z"
     },
     {
-      "id": 15,
-      "ingredientId": 15,
-      "storageId": 2,
       "quantity": 4,
       "unit": "BOX",
       "status": "GOOD",
