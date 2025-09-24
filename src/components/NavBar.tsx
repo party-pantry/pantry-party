@@ -1,8 +1,9 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import Image from "next/image";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import Link from 'next/link';
+import Image from 'next/image';
+import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   Refrigerator,
   ListCheck,
@@ -10,12 +11,12 @@ import {
   User,
   ChevronUp,
   ChevronDown,
-} from "lucide-react";
-import { useState } from "react";
-import SignInModal from "./SignInModal";
-import SignUpModal from "./SignUpModal";
-import SignOutModal from "./SignOutModal";
-import { useSession } from "next-auth/react";
+} from 'lucide-react';
+import { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import SignInModal from './SignInModal';
+import SignUpModal from './SignUpModal';
+import SignOutModal from './SignOutModal';
 
 const NavBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -23,13 +24,13 @@ const NavBar: React.FC = () => {
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { data: session, status } = useSession();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const currentUser = session?.user?.email;
 
   return (
     <>
       <Navbar
         expand="lg"
-        fixed="top"
         bg="primary"
         variant="dark"
         className="custom-navbar"
@@ -39,15 +40,16 @@ const NavBar: React.FC = () => {
             <Image
               src="/pantry-party.png"
               alt="Pantry Party Logo"
-              width={72}
-              height={72}
+              width={120}
+              height={120}
               className="me-2"
+
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              {status == "authenticated" && (
+              {status === 'authenticated' && (
                 <>
                   <Nav.Link
                     as={Link}
@@ -74,15 +76,15 @@ const NavBar: React.FC = () => {
               <NavDropdown
                 id="login-dropdown"
                 className="nav-dropdown"
-                renderMenuOnMount={true}
+                renderMenuOnMount
                 show={dropdownOpen}
                 onToggle={(isOpen) => setDropdownOpen(isOpen)}
-                title={
+                title={(
                   <span
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "4px",
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
                     }}
                   >
                     <User />
@@ -92,9 +94,9 @@ const NavBar: React.FC = () => {
                       <ChevronDown size={15} />
                     )}
                   </span>
-                }
+                )}
               >
-                {status == "authenticated" ? (
+                {status === 'authenticated' ? (
                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>
                     Sign Out
                   </NavDropdown.Item>

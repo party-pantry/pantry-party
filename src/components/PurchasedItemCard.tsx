@@ -1,6 +1,6 @@
-import React from "react";
-import { Card, Button, Form } from "react-bootstrap";
-import { ShoppingItem } from "../utils/shoppingListUtils";
+import React from 'react';
+import { Card, Button, Form } from 'react-bootstrap';
+import { ShoppingItem } from '../utils/shoppingListUtils';
 
 interface PurchasedItemCardProps {
   item: ShoppingItem;
@@ -32,7 +32,7 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
           variant="outline-danger"
           size="sm"
           onClick={() => onRemove(item.id)}
-          style={{ width: "28px", height: "28px" }}
+          style={{ width: '28px', height: '28px' }}
         >
           ×
         </Button>
