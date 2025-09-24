@@ -10,7 +10,6 @@ import { signIn } from 'next-auth/react';
 // Component imports
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 // Icon imports
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { createUser } from '../lib/dbFunctions';
 
@@ -79,7 +78,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
             </InputGroup.Text>
             <Form.Control
               placeholder="Username"
-                                // className="custom-input-control"
+                            // className="custom-input-control"
               className={`form-control ${errors.username ? 'is-invalid' : ''}`}
               type="text"
               {...register('username')}
@@ -94,7 +93,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
             </InputGroup.Text>
             <Form.Control
               placeholder="Email"
-                                // className="custom-input-control"
+                            // className="custom-input-control"
               className={`form-control ${errors.email ? 'is-invalid' : ''}`}
               type="email"
               {...register('email')}
@@ -109,7 +108,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
             </InputGroup.Text>
             <Form.Control
               placeholder="Password"
-                                // className="custom-input-control"
+                            // className="custom-input-control"
               className={`form-control ${errors.password ? 'is-invalid' : ''}`}
               type={passwordVisible ? 'text' : 'password'}
               {...register('password')}
@@ -130,7 +129,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
             </InputGroup.Text>
             <Form.Control
               placeholder="Confirm Password"
-                                // className="custom-input-control"
+                            // className="custom-input-control"
               className={`form-control ${errors.confirmPassword ? 'is-invalid' : ''}`}
               type={passwordConfirmVisible ? 'text' : 'password'}
               {...register('confirmPassword')}
