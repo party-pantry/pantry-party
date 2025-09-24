@@ -26,6 +26,23 @@ const NavBar: React.FC = () => {
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  // Get display name - prioritize name, then email username, then fallback
+  const getDisplayName = () => {
+    if (!currentUser) return null;
+    
+    if (currentUser.name) {
+      return currentUser.name;
+    }
+    
+    if (currentUser.email) {
+      return currentUser.email.split('@')[0];
+    }
+    
+    return 'User';
+  };
+
+  const displayName = getDisplayName();
+
   return (
     <>
       <Navbar
@@ -86,7 +103,11 @@ const NavBar: React.FC = () => {
                       gap: '4px',
                     }}
                   >
-                    <User />
+                    {session && displayName ? (
+                      <span className="nav-link-text">{displayName}</span>
+                    ) : (
+                      <User />
+                    )}
                     {dropdownOpen ? (
                       <ChevronUp size={15} />
                     ) : (
