@@ -17,15 +17,15 @@ const geistMono = Geist_Mono({
 });
 
 const lato = Lato({
-  variable: "--font-lato",
-  subsets: ["latin"],
-  weight: ["400", "700"], // adjust as needed
+  variable: '--font-lato',
+  subsets: ['latin'],
+  weight: ['400', '700'], // adjust as needed
 });
 
 const nunitoSans = Nunito_Sans({
-  variable: "--font-nunito-sans",
-  subsets: ["latin"],
-  weight: ["400", "600"], // adjust as needed
+  variable: '--font-nunito-sans',
+  subsets: ['latin'],
+  weight: ['400', '600'], // adjust as needed
 });
 
 export const metadata: Metadata = {
