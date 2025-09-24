@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { User, Lock, Eye, EyeOff } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -56,7 +56,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           {/* Username or Email */}
           <InputGroup className="mt-4 mb-3 custom-input-group pl-10 pr-10">
             <InputGroup.Text className="custom-input-group-text">
-              <FaUser />
+              <User />
             </InputGroup.Text>
             <Form.Control
               placeholder="Username or Email"
@@ -70,7 +70,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           {/* Password */}
           <InputGroup className="mb-7 custom-input-group pl-10 pr-10">
             <InputGroup.Text className="custom-input-group-text">
-              <FaLock />
+              <Lock />
             </InputGroup.Text>
             <Form.Control
               placeholder="Password"
@@ -83,7 +83,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
               className="custom-input-group-text toggle-icon"
               onClick={togglePasswordVisibility}
             >
-              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+              {passwordVisible ? <EyeOff /> : <Eye />}
             </InputGroup.Text>
 
             {/* Error message */}
