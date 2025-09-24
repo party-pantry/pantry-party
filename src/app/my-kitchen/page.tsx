@@ -1,3 +1,5 @@
+'use client'
+
 /* eslint-disable no-nested-ternary */
 
 import { Container, Button, Row } from "react-bootstrap";
