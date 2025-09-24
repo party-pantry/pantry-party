@@ -1,56 +1,42 @@
-/* eslint-disable react/prop-types */
-
 'use client';
 
 import { useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { createUser } from '../lib/dbFunctions';
 import { signIn } from 'next-auth/react';
 // Component imports
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 // Icon imports
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
-import { createUser } from '../lib/dbFunctions';
 
 interface Props {
-  show: boolean;
-  onHide: () => void;
+    show: boolean;
+    onHide: () => void;
 }
 
 type SignUpData = {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
+    username: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
 
 const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
-  const validationSchema = Yup.object().shape({
-    username: Yup.string().required('Username is required'),
-    email: Yup.string().required('Email is required').email('Email is invalid'),
-    password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
-    // eslint-disable-next-line max-len
-    confirmPassword: Yup.string().required('Confirm Password is required').oneOf([Yup.ref('password'), ''], 'Password does not match'),
-  });
+    const validationSchema = Yup.object().shape({
+        username: Yup.string().required('Username is required'),
+        email: Yup.string().required('Email is required').email('Email is invalid'),
+        password: Yup.string().required('Password is required').min(6, 'Password must be at least 6 characters'),
+        confirmPassword: Yup.string().required('Confirm Password is required').oneOf([Yup.ref('password'), ''], 'Password does not match'),
+    });
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpData>({
-    resolver: yupResolver(validationSchema),
-  });
-
-  const onSubmit = async (data: SignUpData) => {
-    await createUser(data);
-    // Use email as identifier for immediate sign-in after registration
-    await signIn('credentials', {
-      identifier: data.email,
-      password: data.password,
-      callbackUrl: '/my-kitchen',
-      redirect: true,
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<SignUpData>({
+        resolver: yupResolver(validationSchema),
     });
 
     const onSubmit = async (data: SignUpData) => {
