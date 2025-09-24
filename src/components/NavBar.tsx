@@ -31,7 +31,6 @@ const NavBar: React.FC = () => {
     <>
       <Navbar
         expand="lg"
-        fixed="top"
         bg="primary"
         variant="dark"
         className="custom-navbar"
@@ -41,9 +40,10 @@ const NavBar: React.FC = () => {
             <Image
               src="/pantry-party.png"
               alt="Pantry Party Logo"
-              width={72}
-              height={72}
+              width={120}
+              height={120}
               className="me-2"
+
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />

@@ -126,3 +126,6 @@ body {
   display: none !important;
 }
 
+.bg-primary {
+  background-color: #3A5B4F !important; /* SaddleBrown */
+}
