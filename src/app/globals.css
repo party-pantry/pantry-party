@@ -211,3 +211,10 @@ body {
   background-color: #DDF3F0;
 }
 
+h1 {
+  font-family: var(--font-lato), sans-serif;
+}
+
+h5 {
+  font-family: var(--font-nunito-sans), sans-serif;
+}
