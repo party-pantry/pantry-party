@@ -188,6 +188,7 @@ const MyKitchen = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={() => {}}
+        storages={houses.flatMap((house) => house.storages.map((storage) => ({ id: storage.id, name: storage.name })))}
       />
       <AddPantryModal
         show={showPantryModal}
