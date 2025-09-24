@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import {
   Refrigerator,
   ListCheck,
@@ -19,13 +19,12 @@ import SignUpModal from './SignUpModal';
 import SignOutModal from './SignOutModal';
 
 const NavBar: React.FC = () => {
+  const { data: session } = useSession();
+  const currentUser = session?.user;
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: session, status } = useSession();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const currentUser = session?.user?.email;
 
   return (
     <>
@@ -40,8 +39,8 @@ const NavBar: React.FC = () => {
             <Image
               src="/pantry-party.png"
               alt="Pantry Party Logo"
-              width={120}
-              height={120}
+              width={100}
+              height={100}
               className="me-2"
 
             />
@@ -49,7 +48,7 @@ const NavBar: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="ms-auto">
-              {status === 'authenticated' && (
+              {currentUser && (
                 <>
                   <Nav.Link
                     as={Link}
@@ -96,7 +95,7 @@ const NavBar: React.FC = () => {
                   </span>
                 )}
               >
-                {status === 'authenticated' ? (
+                {session ? (
                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>
                     Sign Out
                   </NavDropdown.Item>
