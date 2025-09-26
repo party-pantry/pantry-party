@@ -97,8 +97,7 @@ model Ingredient {
 }
 
 model Stock {
-  id            Int         @id @default(autoincrement())
-  ingredientId  Int?
+  ingredientId  Int
   storageId     Int
   custom_name   String?
   quantity      Float
@@ -110,8 +109,8 @@ model Stock {
 
   ingredient    Ingredient? @relation(fields: [ingredientId], references: [id])
   storage       Storage     @relation(fields: [storageId], references: [id])
-  @@unique      ([ingredientId, storageId])
-  @@unique      ([custom_name, storageId])  
+  
+  @@id([ingredientId, storageId])
 }
 
 model Recipe {
@@ -127,14 +126,15 @@ model Recipe {
 
   user          User        @relation(fields: [userId], references: [id])
   ingredients   RecipeIngredient[]
-  instructions  Instruction[]
-  nutrition     Nutrition[]
+  instructions  RecipeInstruction[]
+  nutrition     RecipeNutrition[]
 }
 
 model RecipeIngredient {
   id            Int         @id @default(autoincrement())
   recipeId      Int
   ingredientId  Int
+  name          String
   quantity      Float
   unit          Unit
   
@@ -142,7 +142,7 @@ model RecipeIngredient {
   ingredient    Ingredient  @relation(fields: [ingredientId], references: [id])
 }
 
-model Instruction {
+model RecipeInstruction {
   id            Int         @id @default(autoincrement())
   recipeId      Int
   step          Int
@@ -151,7 +151,7 @@ model Instruction {
   recipe        Recipe      @relation(fields: [recipeId], references: [id])
 }
 
-model Nutrition {
+model RecipeNutrition {
   id            Int         @id @default(autoincrement())
   recipeId      Int
   name          String
