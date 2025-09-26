@@ -1,13 +1,14 @@
 {
-    "defaultUsers": [
-        {
-            "id": 1,
-            "email": "email@example.com",
-            "username": "Test User",
-            "password": "changeme",
-            "houses": [1]
-        }
-    ],
+  "defaultUsers": [
+    {
+      "id": 1,
+      "email": "email@example.com",
+      "username": "Test User",
+      "password": "changeme",
+      "houses": [1]
+    }
+  ],
+
   "defaultHouses": [
     {
       "id": 1,
@@ -59,8 +60,19 @@
     { "id": 12, "name": "Swiss Cheese", "price": 5 },
     { "id": 13, "name": "Lettuce", "price": 4 },
     { "id": 14, "name": "Tomato", "price": 6 },
-    { "id": 15, "name": "Cereal", "price": 5 }
-  ],
+    { "id": 15, "name": "Cereal", "price": 5 },
+    { "id": 16, "name": "Black Pepper", "price": 3 },
+    { "id": 17, "name": "Penne Pasta", "price": 4 },
+    { "id": 18, "name": "Lemon Juice", "price": 3 },
+    { "id": 19, "name": "Garlic", "price": 2 },
+    { "id": 20, "name": "Red Pepper Flakes", "price": 3 },
+    { "id": 21, "name": "Feta Cheese", "price": 5 },
+    { "id": 22, "name": "Beef Tenderloin", "price": 30 },
+    { "id": 23, "name": "Puff Pastry", "price": 7 },
+    { "id": 24, "name": "Mushrooms", "price": 6 },
+    { "id": 25, "name": "Dijon Mustard", "price": 4 },
+    { "id": 26, "name": "Chickpeas", "price": 3 }
+  ], 
 
   "defaultStocks": [
     {
@@ -212,6 +224,182 @@
       "status": "GOOD",
       "category": "PANTRY",
       "last_updated": "2025-09-21T00:00:00.000Z"
+    }
+  ],
+
+  "defaultRecipes": [
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Tomato Scrambled Eggs",
+      "description": "A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.",
+      "difficulty": "EASY",
+      "prepTime": 5,
+      "cookTime": 10,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 2, "name": "Eggs", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        "Heat olive oil in a non-stick pan over medium heat.",
+        "Dice the tomatoes into small pieces and add to the pan.",
+        "Cook tomatoes for 2-3 minutes until they start to soften.",
+        "Beat the eggs in a bowl and season with salt and pepper.",
+        "Pour the beaten eggs into the pan with tomatoes.",
+        "Gently scramble the eggs, stirring frequently until cooked through.",
+        "Remove from heat and serve immediately while hot."
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 200, "unit": "kcal" },
+        { "name": "Protein", "amount": 12, "unit": "g" },
+        { "name": "Carbs", "amount": 6, "unit": "g" },
+        { "name": "Fat", "amount": 15, "unit": "g" }
+      ]
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "name": "Chicken Breast Salad",
+      "description": "Healthy and protein-rich salad with grilled chicken and fresh vegetables.",
+      "difficulty": "EASY",
+      "prepTime": 10,
+      "cookTime": 15,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 13, "name": "Lettuce", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 18, "name": "Lemon Juice", "quantity": 1, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        "Season chicken with salt and pepper.",
+        "Grill or pan-sear chicken until fully cooked (5–7 minutes per side).",
+        "Slice chicken into strips.",
+        "Dice tomatoes and mix with lettuce in a bowl.",
+        "Top with chicken and drizzle with olive oil and optional lemon juice."
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 250, "unit": "kcal" },
+        { "name": "Protein", "amount": 30, "unit": "g" },
+        { "name": "Carbs", "amount": 5, "unit": "g" },
+        { "name": "Fat", "amount": 12, "unit": "g" }
+      ]
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "name": "Chicken Tomato Pasta",
+      "description": "Delicious pasta with tender chicken and rich tomato sauce.",
+      "difficulty": "MEDIUM",
+      "prepTime": 10,
+      "cookTime": 30,
+      "downTime": 10,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 17, "name": "Penne Pasta", "quantity": 1, "unit": "BOX" },
+        { "ingredientId": 19, "name": "Garlic", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 20, "name": "Red Pepper Flakes", "quantity": 0.25, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        "Cook pasta according to package instructions.",
+        "Drain and set aside.",
+        "Dice tomatoes and set aside.",
+        "Heat olive oil in a pan, sauté garlic for 30 sec.",
+        "Add chicken, cook until lightly browned and fully cooked.",
+        "Add tomatoes and simmer for 5–7 minutes to form sauce.",
+        "Mix pasta with chicken-tomato mixture, season with salt, pepper, and optional red pepper flakes.",
+        "Serve hot."
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 350, "unit": "kcal" },
+        { "name": "Protein", "amount": 28, "unit": "g" },
+        { "name": "Carbs", "amount": 40, "unit": "g" },
+        { "name": "Fat", "amount": 10, "unit": "g" }
+      ]
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "name": "Mediterranean Bowl",
+      "description": "A healthy Mediterranean-inspired bowl with fresh ingredients.",
+      "difficulty": "EASY",
+      "prepTime": 5,
+      "cookTime": 15,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 2, "name": "Eggs", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 13, "name": "Lettuce", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 21, "name": "Feta Cheese", "quantity": 0.25, "unit": "CUP" },
+        { "ingredientId": 26, "name": "Chickpeas", "quantity": 1, "unit": "CUP" }
+      ],
+      "instructions": [
+        "Hard boil or poach eggs (8–10 min).",
+        "Dice tomato and chop lettuce.",
+        "Mix chickpeas, lettuce, tomato, and feta in a bowl.",
+        "Peel and slice eggs, place on top.",
+        "Drizzle with olive oil, season with salt and pepper."
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 300, "unit": "kcal" },
+        { "name": "Protein", "amount": 14, "unit": "g" },
+        { "name": "Carbs", "amount": 18, "unit": "g" },
+        { "name": "Fat", "amount": 18, "unit": "g" }
+      ]
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "name": "Beef Wellington",
+      "description": "A gourmet dish featuring tender beef wrapped in puff pastry.",
+      "difficulty": "HARD",
+      "prepTime": 45,
+      "cookTime": 60,
+      "downTime": 30,
+      "servings": 6,
+      "ingredients": [
+        { "ingredientId": 22, "name": "Beef Tenderloin", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 23, "name": "Puff Pastry", "quantity": 1, "unit": "SHEET" },
+        { "ingredientId": 24, "name": "Mushrooms", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 25, "name": "Dijon Mustard", "quantity": 1, "unit": "TABLESPOON" },
+        { "ingredientId": 2, "name": "Egg", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        "Preheat oven to 200°C (400°F).",
+        "Season beef with salt and pepper, sear in hot oil 2–3 min per side.",
+        "Brush seared beef with mustard.",
+        "Sauté mushrooms until moisture evaporates, cool slightly.",
+        "Roll puff pastry, place mushroom mixture in center, then beef on top, wrap pastry completely.",
+        "Brush with egg wash, bake at 200°C (400°F) for 35–40 min.",
+        "Rest 10 min, slice, and serve."
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 600, "unit": "kcal" },
+        { "name": "Protein", "amount": 45, "unit": "g" },
+        { "name": "Carbs", "amount": 30, "unit": "g" },
+        { "name": "Fat", "amount": 35, "unit": "g" }
+      ]
     }
   ]
 }
