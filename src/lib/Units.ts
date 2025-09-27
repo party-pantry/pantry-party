@@ -1,4 +1,4 @@
-export enum localUnit{
+export enum LocalUnit {
   OUNCE = 'oz',
   POUND = 'lb',
   GRAM = 'g',
@@ -20,14 +20,14 @@ export enum localUnit{
   SACK = 'sack',
 }
 
-export enum localStatus {
+export enum LocalStatus {
   GOOD = 'Good',
   LOW_STOCK = 'Low Stock',
   OUT_OF_STOCK = 'Out of Stock',
   EXPIRED = 'Expired',
 }
 
-export enum localCategory {
+export enum LocalCategory {
   FRIDGE = 'fridge',
   PANTRY = 'pantry',
   FREEZER = 'freezer',

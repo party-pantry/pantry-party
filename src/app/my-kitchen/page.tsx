@@ -28,7 +28,6 @@ type Stock = {
   quantity: number;
   unit: string;
   status: 'GOOD' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'EXPIRED';
-  category: string;
   last_updated: string;
   ingredient: {
     id: number;
@@ -88,7 +87,7 @@ const MyKitchen = () => {
                 : stock.status === 'OUT_OF_STOCK'
                   ? 'Out of Stock'
                   : 'Expired',
-      category: (stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other'),
+      category: 'other',
     }))));
 
     const foundItem = allItems.find((item) => item.id === id);
@@ -114,7 +113,7 @@ const MyKitchen = () => {
               : stock.status === 'OUT_OF_STOCK'
                 ? 'Out of Stock'
                 : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
-      category: stock.category.toLowerCase(),
+      category: 'other',
     }))
     .filter((item) => {
       const searchMatch = filters.search

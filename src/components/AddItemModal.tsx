@@ -7,36 +7,35 @@
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
 import { addItem } from '@/lib/dbFunctions';
-import { localUnit, localStatus } from '@/lib/Units';
+import { Unit, Status } from '@prisma/client';
+import { LocalUnit, LocalStatus } from '@/lib/Units';
 
 interface Props {
   show: boolean;
   onHide: () => void;
   onAddItem: (item: {
     name: string;
-    image: string;
-    quantity: string;
-    status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-    category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
+    // image: string; // Wait for image implementation
+    quantity: number;
+    status: Status;
     storageId: number;
-    units: 'Ounce' | 'Pound' | 'Gram' | 'Kilogram' | 'Milliliter' | 'Liter' | 'Fluid ounce' | 'Cup' | 'Pint' | 'Quart' | 'Gallon' | 'Teaspoon' | 'Tablespoon' | 'Bag' | 'Can' | 'Bottle' | 'Box' | 'Piece' | 'Sack';
+    units: Unit;
   }) => void;
   storages: {
-      id: number;
-      name: string;
-    }[] | null;
+    id: number;
+    name: string;
+  }[] | null;
 
 }
 
 const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) => {
   const [formData, setFormData] = useState({
     name: '',
-    image: '',
-    quantity: '',
-    status: 'Good' as const,
-    category: 'fridge' as const,
+    // image: '',
+    quantity: 0,
+    status: Status.GOOD,
     storageId: storages && storages.length > 0 ? storages[0].id : 0,
-    units: 'Ounce' as const,
+    units: Unit.OUNCE,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,9 +43,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
     if (formData.name && formData.quantity) {
       onAddItem({
         ...formData,
-        image: formData.image || '🍽️',
       });
-      setFormData({ name: '', image: '', quantity: '', status: 'Good', category: 'fridge', storageId: storages && storages.length > 0 ? storages[0].id : 0, units: 'Ounce' });
+      setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 0, units: Unit.OUNCE });
+      addItem(formData);
       onHide();
     }
   };
@@ -74,7 +73,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
         <h5 className="text-center"><strong>Add New Item!</strong></h5>
         <Form onSubmit={handleSubmit}>
           {/* Storage Location Name */}
-          <Form.Group className="mb-3" controlId="storageName" >
+          <Form.Group className="mb-3" controlId="storageName">
             <Form.Select
               className="text-center"
               value={formData.storageId}

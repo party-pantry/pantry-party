@@ -4,8 +4,8 @@
 // import { redirect } from 'next/navigation';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { hash } from 'bcryptjs';
+import { Unit, Status } from '@prisma/client';
 import { prisma } from './prisma';
-import { Unit, Status, Category } from '@prisma/client';
 
 // eslint-disable-next-line import/prefer-default-export
 export async function createUser(credentials: {
@@ -36,43 +36,44 @@ export async function createUser(credentials: {
   });
 }
 
-/* Add item from Ingredient table*/
+/* Add item from Ingredient table */
 export async function addItem(data: {
   name: string;
   quantity: number;
-  status: string;
-  category: string;
+  status: Status;
   storageId: number;
-  unit: string;
+  units: Unit;
 }) {
-  // Check if ingredient already exists
-  const existingIngredient = await prisma.ingredient.findUnique({
-    where: { name: data.name },
+  const sterilizedItemName = data.name.trim();
+  const foundItem = await prisma.ingredient.findFirst({
+    where: {
+      name: {
+        equals: sterilizedItemName,
+        mode: 'insensitive',
+      },
+    },
   });
-  if (!data.ingredientId) {
-    await prisma.stock.create({
+  /* custom ingredient creation */
+  let ingredientId: number;
+
+  if (!foundItem) {
+    const newIngredient = await prisma.ingredient.create({
       data: {
-        storageId: data.storageId,
-        quantity: data.quantity,
-        unit: data.unit as Unit,
-        status: data.status as Status,
-        category: data.category as Category, // May not be needed
-        custom_name: data.name,
+        name: sterilizedItemName,
       },
     });
+    ingredientId = newIngredient.id;
+  } else {
+    ingredientId = foundItem.id;
   }
 
-  // Add stock item assuming ingredientId is provided
-  else {
-    await prisma.stock.create({
-      data: {
-        ingredientId: data.ingredientId,
-        storageId: data.storageId,
-        quantity: data.quantity,
-        unit: data.unit as Unit,
-        status: data.status as Status,
-        category: data.category as Category, // May not be needed
-      },
-    });
-  }
+  await prisma.stock.create({
+    data: {
+      ingredientId,
+      storageId: data.storageId,
+      quantity: Number(data.quantity),
+      unit: data.units,
+      status: data.status,
+    },
+  });
 }
