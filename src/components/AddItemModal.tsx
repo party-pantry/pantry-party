@@ -38,20 +38,27 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
     units: Unit.OUNCE,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.quantity) {
-      onAddItem({
-        ...formData,
-      });
-      setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
-      addItem(formData);
-      onHide();
+      try {
+        await addItem({
+          ...formData,
+          units: formData.units as Unit,
+          status: formData.status as Status,
+        });
+        onAddItem({
+          ...formData,
+        });
+        setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
+        onHide();
+      } catch (error) {
+        alert('Error adding item: ' + (error as Error).message);
+      }
     }
   };
 
   const handleChange = (field: string, value: string) => {
-    // Convert storageId to number
     if (field === 'storageId') {
       setFormData((prev) => ({ ...prev, [field]: Number(value) }));
     } else {
@@ -134,7 +141,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
             >
-              {Object.values(LocalStatus).map((status) => (
+              {Object.values(Status).map((status) => (
                 <option key={status} value={status}>{status}</option>
               ))}
             </Form.Select>

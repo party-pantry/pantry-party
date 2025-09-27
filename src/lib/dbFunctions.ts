@@ -70,15 +70,19 @@ export async function addItem(data: {
           name: sterilizedItemName,
         },
       });
-    } catch (error) {
-      // If creation fails due to race condition, try finding it again
-      ingredient = await prisma.ingredient.findFirst({
-        where: {
-          name: sterilizedItemName,
-        },
-      });
-      if (!ingredient) {
-        throw error; // Re-throw if still not found
+    } catch (error: any) {
+      // If creation fails due to unique constraint, try finding it again
+      if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
+        ingredient = await prisma.ingredient.findFirst({
+          where: {
+            name: sterilizedItemName,
+          },
+        });
+        if (!ingredient) {
+          throw error; // Re-throw if still not found
+        }
+      } else {
+        throw error;
       }
     }
   }

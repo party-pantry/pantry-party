@@ -23,7 +23,6 @@ type Item = {
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-  category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
 };
 
 type Stock = {
@@ -96,7 +95,6 @@ const MyKitchen = () => {
                 : stock.status === 'OUT_OF_STOCK'
                   ? 'Out of Stock'
                   : 'Expired',
-          category: 'other',
     }))));
 
     const foundItem = allItems.find((item) => item.id === id);
@@ -130,7 +128,6 @@ const MyKitchen = () => {
               : stock.status === 'OUT_OF_STOCK'
                 ? 'Out of Stock'
                 : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
-      category: 'other',
     }))
     .filter((item) => {
       const searchMatch = filters.search
@@ -142,7 +139,7 @@ const MyKitchen = () => {
 
     // Sorting (by name)
     const direction = sortDirections[storage.id] || 'asc';
-    return filtered.sort((a, b) => (direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
+    return allItems.sort((a, b) => (direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
   };
 
   return (
