@@ -1,3 +1,7 @@
+"use client";
+
+import slugify from 'slugify';
+import { useRouter } from 'next/navigation';
 import { Recipe } from '@prisma/client';
 import { Clock } from 'lucide-react';
 import { Card, CardBody, CardTitle, CardText, Badge, Button } from 'react-bootstrap';
@@ -17,11 +21,11 @@ interface RecipeCardProps {
 }
 
 const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
+    const link = slugify(recipe.name, { lower: true, strict: true });
     const difficulty = difficultyMap[recipe.difficulty]
     const totalTime = recipe.cookTime + recipe.prepTime + (recipe.downTime ?? 0);
     
     const ingredientsList = recipe.ingredients.map(ri => ri.ingredient.name);
-
     
     /* implement later (AUTH NEEDS TO BE FIXED)
     const haveIngredients = recipe.ingredients
@@ -31,14 +35,13 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     const missingIngredients = recipe.ingredients
         .filter(ri => !userIngredientsId.includes(ri.ingredient.id))
         .map(ri => ri.ingredient.name);
+    */
 
-    
     const router = useRouter();
 
     const handleViewDetails = () => {
-        router.push(`/recipe/${recipe.slug}`);
+        router.push(`/recipe/${link}-${recipe.id}`);
     };
-    */
 
     return (
         <Card className="recipe-card">
@@ -59,7 +62,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
                 <CardText><strong>Match: N/A</strong></CardText>
 
                 <div className="recipe-card-view-cook-buttons">
-                    <Button className="view-recipe-button" variant="success">View Recipe</Button>
+                    <Button className="view-recipe-button" variant="success" onClick={handleViewDetails}>View Recipe</Button>
                     <Button className="start-cooking-button" variant="success">Start Cooking</Button>
                 </div>
                 <div className="recipe-card-missing-button">

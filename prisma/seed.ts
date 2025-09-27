@@ -231,7 +231,6 @@ async function main() {
         id: recipe.id,
         userId: recipe.userId,
         name: recipe.name,
-        slug: slugify(recipe.name, { lower:true, strict: true}),
         description: recipe.description,
         difficulty: getDifficulty(recipe.difficulty),
         prepTime: recipe.prepTime,
