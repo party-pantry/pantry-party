@@ -12,7 +12,7 @@ interface Item {
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-  category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
+
 }
 
 interface Props {

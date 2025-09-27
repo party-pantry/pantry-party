@@ -29,15 +29,15 @@ const NavBar: React.FC = () => {
   // Get display name - prioritize name, then email username, then fallback
   const getDisplayName = () => {
     if (!currentUser) return null;
-    
+
     if (currentUser.name) {
       return currentUser.name;
     }
-    
+
     if (currentUser.email) {
       return currentUser.email.split('@')[0];
     }
-    
+
     return 'User';
   };
 
@@ -45,12 +45,7 @@ const NavBar: React.FC = () => {
 
   return (
     <>
-      <Navbar
-        expand="lg"
-        bg="primary"
-        variant="dark"
-        className="custom-navbar"
-      >
+      <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar">
         <Container>
           <Navbar.Brand as={Link} href="/">
             <Image
@@ -59,7 +54,6 @@ const NavBar: React.FC = () => {
               width={100}
               height={100}
               className="me-2"
-
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -95,7 +89,7 @@ const NavBar: React.FC = () => {
                 renderMenuOnMount
                 show={dropdownOpen}
                 onToggle={(isOpen) => setDropdownOpen(isOpen)}
-                title={(
+                title={
                   <span
                     style={{
                       display: 'flex',
@@ -114,7 +108,7 @@ const NavBar: React.FC = () => {
                       <ChevronDown size={15} />
                     )}
                   </span>
-                )}
+                }
               >
                 {session ? (
                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>

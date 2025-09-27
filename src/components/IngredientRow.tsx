@@ -31,7 +31,7 @@ const IngredientRow: React.FC<Props> = ({
   onDelete,
   onEdit,
 }) => (
-  <tr className="border-b">
+  <tr key={id} className="border-b">
     <td className="p-3">
       <input type="checkbox" />
     </td>
