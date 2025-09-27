@@ -17,19 +17,13 @@ const handler = NextAuth({
         // try to find user by email or username using findFirst
         const user = await prisma.user.findFirst({
           where: {
-            OR: [
-              { email: credentials.identifier },
-              { username: credentials.identifier },
-            ],
+            OR: [{ email: credentials.identifier }, { username: credentials.identifier }],
           },
         });
         if (!user) return null;
 
         // checking if password matches in database
-        const validPassword = await compare(
-          credentials.password,
-          user.password,
-        );
+        const validPassword = await compare(credentials.password, user.password);
         if (!validPassword) return null;
 
         return {
@@ -42,6 +36,8 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
   callbacks: {
     session: ({ session, token }) => ({
