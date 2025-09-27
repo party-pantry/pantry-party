@@ -5,6 +5,7 @@
 
 import { PrismaClient, Category, Unit, Status, Difficulty } from '@prisma/client';
 import { hash } from 'bcrypt';
+import slugify from 'slugify';
 import config from '../config/settings.development.json' assert { type: 'json' };
 
 const prisma = new PrismaClient();
@@ -230,6 +231,7 @@ async function main() {
         id: recipe.id,
         userId: recipe.userId,
         name: recipe.name,
+        slug: slugify(recipe.name, { lower:true, strict: true}),
         description: recipe.description,
         difficulty: getDifficulty(recipe.difficulty),
         prepTime: recipe.prepTime,

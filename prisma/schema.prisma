@@ -61,6 +61,7 @@ model Recipe {
   id           Int                 @id @default(autoincrement())
   userId       Int
   name         String
+  slug         String              @unique
   description  String?
   difficulty   Difficulty
   prepTime     Int
