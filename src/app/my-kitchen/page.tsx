@@ -66,7 +66,7 @@ const MyKitchen = () => {
 
   // Sort direction per storage (keyed by storage.id)
   const [sortDirections, setSortDirections] = useState<
-    Record<number, 'asc' | 'desc'>
+  Record<number, 'asc' | 'desc'>
   >({});
 
   // Fetch kitchen data
@@ -142,19 +142,18 @@ const MyKitchen = () => {
         const searchMatch = filters.search
           ? item.name.toLowerCase().includes(filters.search.toLowerCase())
           : true;
-        const statusMatch =
-          filters.status.length > 0
-            ? filters.status.includes(item.status)
-            : true;
+        const statusMatch = filters.status.length > 0
+          ? filters.status.includes(item.status)
+          : true;
         return searchMatch && statusMatch;
       });
 
     // Sorting (by name)
     const direction = sortDirections[storage.id] || 'asc';
     return allItems.sort((a, b) =>
-      direction === 'asc'
+      (direction === 'asc'
         ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name),
+        : b.name.localeCompare(a.name)),
     );
   };
 

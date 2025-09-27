@@ -22,11 +22,11 @@ interface Props {
     units: Unit;
   }) => void;
   storages:
-    | {
-        id: number;
-        name: string;
-      }[]
-    | null;
+  | {
+    id: number;
+    name: string;
+  }[]
+  | null;
 }
 
 const AddItemModal: React.FC<Props> = ({
@@ -66,6 +66,7 @@ const AddItemModal: React.FC<Props> = ({
         });
         setError(null);
         onHide();
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       } catch (error) {
         let message = 'Error adding item.';
         const errMsg = (error as Error).message;
@@ -177,7 +178,7 @@ const AddItemModal: React.FC<Props> = ({
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
             >
-              {Object.values(Status).map((status) => (
+              {Object.values(LocalStatus).map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
