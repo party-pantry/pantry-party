@@ -21,14 +21,20 @@ interface Props {
     storageId: number;
     units: Unit;
   }) => void;
-  storages: {
-    id: number;
-    name: string;
-  }[] | null;
-
+  storages:
+    | {
+        id: number;
+        name: string;
+      }[]
+    | null;
 }
 
-const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) => {
+const AddItemModal: React.FC<Props> = ({
+  show,
+  onHide,
+  onAddItem,
+  storages,
+}) => {
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -51,7 +57,13 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
         onAddItem({
           ...formData,
         });
-        setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
+        setFormData({
+          name: '',
+          quantity: 0,
+          status: Status.GOOD,
+          storageId: storages && storages.length > 0 ? storages[0].id : 1,
+          units: Unit.OUNCE,
+        });
         setError(null);
         onHide();
       } catch (error) {
@@ -59,7 +71,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
         const errMsg = (error as Error).message;
         if (errMsg.includes('Unique constraint failed')) {
           message = 'This item already exists in your pantry.';
-        } 
+        }
         setError(message);
       }
     }
@@ -77,14 +89,22 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
     <Modal
       show={show}
       onHide={onHide}
-		// backdrop="static"
-		// keyboard={false}
+      // backdrop="static"
+      // keyboard={false}
       centered
       contentClassName="custom-modal"
     >
-      <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
-      <Modal.Body className="text-center" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
-        <h5 className="text-center"><strong>Add New Item!</strong></h5>
+      <Modal.Header
+        style={{ borderBottom: 'none', paddingBottom: '0px' }}
+        closeButton
+      />
+      <Modal.Body
+        className="text-center"
+        style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
+      >
+        <h5 className="text-center">
+          <strong>Add New Item!</strong>
+        </h5>
         {error && (
           <div className="alert alert-danger" role="alert">
             {error}
@@ -100,7 +120,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
               required
             >
               {storages?.map((storage) => (
-                <option key={storage.id} value={storage.id}>{storage.name}</option>
+                <option key={storage.id} value={storage.id}>
+                  {storage.name}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
@@ -140,7 +162,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
                   onChange={(e) => handleChange('units', e.target.value)}
                 >
                   {Object.entries(LocalUnit).map(([key, value]) => (
-                    <option key={key} value={key}>{value}</option>
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
                   ))}
                 </Form.Select>
               </Form.Group>
@@ -154,14 +178,15 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
               onChange={(e) => handleChange('status', e.target.value)}
             >
               {Object.values(Status).map((status) => (
-                <option key={status} value={status}>{status}</option>
+                <option key={status} value={status}>
+                  {status}
+                </option>
               ))}
             </Form.Select>
           </Form.Group>
           <Button className="mb-2" variant="success" type="submit">
             Add Item
           </Button>
-
         </Form>
       </Modal.Body>
     </Modal>
