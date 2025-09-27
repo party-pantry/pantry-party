@@ -1,23 +1,36 @@
-enum Unit {
-  OUNCE,
-  POUND,
-  GRAM,
-  KILOGRAM,
-  MILILITER,
-  LITER,
-  FLUID_OUNCE,
-  CUP,
-  PINT,
-  QUART,
-  GALLON,
-  TEASPOON,
-  TABLESPOON,
-  BAG,
-  CAN,
-  BOTTLE,
-  BOX,
-  PIECE,
-  SACK,
+export enum LocalUnit {
+  OUNCE = 'oz',
+  POUND = 'lb',
+  GRAM = 'g',
+  KILOGRAM = 'kg',
+  MILILITER = 'mL',
+  LITER = 'L',
+  FLUID_OUNCE = 'fl oz',
+  CUP = 'cup',
+  PINT = 'pt',
+  QUART = 'qt',
+  GALLON = 'gal',
+  TEASPOON = 'tsp',
+  TABLESPOON = 'tbsp',
+  BAG = 'bag(s)',
+  CAN = 'can(s)',
+  BOTTLE = 'bottle(s)',
+  BOX = 'box(es)',
+  PIECE = 'pc(s)',
+  SACK = 'sack(s)',
 }
 
-export default Unit;
+export enum LocalStatus {
+  GOOD = 'Good',
+  LOW_STOCK = 'Low Stock',
+  OUT_OF_STOCK = 'Out of Stock',
+  EXPIRED = 'Expired',
+}
+
+export enum LocalCategory {
+  FRIDGE = 'fridge',
+  PANTRY = 'pantry',
+  FREEZER = 'freezer',
+  SPICE_RACK = 'spice rack',
+  OTHER = 'other',
+}

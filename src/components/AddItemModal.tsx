@@ -6,31 +6,36 @@
 
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
+import { addItem } from '@/lib/dbFunctions';
+import { Unit, Status } from '@prisma/client';
+import { LocalUnit, LocalStatus } from '@/lib/Units';
 
 interface Props {
   show: boolean;
   onHide: () => void;
   onAddItem: (item: {
     name: string;
-    image: string;
-    quantity: string;
-    status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-    category: 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other';
-    // for storage location name
-    storage: string;
-    units: 'Ounce' | 'Pound' | 'Gram' | 'Kilogram' | 'Milliliter' | 'Liter' | 'Fluid ounce' | 'Cup' | 'Pint' | 'Quart' | 'Gallon' | 'Teaspoon' | 'Tablespoon' | 'Bag' | 'Can' | 'Bottle' | 'Box' | 'Piece' | 'Sack';
+    // image: string; // Wait for image implementation
+    quantity: number;
+    status: Status;
+    storageId: number;
+    units: Unit;
   }) => void;
+  storages: {
+    id: number;
+    name: string;
+  }[] | null;
+
 }
 
-const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
+const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) => {
   const [formData, setFormData] = useState({
     name: '',
-    image: '',
-    quantity: '',
-    status: 'Good' as const,
-    category: 'fridge' as const,
-    storage: '',
-    units: 'Ounce' as const,
+    // image: '',
+    quantity: 0,
+    status: Status.GOOD,
+    storageId: storages && storages.length > 0 ? storages[0].id : 1,
+    units: Unit.OUNCE,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -38,15 +43,20 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
     if (formData.name && formData.quantity) {
       onAddItem({
         ...formData,
-        image: formData.image || '🍽️',
       });
-      setFormData({ name: '', image: '', quantity: '', status: 'Good', category: 'fridge', storage: '', units: 'Ounce' });
+      setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
+      addItem(formData);
       onHide();
     }
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    // Convert storageId to number
+    if (field === 'storageId') {
+      setFormData((prev) => ({ ...prev, [field]: Number(value) }));
+    } else {
+      setFormData((prev) => ({ ...prev, [field]: value }));
+    }
   };
 
   return (
@@ -64,14 +74,16 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
         <Form onSubmit={handleSubmit}>
           {/* Storage Location Name */}
           <Form.Group className="mb-3" controlId="storageName">
-            <Form.Control
+            <Form.Select
               className="text-center"
-              type="text"
-              placeholder="Storage Location Name"
-              value={formData.storage}
-              onChange={(e) => handleChange('storage', e.target.value)}
+              value={formData.storageId}
+              onChange={(e) => handleChange('storageId', e.target.value)}
               required
-            />
+            >
+              {storages?.map((storage) => (
+                <option key={storage.id} value={storage.id}>{storage.name}</option>
+              ))}
+            </Form.Select>
           </Form.Group>
           {/* Item Name */}
           <Form.Group className="mb-3" controlId="itemName">
@@ -108,25 +120,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
                   value={formData.units}
                   onChange={(e) => handleChange('units', e.target.value)}
                 >
-                  <option value="Ounce">Ounce</option>
-                  <option value="Pound">Pound</option>
-                  <option value="Gram">Gram</option>
-                  <option value="Kilogram">Kilogram</option>
-                  <option value="Milliliter">Milliliter</option>
-                  <option value="Liter">Liter</option>
-                  <option value="Fluid ounce">Fluid Ounce</option>
-                  <option value="Cup">Cup</option>
-                  <option value="Pint">Pint</option>
-                  <option value="Quart">Quart</option>
-                  <option value="Gallon">Gallon</option>
-                  <option value="Teaspoon">Teaspoon</option>
-                  <option value="Tablespoon">Tablespoon</option>
-                  <option value="Bag">Bag</option>
-                  <option value="Can">Can</option>
-                  <option value="Bottle">Bottle</option>
-                  <option value="Box">Box</option>
-                  <option value="Piece">Piece</option>
-                  <option value="Sack">Sack</option>
+                  {Object.entries(LocalUnit).map(([key, value]) => (
+                    <option key={key} value={key}>{value}</option>
+                  ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -138,10 +134,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem }) => {
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
             >
-              <option value="Good">Good</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-              <option value="Expired">Expired</option>
+              {Object.values(LocalStatus).map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
             </Form.Select>
           </Form.Group>
           <Button className="mb-2" variant="success" type="submit">

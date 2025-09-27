@@ -31,7 +31,6 @@ type Stock = {
   quantity: number;
   unit: string;
   status: 'GOOD' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'EXPIRED';
-  category: string;
   last_updated: string;
   ingredient: {
     id: number;
@@ -97,10 +96,8 @@ const MyKitchen = () => {
                 : stock.status === 'OUT_OF_STOCK'
                   ? 'Out of Stock'
                   : 'Expired',
-          category: stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other',
-        })),
-      ),
-    );
+          category: 'other',
+    }))));
 
     const foundItem = allItems.find((item) => item.id === id);
     if (foundItem) {
@@ -126,19 +123,19 @@ const MyKitchen = () => {
       quantity: `${stock.quantity} ${stock.unit}`,
       updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
       status:
-        stock.status === 'GOOD'
-          ? 'Good'
-          : stock.status === 'LOW_STOCK'
-            ? 'Low Stock'
-            : stock.status === 'OUT_OF_STOCK'
-              ? 'Out of Stock'
-              : 'Expired',
-      category: stock.category.toLowerCase() as 'fridge' | 'pantry' | 'freezer' | 'spice rack' | 'other',
-    }));
-
-    // Apply filters
-    const filtered = allItems.filter((item) => {
-      const searchMatch = filters.search ? item.name.toLowerCase().includes(filters.search.toLowerCase()) : true;
+          stock.status === 'GOOD'
+            ? 'Good'
+            : stock.status === 'LOW_STOCK'
+              ? 'Low Stock'
+              : stock.status === 'OUT_OF_STOCK'
+                ? 'Out of Stock'
+                : 'Expired' as 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired',
+      category: 'other',
+    }))
+    .filter((item) => {
+      const searchMatch = filters.search
+        ? item.name.toLowerCase().includes(filters.search.toLowerCase())
+        : true;
       const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
       return searchMatch && statusMatch;
     });
@@ -211,9 +208,17 @@ const MyKitchen = () => {
         ))}
       </div>
 
-      {/* Modals */}
-      <AddItemModal show={showAddModal} onHide={() => setShowAddModal(false)} onAddItem={() => {}} />
-      <AddPantryModal show={showPantryModal} onHide={() => setShowPantryModal(false)} onAddPantry={() => {}} />
+      <AddItemModal
+        show={showAddModal}
+        onHide={() => setShowAddModal(false)}
+        onAddItem={() => {}}
+        storages={houses.flatMap((house) => house.storages.map((storage) => ({ id: storage.id, name: storage.name })))}
+      />
+      <AddPantryModal
+        show={showPantryModal}
+        onHide={() => setShowPantryModal(false)}
+        onAddPantry={() => {}}
+      />
       <EditItemModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
