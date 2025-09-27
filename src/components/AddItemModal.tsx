@@ -29,6 +29,7 @@ interface Props {
 }
 
 const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) => {
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     name: '',
     // image: '',
@@ -51,9 +52,15 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
           ...formData,
         });
         setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
+        setError(null);
         onHide();
       } catch (error) {
-        alert('Error adding item: ' + (error as Error).message);
+        let message = 'Error adding item.';
+        const errMsg = (error as Error).message;
+        if (errMsg.includes('Unique constraint failed')) {
+          message = 'This item already exists in your pantry.';
+        } 
+        setError(message);
       }
     }
   };
@@ -78,6 +85,11 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
       <Modal.Body className="text-center" style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}>
         <h5 className="text-center"><strong>Add New Item!</strong></h5>
+        {error && (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
+        )}
         <Form onSubmit={handleSubmit}>
           {/* Storage Location Name */}
           <Form.Group className="mb-3" controlId="storageName">

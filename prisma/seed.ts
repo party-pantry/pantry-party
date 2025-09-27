@@ -235,6 +235,8 @@ async function main() {
         cookTime: recipe.cookTime,
         downTime: recipe.downTime,
         servings: recipe.servings,
+        // Update this slug when config is updated
+        slug: (recipe.slug ? recipe.slug : recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')),
         ingredients: {
           create: recipe.ingredients.map((ing: any) => ({
             ingredientId: ing.ingredientId,
