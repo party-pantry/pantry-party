@@ -120,25 +120,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
                   value={formData.units}
                   onChange={(e) => handleChange('units', e.target.value)}
                 >
-                  <option value="Ounce">Ounce</option>
-                  <option value="Pound">Pound</option>
-                  <option value="Gram">Gram</option>
-                  <option value="Kilogram">Kilogram</option>
-                  <option value="Milliliter">Milliliter</option>
-                  <option value="Liter">Liter</option>
-                  <option value="Fluid ounce">Fluid Ounce</option>
-                  <option value="Cup">Cup</option>
-                  <option value="Pint">Pint</option>
-                  <option value="Quart">Quart</option>
-                  <option value="Gallon">Gallon</option>
-                  <option value="Teaspoon">Teaspoon</option>
-                  <option value="Tablespoon">Tablespoon</option>
-                  <option value="Bag">Bag</option>
-                  <option value="Can">Can</option>
-                  <option value="Bottle">Bottle</option>
-                  <option value="Box">Box</option>
-                  <option value="Piece">Piece</option>
-                  <option value="Sack">Sack</option>
+                  {Object.values(LocalUnit).map((unit) => (
+                    <option key={unit} value={unit}>{unit}</option>
+                  ))}
                 </Form.Select>
               </Form.Group>
             </Col>
@@ -150,10 +134,9 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
             >
-              <option value="Good">Good</option>
-              <option value="Low Stock">Low Stock</option>
-              <option value="Out of Stock">Out of Stock</option>
-              <option value="Expired">Expired</option>
+              {Object.values(LocalStatus).map((status) => (
+                <option key={status} value={status}>{status}</option>
+              ))}
             </Form.Select>
           </Form.Group>
           <Button className="mb-2" variant="success" type="submit">

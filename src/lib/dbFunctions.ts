@@ -44,36 +44,83 @@ export async function addItem(data: {
   storageId: number;
   units: Unit;
 }) {
-  const sterilizedItemName = data.name.trim();
-  const foundItem = await prisma.ingredient.findFirst({
-    where: {
-      name: {
-        equals: sterilizedItemName,
-        mode: 'insensitive',
-      },
-    },
-  });
-  /* custom ingredient creation */
-  let ingredientId: number;
+  const sterilizedItemName = data.name.trim().toLowerCase();
 
-  if (!foundItem) {
-    const newIngredient = await prisma.ingredient.create({
-      data: {
-        name: sterilizedItemName,
-      },
-    });
-    ingredientId = newIngredient.id;
-  } else {
-    ingredientId = foundItem.id;
+  // Validate that the storage exists
+  const storage = await prisma.storage.findUnique({
+    where: { id: data.storageId },
+  });
+
+  if (!storage) {
+    throw new Error(`Storage with ID ${data.storageId} does not exist`);
   }
 
-  await prisma.stock.create({
-    data: {
-      ingredientId,
-      storageId: data.storageId,
-      quantity: Number(data.quantity),
-      unit: data.units,
-      status: data.status,
+  // First try to find existing ingredient
+  let ingredient = await prisma.ingredient.findFirst({
+    where: {
+      name: sterilizedItemName,
     },
   });
+
+  // If not found, try to create it (handle race condition)
+  if (!ingredient) {
+    try {
+      ingredient = await prisma.ingredient.create({
+        data: {
+          name: sterilizedItemName,
+        },
+      });
+    } catch (error) {
+      // If creation fails due to race condition, try finding it again
+      ingredient = await prisma.ingredient.findFirst({
+        where: {
+          name: sterilizedItemName,
+        },
+      });
+      if (!ingredient) {
+        throw error; // Re-throw if still not found
+      }
+    }
+  }
+
+  const ingredientId = ingredient.id;
+
+  // Check if stock already exists for this ingredient and storage combination
+  const existingStock = await prisma.stock.findUnique({
+    where: {
+      ingredientId_storageId: {
+        ingredientId,
+        storageId: data.storageId,
+      },
+    },
+  });
+
+  if (existingStock) {
+    // Update existing stock by adding the new quantity
+    await prisma.stock.update({
+      where: {
+        ingredientId_storageId: {
+          ingredientId,
+          storageId: data.storageId,
+        },
+      },
+      data: {
+        quantity: existingStock.quantity + Number(data.quantity),
+        unit: data.units,
+        status: data.status,
+        last_updated: new Date(),
+      },
+    });
+  } else {
+    // Create new stock
+    await prisma.stock.create({
+      data: {
+        ingredientId,
+        storageId: data.storageId,
+        quantity: Number(data.quantity),
+        unit: data.units,
+        status: data.status,
+      },
+    });
+  }
 }

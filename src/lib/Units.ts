@@ -12,12 +12,12 @@ export enum LocalUnit {
   GALLON = 'gal',
   TEASPOON = 'tsp',
   TABLESPOON = 'tbsp',
-  BAG = 'bag',
-  CAN = 'can',
-  BOTTLE = 'bottle',
-  BOX = 'box',
-  PIECE = 'pc',
-  SACK = 'sack',
+  BAG = 'bag(s)',
+  CAN = 'can(s)',
+  BOTTLE = 'bottle(s)',
+  BOX = 'box(es)',
+  PIECE = 'pc(s)',
+  SACK = 'sack(s)',
 }
 
 export enum LocalStatus {

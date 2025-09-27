@@ -50,7 +50,6 @@ model Stock {
   unit         Unit
   last_updated DateTime   @default(now()) @updatedAt
   status       Status     @default(GOOD)
-  category     Category
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   storage      Storage    @relation(fields: [storageId], references: [id])
 
@@ -61,6 +60,7 @@ model Recipe {
   id                Int                 @id @default(autoincrement())
   userId            Int
   name              String
+  slug              String              @unique
   description       String?
   difficulty        Difficulty
   prepTime          Int
