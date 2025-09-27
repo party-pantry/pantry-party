@@ -2,12 +2,9 @@
 
 import React, { useState } from 'react';
 import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
-import {
-  ShoppingItem,
-  sortItemsByPriority,
-} from '../../utils/shoppingListUtils';
-import ShoppingItemCard from '../../components/ShoppingItemCard';
-import PurchasedItemCard from '../../components/PurchasedItemCard';
+import { ShoppingItem, sortItemsByPriority } from '../../utils/shoppingListUtils';
+import ShoppingItemCard from '../../components/shopping-list-components/ShoppingItemCard';
+import PurchasedItemCard from '../../components/shopping-list-components/PurchasedItemCard';
 
 const ShoppingList: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);

@@ -11,7 +11,7 @@ import { signIn } from 'next-auth/react';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 // Icon imports
 import { User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
-import { createUser } from '../lib/dbFunctions';
+import { createUser } from '../../lib/dbFunctions';
 
 interface Props {
   show: boolean;

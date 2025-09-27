@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Button, Form } from 'react-bootstrap';
-import { ShoppingItem } from '../utils/shoppingListUtils';
+import { ShoppingItem } from '../../utils/shoppingListUtils';
 
 interface PurchasedItemCardProps {
   item: ShoppingItem;

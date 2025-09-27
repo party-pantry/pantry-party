@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
 import { Modal, Button, Badge, Row, Col, Card } from 'react-bootstrap';
-import { Recipe, getDifficultyVariant, getMatchPercentage } from '../utils/recipeUtils';
+import { Recipe, getDifficultyVariant, getMatchPercentage } from '../../utils/recipeUtils';
 
 interface RecipeModalProps {
   recipe: Recipe | null;

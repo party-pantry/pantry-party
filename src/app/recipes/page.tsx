@@ -8,7 +8,7 @@ import {
   Recipe,
   getMatchPercentage,
 } from '../../utils/recipeUtils';
-import RecipeModal from '../../components/RecipeModal';
+import RecipeModal from '../../components/recipes-components/RecipeModal';
 
 const Recipes: React.FC = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);

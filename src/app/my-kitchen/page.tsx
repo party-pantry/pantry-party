@@ -7,14 +7,14 @@
 
 import { Container, Button, Row } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
-import IngredientTable from '../../components/IngredientTable';
-import StorageContainer from '../../components/StorageContainer';
-import HomeTabSelection from '../../components/HomeTabSelection';
-import AddItemModal from '../../components/AddItemModal';
-import AddPantryModal from '../../components/AddPantryModal';
-import KitchenFilterButton from '../../components/KitchenFilterButton';
-import EditItemModal from '../../components/EditItemModal';
-import KitchenSortButton from '../../components/KitchenSortButton';
+import IngredientTable from '../../components/kitchen-components/IngredientTable';
+import StorageContainer from '../../components/kitchen-components/StorageContainer';
+import HomeTabSelection from '../../components/kitchen-components/HomeTabSelection';
+import AddItemModal from '../../components/kitchen-components/AddItemModal';
+import AddPantryModal from '../../components/kitchen-components/AddPantryModal';
+import KitchenFilterButton from '../../components/kitchen-components/KitchenFilterButton';
+import EditItemModal from '../../components/kitchen-components/EditItemModal';
+import KitchenSortButton from '../../components/kitchen-components/KitchenSortButton';
 
 type Item = {
   id: number;
