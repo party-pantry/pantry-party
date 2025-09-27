@@ -98,7 +98,7 @@ const ShoppingList: React.FC = () => {
   const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
   return (
-    <Container style={{ marginTop: 100, marginBottom: 50 }}>
+    <Container style={{ marginBottom: 50 }}>
       {/* Header */}
       <div
         style={{

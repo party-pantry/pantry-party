@@ -13,12 +13,16 @@ const SignOutModal: React.FC<Props> = ({ show, onHide }) => (
   <Modal show={show} onHide={onHide} centered>
     <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
     <Modal.Body className="text-center">
-      <h5 className="text-center mb-4"><strong>Are you sure you want to sign out?</strong></h5>
+      <h5 className="text-center mb-4">
+        <strong>Are you sure you want to sign out?</strong>
+      </h5>
       <div className="sign-out-buttons">
-        <Button variant="dark" onClick={() => signOut({ callbackUrl: '/', redirect: true })}>
+        <Button variant="success" onClick={() => signOut({ callbackUrl: '/', redirect: true })}>
           <strong>Yes, Sign Out</strong>
         </Button>
-        <Button variant="danger" onClick={onHide}><strong>No</strong></Button>
+        <Button variant="danger" onClick={onHide}>
+          <strong>No</strong>
+        </Button>
       </div>
     </Modal.Body>
   </Modal>

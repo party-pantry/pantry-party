@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #E5E5E3;
   --foreground: #171717;
 }
 
@@ -12,12 +12,14 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* DARK MODE
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
 }
+*/
 
 body {
   background: var(--background);
@@ -26,6 +28,10 @@ body {
 }
 
 /* Navbar */
+.navbar {
+  background-color: #3A5B4F !important;
+}
+
 .nav-link-icon {
   display: flex;
   align-items: center;
@@ -91,6 +97,13 @@ body {
   pointer-events: auto;
 }
 
+/* Footer */
+.custom-footer {
+  background-color: #3A5B4F !important;
+  color: white;
+  text-align: center;
+}
+
 /* Modal */
 .custom-modal {
   height: 50vh;
@@ -104,16 +117,66 @@ body {
   gap: 1rem;
 }
 
+/* Auth */
 .sign-out-buttons {
   display: flex;
   justify-content: center;
   gap: 1rem;
 }
 
-/* Footer */
-.custom-footer {
+/* Landing page */
+.landing-hero {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 0 5%;
+  gap: 5rem;
+}
+
+.feature-card {
+  width: 15rem;
+  background-color: #3A5B4F;
   color: white;
-  text-align: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  border-radius: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+}
+
+.feature-icon-circle {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.1);
+  display: flex;
+  margin: 1rem auto 0;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.feature-title {
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.feature-icon-circle svg {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.feature-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+}
+
+.feature-card:hover .feature-icon-circle {
+  transform: scale(1.1);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 /* Border thickness for cards */
@@ -126,6 +189,32 @@ body {
   display: none !important;
 }
 
-.bg-primary {
-  background-color: #3A5B4F !important; /* SaddleBrown */
+/* Buttons */
+.btn-success {
+  background-color: #3A5B4F;
+  border-color: #3A5B4F;
+}
+
+.card-header {
+  border-bottom: none;
+}
+
+.custom-nav-link .nav-link {
+  color: #000000;
+}
+
+.custom-nav-link .nav-link:hover {
+  color: #DDF3F0;
+}
+
+#nav-tabs-kitchen {
+  background-color: #DDF3F0;
+}
+
+h1 {
+  font-family: var(--font-lato), sans-serif;
+}
+
+h5 {
+  font-family: var(--font-nunito-sans), sans-serif;
 }

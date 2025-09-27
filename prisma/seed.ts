@@ -130,7 +130,6 @@ async function main() {
       where: { email: user.email },
       update: {},
       create: {
-        id: user.id,
         email: user.email,
         username: user.username,
         password,
@@ -138,9 +137,11 @@ async function main() {
     });
   }
 
+
   // Seed Houses
   for (const house of config.defaultHouses) {
-    const ownerUser = config.defaultUsers.find((user) => user.houses.includes(house.id));
+
+    const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
 
     if (!ownerUser) {
       console.error(`No owner found for house ${house.name}`);
@@ -153,7 +154,6 @@ async function main() {
       where: { id: house.id },
       update: {},
       create: {
-        id: house.id,
         name: house.name,
         address: house.address,
         userId: ownerUser.id,
@@ -163,9 +163,8 @@ async function main() {
 
   // Seed Storages
   for (const storage of config.defaultStorages) {
-    console.log(
-      `Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`,
-    );
+
+    console.log(`Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`);
 
     await prisma.storage.upsert({
       where: { id: storage.id },
@@ -181,8 +180,9 @@ async function main() {
 
   // Seed Ingredients
   for (const ingredient of config.defaultIngredients) {
-    console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
 
+    console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
+    
     await prisma.ingredient.upsert({
       where: { id: ingredient.id },
       update: {},
@@ -195,9 +195,8 @@ async function main() {
 
   // Seed Stocks
   for (const stock of config.defaultStocks) {
-    console.log(
-      `Seeding Stock: IngredientID=${stock.ingredientId}, StorageID=${stock.storageId}, Qty=${stock.quantity} ${stock.unit}, Status=${stock.status}`,
-    );
+
+    console.log(`Seeding Stock: IngredientID=${stock.ingredientId}, StorageID=${stock.storageId}, Qty=${stock.quantity} ${stock.unit}, Status=${stock.status}`);
 
     await prisma.stock.upsert({
       where: {
@@ -214,6 +213,49 @@ async function main() {
         unit: getUnit(stock.unit),
         status: getStatus(stock.status),
         last_updated: new Date(stock.last_updated),
+      },
+    });
+  }
+  
+  // Seed Recipes
+  for (const recipe of config.defaultRecipes) {
+
+    console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
+
+    await prisma.recipe.upsert({
+      where: { id: recipe.id },
+      update: {},
+      create: {
+        id: recipe.id,
+        userId: recipe.userId,
+        name: recipe.name,
+        description: recipe.description,
+        difficulty: getDifficulty(recipe.difficulty),
+        prepTime: recipe.prepTime,
+        cookTime: recipe.cookTime,
+        downTime: recipe.downTime,
+        servings: recipe.servings,
+        ingredients: {
+          create: recipe.ingredients.map((ing: any) => ({
+            ingredientId: ing.ingredientId,
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: getUnit(ing.unit),
+          })),
+        },
+        instructions: {
+          create: recipe.instructions.map((inst: any) => ({
+            step: inst.step,
+            content: inst.content,
+          })),
+        },
+        nutrition: {
+          create: recipe.nutrition.map((nut: any) => ({
+            name: nut.name,
+            amount: nut.amount,
+            unit: nut.unit,
+          })),
+        },
       },
     });
   }

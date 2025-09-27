@@ -5,8 +5,7 @@
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
+import { User, Lock, Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 interface Props {
@@ -50,13 +49,14 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
       <Modal.Body className="text-center">
-        <h5 className="text-center mb-4"><strong>Welcome Back to the Party!</strong></h5>
+        <h5 className="text-center mb-4">
+          <strong>Welcome Back to the Party!</strong>
+        </h5>
         <Form onSubmit={handleSubmit}>
-
           {/* Username or Email */}
           <InputGroup className="mt-4 mb-3 custom-input-group pl-10 pr-10">
             <InputGroup.Text className="custom-input-group-text">
-              <FaUser />
+              <User />
             </InputGroup.Text>
             <Form.Control
               placeholder="Username or Email"
@@ -70,7 +70,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           {/* Password */}
           <InputGroup className="mb-7 custom-input-group pl-10 pr-10">
             <InputGroup.Text className="custom-input-group-text">
-              <FaLock />
+              <Lock />
             </InputGroup.Text>
             <Form.Control
               placeholder="Password"
@@ -79,11 +79,8 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
               onChange={(e) => setPassword(e.target.value)}
               isInvalid={!!error}
             />
-            <InputGroup.Text
-              className="custom-input-group-text toggle-icon"
-              onClick={togglePasswordVisibility}
-            >
-              {passwordVisible ? <FaEyeSlash /> : <FaEye />}
+            <InputGroup.Text className="custom-input-group-text toggle-icon" onClick={togglePasswordVisibility}>
+              {passwordVisible ? <EyeOff /> : <Eye />}
             </InputGroup.Text>
 
             {/* Error message */}
@@ -93,8 +90,10 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           </InputGroup>
 
           {/* Sign in button */}
-          <Button variant="dark" type="submit"><strong>Sign in</strong></Button>
-          { /* error message */ }
+          <Button variant="success" type="submit">
+            <strong>Sign in</strong>
+          </Button>
+          {/* error message */}
           {/* {error && <p className="text-red-500 text-sm">{error}</p>} */}
         </Form>
       </Modal.Body>

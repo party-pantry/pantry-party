@@ -1,5 +1,3 @@
-/* eslint-disable arrow-body-style */
-
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
@@ -19,19 +17,13 @@ const handler = NextAuth({
         // try to find user by email or username using findFirst
         const user = await prisma.user.findFirst({
           where: {
-            OR: [
-              { email: credentials.identifier },
-              { username: credentials.identifier },
-            ],
+            OR: [{ email: credentials.identifier }, { username: credentials.identifier }],
           },
         });
         if (!user) return null;
 
         // checking if password matches in database
-        const validPassword = await compare(
-          credentials.password,
-          user.password,
-        );
+        const validPassword = await compare(credentials.password, user.password);
         if (!validPassword) return null;
 
         return {
@@ -44,17 +36,17 @@ const handler = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
   callbacks: {
-    session: ({ session, token }) => {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-        },
-      };
-    },
+    session: ({ session, token }) => ({
+      ...session,
+      user: {
+        ...session.user,
+        id: token.id,
+      },
+    }),
     jwt: ({ token, user }) => {
       if (user) {
         return {

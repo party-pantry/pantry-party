@@ -83,7 +83,7 @@ const Recipes: React.FC = () => {
   };
 
   return (
-    <Container style={{ marginTop: 100, marginBottom: 50 }}>
+    <Container style={{ marginBottom: 50 }}>
       {/* Header */}
       <div
         style={{
@@ -96,6 +96,9 @@ const Recipes: React.FC = () => {
       >
         <h1 className="fs-1">Recipe Suggestions</h1>
         <h6>Find recipes based on ingredients you already have!</h6>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
+          <Button variant="primary">+New Recipe</Button>
+        </div>
         <hr />
       </div>
 

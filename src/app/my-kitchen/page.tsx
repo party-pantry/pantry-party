@@ -1,3 +1,6 @@
+/* eslint-disable function-paren-newline */
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
 'use client';
@@ -11,8 +14,8 @@ import AddItemModal from '../../components/AddItemModal';
 import AddPantryModal from '../../components/AddPantryModal';
 import KitchenFilterButton from '../../components/KitchenFilterButton';
 import EditItemModal from '../../components/EditItemModal';
+import KitchenSortButton from '../../components/KitchenSortButton';
 
-// Types
 type Item = {
   id: number;
   name: string;
@@ -56,11 +59,16 @@ const MyKitchen = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
 
-  const [filters, setFilters] = useState<{
-    search: string;
-    status: string[];
-  }>({ search: '', status: [] });
+  // Used as global filtering state (for all storage locations)
+  const [filters, setFilters] = useState<{ search: string; status: string[] }>({
+    search: '',
+    status: [],
+  });
 
+  // Sort direction per storage (keyed by storage.id)
+  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
+
+  // Fetch kitchen data
   useEffect(() => {
     async function fetchHouses() {
       const res = await fetch('/api/kitchen');
@@ -70,16 +78,17 @@ const MyKitchen = () => {
     fetchHouses();
   }, []);
 
+  // Flatten all stocks into items
   const handleEditItem = (id: number) => {
-    // Flatten all stocks into items
-    // eslint-disable-next-line max-len
-    const allItems: Item[] = houses.flatMap((house) => house.storages.flatMap((storage) => storage.stocks.map((stock) => ({
-      id: stock.id,
-      name: stock.ingredient.name,
-      image: stock.ingredient.image || '',
-      quantity: `${stock.quantity} ${stock.unit}`,
-      updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
-      status:
+    const allItems: Item[] = houses.flatMap((house) =>
+      house.storages.flatMap((storage) =>
+        storage.stocks.map((stock) => ({
+          id: stock.id,
+          name: stock.ingredient.name,
+          image: stock.ingredient.image || '',
+          quantity: `${stock.quantity} ${stock.unit}`,
+          updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+          status:
             stock.status === 'GOOD'
               ? 'Good'
               : stock.status === 'LOW_STOCK'
@@ -87,7 +96,7 @@ const MyKitchen = () => {
                 : stock.status === 'OUT_OF_STOCK'
                   ? 'Out of Stock'
                   : 'Expired',
-      category: 'other',
+          category: 'other',
     }))));
 
     const foundItem = allItems.find((item) => item.id === id);
@@ -97,9 +106,17 @@ const MyKitchen = () => {
     }
   };
 
-  // Apply filters to all stocks
-  const getFilteredStocks = (stocks: Stock[]) => stocks
-    .map((stock) => ({
+  // Toggle sorting for one storage
+  const handleSort = (storageId: number) => {
+    setSortDirections((prev) => ({
+      ...prev,
+      [storageId]: prev[storageId] === 'asc' ? 'desc' : 'asc',
+    }));
+  };
+
+  // Get the items for one storage (filtered + sorted)
+  const getDisplayedStocks = (storage: Storage): Item[] => {
+    const allItems: Item[] = storage.stocks.map((stock) => ({
       id: stock.id,
       name: stock.ingredient.name,
       image: stock.ingredient.image || '',
@@ -123,14 +140,20 @@ const MyKitchen = () => {
       return searchMatch && statusMatch;
     });
 
+    // Sorting (by name)
+    const direction = sortDirections[storage.id] || 'asc';
+    return filtered.sort((a, b) => (direction === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)));
+  };
+
   return (
-    <Container style={{ marginTop: 100 }}>
+    <Container style={{ marginTop: 40 }}>
+      {/* Page header */}
       <div
         style={{
           display: 'flex',
           justifyContent: 'center',
           flexDirection: 'column',
-          height: '30vh',
+          height: '20vh',
           marginBottom: '5px',
         }}
       >
@@ -139,6 +162,7 @@ const MyKitchen = () => {
         <hr />
       </div>
 
+      {/* Houses and storages */}
       <div
         style={{
           justifyContent: 'center',
@@ -147,34 +171,35 @@ const MyKitchen = () => {
           marginBottom: '50px',
         }}
       >
-        {/* Map houses from db */}
         {houses.map((house) => (
           <HomeTabSelection key={house.id} id={house.id.toString()} title={house.name}>
-            <Row className="justify-content-end mb-4">
+            <Row className="justify-content-end mb-3 pr-4">
               <KitchenFilterButton
                 onApply={(appliedFilters) => setFilters({ ...filters, status: appliedFilters.status })}
               />
               <Button
-                style={{ width: '125px' }}
-                variant="success"
+                style={{ width: '125px', backgroundColor: '#3A5B4F', color: 'white' }}
+                variant=""
                 onClick={() => setShowAddModal(true)}
               >
                 <strong>Add Item +</strong>
               </Button>
             </Row>
-
             {house.storages.map((storage) => (
-              <StorageContainer key={storage.id} id={storage.id.toString()} title={storage.name}>
-                <IngredientTable
-                  items={getFilteredStocks(storage.stocks)}
-                  onDelete={() => {}}
-                  onEdit={handleEditItem}
-                />
+              <StorageContainer
+                key={storage.id}
+                id={storage.id.toString()}
+                title={storage.name}
+                /* Sorting for every storage space */
+                feature={<KitchenSortButton label="Sort" onSort={() => handleSort(storage.id)} />}
+              >
+                {/* Table of items */}
+                <IngredientTable items={getDisplayedStocks(storage)} onDelete={() => {}} onEdit={handleEditItem} />
               </StorageContainer>
             ))}
-
             <Button
-              style={{ width: '150px', backgroundColor: '#028383ff' }}
+              className="mt-1"
+              style={{ width: '150px', backgroundColor: '#3A5B4F', borderColor: '#3A5B4F' }}
               onClick={() => setShowPantryModal(true)}
             >
               <strong>Add Storage +</strong>
