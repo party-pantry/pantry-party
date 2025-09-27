@@ -57,7 +57,7 @@ const MyKitchen = () => {
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
-
+  
   // Used as global filtering state (for all storage locations)
   const [filters, setFilters] = useState<{ search: string; status: string[] }>({
     search: '',
@@ -187,8 +187,9 @@ const MyKitchen = () => {
           <HomeTabSelection
             key={house.id}
             id={house.id.toString()}
-            title={house.name}
+            houseArray={houses.map((h) => ({ id: h.id, name: h.name }))}
           >
+            
             <Row className="justify-content-end mb-3 pr-4">
               <KitchenFilterButton
                 onApply={(appliedFilters) =>
