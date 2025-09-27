@@ -85,42 +85,14 @@ export async function addItem(data: {
 
   const ingredientId = ingredient.id;
 
-  // Check if stock already exists for this ingredient and storage combination
-  const existingStock = await prisma.stock.findUnique({
-    where: {
-      ingredientId_storageId: {
-        ingredientId,
-        storageId: data.storageId,
-      },
+  // Create new stock
+  await prisma.stock.create({
+    data: {
+      ingredientId,
+      storageId: data.storageId,
+      quantity: Number(data.quantity),
+      unit: data.units,
+      status: data.status,
     },
   });
-
-  if (existingStock) {
-    // Update existing stock by adding the new quantity
-    await prisma.stock.update({
-      where: {
-        ingredientId_storageId: {
-          ingredientId,
-          storageId: data.storageId,
-        },
-      },
-      data: {
-        quantity: existingStock.quantity + Number(data.quantity),
-        unit: data.units,
-        status: data.status,
-        last_updated: new Date(),
-      },
-    });
-  } else {
-    // Create new stock
-    await prisma.stock.create({
-      data: {
-        ingredientId,
-        storageId: data.storageId,
-        quantity: Number(data.quantity),
-        unit: data.units,
-        status: data.status,
-      },
-    });
-  }
 }

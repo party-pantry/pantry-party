@@ -187,7 +187,6 @@ async function main() {
       where: { id: ingredient.id },
       update: {},
       create: {
-        id: ingredient.id,
         name: ingredient.name,
         price: ingredient.price,
       },

@@ -34,7 +34,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
     // image: '',
     quantity: 0,
     status: Status.GOOD,
-    storageId: storages && storages.length > 0 ? storages[0].id : 0,
+    storageId: storages && storages.length > 0 ? storages[0].id : 1,
     units: Unit.OUNCE,
   });
 
@@ -44,7 +44,7 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
       onAddItem({
         ...formData,
       });
-      setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 0, units: Unit.OUNCE });
+      setFormData({ name: '', quantity: 0, status: Status.GOOD, storageId: storages && storages.length > 0 ? storages[0].id : 1, units: Unit.OUNCE });
       addItem(formData);
       onHide();
     }
@@ -120,8 +120,8 @@ const AddItemModal: React.FC<Props> = ({ show, onHide, onAddItem, storages }) =>
                   value={formData.units}
                   onChange={(e) => handleChange('units', e.target.value)}
                 >
-                  {Object.values(LocalUnit).map((unit) => (
-                    <option key={unit} value={unit}>{unit}</option>
+                  {Object.entries(LocalUnit).map(([key, value]) => (
+                    <option key={key} value={key}>{value}</option>
                   ))}
                 </Form.Select>
               </Form.Group>
