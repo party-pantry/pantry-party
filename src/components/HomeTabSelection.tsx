@@ -18,12 +18,16 @@ interface HomeTabSelectionProps {
     id: number;
     name: string;
   }[];
+  activeHouseId: number;
+  selectActiveHouseId: (id: number) => void;
 }
 
 const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   id,
   children,
   houseArray = [],
+  activeHouseId,
+  selectActiveHouseId,
 }) => {
   const [showHouseModal, setShowHouseModal] = React.useState(false);
   console.log(houseArray);
@@ -33,23 +37,32 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
         <Card.Header
           style={{
             backgroundColor: '#2C776D',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0.5rem 1rem',
           }}
         >
-          <Nav variant="tabs" defaultActiveKey="#first">
-            {houseArray.map((house) => (
+          <Nav
+            variant="tabs"
+            activeKey={activeHouseId.toString()}
+            onSelect={k => selectActiveHouseId(Number(k))}
+            style={{ flex: 1 }}
+          >
+            {houseArray.map(house => (
               <Nav.Item key={house.id}>
-                <Nav.Link href={`#house-${house.id}`}>{house.name}</Nav.Link>
+                <Nav.Link eventKey={house.id.toString()}>{house.name}</Nav.Link>
               </Nav.Item>
             ))}
+            </Nav>
             <Nav.Item className="ms-auto d-flex align-items-center">
               <PlusCircle
                 size={32}
                 className=" ml-auto"
                 style={{ cursor: 'pointer', color: '#ffffffff' }}
-                onClick={() => setShowHouseModal(true)}
-              />
-            </Nav.Item>
-          </Nav>
+              onClick={() => setShowHouseModal(true)}
+            />
+          </Nav.Item>
         </Card.Header>
         <Card.Body
           className="p-4 mb-0"
