@@ -117,7 +117,6 @@ async function main() {
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "RecipeInstruction" RESTART IDENTITY CASCADE;');
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "RecipeNutrition" RESTART IDENTITY CASCADE;');
 
-
   console.log('Seeding database...');
 
   // Seed Users
@@ -213,7 +212,6 @@ async function main() {
         storageId: stock.storageId,
         quantity: stock.quantity,
         unit: getUnit(stock.unit),
-        category: getCategory(stock.category),
         status: getStatus(stock.status),
         last_updated: new Date(stock.last_updated),
       },

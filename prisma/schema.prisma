@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,6 +5,100 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  username String   @unique
+  password String
+  houses   House[]
+  recipes  Recipe[]
+}
+
+model House {
+  id       Int       @id @default(autoincrement())
+  userId   Int
+  name     String
+  address  String?
+  user     User      @relation(fields: [userId], references: [id])
+  storages Storage[]
+}
+
+model Storage {
+  id      Int      @id @default(autoincrement())
+  houseId Int
+  name    String?
+  type    Category
+  stocks  Stock[]
+  house   House    @relation(fields: [houseId], references: [id])
+}
+
+model Ingredient {
+  id      Int                @id @default(autoincrement())
+  name    String
+  price   Int?
+  recipes RecipeIngredient[]
+  stocks  Stock[]
+}
+
+model Stock {
+  ingredientId Int
+  storageId    Int
+  custom_name  String?
+  quantity     Float
+  unit         Unit
+  last_updated DateTime   @default(now()) @updatedAt
+  status       Status     @default(GOOD)
+
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  storage      Storage    @relation(fields: [storageId], references: [id])
+
+  @@id([ingredientId, storageId])
+}
+
+model Recipe {
+  id           Int                 @id @default(autoincrement())
+  userId       Int
+  name         String
+  description  String?
+  difficulty   Difficulty
+  prepTime     Int
+  cookTime     Int
+  downTime     Int?
+  servings     Int
+  user         User                @relation(fields: [userId], references: [id])
+  ingredients  RecipeIngredient[]
+  instructions RecipeInstruction[]
+  nutrition    RecipeNutrition[]
+}
+
+model RecipeIngredient {
+  id           Int        @id @default(autoincrement())
+  recipeId     Int
+  ingredientId Int
+  quantity     Float
+  unit         Unit
+  name         String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+}
+
+model RecipeInstruction {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  step     Int
+  content  String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
+model RecipeNutrition {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  name     String
+  amount   Float
+  unit     String
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
 }
 
 enum Unit {
@@ -57,106 +145,4 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
-}
-
-model User {
-  id        Int             @id @default(autoincrement())
-  email     String          @unique
-  username  String          @unique
-  password  String
-  houses    House[]
-  recipes   Recipe[]
-}
-
-model House {
-  id        Int             @id @default(autoincrement())
-  userId    Int
-  name      String
-  address   String?
-  storages  Storage[]
-
-  user      User            @relation(fields: [userId], references: [id])
-}
-
-model Storage {
-  id        Int             @id @default(autoincrement())
-  houseId   Int
-  name      String?
-  type      Category
-  stocks    Stock[]
-
-  house     House           @relation(fields: [houseId], references: [id]) 
-}
-
-model Ingredient {
-  id        Int             @id @default(autoincrement())
-  name      String
-  price     Int?
-  stocks    Stock[]
-  recipes   RecipeIngredient[]
-}
-
-model Stock {
-  ingredientId  Int
-  storageId     Int
-  custom_name   String?
-  quantity      Float
-  unit          Unit
-  last_updated  DateTime    @default(now()) @updatedAt
-  status        Status      @default(GOOD)
-  category      Category 
-
-
-  ingredient    Ingredient? @relation(fields: [ingredientId], references: [id])
-  storage       Storage     @relation(fields: [storageId], references: [id])
-  
-  @@id([ingredientId, storageId])
-}
-
-model Recipe {
-  id            Int         @id @default(autoincrement())
-  userId        Int
-  name          String
-  description   String?
-  difficulty    Difficulty
-  prepTime      Int
-  cookTime      Int
-  downTime      Int?
-  servings      Int
-
-  user          User        @relation(fields: [userId], references: [id])
-  ingredients   RecipeIngredient[]
-  instructions  RecipeInstruction[]
-  nutrition     RecipeNutrition[]
-}
-
-model RecipeIngredient {
-  id            Int         @id @default(autoincrement())
-  recipeId      Int
-  ingredientId  Int
-  name          String
-  quantity      Float
-  unit          Unit
-  
-  recipe        Recipe      @relation(fields: [recipeId], references: [id])
-  ingredient    Ingredient  @relation(fields: [ingredientId], references: [id])
-}
-
-model RecipeInstruction {
-  id            Int         @id @default(autoincrement())
-  recipeId      Int
-  step          Int
-  content       String
-  
-  recipe        Recipe      @relation(fields: [recipeId], references: [id])
-}
-
-model RecipeNutrition {
-  id            Int         @id @default(autoincrement())
-  recipeId      Int
-  name          String
-  amount        Float
-  unit          String
-
-  recipe        Recipe      @relation(fields: [recipeId], references: [id])
 }
