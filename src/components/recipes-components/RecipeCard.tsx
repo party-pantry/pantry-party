@@ -5,12 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Recipe } from '@prisma/client';
 import { Clock } from 'lucide-react';
 import { Card, CardBody, CardTitle, CardText, Badge, Button } from 'react-bootstrap';
-
-const difficultyMap = {
-    EASY: { label: 'Easy', variant: 'success' },
-    MEDIUM: { label: 'Medium', variant: 'warning' },
-    HARD: { label: 'Hard', variant: 'danger' },
-}
+import {
+    calculateTotalTime,
+    getDifficulty,
+    checkIngredients,
+    formatIngredientsDisplay,
+} from '@/utils/recipeUtils';
 
 interface RecipeCardProps {
   recipe: Recipe & {
@@ -29,21 +29,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
         router.push(`/recipe/${recipe.id}/${link}`);
     };
 
-    const difficulty = difficultyMap[recipe.difficulty]
-    const totalTime = recipe.cookTime + recipe.prepTime + (recipe.downTime ?? 0);
-
-    const haveIngredients = recipe.ingredients
-        .filter(ri => userIngredientsId?.has(ri.ingredient.id))
-        .map(ri => ri.ingredient.name);
-
-    const missingIngredients = recipe.ingredients
-        .filter(ri => !userIngredientsId?.has(ri.ingredient.id))
-        .map(ri => ri.ingredient.name);
-
-    const matchPercent = recipe.ingredients.length > 0
-        ? Math.round((haveIngredients.length / recipe.ingredients.length) * 100)
-        : 0;
-
+    const difficulty = getDifficulty(recipe.difficulty);
+    const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
+    const { haveIngredients, missingIngredients, matchPercent } = checkIngredients(
+        recipe.ingredients,
+        userIngredientsId
+    );
 
     return (
         <Card className="recipe-card">
@@ -57,10 +48,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
                 <CardText className="recipe-card-time text-muted"><Clock size={15} />{totalTime} minutes</CardText>
 
                 <CardText>
-                    <strong>Ingredients You Have:</strong> {haveIngredients.join(', ') || 'None'}
+                    <strong>Ingredients You Have:</strong> {formatIngredientsDisplay(haveIngredients)}
                 </CardText>
                 <CardText>
-                    <strong>Ingredients You're Missing:</strong> {missingIngredients.join(', ') || 'None'}
+                    <strong>Ingredients You're Missing:</strong> {formatIngredientsDisplay(missingIngredients)}
                 </CardText>
                 <CardText><strong>Match: {matchPercent}%</strong></CardText>
 

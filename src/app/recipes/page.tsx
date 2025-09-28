@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Button, Row, Col } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
+import Loading from '../../components/home-components/Loading';
 import RecipeCard from '../../components/recipes-components/RecipeCard';
 
 interface RecipeWithIngredients extends Recipe {
@@ -12,25 +13,51 @@ interface RecipeWithIngredients extends Recipe {
 }
 
 const Recipes: React.FC = () => {
+  const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>(false);
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const fetchRecipes = async () => {
-      const res = await fetch('/api/recipes');
-      const data = await res.json();
-      setRecipes(data.recipes);
+      try {
+        const res = await fetch('/api/recipes');
+        if (!res.ok) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
+        if (!data.recipes || data.recipes.length === 0) {
+          setNotFound(true);
+        } else {
+          setRecipes(data.recipes);
+        }
+      } catch (error) {
+        console.error(error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
     };
 
     const fetchUserIngredients = async () => {
       const res = await fetch('/api/user-ingredients');
-      const data = await res.json();;
+      const data = await res.json();
       setUserIngredients(new Set(data.ingredientIds));
     };
 
     fetchRecipes();
     fetchUserIngredients();
   }, []);
+
+  if (loading) {
+    return <div className="min-h-screen d-flex justify-content-center align-items-center"><Loading /></div>;
+  }
+
+  if (notFound) {
+    return <div className="min-h-screen d-flex justify-content-center align-items-center"><p>Recipe not found.</p></div>;
+  }
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
@@ -42,17 +69,13 @@ const Recipes: React.FC = () => {
         <hr className="mt-4 border-gray-300"/>
       </div>
 
-      {recipes.length === 0 ? (
-        <p>No recipes found. Please add some recipes.</p>
-      ) : (
-        <Row className="g-4 justify-content-center">
-          {recipes.map(recipe => (
-            <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
-              <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
-            </Col>
-          ))}
-        </Row>
-      )}
+      <Row className="g-4 justify-content-center">
+        {recipes.map(recipe => (
+          <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+            <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
+          </Col>
+        ))}
+      </Row>
     </Container>
   );
 };

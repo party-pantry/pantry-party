@@ -1,51 +1,82 @@
-import React from 'react';
+'use client';
+
 import slugify from 'slugify';
-import { prisma } from '@/lib/prisma';
-import { redirect } from 'next/navigation';
+import React, { useEffect,useState} from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import { Container, Badge, Button } from 'react-bootstrap';
+import { Check, X } from 'lucide-react';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
+import Loading from '@/components/home-components/Loading';
+import {
+    calculateTotalTime,
+    getDifficulty,
+    checkIngredients,
+} from '@/utils/recipeUtils';
+import { P } from 'framer-motion/dist/types.d-DsEeKk6G';
 
-interface RecipePageProps {
-    params: { id: string, link: string }
-}
+const RecipePage: React.FC = () => {
+    const params = useParams();
+    const router = useRouter();
+    const [loading, setLoading] = useState<boolean>(true);
+    const [notFound, setNotFound] = useState<boolean>(false);
+    const [recipe, setRecipe] = useState<any>(null);
+    const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
 
-const difficultyMap = {
-  EASY: { label: 'Easy', variant: 'success' },
-  MEDIUM: { label: 'Medium', variant: 'warning' },
-  HARD: { label: 'Hard', variant: 'danger' },
-};
+    useEffect(() => {
+        const fetchRecipe = async () => {
+            try {
+                const res = await fetch(`/api/recipe/${params.id}`);
+                if (!res.ok) {
+                    setNotFound(true);
+                    setLoading(false);
+                    return;
+                }
+                const data = await res.json();
+                if (!data || !data.recipe) {
+                    setNotFound(true);
+                } else {
+                    setRecipe(data.recipe);
+                    const expectedLink = slugify(data.recipe.name, { lower: true, strict: true });
+                    if (params.link !== expectedLink) {
+                        router.replace(`/recipe/${data.recipe.id}/${expectedLink}`);
+                        return;
+                    }
+                }
+            } catch (error) {
+                console.error(error);
+                setNotFound(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchRecipe();
+    
+        fetch('/api/user-ingredients')
+            .then(res => res.json())
+            .then(data => setUserIngredients(new Set(data.ingredientIds)));
+    }, [params.id, params.link, router]);
 
-const RecipePage: React.FC<RecipePageProps> = async ({ params }) => {
-    const id = Number(params.id);
-
-    const recipe = await prisma.recipe.findUnique({
-        where: { id },
-        include: {
-            ingredients: { include: { ingredient: true } },
-            instructions: true,
-            nutrition: true,
-            user: true,
-        },
-    });
-
-    if (!recipe) {
-        return <Container className="min-h-screen"><p>Recipe not found.</p></Container>;
+    if (loading) {
+        return <div className="min-h-screen d-flex justify-content-center align-items-center"><Loading /></div>;
     }
 
-    const expectedLink = slugify(recipe.name, { lower: true, strict: true });
-    if (params.link !== expectedLink) {
-        return redirect(`/recipe/${recipe.id}/${expectedLink}`);
+    if (notFound) {
+        return <div className="min-h-screen d-flex justify-content-center align-items-center"><p>Recipe not found.</p></div>;
     }
 
-    const totalTime = recipe.cookTime + recipe.prepTime + (recipe.downTime ?? 0);
-    const difficulty = difficultyMap[recipe.difficulty];
-    const ingredientsList = recipe.ingredients.map(ri => ({
+    const difficulty = getDifficulty(recipe.difficulty);
+    const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
+    const { haveIngredients, missingIngredients, matchPercent } = checkIngredients(
+        recipe.ingredients,
+        userIngredients
+    );
+
+    const ingredientsList = recipe.ingredients.map((ri: { ingredient: { id: number; name: string }; quantity: number; unit: string }) => ({
+        id: ri.ingredient.id,
         name: ri.ingredient.name,
         quantity: ri.quantity,
         unit: ri.unit,
     }));
-    
-    console.log(recipe.rating);
 
     return (
         <Container className="min-h-screen py-10">
@@ -53,8 +84,7 @@ const RecipePage: React.FC<RecipePageProps> = async ({ params }) => {
                 <div className="flex items-center gap-4">
                     <h1 className="text-5xl font-bold">{recipe.name}</h1>
                     <Badge className="fs-6 py-1 px-3" bg={difficulty.variant}>{difficulty.label}</Badge>
-                    {/* Placeholder for match percentage */}
-                    <span className="text-muted">Match: N/A%</span>
+                    <span className="text-muted">Match: {matchPercent.toFixed(0)}%</span>
                 </div>
                 <p className="text-sm m-0">By {recipe.user.username}</p>
                 <hr className="my-4 w-100" />
@@ -77,9 +107,16 @@ const RecipePage: React.FC<RecipePageProps> = async ({ params }) => {
                 
                 <h3 className="text-2xl font-semibold pt-4">Ingredients</h3>
                 <ul className="list-disc pl-6 space-y-1">
-                    {ingredientsList.map((ingredient, index) => (
-                        <li key={index}>
-                            {ingredient.quantity} {ingredient.unit.toLowerCase()} {ingredient.name}
+                    {ingredientsList.map((ingredient: { id: number; name: string; quantity: number; unit: string }) => (
+                        <li key={ingredient.id} className="flex items-center gap-2 list-item">
+                            <span className="flex items-center gap-2">
+                                {ingredient.quantity} {ingredient.unit.toLowerCase()} {ingredient.name}
+                                <span
+                                    className={`ms-2 ${userIngredients.has(ingredient.id) ? 'text-success' : 'text-danger'}`}
+                                >
+                                    {userIngredients.has(ingredient.id) ? <Check size={16} /> : <X size={16} />}
+                                </span>
+                            </span>
                         </li>
                     ))}
                 </ul>
@@ -89,8 +126,8 @@ const RecipePage: React.FC<RecipePageProps> = async ({ params }) => {
                 <h3 className="text-2xl font-semibold pt-4">Instructions</h3>
                 <div className="flex flex-col gap-4 pt-2">
                     {recipe.instructions
-                        .sort((a, b) => a.step - b.step)
-                        .map((instruction) => (
+                        .sort((a: { step: number }, b: { step: number }) => a.step - b.step)
+                        .map((instruction: { id: number; step: number; content: string }) => (
                             <div key={instruction.id} className="flex items-start gap-4">
                                 <div className="flex-shrink-0 w-8 h-8 rounded-full bg-success-custom text-white flex items-center justify-center font-bold">
                                     {instruction.step}
