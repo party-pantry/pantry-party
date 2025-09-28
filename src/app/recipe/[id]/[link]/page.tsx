@@ -1,8 +1,8 @@
-import { prisma } from '@/lib/prisma';
 import React from 'react';
-import { Container, Badge, Button, Accordion, AccordionItem, AccordionHeader, AccordionBody } from 'react-bootstrap';
 import slugify from 'slugify';
+import { prisma } from '@/lib/prisma';
 import { redirect } from 'next/navigation';
+import { Container, Badge, Button } from 'react-bootstrap';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
 
 interface RecipePageProps {
