@@ -214,7 +214,6 @@ async function main() {
         quantity: stock.quantity,
         unit: getUnit(stock.unit),
         status: getStatus(stock.status),
-        last_updated: new Date(stock.last_updated),
       },
     });
   }
@@ -237,6 +236,7 @@ async function main() {
         cookTime: recipe.cookTime,
         downTime: recipe.downTime,
         servings: recipe.servings,
+        rating: recipe.rating,
         ingredients: {
           create: recipe.ingredients.map((ing: any) => ({
             ingredientId: ing.ingredientId,
@@ -261,7 +261,6 @@ async function main() {
       },
     });
   }
-
 
   console.log('Database seeded successfully!');
 }

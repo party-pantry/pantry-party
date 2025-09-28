@@ -81,8 +81,7 @@
       "quantity": 1,
       "unit": "GALLON",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 2,
@@ -90,8 +89,7 @@
       "quantity": 12,
       "unit": "PIECE",
       "status": "GOOD",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 3,
@@ -99,8 +97,7 @@
       "quantity": 5,
       "unit": "POUND",
       "status": "LOW_STOCK",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
       "ingredientId": 4,
@@ -108,8 +105,7 @@
       "quantity": 10,
       "unit": "POUND",
       "status": "LOW_STOCK",
-      "category": "FREEZER",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FREEZER"
     },
     {
       "ingredientId": 5,
@@ -117,8 +113,7 @@
       "quantity": 1,
       "unit": "POUND",
       "status": "GOOD",
-      "category": "SPICE_RACK",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "SPICE_RACK"
     },
     {
       "ingredientId": 6,
@@ -126,8 +121,7 @@
       "quantity": 7,
       "unit": "LOAVES",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
       "ingredientId": 7,
@@ -135,8 +129,7 @@
       "quantity": 5,
       "unit": "BUNDLES",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
       "ingredientId": 8,
@@ -144,8 +137,7 @@
       "quantity": 2,
       "unit": "BOX",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 9,
@@ -153,8 +145,7 @@
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
-      "category": "SPICE_RACK",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "SPICE_RACK"
     },
     {
       "ingredientId": 10,
@@ -162,8 +153,7 @@
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
       "ingredientId": 11,
@@ -171,8 +161,7 @@
       "quantity": 0,
       "unit": "PINT",
       "status": "OUT_OF_STOCK",
-      "category": "FREEZER",
-      "last_updated": "2025-09-20T00:00:00.000Z"
+      "category": "FREEZER"
     },
     {
       "ingredientId": 12,
@@ -180,8 +169,7 @@
       "quantity": 2,
       "unit": "PACKAGE",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-19T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 13,
@@ -189,8 +177,7 @@
       "quantity": 6,
       "unit": "BUNDLES",
       "status": "GOOD",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-21T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 14,
@@ -198,8 +185,7 @@
       "quantity": 2,
       "unit": "BUNDLES",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
       "ingredientId": 15,
@@ -207,8 +193,7 @@
       "quantity": 4,
       "unit": "BOX",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-21T00:00:00.000Z"
+      "category": "PANTRY"
     }
   ],
 
@@ -244,7 +229,8 @@
         { "name": "Protein", "amount": 12, "unit": "g" },
         { "name": "Carbs", "amount": 6, "unit": "g" },
         { "name": "Fat", "amount": 15, "unit": "g" }
-      ]
+      ],
+      "rating": 4.5
     },
     {
       "id": 2,
@@ -277,7 +263,8 @@
         { "name": "Protein", "amount": 30, "unit": "g" },
         { "name": "Carbs", "amount": 5, "unit": "g" },
         { "name": "Fat", "amount": 12, "unit": "g" }
-      ]
+      ],
+      "rating": 1.0
     },
     {
       "id": 3,
@@ -314,7 +301,8 @@
         { "name": "Protein", "amount": 28, "unit": "g" },
         { "name": "Carbs", "amount": 40, "unit": "g" },
         { "name": "Fat", "amount": 10, "unit": "g" }
-      ]
+      ],
+      "rating": 4.2
     },
     {
       "id": 4,
@@ -348,7 +336,8 @@
         { "name": "Protein", "amount": 14, "unit": "g" },
         { "name": "Carbs", "amount": 18, "unit": "g" },
         { "name": "Fat", "amount": 18, "unit": "g" }
-      ]
+      ],
+      "rating": 3.5
     },
     {
       "id": 5,
@@ -384,7 +373,8 @@
         { "name": "Protein", "amount": 45, "unit": "g" },
         { "name": "Carbs", "amount": 30, "unit": "g" },
         { "name": "Fat", "amount": 35, "unit": "g" }
-      ]
+      ],
+      "rating": 5.0
     }
   ]
 }

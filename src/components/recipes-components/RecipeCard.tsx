@@ -40,7 +40,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
     const router = useRouter();
 
     const handleViewDetails = () => {
-        router.push(`/recipe/${link}-${recipe.id}`);
+        router.push(`/recipe/${recipe.id}/${link}`);
     };
 
     return (
@@ -54,7 +54,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe }) => {
                 <CardText className="recipe-card-description text-muted">{recipe.description}</CardText>
                 <CardText className="recipe-card-time text-muted"><Clock size={15} />{totalTime} minutes</CardText>
 
-                {/* IMPLEMENT MATCH PERCENTAGE AND IMPROVE INGREDIENTS AFTER FIXING AUTH */}
+                {/* Placeholder for match percentage, improve later */}
                 <CardText className="recipe-card-ingredients">
                     <strong>Ingredients: </strong>
                     {ingredientsList.join(', ')}

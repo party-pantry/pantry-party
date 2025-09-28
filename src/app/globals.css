@@ -274,6 +274,10 @@ body {
   background-color: transparent;
 }
 
+.bg-success-custom {
+  background-color: #3A5B4F !important;
+}
+
 
 .card-header {
   border-bottom: none;

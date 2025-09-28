@@ -4,7 +4,7 @@ import NavBar from '../components/home-components/NavBar';
 import Footer from '../components/home-components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
-import SessionProviderWrapper from '../components/home-components/SessionProviderWrapper';
+import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

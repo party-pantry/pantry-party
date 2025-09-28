@@ -63,10 +63,12 @@ model Recipe {
   name         String
   description  String?
   difficulty   Difficulty
+  postDate     DateTime            @default(now()) @updatedAt
   prepTime     Int
   cookTime     Int
   downTime     Int?
   servings     Int
+  rating       Int
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]
