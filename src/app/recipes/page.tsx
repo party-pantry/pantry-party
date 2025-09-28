@@ -5,6 +5,9 @@ import { Container, Button, Row, Col } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
 import Loading from '../../components/home-components/Loading';
 import RecipeCard from '../../components/recipes-components/RecipeCard';
+import RecipesSearch from '../../components/recipes-components/RecipesSearch';
+import RecipesFilterButton from '../../components/recipes-components/RecipesFilterButton';
+import AddRecipesModal from '../../components/recipes-components/AddRecipesModal';
 
 interface RecipeWithIngredients extends Recipe {
   ingredients: {
@@ -67,6 +70,13 @@ const Recipes: React.FC = () => {
         <div className="flex justify-end mt-2">
         </div>
         <hr className="mt-4 border-gray-300"/>
+      </div>
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <RecipesSearch />
+        <div className="d-flex gap-2">
+          <RecipesFilterButton />
+          <AddRecipesModal />
+        </div>
       </div>
 
       <Row className="g-4 justify-content-center">
