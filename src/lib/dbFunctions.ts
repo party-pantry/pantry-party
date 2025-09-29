@@ -4,6 +4,7 @@
 // import { redirect } from 'next/navigation';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { hash } from 'bcryptjs';
+import { Unit, Status } from '@prisma/client';
 import { prisma } from './prisma';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -16,10 +17,7 @@ export async function createUser(credentials: {
   // Check if user with this email or username already exists
   const existingUser = await prisma.user.findFirst({
     where: {
-      OR: [
-        { email: credentials.email },
-        { username: credentials.username },
-      ],
+      OR: [{ email: credentials.email }, { username: credentials.username }],
     },
   });
   if (existingUser) {
@@ -34,6 +32,71 @@ export async function createUser(credentials: {
       email: credentials.email,
       username: credentials.username,
       password,
+    },
+  });
+}
+
+/* Add item from Ingredient table */
+export async function addItem(data: {
+  name: string;
+  quantity: number;
+  status: Status;
+  storageId: number;
+  units: Unit;
+}) {
+  const sterilizedItemName = data.name.trim().toLowerCase();
+
+  // Validate that the storage exists
+  const storage = await prisma.storage.findUnique({
+    where: { id: data.storageId },
+  });
+
+  if (!storage) {
+    throw new Error(`Storage with ID ${data.storageId} does not exist`);
+  }
+
+  // First try to find existing ingredient
+  let ingredient = await prisma.ingredient.findFirst({
+    where: {
+      name: sterilizedItemName,
+    },
+  });
+
+  // If not found, try to create it (handle race condition)
+  if (!ingredient) {
+    try {
+      ingredient = await prisma.ingredient.create({
+        data: {
+          name: sterilizedItemName,
+        },
+      });
+    } catch (error: any) {
+      // If creation fails due to unique constraint, try finding it again
+      if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
+        ingredient = await prisma.ingredient.findFirst({
+          where: {
+            name: sterilizedItemName,
+          },
+        });
+        if (!ingredient) {
+          throw error; // Re-throw if still not found
+        }
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  const ingredientId = ingredient.id;
+
+  // Create new stock
+  await prisma.stock.create({
+    data: {
+      ingredientId,
+      storageId: data.storageId,
+      quantity: Number(data.quantity),
+      unit: data.units,
+      status: data.status,
     },
   });
 }

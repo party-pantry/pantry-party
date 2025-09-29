@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 /* HOW TO IMPLEMENT SEED:
 1. npx prisma db push (updates the database schema)
 2. npx prisma db seed (runs this seed file)
@@ -130,7 +131,6 @@ async function main() {
       where: { email: user.email },
       update: {},
       create: {
-        id: user.id,
         email: user.email,
         username: user.username,
         password,
@@ -153,7 +153,6 @@ async function main() {
       where: { id: house.id },
       update: {},
       create: {
-        id: house.id,
         name: house.name,
         address: house.address,
         userId: ownerUser.id,
@@ -185,8 +184,8 @@ async function main() {
       where: { id: ingredient.id },
       update: {},
       create: {
-        id: ingredient.id,
         name: ingredient.name,
+        price: ingredient.price,
       },
     });
   }
@@ -212,7 +211,7 @@ async function main() {
       },
     });
   }
-
+  
   // Seed Recipes
   for (const recipe of config.defaultRecipes) {
     console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
@@ -255,6 +254,32 @@ async function main() {
       },
     });
   }
+
+  // Reset auto-increment sequences to prevent ID conflicts
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"User"\', \'id\'), COALESCE(MAX(id), 1)) FROM "User";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"House"\', \'id\'), COALESCE(MAX(id), 1)) FROM "House";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Storage"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Storage";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Ingredient"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Ingredient";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Recipe"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Recipe";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeIngredient"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeIngredient";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeInstruction"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeInstruction";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeNutrition"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeNutrition";',
+  );
 
   console.log('Database seeded successfully!');
 }
