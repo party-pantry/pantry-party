@@ -1,196 +1,96 @@
-/* eslint-disable react/no-array-index-key */
+/* eslint-disable max-len */
 
 'use client';
 
-import React, { useState } from 'react';
-import { Container, Card, Row, Col, Badge, Button } from 'react-bootstrap';
-import {
-  Recipe,
-  getMatchPercentage,
-} from '../../utils/recipeUtils';
-import RecipeModal from '../../components/RecipeModal';
+import React, { useEffect, useState } from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import { Recipe } from '@prisma/client';
+import Loading from '../../components/home-components/Loading';
+import RecipeCard from '../../components/recipes-components/RecipeCard';
+import RecipesSearch from '../../components/recipes-components/RecipesSearch';
+import RecipesFilterButton from '../../components/recipes-components/RecipesFilterButton';
+import RecipesSortButton from '../../components/recipes-components/RecipesSortButton';
+import AddRecipesModal from '../../components/recipes-components/AddRecipesModal';
+
+interface RecipeWithIngredients extends Recipe {
+  ingredients: {
+    ingredient: { id: number, name: string };
+  }[];
+}
 
 const Recipes: React.FC = () => {
-  const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
-  const [showModal, setShowModal] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState<boolean>(false);
+  const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
+  const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
 
-  const handleViewRecipe = (recipe: Recipe): void => {
-    setSelectedRecipe(recipe);
-    setShowModal(true);
-  };
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      try {
+        const res = await fetch('/api/recipes');
+        if (!res.ok) {
+          setNotFound(true);
+          setLoading(false);
+          return;
+        }
+        const data = await res.json();
+        if (!data.recipes || data.recipes.length === 0) {
+          setNotFound(true);
+        } else {
+          setRecipes(data.recipes);
+        }
+      } catch (error) {
+        console.error(error);
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleCloseModal = (): void => {
-    setShowModal(false);
-    setSelectedRecipe(null);
-  };
-  const mockRecipes: Recipe[] = [
-    {
-      id: 1,
-      name: 'Tomato Scrambled Eggs',
-      image: '🍳',
-      cookTime: '15 min',
-      difficulty: 'Easy',
-      availableIngredients: ['Tomatoes', 'Eggs'],
-      missingIngredients: ['Salt', 'Oil'],
-      description:
-        'A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.',
-    },
-    {
-      id: 2,
-      name: 'Chicken Breast Salad',
-      image: '🥗',
-      cookTime: '20 min',
-      difficulty: 'Easy',
-      availableIngredients: ['Chicken Breast', 'Tomatoes'],
-      missingIngredients: ['Lettuce', 'Dressing'],
-      description:
-        'Healthy and protein-rich salad with grilled chicken and fresh vegetables.',
-    },
-    {
-      id: 3,
-      name: 'Chicken Tomato Pasta',
-      image: '🍝',
-      cookTime: '30 min',
-      difficulty: 'Medium',
-      availableIngredients: ['Chicken Breast', 'Tomatoes'],
-      missingIngredients: ['Pasta', 'Garlic', 'Onion'],
-      description: 'Delicious pasta with tender chicken and rich tomato sauce.',
-    },
-    {
-      id: 4,
-      name: 'Mediterranean Bowl',
-      image: '🍲',
-      cookTime: '25 min',
-      difficulty: 'Medium',
-      availableIngredients: ['Chicken Breast', 'Tomatoes'],
-      missingIngredients: ['Rice', 'Olives', 'Feta Cheese'],
-      description:
-        'A healthy Mediterranean-inspired bowl with fresh ingredients.',
-    },
-  ];
+    const fetchUserIngredients = async () => {
+      const res = await fetch('/api/user-ingredients');
+      const data = await res.json();
+      setUserIngredients(new Set(data.ingredientIds));
+    };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case 'Easy':
-        return 'success';
-      case 'Medium':
-        return 'warning';
-      case 'Hard':
-        return 'danger';
-      default:
-        return 'secondary';
-    }
-  };
+    fetchRecipes();
+    fetchUserIngredients();
+  }, []);
+
+  if (loading) {
+    return <div className="min-h-screen d-flex justify-content-center align-items-center"><Loading /></div>;
+  }
+
+  if (notFound) {
+    return <div className="min-h-screen d-flex justify-content-center align-items-center"><p>Recipe not found.</p></div>;
+  }
 
   return (
-    <Container style={{ marginBottom: 50 }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          height: '30vh',
-          marginBottom: '5px',
-        }}
-      >
-        <h1 className="fs-1">Recipe Suggestions</h1>
-        <h6>Find recipes based on ingredients you already have!</h6>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}>
-          <Button variant="primary">+New Recipe</Button>
+    <Container className="mb-12 min-h-screen mt-5">
+      <div className="flex flex-col justify-center h-[30vh]">
+        <h1 className="text-4xl font-bold">Recipe Suggestions</h1>
+        <h6 className="text-gray-600 mt-2">Find recipes based on ingredients you already have!</h6>
+        <div className="flex justify-end mt-2">
         </div>
-        <hr />
+        <hr className="mt-4 border-gray-300"/>
       </div>
 
-      <Row>
-        {mockRecipes.map((recipe) => (
-          <Col md={6} lg={4} key={recipe.id} className="mb-4">
-            <Card className="h-100 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-start mb-2">
-                  <Card.Title className="mb-0">
-                    <span style={{ fontSize: '2rem', marginRight: '10px' }}>
-                      {recipe.image}
-                    </span>
-                    {recipe.name}
-                  </Card.Title>
-                  <Badge bg={getDifficultyColor(recipe.difficulty)}>
-                    {recipe.difficulty}
-                  </Badge>
-                </div>
+      <div className="d-flex justify-content-end flex-wrap gap-2 mb-2">
+        <AddRecipesModal />
+      </div>
+      <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
+        <RecipesSearch />
+        <RecipesFilterButton />
+        <RecipesSortButton />
+      </div>
 
-                <Card.Text className="text-muted mb-3">
-                  {recipe.description}
-                </Card.Text>
-
-                <div className="mb-3">
-                  <small className="text-muted">
-                    ⏱️
-                    {recipe.cookTime}
-                  </small>
-                </div>
-
-                <div className="mb-3">
-                  <div className="d-flex justify-content-between align-items-center mb-2">
-                    <small className="fw-bold">
-                      Match:
-                      {' '}
-                      {getMatchPercentage(recipe)}
-                      %
-                    </small>
-                  </div>
-
-                  <div className="mb-2">
-                    <small className="text-success fw-bold">You have:</small>
-                    <div>
-                      {recipe.availableIngredients.map((ingredient, index) => (
-                        <Badge key={index} bg="success" className="me-1 mb-1">
-                          {ingredient}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <small className="text-danger fw-bold">You need:</small>
-                    <div>
-                      {recipe.missingIngredients.map((ingredient, index) => (
-                        <Badge
-                          key={index}
-                          bg="outline-danger"
-                          text="danger"
-                          className="me-1 mb-1"
-                        >
-                          {ingredient}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="d-grid gap-2">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    onClick={() => handleViewRecipe(recipe)}
-                  >
-                    View Recipe
-                  </Button>
-                  <Button variant="outline-secondary" size="sm">
-                    Add Missing to Shopping List
-                  </Button>
-                </div>
-              </Card.Body>
-            </Card>
+      <Row className="g-4 justify-content-center">
+        {recipes.map(recipe => (
+          <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+            <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
           </Col>
         ))}
       </Row>
-
-      <RecipeModal
-        recipe={selectedRecipe}
-        show={showModal}
-        onHide={handleCloseModal}
-      />
     </Container>
   );
 };

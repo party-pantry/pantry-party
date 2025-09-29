@@ -7,14 +7,14 @@
 
 import { Container, Button, Row } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
-import IngredientTable from '../../components/IngredientTable';
-import StorageContainer from '../../components/StorageContainer';
-import HomeTabSelection from '../../components/HomeTabSelection';
-import AddItemModal from '../../components/AddItemModal';
-import AddPantryModal from '../../components/AddPantryModal';
-import KitchenFilterButton from '../../components/KitchenFilterButton';
-import EditItemModal from '../../components/EditItemModal';
-import KitchenSortButton from '../../components/KitchenSortButton';
+import IngredientTable from '../../components/kitchen-components/IngredientTable';
+import StorageContainer from '../../components/kitchen-components/StorageContainer';
+import HomeTabSelection from '../../components/kitchen-components/HomeTabSelection';
+import AddItemModal from '../../components/kitchen-components/AddItemModal';
+import AddPantryModal from '../../components/kitchen-components/AddPantryModal';
+import KitchenFilterButton from '../../components/kitchen-components/KitchenFilterButton';
+import EditItemModal from '../../components/kitchen-components/EditItemModal';
+import KitchenSortButton from '../../components/kitchen-components/KitchenSortButton';
 
 type Item = {
   id: number;
@@ -158,20 +158,13 @@ const MyKitchen = () => {
   };
 
   return (
-    <Container style={{ marginTop: 40 }}>
-      {/* Page header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          height: '20vh',
-          marginBottom: '5px',
-        }}
-      >
-        <h1 className="fs-1">My Kitchen</h1>
-        <h6>Here you can see what is in your kitchen</h6>
-        <hr />
+    <Container className="mb-12 min-h-screen mt-5">
+      <div className="flex flex-col justify-center h-[30vh] mb-5">
+        <h1 className="text-4xl font-bold">My Kitchen</h1>
+        <h6 className="text-gray-600 mt-2">Here you can see what is in your kitchen</h6>
+        <div className="flex justify-end mt-2">
+        </div>
+        <hr className="mt-4 border-gray-300"/>
       </div>
 
       {/* Houses and storages */}

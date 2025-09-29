@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
-import NavBar from '../components/NavBar';
-import Footer from '../components/Footer';
+import NavBar from '../components/home-components/NavBar';
+import Footer from '../components/home-components/Footer';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
-import SessionProviderWrapper from '../components/SessionProviderWrapper';
+import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

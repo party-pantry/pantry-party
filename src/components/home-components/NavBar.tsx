@@ -14,9 +14,9 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import SignInModal from './SignInModal';
-import SignUpModal from './SignUpModal';
-import SignOutModal from './SignOutModal';
+import SignInModal from '../auth-components/SignInModal';
+import SignUpModal from '../auth-components/SignUpModal';
+import SignOutModal from '../auth-components/SignOutModal';
 
 const NavBar: React.FC = () => {
   const { data: session } = useSession();

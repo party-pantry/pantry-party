@@ -6,6 +6,7 @@
 
 import { PrismaClient, Category, Unit, Status, Difficulty } from '@prisma/client';
 import { hash } from 'bcrypt';
+import slugify from 'slugify';
 import config from '../config/settings.development.json' assert { type: 'json' };
 
 const prisma = new PrismaClient();
@@ -137,10 +138,8 @@ async function main() {
     });
   }
 
-
   // Seed Houses
   for (const house of config.defaultHouses) {
-
     const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
 
     if (!ownerUser) {
@@ -163,7 +162,6 @@ async function main() {
 
   // Seed Storages
   for (const storage of config.defaultStorages) {
-
     console.log(`Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`);
 
     await prisma.storage.upsert({
@@ -180,9 +178,8 @@ async function main() {
 
   // Seed Ingredients
   for (const ingredient of config.defaultIngredients) {
-
     console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
-    
+
     await prisma.ingredient.upsert({
       where: { id: ingredient.id },
       update: {},
@@ -195,7 +192,6 @@ async function main() {
 
   // Seed Stocks
   for (const stock of config.defaultStocks) {
-
     console.log(`Seeding Stock: IngredientID=${stock.ingredientId}, StorageID=${stock.storageId}, Qty=${stock.quantity} ${stock.unit}, Status=${stock.status}`);
 
     await prisma.stock.upsert({
@@ -212,14 +208,12 @@ async function main() {
         quantity: stock.quantity,
         unit: getUnit(stock.unit),
         status: getStatus(stock.status),
-        last_updated: new Date(stock.last_updated),
       },
     });
   }
   
   // Seed Recipes
   for (const recipe of config.defaultRecipes) {
-
     console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
 
     await prisma.recipe.upsert({
@@ -235,8 +229,7 @@ async function main() {
         cookTime: recipe.cookTime,
         downTime: recipe.downTime,
         servings: recipe.servings,
-        // Update this slug when config is updated
-        slug: (recipe.slug ? recipe.slug : recipe.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')),
+        rating: recipe.rating,
         ingredients: {
           create: recipe.ingredients.map((ing: any) => ({
             ingredientId: ing.ingredientId,
