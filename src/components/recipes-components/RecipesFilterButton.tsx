@@ -1,8 +1,7 @@
 import { DropdownButton, Dropdown, Form, Button } from 'react-bootstrap';
 import { Filter } from 'lucide-react';
 
-const RecipesFilterButton: React.FC = () => {
-    return (
+const RecipesFilterButton: React.FC = () => (
         <DropdownButton id="recipes-filter-dropdown"
             title= {
                 <div className="d-flex align-items-center gap-1">
@@ -37,7 +36,6 @@ const RecipesFilterButton: React.FC = () => {
 
                     <Dropdown.Divider />
 
-
                     <Form.Label className="fw-bold fs-6 text-bold">Rating</Form.Label>
                     <Form.Check type="checkbox" label="1 Star & Up" />
                     <Form.Check type="checkbox" label="2 Stars & Up" />
@@ -67,7 +65,6 @@ const RecipesFilterButton: React.FC = () => {
                 </Form.Group>
             </Form>
         </DropdownButton>
-    )
-}
+);
 
 export default RecipesFilterButton;

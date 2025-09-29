@@ -1,7 +1,9 @@
+/* eslint-disable max-len */
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Container, Button, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
 import Loading from '../../components/home-components/Loading';
 import RecipeCard from '../../components/recipes-components/RecipeCard';
@@ -72,7 +74,6 @@ const Recipes: React.FC = () => {
         </div>
         <hr className="mt-4 border-gray-300"/>
       </div>
-
 
       <div className="d-flex justify-content-end flex-wrap gap-2 mb-2">
         <AddRecipesModal />

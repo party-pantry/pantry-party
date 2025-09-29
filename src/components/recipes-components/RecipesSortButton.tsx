@@ -1,8 +1,7 @@
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { ArrowUpDown } from 'lucide-react';
 
-const RecipesSortButton: React.FC = () => {
-    return (
+const RecipesSortButton: React.FC = () => (
         <DropdownButton id="recipes-sort-dropdown"
             title= {
                 <div className="d-flex align-items-center gap-1">
@@ -23,7 +22,6 @@ const RecipesSortButton: React.FC = () => {
             <Dropdown.Item eventKey="rating">Rating</Dropdown.Item>
             <Dropdown.Item eventKey="postdate">Post Date</Dropdown.Item>
         </DropdownButton>
-    )
-}
+);
 
 export default RecipesSortButton;

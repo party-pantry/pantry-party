@@ -125,7 +125,7 @@ async function main() {
     const password = await hash(user.password, 10);
 
     console.log(`Seeding User: ${user.username} (Email: ${user.email}, ID: ${user.id})`);
-    
+
     await prisma.user.upsert({
       where: { email: user.email },
       update: {},
@@ -138,10 +138,8 @@ async function main() {
     });
   }
 
-
   // Seed Houses
   for (const house of config.defaultHouses) {
-
     const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
 
     if (!ownerUser) {
@@ -165,7 +163,6 @@ async function main() {
 
   // Seed Storages
   for (const storage of config.defaultStorages) {
-
     console.log(`Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`);
 
     await prisma.storage.upsert({
@@ -182,9 +179,8 @@ async function main() {
 
   // Seed Ingredients
   for (const ingredient of config.defaultIngredients) {
-
     console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
-    
+
     await prisma.ingredient.upsert({
       where: { id: ingredient.id },
       update: {},
@@ -197,9 +193,8 @@ async function main() {
 
   // Seed Stocks
   for (const stock of config.defaultStocks) {
-
     console.log(`Seeding Stock: IngredientID=${stock.ingredientId}, StorageID=${stock.storageId}, Qty=${stock.quantity} ${stock.unit}, Status=${stock.status}`);
-    
+
     await prisma.stock.upsert({
       where: {
         ingredientId_storageId: {
@@ -220,7 +215,6 @@ async function main() {
 
   // Seed Recipes
   for (const recipe of config.defaultRecipes) {
-
     console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
 
     await prisma.recipe.upsert({

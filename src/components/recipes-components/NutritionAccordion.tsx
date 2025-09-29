@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Minus } from 'lucide-react';
 
 type Nutrition = {
-    id: string | number;
-    name: string;
-    amount: number | string;
-    unit: string;
+  id: string | number;
+  name: string;
+  amount: number | string;
+  unit: string;
 };
 
 interface NutritionAccordionProps {
-    nutrition: Nutrition[];
+  nutrition: Nutrition[];
 }
 
 const NutritionAccordion = ({ nutrition }: NutritionAccordionProps) => {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    return (
+  return (
         <div className="w-full max-w-md bg-transparent">
             <div
                 className="flex items-center cursor-pointer gap-3 font-semibold text-lg px-0 py-2"
@@ -32,9 +32,9 @@ const NutritionAccordion = ({ nutrition }: NutritionAccordionProps) => {
                 {open && (
                     <motion.div
                         initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
+                        animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3, ease: "easeInOut" }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
                         className="overflow-hidden flex flex-col gap-1 mt-2"
                     >
                         {nutrition.map((n) => (
@@ -47,7 +47,7 @@ const NutritionAccordion = ({ nutrition }: NutritionAccordionProps) => {
                 )}
             </AnimatePresence>
         </div>
-    );
+  );
 };
 
 export default NutritionAccordion;

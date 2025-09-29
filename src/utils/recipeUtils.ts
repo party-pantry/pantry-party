@@ -1,8 +1,8 @@
 export const difficultyMap = {
-  EASY: { label: 'Easy', variant: 'success' as const},
-  MEDIUM: { label: 'Medium', variant: 'warning' as const},
-  HARD: { label: 'Hard', variant: 'danger' as const},
-}
+  EASY: { label: 'Easy', variant: 'success' as const },
+  MEDIUM: { label: 'Medium', variant: 'warning' as const },
+  HARD: { label: 'Hard', variant: 'danger' as const },
+};
 
 export interface IngredientChecker {
   haveIngredients: string[];
@@ -17,18 +17,14 @@ export interface RecipeIngredient {
 export const calculateTotalTime = (
   prepTime: number,
   cookTime: number,
-  downTime?: number
-): number => {
-  return prepTime + cookTime + (downTime ?? 0);
-};
+  downTime?: number,
+): number => prepTime + cookTime + (downTime ?? 0);
 
-export const getDifficulty = (difficulty: keyof typeof difficultyMap) => {
-  return difficultyMap[difficulty];
-};
+export const getDifficulty = (difficulty: keyof typeof difficultyMap) => difficultyMap[difficulty];
 
 export const checkIngredients = (
   recipeIngredients: RecipeIngredient[],
-  userIngredientsId?: Set<number>
+  userIngredientsId?: Set<number>,
 ): IngredientChecker => {
   if (!userIngredientsId || userIngredientsId.size === 0) {
     return {
@@ -53,8 +49,6 @@ export const checkIngredients = (
     missingIngredients,
     matchPercent,
   };
-}
-
-export const formatIngredientsDisplay = (ingredients: string[]): string => {
-  return ingredients.join(', ') || 'None';
 };
+
+export const formatIngredientsDisplay = (ingredients: string[]): string => ingredients.join(', ') || 'None';
