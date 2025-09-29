@@ -4,7 +4,7 @@
 // import { redirect } from 'next/navigation';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { hash } from 'bcryptjs';
-import { Unit, Status } from '@prisma/client';
+import { Unit, Status, Category } from '@prisma/client';
 import { prisma } from './prisma';
 
 /* Create a new user with unique email and username */
@@ -109,6 +109,17 @@ export async function addHouse(data: { name: string; address?: string; userId: n
       name: data.name,
       address: data.address,
       userId: Number(data.userId),
+    },
+  });
+}
+
+/* Create a new storage/pantry */
+export async function addStorage(data: { name: string; type: Category; houseId: number }) {
+  await prisma.storage.create({
+    data: {
+      name: data.name,
+      type: data.type,
+      houseId: data.houseId,
     },
   });
 }

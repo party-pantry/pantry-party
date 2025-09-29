@@ -28,9 +28,9 @@ export enum LocalStatus {
 }
 
 export enum LocalCategory {
-  FRIDGE = 'fridge',
-  PANTRY = 'pantry',
-  FREEZER = 'freezer',
-  SPICE_RACK = 'spice rack',
-  OTHER = 'other',
+  FRIDGE = 'Fridge',
+  PANTRY = 'Pantry',
+  FREEZER = 'Freezer',
+  SPICE_RACK = 'Spice Rack',
+  OTHER = 'Other',
 }

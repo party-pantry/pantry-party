@@ -4,24 +4,26 @@
 
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
+import { LocalCategory } from '../lib/Units';
 
 interface Props {
   show: boolean;
   onHide: () => void;
-  onAddPantry: (pantry: { name: string; type: string }) => void;
+  onAddPantry: (pantry: { name: string; type: LocalCategory }) => void;
+  houseId: number;
 }
 
-const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
+const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId }) => {
   const [formData, setFormData] = useState({
     name: '',
-    type: '',
+    type: '' as LocalCategory,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.type) {
       onAddPantry({ ...formData });
-      setFormData({ name: '', type: '' });
+      setFormData({ name: '', type: '' as LocalCategory });
       onHide();
     }
   };
@@ -46,26 +48,31 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry }) => {
       <Modal.Body className="text-center">
         <h4>Add New Pantry</h4>
         <Form autoComplete="off" onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="storageName">
-            <Form.Control
+          <Form.Group className="mb-3" controlId="storageType">
+            <Form.Select
               className="text-center"
-              placeholder="Storage Name"
-              value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
+              value={formData.type}
+              onChange={(e) => handleChange('type', e.target.value)}
               required
-            />
+            > {Object.values(LocalCategory).map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
 
           <Row className="mb-3">
             <Col>
-              <Form.Group controlId="storageType">
+              <Form.Group controlId="storageName">
                 <Form.Control
                   className="text-center"
-                  placeholder="Storage Type"
-                  value={formData.type}
-                  onChange={(e) => handleChange('type', e.target.value)}
+                  placeholder="Storage Name"
+                  value={formData.name}
+                  onChange={(e) => handleChange('name', e.target.value)}
                   required
                 />
+
               </Form.Group>
             </Col>
           </Row>
