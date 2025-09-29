@@ -68,14 +68,6 @@ body {
   transform: translateX(0);
 }
 
-#login-dropdown::after {
-  display: none !important;
-}
-
-#filter::after {
-  display: none !important;
-}
-
 .nav-dropdown {
   position: relative;
 }
@@ -237,14 +229,18 @@ body {
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
 }
 
+/* Remove dropdown arrows */
+#recipes-filter-dropdown::after,
+#recipes-sort-dropdown::after,
+#kitchen-filter-dropdown::after,
+#login-dropdown::after,
+#filter::after {
+  display: none !important;
+}
+
 /* Border thickness for cards */
 .custom-card-border {
   border-width: 3px;
-}
-
-/* Kitchen Filter Button */
-#kitchen-filter-dropdown::after {
-  display: none !important;
 }
 
 /* Buttons */

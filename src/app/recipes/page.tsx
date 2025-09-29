@@ -7,6 +7,7 @@ import Loading from '../../components/home-components/Loading';
 import RecipeCard from '../../components/recipes-components/RecipeCard';
 import RecipesSearch from '../../components/recipes-components/RecipesSearch';
 import RecipesFilterButton from '../../components/recipes-components/RecipesFilterButton';
+import RecipesSortButton from '../../components/recipes-components/RecipesSortButton';
 import AddRecipesModal from '../../components/recipes-components/AddRecipesModal';
 
 interface RecipeWithIngredients extends Recipe {
@@ -64,19 +65,22 @@ const Recipes: React.FC = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div className="flex flex-col justify-center h-[30vh] mb-5">
+      <div className="flex flex-col justify-center h-[30vh]">
         <h1 className="text-4xl font-bold">Recipe Suggestions</h1>
         <h6 className="text-gray-600 mt-2">Find recipes based on ingredients you already have!</h6>
         <div className="flex justify-end mt-2">
         </div>
         <hr className="mt-4 border-gray-300"/>
       </div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+
+
+      <div className="d-flex justify-content-end flex-wrap gap-2 mb-2">
+        <AddRecipesModal />
+      </div>
+      <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
         <RecipesSearch />
-        <div className="d-flex gap-2">
-          <RecipesFilterButton />
-          <AddRecipesModal />
-        </div>
+        <RecipesFilterButton />
+        <RecipesSortButton />
       </div>
 
       <Row className="g-4 justify-content-center">

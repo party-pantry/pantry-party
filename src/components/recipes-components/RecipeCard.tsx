@@ -53,7 +53,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
                 <CardText>
                     <strong>Ingredients You're Missing:</strong> {formatIngredientsDisplay(missingIngredients)}
                 </CardText>
-                <CardText><strong>Match: {matchPercent}%</strong></CardText>
+                <CardText><strong>Match: {matchPercent.toFixed(0)}%</strong></CardText>
 
                 <div className="recipe-card-view-cook-buttons">
                     <Button className="view-recipe-button" variant="success" onClick={handleViewDetails}>View Recipe</Button>
