@@ -4,9 +4,10 @@
 // import { redirect } from 'next/navigation';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { hash } from 'bcryptjs';
-import { Unit, Status } from '@prisma/client';
+import { Unit, Status, Category } from '@prisma/client';
 import { prisma } from './prisma';
 
+/* Create a new user with unique email and username */
 // eslint-disable-next-line import/prefer-default-export
 export async function createUser(credentials: {
   username: string;
@@ -36,7 +37,7 @@ export async function createUser(credentials: {
   });
 }
 
-/* Add item from Ingredient table */
+/* Create new stock and able to create new ingredient */
 export async function addItem(data: {
   name: string;
   quantity: number;
@@ -97,6 +98,35 @@ export async function addItem(data: {
       quantity: Number(data.quantity),
       unit: data.units,
       status: data.status,
+    },
+  });
+}
+
+/* Create a new house */
+export async function addHouse(data: { name: string; address?: string; userId: number }) {
+  await prisma.house.create({
+    data: {
+      name: data.name,
+      address: data.address,
+      userId: Number(data.userId),
+    },
+  });
+}
+
+/* Delete house by id */
+export async function deleteHouse(houseId: number) {
+  await prisma.house.delete({
+    where: { id: houseId },
+  });
+}
+
+/* Create a new storage/pantry */
+export async function addStorage(data: { name: string; type: Category; houseId: number }) {
+  await prisma.storage.create({
+    data: {
+      name: data.name,
+      type: data.type,
+      houseId: data.houseId,
     },
   });
 }

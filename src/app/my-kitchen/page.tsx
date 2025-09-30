@@ -5,7 +5,7 @@
 
 'use client';
 
-import { Container, Button, Row } from 'react-bootstrap';
+import { Container, Button, Row, Nav } from 'react-bootstrap';
 import React, { useState, useEffect } from 'react';
 import IngredientTable from '../../components/kitchen-components/IngredientTable';
 import StorageContainer from '../../components/kitchen-components/StorageContainer';
@@ -15,7 +15,7 @@ import AddPantryModal from '../../components/kitchen-components/AddPantryModal';
 import KitchenFilterButton from '../../components/kitchen-components/KitchenFilterButton';
 import EditItemModal from '../../components/kitchen-components/EditItemModal';
 import KitchenSortButton from '../../components/kitchen-components/KitchenSortButton';
-
+import { LocalUnit } from '../../lib/Units';
 type Item = {
   id: number;
   name: string;
@@ -53,6 +53,7 @@ type House = {
 
 const MyKitchen = () => {
   const [houses, setHouses] = useState<House[]>([]);
+  const [activeHouseId, setActiveHouseId] = useState<number>(0);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -75,6 +76,7 @@ const MyKitchen = () => {
       const res = await fetch('/api/kitchen');
       const data = await res.json();
       setHouses(data);
+      if (data.length > 0) setActiveHouseId(data[0].id); // Auto-select first house
     }
     fetchHouses();
   }, []);
@@ -123,7 +125,7 @@ const MyKitchen = () => {
         id: stock.id,
         name: stock.ingredient.name,
         image: stock.ingredient.image || '',
-        quantity: `${stock.quantity} ${stock.unit}`,
+        quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit}`,
         updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
         status:
           stock.status === 'GOOD'
@@ -167,7 +169,7 @@ const MyKitchen = () => {
         <hr className="mt-4 border-gray-300"/>
       </div>
 
-      {/* Houses and storages */}
+      {/* House tabs */}
       <div
         style={{
           justifyContent: 'center',
@@ -176,81 +178,81 @@ const MyKitchen = () => {
           marginBottom: '50px',
         }}
       >
-        {houses.map((house) => (
-          <HomeTabSelection
-            key={house.id}
-            id={house.id.toString()}
-            title={house.name}
-          >
-            <Row className="justify-content-end mb-3 pr-4">
-              <KitchenFilterButton
-                onApply={(appliedFilters) =>
-                  setFilters({ ...filters, status: appliedFilters.status })
-                }
-              />
-              <Button
-                style={{
-                  width: '125px',
-                  backgroundColor: '#3A5B4F',
-                  color: 'white',
-                }}
-                variant=""
-                onClick={() => setShowAddModal(true)}
-              >
-                <strong>Add Item +</strong>
-              </Button>
-            </Row>
-            {house.storages.map((storage) => (
-              <StorageContainer
-                key={storage.id}
-                id={storage.id.toString()}
-                title={storage.name}
-                /* Sorting for every storage space */
-                feature={
-                  <KitchenSortButton
-                    label="Sort"
-                    onSort={() => handleSort(storage.id)}
-                  />
-                }
-              >
-                {/* Table of items */}
-                <IngredientTable
-                  items={getDisplayedStocks(storage)}
-                  onDelete={() => {}}
-                  onEdit={handleEditItem}
-                />
-              </StorageContainer>
-            ))}
-            <Button
-              className="mt-1"
-              style={{
-                width: '150px',
-                backgroundColor: '#3A5B4F',
-                borderColor: '#3A5B4F',
-              }}
-              onClick={() => setShowPantryModal(true)}
+        <div style={{ marginTop: '24px' }}>
+          {houses.filter(house => house.id === activeHouseId).map(house => (
+            <HomeTabSelection
+              key={house.id}
+              id={house.id.toString()}
+              houseArray={houses.map(h => ({ id: h.id, name: h.name }))}
+              activeHouseId={activeHouseId}
+              selectActiveHouseId={setActiveHouseId}
             >
-              <strong>Add Storage +</strong>
-            </Button>
-          </HomeTabSelection>
-        ))}
+              <Row className="justify-content-end mb-3 pr-4">
+                <KitchenFilterButton
+                  onApply={(appliedFilters) =>
+                    setFilters({ ...filters, status: appliedFilters.status })
+                  }
+                />
+                <Button
+                  style={{
+                    width: '125px',
+                    backgroundColor: '#3A5B4F',
+                    color: 'white',
+                  }}
+                  variant=""
+                  onClick={() => setShowAddModal(true)}
+                >
+                  <strong>Add Item +</strong>
+                </Button>
+              </Row>
+              {house.storages.map((storage) => (
+                <StorageContainer
+                  key={storage.id}
+                  id={storage.id.toString()}
+                  title={storage.name}
+                  /* Sorting for every storage space */
+                  feature={
+                    <KitchenSortButton
+                      label="Sort"
+                      onSort={() => handleSort(storage.id)}
+                    />
+                  }
+                >
+                  {/* Table of items */}
+                  <IngredientTable
+                    items={getDisplayedStocks(storage)}
+                    onDelete={() => {}}
+                    onEdit={handleEditItem}
+                  />
+                </StorageContainer>
+              ))}
+              <Button
+                className="mt-1"
+                style={{
+                  width: '150px',
+                  backgroundColor: '#3A5B4F',
+                  borderColor: '#3A5B4F',
+                }}
+                onClick={() => setShowPantryModal(true)}
+              >
+                <strong>Add Storage +</strong>
+              </Button>
+            </HomeTabSelection>
+          ))}
+        </div>
       </div>
 
       <AddItemModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={() => {}}
-        storages={houses.flatMap((house) =>
-          house.storages.map((storage) => ({
-            id: storage.id,
-            name: storage.name,
-          })),
-        )}
+        storages={houses.find(house => house.id === activeHouseId)?.storages || []}
       />
       <AddPantryModal
         show={showPantryModal}
         onHide={() => setShowPantryModal(false)}
         onAddPantry={() => {}}
+        houseId={activeHouseId}
       />
       <EditItemModal
         show={showEditModal}

@@ -18,6 +18,9 @@ export enum LocalUnit {
   BOX = 'box(es)',
   PIECE = 'pc(s)',
   SACK = 'sack(s)',
+  BUNDLES = 'bundle(s)',
+  LOAVES = 'loaf(s)',
+  PACKAGE = 'package(s)',
 }
 
 export enum LocalStatus {
@@ -28,9 +31,9 @@ export enum LocalStatus {
 }
 
 export enum LocalCategory {
-  FRIDGE = 'fridge',
-  PANTRY = 'pantry',
-  FREEZER = 'freezer',
-  SPICE_RACK = 'spice rack',
-  OTHER = 'other',
+  FRIDGE = 'Fridge',
+  PANTRY = 'Pantry',
+  FREEZER = 'Freezer',
+  SPICE_RACK = 'Spice Rack',
+  OTHER = 'Other',
 }

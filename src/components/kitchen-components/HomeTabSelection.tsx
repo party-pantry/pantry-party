@@ -6,51 +6,90 @@
 import React from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { PlusCircle } from 'lucide-react';
+import { MinusCircle, PlusCircle } from 'lucide-react';
+import AddHouseModal from './AddHouseModal';
+import { deleteHouse } from '@/lib/dbFunctions';
+
 
 interface HomeTabSelectionProps {
   // Might be good to have an id prop to keep track of containers
   // eslint-disable-next-line react/require-default-props
   id?: string;
-  title: string;
   children: React.ReactNode;
+  houseArray: {
+    id: number;
+    name: string;
+  }[];
+  activeHouseId: number;
+  selectActiveHouseId: (id: number) => void;
 }
 
-const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({ id, title, children }) => (
-  <Card id={id} border="" className="shadow-lg  mb-5">
-    <Card.Header
-      style={{
-        backgroundColor: '#2C776D',
-      }}
-    >
-      <Nav variant="tabs" defaultActiveKey="#first">
-        <Nav.Item>
-          <Nav.Link href="#first">{title}</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href="##link">Home 2</Nav.Link>
-        </Nav.Item>
-        <Nav.Item>
-          <Nav.Link href="#third">Home 3</Nav.Link>
-        </Nav.Item>
-        <Nav.Item className="ms-auto d-flex align-items-center">
-          <PlusCircle
-            size={32}
-            className=" ml-auto"
-            style={{ cursor: 'pointer', color: '#ffffffff' }}
-          />
-        </Nav.Item>
-      </Nav>
-    </Card.Header>
-    <Card.Body
-      className="p-4 mb-0"
-      style={{
-        backgroundColor: '#DDF3F0',
-      }}
-    >
-      {children}
-    </Card.Body>
-  </Card>
-);
+const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
+  id,
+  children,
+  houseArray = [],
+  activeHouseId,
+  selectActiveHouseId,
+}) => {
+  const [showHouseModal, setShowHouseModal] = React.useState(false);
+  
+  return (
+    <>
+      <Card id={id} border="" className="shadow-lg  mb-5">
+        <Card.Header
+          style={{
+            backgroundColor: '#2C776D',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0.5rem 1rem',
+          }}
+        >
+          <Nav
+            variant="tabs"
+            activeKey={activeHouseId.toString()}
+            onSelect={k => selectActiveHouseId(Number(k))}
+            style={{ flex: 1 }}
+          >
+            {houseArray.map(house => (
+              <Nav.Item key={house.id}>
+                <Nav.Link eventKey={house.id.toString()}>{house.name}</Nav.Link>
+              </Nav.Item>
+            ))}
+            </Nav>
+            <Nav.Item className="ms-auto d-flex align-items-center">
+              <MinusCircle
+                size={32}
+                className="me-3"
+                style={{ cursor: 'pointer', color: '#ffffffff' }}
+                onClick={() => deleteHouse(activeHouseId)}
+              />
+              <PlusCircle
+                size={32}
+                className=" ml-auto"
+                style={{ cursor: 'pointer', color: '#ffffffff' }}
+              onClick={() => setShowHouseModal(true)}
+            />
+          </Nav.Item>
+        </Card.Header>
+        <Card.Body
+          className="p-4 mb-0"
+          style={{
+            backgroundColor: '#DDF3F0',
+          }}
+        >
+          {children}
+        </Card.Body>
+      </Card>
+      <AddHouseModal
+        show={showHouseModal}
+        onHide={() => setShowHouseModal(false)}
+        onAddHouse={(house) => {
+          setShowHouseModal(false);
+        }}
+      />
+    </>
+  );
+};
 
 export default HomeTabSelection;

@@ -19,7 +19,9 @@ interface Props {
 }
 
 // Mockup UI of what list of ingredients table could look like
-const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
+const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
+  
+  return (
   <table className="w-full h-full border-collapse bg-white shadow-md rounded">
     <thead className="bg-gray-100">
       <tr>
@@ -42,12 +44,12 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
           </td>
         </tr>
       ) : (
-        items.map((item) => (
-          <IngredientRow key={item.id} {...item} onDelete={onDelete} onEdit={onEdit} />
+        items.map((item, idx) => (
+          <IngredientRow key={item.id + '-' + idx} {...item} onDelete={onDelete} onEdit={onEdit} />
         ))
       )}
     </tbody>
   </table>
-);
+)};
 
 export default IngredientTable;
