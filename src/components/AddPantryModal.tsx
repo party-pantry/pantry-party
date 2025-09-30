@@ -1,3 +1,4 @@
+/* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/prop-types */
 
 'use client';
@@ -7,7 +8,6 @@ import { useState } from 'react';
 import { Category } from '@prisma/client';
 import { LocalCategory } from '@/lib/Units';
 import { addStorage } from '@/lib/dbFunctions';
-
 
 interface Props {
   show: boolean;
@@ -61,13 +61,20 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
             <Form.Select
               className="text-center"
               value={formData.type}
-              onChange={(e) => handleChange('type', Object.keys(LocalCategory).includes(e.target.value) ? e.target.value as Category : '')}
+              onChange={(e) =>
+                handleChange(
+                  'type',
+                  Object.keys(LocalCategory).includes(e.target.value)
+                    ? (e.target.value as Category)
+                    : '',
+                )
+              }
               required
             > {Object.entries(LocalCategory).map(([key, value]) => (
                 <option key={key} value={key}>
                   {value}
                 </option>
-              ))}
+            ))}
             </Form.Select>
           </Form.Group>
 

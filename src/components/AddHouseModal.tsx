@@ -18,25 +18,25 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
   const [formData, setFormData] = React.useState<{ name: string; address?: string; userId: number }>({
     name: '',
     address: '',
-    userId: userId,
+    userId,
   });
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault(); 
+    e.preventDefault();
     if (formData.name) {
       try {
         await addHouse({ ...formData });
         onAddHouse(formData);
-        setFormData({ name: '', address: '', userId: userId });
+        setFormData({ name: '', address: '', userId });
         setError(null);
         onHide();
+      // eslint-disable-next-line @typescript-eslint/no-shadow
       } catch (error) {
         setError('Error adding house.');
       }
     }
   };
-  
+
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
@@ -67,7 +67,7 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
               required={false}
             />
           </Form.Group>
-          <button 
+          <button
             className="btn btn-success"
             type="submit"
           >
@@ -80,4 +80,3 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
 };
 
 export default AddHouseModal;
-
