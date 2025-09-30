@@ -7,9 +7,8 @@ import React from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
-import AddHouseModal from './AddHouseModal';
 import { deleteHouse } from '@/lib/dbFunctions';
-
+import AddHouseModal from './AddHouseModal';
 
 interface HomeTabSelectionProps {
   // Might be good to have an id prop to keep track of containers
@@ -32,7 +31,7 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   selectActiveHouseId,
 }) => {
   const [showHouseModal, setShowHouseModal] = React.useState(false);
-  
+
   return (
     <>
       <Card id={id} border="" className="shadow-lg  mb-5">
@@ -84,7 +83,7 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
       <AddHouseModal
         show={showHouseModal}
         onHide={() => setShowHouseModal(false)}
-        onAddHouse={(house) => {
+        onAddHouse={() => {
           setShowHouseModal(false);
         }}
       />
