@@ -6,8 +6,10 @@
 import React from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { PlusCircle } from 'lucide-react';
+import { MinusCircle, PlusCircle } from 'lucide-react';
 import AddHouseModal from './AddHouseModal';
+import { deleteHouse } from '@/lib/dbFunctions';
+
 
 interface HomeTabSelectionProps {
   // Might be good to have an id prop to keep track of containers
@@ -30,7 +32,7 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   selectActiveHouseId,
 }) => {
   const [showHouseModal, setShowHouseModal] = React.useState(false);
-  console.log(houseArray);
+  
   return (
     <>
       <Card id={id} border="" className="shadow-lg  mb-5">
@@ -56,6 +58,12 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
             ))}
             </Nav>
             <Nav.Item className="ms-auto d-flex align-items-center">
+              <MinusCircle
+                size={32}
+                className="me-3"
+                style={{ cursor: 'pointer', color: '#ffffffff' }}
+                onClick={() => deleteHouse(activeHouseId)}
+              />
               <PlusCircle
                 size={32}
                 className=" ml-auto"

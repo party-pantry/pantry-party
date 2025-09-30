@@ -113,6 +113,13 @@ export async function addHouse(data: { name: string; address?: string; userId: n
   });
 }
 
+/* Delete house by id */
+export async function deleteHouse(houseId: number) {
+  await prisma.house.delete({
+    where: { id: houseId },
+  });
+}
+
 /* Create a new storage/pantry */
 export async function addStorage(data: { name: string; type: Category; houseId: number }) {
   await prisma.storage.create({
