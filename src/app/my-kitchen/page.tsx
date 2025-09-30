@@ -5,16 +5,16 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
-import { Container, Button, Row } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
-import IngredientTable from "../../components/kitchen-components/IngredientTable";
-import StorageContainer from "../../components/kitchen-components/StorageContainer";
-import HomeTabSelection from "../../components/kitchen-components/HomeTabSelection";
-import AddItemModal from "../../components/kitchen-components/AddItemModal";
-import AddPantryModal from "../../components/kitchen-components/AddPantryModal";
-import KitchenFilterButton from "../../components/kitchen-components/KitchenFilterButton";
-import EditItemModal from "../../components/kitchen-components/EditItemModal";
-import { useSession } from "next-auth/react";
+import { Container, Button, Row } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import IngredientTable from '../../components/kitchen-components/IngredientTable';
+import StorageContainer from '../../components/kitchen-components/StorageContainer';
+import HomeTabSelection from '../../components/kitchen-components/HomeTabSelection';
+import AddItemModal from '../../components/kitchen-components/AddItemModal';
+import AddPantryModal from '../../components/kitchen-components/AddPantryModal';
+import KitchenFilterButton from '../../components/kitchen-components/KitchenFilterButton';
+import EditItemModal from '../../components/kitchen-components/EditItemModal';
 import KitchenSortButton from '../../components/kitchen-components/KitchenSortButton';
 import { LocalUnit } from '../../lib/Units';
 
@@ -76,7 +76,7 @@ const MyKitchen = () => {
 
   // Fetch kitchen data
   useEffect(() => {
-    if (!userId) return; 
+    if (!userId) return;
 
     async function fetchHouses() {
       const res = await fetch(`/api/kitchen?userId=${userId}`);
