@@ -38,7 +38,7 @@ const NewHouseModal: React.FC<{
         <button className="btn btn-secondary" onClick={handleClose}>
           Cancel
         </button>
-        <button className="btn btn-primary" onClick={() => addHouse(houseName, userId as number).then(handleClose)}>
+        <button className="btn btn-primary" onClick={() => addHouse({ name: houseName, userId: userId as number }).then(handleClose)}>
           Add House
         </button>
       </Modal.Footer>

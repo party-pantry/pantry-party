@@ -18,7 +18,7 @@ import { useSession } from 'next-auth/react';
 import SignInModal from '../auth-components/SignInModal';
 import SignUpModal from '../auth-components/SignUpModal';
 import SignOutModal from '../auth-components/SignOutModal';
-import NewHouseModal from '../kitchen-components/NewHouseModal';
+import NewHouseModal from '../NewHouseModal';
 
 const NavBar: React.FC = () => {
   const { data: session } = useSession();
