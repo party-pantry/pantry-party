@@ -42,7 +42,7 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
         marginRight: '120px',
         paddingTop: '20px',
         marginTop: '10px',
-        marginBottom: '-50px',
+        marginBottom: '-58px',
         marginLeft: '20px',
       }}
     >
