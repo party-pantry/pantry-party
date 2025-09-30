@@ -1,3 +1,5 @@
+'use client';
+
 /* eslint-disable function-paren-newline */
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable max-len */
@@ -74,18 +76,16 @@ const MyKitchen = () => {
 
   // Fetch kitchen data
   useEffect(() => {
-    // Ensure userId is available
     if (!userId) return; 
 
     async function fetchHouses() {
       const res = await fetch(`/api/kitchen?userId=${userId}`);
-
       const data = await res.json();
       setHouses(data);
-      if (data.length > 0) setActiveHouseId(data[0].id); // Auto-select first house
+      if (data.length > 0) setActiveHouseId(data[0].id); // <-- This sets the active house
     }
     fetchHouses();
-  }, []);
+  }, [userId]);
 
   // Flatten all stocks into items
   const handleEditItem = (id: number) => {
