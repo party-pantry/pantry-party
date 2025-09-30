@@ -8,7 +8,7 @@ import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
 import { deleteHouse } from '@/lib/dbFunctions';
-import AddHouseModal from './AddHouseModal';
+import AddHouseModal from '@/components/AddHouseModal';
 
 interface HomeTabSelectionProps {
   // Might be good to have an id prop to keep track of containers
