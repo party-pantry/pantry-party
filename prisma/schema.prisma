@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id       Int     @id @default(autoincrement())
-  email    String  @unique
-  username String  @unique
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  username String   @unique
   password String
   houses   House[]
+  Recipe   Recipe[]
 }
 
 model House {
@@ -20,7 +21,7 @@ model House {
   userId   Int
   name     String
   address  String?
-  user     User      @relation(fields: [userId], references: [id])
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   storages Storage[]
 }
 
@@ -30,31 +31,75 @@ model Storage {
   name    String?
   type    Category
   stocks  Stock[]
-  house   House    @relation(fields: [houseId], references: [id])
+  house   House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
 }
 
 model Ingredient {
-  id     Int     @id @default(autoincrement())
-  name   String
-  price  Int?
-  stocks Stock[]
+  id               Int                @id @default(autoincrement())
+  name             String
+  price            Int?
+  RecipeIngredient RecipeIngredient[]
+  stocks           Stock[]
 }
 
 model Stock {
-  id           Int         @id @default(autoincrement())
-  ingredientId Int?
+  ingredientId Int
   storageId    Int
   custom_name  String?
   quantity     Float
   unit         Unit
-  last_updated DateTime    @default(now()) @updatedAt
-  status       Status      @default(GOOD)
-  category     Category
-  ingredient   Ingredient? @relation(fields: [ingredientId], references: [id])
-  storage      Storage     @relation(fields: [storageId], references: [id])
+  last_updated DateTime   @default(now()) @updatedAt
+  status       Status     @default(GOOD)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  storage      Storage    @relation(fields: [storageId], references: [id], onDelete: Cascade)
 
-  @@unique([ingredientId, storageId])
-  @@unique([custom_name, storageId])
+  @@id([ingredientId, storageId])
+}
+
+model Recipe {
+  id                Int                 @id @default(autoincrement())
+  userId            Int
+  name              String
+  description       String?
+  difficulty        Difficulty
+  postDate          DateTime            @default(now())
+  prepTime          Int
+  cookTime          Int
+  downTime          Int?
+  servings          Int
+  rating            Int
+  User              User                @relation(fields: [userId], references: [id])
+  RecipeIngredient  RecipeIngredient[]
+  RecipeInstruction RecipeInstruction[]
+  RecipeNutrition   RecipeNutrition[]
+}
+
+model RecipeIngredient {
+  id           Int        @id @default(autoincrement())
+  recipeId     Int
+  ingredientId Int
+  quantity     Float
+  unit         Unit
+  name         String
+  Ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  Recipe       Recipe     @relation(fields: [recipeId], references: [id])
+}
+
+model RecipeInstruction {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  step     Int
+  content  String
+  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
+model RecipeNutrition {
+  id       Int    @id @default(autoincrement())
+  recipeId Int
+  name     String
+  amount   Float
+  unit     String
+  Recipe   Recipe @relation(fields: [recipeId], references: [id])
 }
 
 enum Unit {
@@ -95,4 +140,10 @@ enum Category {
   FREEZER
   SPICE_RACK
   OTHER
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
 }
