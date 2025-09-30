@@ -3,6 +3,8 @@
 // import { Stuff, Condition } from '@prisma/client';
 // import { redirect } from 'next/navigation';
 // eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/prefer-default-export
+
 import { hash } from 'bcryptjs';
 import { Unit, Status, Category } from '@prisma/client';
 import { prisma } from './prisma';
