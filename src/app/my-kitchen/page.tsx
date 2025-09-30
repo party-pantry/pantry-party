@@ -15,7 +15,7 @@ import AddPantryModal from '../../components/AddPantryModal';
 import KitchenFilterButton from '../../components/KitchenFilterButton';
 import EditItemModal from '../../components/EditItemModal';
 import KitchenSortButton from '../../components/KitchenSortButton';
-
+import { LocalUnit } from '../../lib/Units';
 type Item = {
   id: number;
   name: string;
@@ -125,7 +125,7 @@ const MyKitchen = () => {
         id: stock.id,
         name: stock.ingredient.name,
         image: stock.ingredient.image || '',
-        quantity: `${stock.quantity} ${stock.unit}`,
+        quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit}`,
         updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
         status:
           stock.status === 'GOOD'

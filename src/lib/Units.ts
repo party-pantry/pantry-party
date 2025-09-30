@@ -18,6 +18,9 @@ export enum LocalUnit {
   BOX = 'box(es)',
   PIECE = 'pc(s)',
   SACK = 'sack(s)',
+  BUNDLES = 'bundle(s)',
+  LOAVES = 'loaf(s)',
+  PACKAGE = 'package(s)',
 }
 
 export enum LocalStatus {
