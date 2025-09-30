@@ -4,27 +4,36 @@
 
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
-import { LocalCategory } from '../lib/Units';
+import { Category } from '@prisma/client';
+import { LocalCategory } from '@/lib/Units';
+import { addStorage } from '@/lib/dbFunctions';
+
 
 interface Props {
   show: boolean;
   onHide: () => void;
-  onAddPantry: (pantry: { name: string; type: LocalCategory }) => void;
+  onAddPantry: (pantry: { name: string; type: Category }) => void;
   houseId: number;
 }
 
 const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId }) => {
   const [formData, setFormData] = useState({
     name: '',
-    type: '' as LocalCategory,
+    type: '' as Category,
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.type) {
-      onAddPantry({ ...formData });
-      setFormData({ name: '', type: '' as LocalCategory });
-      onHide();
+      try {
+        await addStorage({ name: formData.name, type: formData.type, houseId });
+        onAddPantry({ ...formData });
+        setFormData({ name: '', type: '' as Category });
+        onHide();
+      } catch (error) {
+        // Handle error appropriately
+        console.error(error);
+      }
     }
   };
 
@@ -52,11 +61,11 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
             <Form.Select
               className="text-center"
               value={formData.type}
-              onChange={(e) => handleChange('type', e.target.value)}
+              onChange={(e) => handleChange('type', Object.keys(LocalCategory).includes(e.target.value) ? e.target.value as Category : '')}
               required
-            > {Object.values(LocalCategory).map((category) => (
-                <option key={category} value={category}>
-                  {category}
+            > {Object.entries(LocalCategory).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {value}
                 </option>
               ))}
             </Form.Select>

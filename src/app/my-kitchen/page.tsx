@@ -253,17 +253,13 @@ const MyKitchen = () => {
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
         onAddItem={() => {}}
-        storages={houses.flatMap((house) =>
-          house.storages.map((storage) => ({
-            id: storage.id,
-            name: storage.name,
-          })),
-        )}
+        storages={houses.find(house => house.id === activeHouseId)?.storages || []}
       />
       <AddPantryModal
         show={showPantryModal}
         onHide={() => setShowPantryModal(false)}
         onAddPantry={() => {}}
+        houseId={activeHouseId}
       />
       <EditItemModal
         show={showEditModal}

@@ -13,13 +13,15 @@ interface Props {
 
 const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
   const userId = (useSession().data?.user as { id: number }).id;
-  console.log(userId);
+  const [error, setError] = React.useState<string | null>(null);
+
   const [formData, setFormData] = React.useState<{ name: string; address?: string; userId: number }>({
     name: '',
     address: '',
     userId: userId,
   });
-  const [error, setError] = React.useState<string | null>(null);
+  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); 
     if (formData.name) {
@@ -34,6 +36,7 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
       }
     }
   };
+  
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
