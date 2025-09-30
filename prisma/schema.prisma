@@ -13,7 +13,7 @@ model User {
   username String   @unique
   password String
   houses   House[]
-  Recipe   Recipe[]
+  recipes  Recipe[]
 }
 
 model House {
@@ -21,7 +21,7 @@ model House {
   userId   Int
   name     String
   address  String?
-  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id])
   storages Storage[]
 }
 
@@ -31,15 +31,15 @@ model Storage {
   name    String?
   type    Category
   stocks  Stock[]
-  house   House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  house   House    @relation(fields: [houseId], references: [id])
 }
 
 model Ingredient {
-  id               Int                @id @default(autoincrement())
-  name             String
-  price            Int?
-  RecipeIngredient RecipeIngredient[]
-  stocks           Stock[]
+  id      Int                @id @default(autoincrement())
+  name    String
+  price   Int?
+  recipes RecipeIngredient[]
+  stocks  Stock[]
 }
 
 model Stock {
@@ -51,27 +51,27 @@ model Stock {
   last_updated DateTime   @default(now()) @updatedAt
   status       Status     @default(GOOD)
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  storage      Storage    @relation(fields: [storageId], references: [id], onDelete: Cascade)
+  storage      Storage    @relation(fields: [storageId], references: [id])
 
   @@id([ingredientId, storageId])
 }
 
 model Recipe {
-  id                Int                 @id @default(autoincrement())
-  userId            Int
-  name              String
-  description       String?
-  difficulty        Difficulty
-  postDate          DateTime            @default(now())
-  prepTime          Int
-  cookTime          Int
-  downTime          Int?
-  servings          Int
-  rating            Int
-  User              User                @relation(fields: [userId], references: [id])
-  RecipeIngredient  RecipeIngredient[]
-  RecipeInstruction RecipeInstruction[]
-  RecipeNutrition   RecipeNutrition[]
+  id           Int                 @id @default(autoincrement())
+  userId       Int
+  name         String
+  description  String?
+  difficulty   Difficulty
+  postDate     DateTime            @default(now()) @updatedAt
+  prepTime     Int
+  cookTime     Int
+  downTime     Int?
+  servings     Int
+  rating       Int
+  user         User                @relation(fields: [userId], references: [id])
+  ingredients  RecipeIngredient[]
+  instructions RecipeInstruction[]
+  nutrition    RecipeNutrition[]
 }
 
 model RecipeIngredient {
@@ -81,8 +81,8 @@ model RecipeIngredient {
   quantity     Float
   unit         Unit
   name         String
-  Ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  Recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
 }
 
 model RecipeInstruction {
@@ -90,7 +90,7 @@ model RecipeInstruction {
   recipeId Int
   step     Int
   content  String
-  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
 }
 
 model RecipeNutrition {
@@ -99,7 +99,7 @@ model RecipeNutrition {
   name     String
   amount   Float
   unit     String
-  Recipe   Recipe @relation(fields: [recipeId], references: [id])
+  recipe   Recipe @relation(fields: [recipeId], references: [id])
 }
 
 enum Unit {

@@ -1,59 +1,57 @@
-"use client";
-import React, { useState } from "react";
-import { Container, Card, Row, Col, Button, Form } from "react-bootstrap";
-import {
-  ShoppingItem,
-  sortItemsByPriority,
-} from "../../utils/shoppingListUtils";
-import ShoppingItemCard from "../../components/ShoppingItemCard";
-import PurchasedItemCard from "../../components/PurchasedItemCard";
+'use client';
+
+import React, { useState } from 'react';
+import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
+import { ShoppingItem, sortItemsByPriority } from '../../utils/shoppingListUtils';
+import ShoppingItemCard from '../../components/shopping-list-components/ShoppingItemCard';
+import PurchasedItemCard from '../../components/shopping-list-components/PurchasedItemCard';
 
 const ShoppingList: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
   const [newItem, setNewItem] = useState({
-    name: "",
-    quantity: "",
-    category: "Other" as ShoppingItem["category"],
-    priority: "Medium" as ShoppingItem["priority"],
+    name: '',
+    quantity: '',
+    category: 'Other' as ShoppingItem['category'],
+    priority: 'Medium' as ShoppingItem['priority'],
   });
 
   // Example shopping list data
   const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([
     {
       id: 1,
-      name: "Milk",
-      quantity: "1 gallon",
-      category: "Dairy",
-      priority: "High",
+      name: 'Milk',
+      quantity: '1 gallon',
+      category: 'Dairy',
+      priority: 'High',
       purchased: false,
-      addedDate: "Sep 9, 2025",
+      addedDate: 'Sep 9, 2025',
     },
     {
       id: 2,
-      name: "Bread",
-      quantity: "2 loaves",
-      category: "Pantry",
-      priority: "Medium",
+      name: 'Bread',
+      quantity: '2 loaves',
+      category: 'Pantry',
+      priority: 'Medium',
       purchased: false,
-      addedDate: "Sep 9, 2025",
+      addedDate: 'Sep 9, 2025',
     },
     {
       id: 3,
-      name: "Bananas",
-      quantity: "1 bunch",
-      category: "Produce",
-      priority: "Low",
+      name: 'Bananas',
+      quantity: '1 bunch',
+      category: 'Produce',
+      priority: 'Low',
       purchased: true,
-      addedDate: "Sep 8, 2025",
+      addedDate: 'Sep 8, 2025',
     },
     {
       id: 4,
-      name: "Chicken Breast",
-      quantity: "2 lbs",
-      category: "Meat",
-      priority: "High",
+      name: 'Chicken Breast',
+      quantity: '2 lbs',
+      category: 'Meat',
+      priority: 'High',
       purchased: false,
-      addedDate: "Sep 9, 2025",
+      addedDate: 'Sep 9, 2025',
     },
   ]);
 
@@ -67,30 +65,26 @@ const ShoppingList: React.FC = () => {
       ...newItem,
       id: Math.max(...shoppingItems.map(({ id }) => id), 0) + 1,
       purchased: false,
-      addedDate: new Date().toLocaleDateString("en-US", {
-        month: "short",
-        day: "numeric",
-        year: "numeric",
+      addedDate: new Date().toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
       }),
     };
 
     setShoppingItems((prev) => [...prev, item]);
     setNewItem({
-      name: "",
-      quantity: "",
-      category: "Other",
-      priority: "Medium",
+      name: '',
+      quantity: '',
+      category: 'Other',
+      priority: 'Medium',
     });
     setShowAddForm(false);
   };
 
   // Arrow functions with proper typing
   const togglePurchased = (id: number): void => {
-    setShoppingItems((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, purchased: !item.purchased } : item
-      )
-    );
+    setShoppingItems((prev) => prev.map((item) => (item.id === id ? { ...item, purchased: !item.purchased } : item)));
   };
 
   const removeItem = (id: number): void => {
@@ -101,29 +95,23 @@ const ShoppingList: React.FC = () => {
   const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
   return (
-    <Container style={{ marginTop: 100, marginBottom: 50 }}>
+    <Container className="mb-12 min-h-screen mt-5">
       {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "column",
-          height: "30vh",
-          marginBottom: "5px",
-        }}
-      >
-        <h1 className="fs-1">Shopping List</h1>
-        <h6>Keep track of what you need to buy</h6>
-        <hr />
+      <div className="flex flex-col justify-center h-[30vh] mb-5">
+        <h1 className="text-4xl font-bold">Shopping List</h1>
+        <h6 className="text-gray-600 mt-2">Keep track of what you need to buy</h6>
+        <div className="flex justify-end mt-2">
+        </div>
+        <hr className="mt-4 border-gray-300"/>
       </div>
 
       <Row className="justify-content-end mb-4">
         <Button
-          variant={showAddForm ? "outline-secondary" : "success"}
+          variant={showAddForm ? 'outline-secondary' : 'success'}
           onClick={() => setShowAddForm(!showAddForm)}
-          style={{ width: "125px" }}
+          style={{ width: '125px' }}
         >
-          <strong>{showAddForm ? "Cancel" : "Add Item +"}</strong>
+          <strong>{showAddForm ? 'Cancel' : 'Add Item +'}</strong>
         </Button>
       </Row>
 
@@ -139,9 +127,7 @@ const ShoppingList: React.FC = () => {
                     type="text"
                     placeholder="Enter item name"
                     value={newItem.name}
-                    onChange={(e) =>
-                      setNewItem({ ...newItem, name: e.target.value })
-                    }
+                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     required
                   />
                 </Col>
@@ -151,9 +137,7 @@ const ShoppingList: React.FC = () => {
                     type="text"
                     placeholder="e.g., 2 lbs"
                     value={newItem.quantity}
-                    onChange={(e) =>
-                      setNewItem({ ...newItem, quantity: e.target.value })
-                    }
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     required
                   />
                 </Col>
@@ -161,12 +145,10 @@ const ShoppingList: React.FC = () => {
                   <Form.Label>Category</Form.Label>
                   <Form.Select
                     value={newItem.category}
-                    onChange={(e) =>
-                      setNewItem({
-                        ...newItem,
-                        category: e.target.value as ShoppingItem["category"],
-                      })
-                    }
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      category: e.target.value as ShoppingItem['category'],
+                    })}
                   >
                     <option value="Produce">Produce</option>
                     <option value="Meat">Meat</option>
@@ -179,12 +161,10 @@ const ShoppingList: React.FC = () => {
                   <Form.Label>Priority</Form.Label>
                   <Form.Select
                     value={newItem.priority}
-                    onChange={(e) =>
-                      setNewItem({
-                        ...newItem,
-                        priority: e.target.value as ShoppingItem["priority"],
-                      })
-                    }
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      priority: e.target.value as ShoppingItem['priority'],
+                    })}
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
@@ -225,7 +205,7 @@ const ShoppingList: React.FC = () => {
             <Card.Body>
               <h3 className="text-danger fs-2">
                 {
-                  unpurchasedItems.filter((item) => item.priority === "High")
+                  unpurchasedItems.filter((item) => item.priority === 'High')
                     .length
                 }
               </h3>
@@ -241,9 +221,13 @@ const ShoppingList: React.FC = () => {
         <Col lg={8}>
           <Card className="shadow-sm">
             <Card.Header>
-              <h5 className="mb-0">Items to Buy ({unpurchasedItems.length})</h5>
+              <h5 className="mb-0">
+                Items to Buy (
+                {unpurchasedItems.length}
+                )
+              </h5>
             </Card.Header>
-            <Card.Body style={{ maxHeight: "500px", overflowY: "auto" }}>
+            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
               {unpurchasedItems.length === 0 ? (
                 <p className="text-muted text-center py-4">
                   No items in your shopping list!
@@ -269,10 +253,12 @@ const ShoppingList: React.FC = () => {
           <Card className="shadow-sm">
             <Card.Header>
               <h5 className="mb-0">
-                Recently Purchased ({purchasedItems.length})
+                Recently Purchased (
+                {purchasedItems.length}
+                )
               </h5>
             </Card.Header>
-            <Card.Body style={{ maxHeight: "500px", overflowY: "auto" }}>
+            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
               {purchasedItems.length === 0 ? (
                 <p className="text-muted text-center py-4">
                   No purchased items yet!

@@ -1,47 +1,54 @@
-// Recipe types and utilities
+export const difficultyMap = {
+  EASY: { label: 'Easy', variant: 'success' as const },
+  MEDIUM: { label: 'Medium', variant: 'warning' as const },
+  HARD: { label: 'Hard', variant: 'danger' as const },
+};
 
-export type Recipe = {
-  id: number;
-  name: string;
-  image: string;
-  cookTime: string;
-  difficulty: "Easy" | "Medium" | "Hard";
-  availableIngredients: string[];
+export interface IngredientChecker {
+  haveIngredients: string[];
   missingIngredients: string[];
-  description: string;
-  servings?: number;
-  prepTime?: string;
-  ingredients?: RecipeIngredient[];
-  instructions?: string[];
-  nutritionInfo?: NutritionInfo;
+  matchPercent: number;
+}
+
+export interface RecipeIngredient {
+  ingredient: { id: number, name: string };
+}
+
+export const calculateTotalTime = (
+  prepTime: number,
+  cookTime: number,
+  downTime?: number,
+): number => prepTime + cookTime + (downTime ?? 0);
+
+export const getDifficulty = (difficulty: keyof typeof difficultyMap) => difficultyMap[difficulty];
+
+export const checkIngredients = (
+  recipeIngredients: RecipeIngredient[],
+  userIngredientsId?: Set<number>,
+): IngredientChecker => {
+  if (!userIngredientsId || userIngredientsId.size === 0) {
+    return {
+      haveIngredients: [],
+      missingIngredients: recipeIngredients.map(ri => ri.ingredient.name),
+      matchPercent: 0,
+    };
+  }
+
+  const haveIngredients = recipeIngredients
+    .filter(ri => userIngredientsId.has(ri.ingredient.id))
+    .map(ri => ri.ingredient.name);
+
+  const missingIngredients = recipeIngredients
+    .filter(ri => !userIngredientsId.has(ri.ingredient.id))
+    .map(ri => ri.ingredient.name);
+
+  const matchPercent = Math.round((haveIngredients.length / recipeIngredients.length) * 100);
+
+  return {
+    haveIngredients,
+    missingIngredients,
+    matchPercent,
+  };
 };
 
-export type RecipeIngredient = {
-  name: string;
-  amount: string;
-  unit: string;
-  available: boolean;
-};
-
-export type NutritionInfo = {
-  calories: number;
-  protein: string;
-  carbs: string;
-  fat: string;
-};
-
-// Bootstrap variant mapping for difficulty levels
-export const getDifficultyVariant = (difficulty: Recipe["difficulty"]): string => {
-  const difficultyMap = {
-    Easy: "success",
-    Medium: "warning",
-    Hard: "danger",
-  } as const;
-  return difficultyMap[difficulty];
-};
-
-// Calculate recipe match percentage
-export const getMatchPercentage = (recipe: Recipe): number => {
-  const total = recipe.availableIngredients.length + recipe.missingIngredients.length;
-  return Math.round((recipe.availableIngredients.length / total) * 100);
-};
+export const formatIngredientsDisplay = (ingredients: string[]): string => ingredients.join(', ') || 'None';
