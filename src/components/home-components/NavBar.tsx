@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import {
   Refrigerator,
   ListCheck,
@@ -15,41 +15,50 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import SignInModal from './SignInModal';
-import SignUpModal from './SignUpModal';
-import SignOutModal from './SignOutModal';
-import NewHouseModal from "./NewHouseModal";
-
+import SignInModal from '../auth-components/SignInModal';
+import SignUpModal from '../auth-components/SignUpModal';
+import SignOutModal from '../auth-components/SignOutModal';
+import NewHouseModal from '../kitchen-components/NewHouseModal';
 
 const NavBar: React.FC = () => {
+  const { data: session } = useSession();
+  const currentUser = session?.user;
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: session, status } = useSession();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const currentUser = session?.user?.email;
+
+  // Get display name - prioritize name, then email username, then fallback
+  const getDisplayName = () => {
+    if (!currentUser) return null;
+
+    if (currentUser.name) {
+      return currentUser.name;
+    }
+
+    if (currentUser.email) {
+      return currentUser.email.split('@')[0];
+    }
+
+    return 'User';
+  };
+
+  const displayName = getDisplayName();
 
   /* Temporary settings */
   const [houseModal, setHouseModal] = useState(false);
 
   return (
     <>
-      <Navbar
-        expand="lg"
-        bg="primary"
-        variant="dark"
-        className="custom-navbar"
-      >
+      <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar">
         <Container>
           <Navbar.Brand as={Link} href="/">
             <Image
               src="/pantry-party.png"
               alt="Pantry Party Logo"
-              width={120}
-              height={120}
+              width={100}
+              height={100}
               className="me-2"
-
             />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -63,7 +72,7 @@ const NavBar: React.FC = () => {
               <Nav.Item className="nav-separator">|</Nav.Item>
             </Nav>
             <Nav className="ms-auto">
-              {status === 'authenticated' && (
+              {currentUser && (
                 <>
                   <Nav.Link
                     as={Link}
@@ -93,7 +102,7 @@ const NavBar: React.FC = () => {
                 renderMenuOnMount
                 show={dropdownOpen}
                 onToggle={(isOpen) => setDropdownOpen(isOpen)}
-                title={(
+                title={
                   <span
                     style={{
                       display: 'flex',
@@ -101,16 +110,20 @@ const NavBar: React.FC = () => {
                       gap: '4px',
                     }}
                   >
-                    <User />
+                    {session && displayName ? (
+                      <span className="nav-link-text">{displayName}</span>
+                    ) : (
+                      <User />
+                    )}
                     {dropdownOpen ? (
                       <ChevronUp size={15} />
                     ) : (
                       <ChevronDown size={15} />
                     )}
                   </span>
-                )}
+                }
               >
-                {status === 'authenticated' ? (
+                {session ? (
                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>
                     Sign Out
                   </NavDropdown.Item>

@@ -42,8 +42,8 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
           </td>
         </tr>
       ) : (
-        items.map((item) => (
-          <IngredientRow key={item.id} {...item} onDelete={onDelete} onEdit={onEdit} />
+        items.map((item, idx) => (
+          <IngredientRow key={`${item.id}-${idx}`} {...item} onDelete={onDelete} onEdit={onEdit} />
         ))
       )}
     </tbody>
