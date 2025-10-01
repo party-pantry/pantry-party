@@ -31,3 +31,12 @@ Pages for "normal users" should load in less than 3 seconds. It is acceptable fo
 ### UI-07: The console does not generate errors.
 
 When loading and/or interacting with the page with Chrome Developer Tools open, no errors should be generated.
+
+### UI-08: The layout of components make the page visually readable.
+
+1) There should be no fancy fonts, clashing color schemes, misaligned items, or other aspects that make the page confusing or difficult to understand.
+
+2) There is an appropriate amount of white space  between each element, div, container, component, etc. on the page, that makes it visually digestible for the user. 
+    - Are items too cluttered or too spaced out on the page?
+
+3) Are there other visual cues or elements that distract the user from the purpose of the page?
