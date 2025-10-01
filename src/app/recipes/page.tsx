@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
+import { useDebounce } from 'use-debounce';
 import Loading from '../../components/home-components/Loading';
 import RecipeCard from '../../components/recipes-components/RecipeCard';
 import RecipesSearch from '../../components/recipes-components/RecipesSearch';
@@ -21,8 +22,12 @@ interface RecipeWithIngredients extends Recipe {
 const Recipes: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState<boolean>(false);
+
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
+
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [debouncedSearchTerm] = useDebounce(searchTerm, 300);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -65,6 +70,19 @@ const Recipes: React.FC = () => {
     return <div className="min-h-screen d-flex justify-content-center align-items-center"><p>Recipe not found.</p></div>;
   }
 
+  let filteredRecipes = recipes;
+
+  // Improve search to be more strict (ex. match whole words)?
+  filteredRecipes = filteredRecipes.filter(recipe => {
+    const nameMatch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const ingredientMatch = recipe.ingredients.some(ing =>
+      ing.ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    return nameMatch || ingredientMatch;
+  });
+
+  // Chain other filters (difficulty, time, serving, ratings, etc) later
+
   return (
     <Container className="mb-12 min-h-screen mt-5">
       <div className="flex flex-col justify-center h-[30vh]">
@@ -79,18 +97,24 @@ const Recipes: React.FC = () => {
         <AddRecipesModal />
       </div>
       <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
-        <RecipesSearch />
+        <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <RecipesFilterButton />
         <RecipesSortButton />
       </div>
 
-      <Row className="g-4 justify-content-center">
-        {recipes.map(recipe => (
-          <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
-            <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
-          </Col>
-        ))}
-      </Row>
+      {filteredRecipes.length === 0 ? (
+        <div className="min-h-[50vh] d-flex flex-column justify-content-center align-items-center">
+          <p>No recipes match your search. Try adjusting your filters!</p>
+        </div>
+      ) : (
+        <Row className="g-4 justify-content-center">
+          {filteredRecipes.map(recipe => (
+            <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+              <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
+            </Col>
+          ))}
+        </Row>
+      )}
     </Container>
   );
 };
