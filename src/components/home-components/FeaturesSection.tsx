@@ -34,7 +34,7 @@ const features = [
     title: 'Instant Cost Estimates',
     description: 'Know how much you’ll spend if you restock everything.',
     icon: <DollarSign />,
-  }
+  },
 ];
 
 const FeaturesSection: React.FC = () => (
