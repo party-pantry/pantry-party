@@ -178,10 +178,15 @@ const AddItemModal: React.FC<Props> = ({
               value={formData.status}
               onChange={(e) => handleChange('status', e.target.value)}
             >
-              {Object.values(LocalStatus).map((status) => (
+              {/* {Object.values(LocalStatus).map((status) => (
                 <option key={status} value={status}>
                   {status}
                 </option>
+              ))} */}
+              {Object.entries(LocalStatus).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
               ))}
             </Form.Select>
           </Form.Group>
