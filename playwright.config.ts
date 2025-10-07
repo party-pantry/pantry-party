@@ -27,7 +27,6 @@ export default defineConfig({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:3000/',
-
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
@@ -48,6 +47,21 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+
+    // First run the setup for playwright testing (logged-in sessions)
+    {
+      name: 'setup',
+      testMatch: /.*auth\.setup\.ts/,
+    },
+    // Then run other tests with that state
+    // {
+    //   name: 'e2e',
+    //   dependencies: ['setup'],
+    //   testMatch: /.*(spec|test)\.ts/,
+    //   use: {
+    //     storageState: 'tests/playwright-auth-sessions/test-user-auth.json',
+    //   },
+    // },
 
     /* Test against mobile viewports. */
     // {

@@ -1,36 +1,41 @@
 import { test, expect} from '@playwright/test';
 
-// test.use({
-//   storageState: 'john-auth.json',
-// });
+// Use stored authentication state
+test.use({
+  storageState: 'tests/playwright-auth-sessions/test-user-auth.json',
+});
 
 test('Recipes Page: visible', async ({ page }) => {
   await page.goto('http://localhost:3000/recipes'); 
   // Nav link works with visible page
-  // await page.getByRole('link', { name: 'Recipes' }).click();
-  await expect(page.getByText('Recipe SuggestionsFind recipes based on ingredients you already have!🍳Tomato')).toBeVisible();
-  await expect(page.getByRole('heading', { name: 'Recipe Suggestions' })).toBeVisible();
+  await page.getByRole('link', { name: 'Recipes' }).click();
+  await expect(page.locator('div').filter({ hasText: /^Add Recipe \+$/ })).toBeVisible();
+  await expect(page.getByText('FilterSort')).toBeVisible();
+  await expect(page.locator('div').filter({ hasText: 'Tomato Scrambled EggsEasyA' }).nth(1)).toBeVisible();
 });
 
 test('Recipe cards, buttons visible', async ({ page }) => {
   await page.goto('http://localhost:3000/recipes');
   // Recipe cards visible with buttons
-  await expect(page.getByText('🍳Tomato Scrambled EggsEasyA')).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add Missing to Shopping List' }).first()).toBeVisible();
-  await page.getByRole('button', { name: 'Add Missing to Shopping List' }).first().click();
-  await page.getByRole('button', { name: 'View Recipe' }).first().click();
-  await expect(page.locator('div').filter({ hasText: 'A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.10' }).nth(3)).toBeVisible();
-  
+  await expect(page.getByText('Chicken Breast SaladEasyHealthy and protein-rich salad with grilled chicken and')).toBeVisible();
+  await page.getByRole('button', { name: 'Start Cooking' }).nth(1).click();
+  await page.getByRole('button', { name: 'Add Missing Ingredients' }).nth(1).click();
+  await expect(page.getByText('25 minutes')).toBeVisible();
+  await expect(page.getByText('Ingredients You Have: chicken breast, tomato, lettuce, salt, olive oil')).toBeVisible();
+  await expect(page.getByRole('paragraph').filter({ hasText: 'Match: 71%' })).toBeVisible();
+});
+
+test('Test specific recipe page', async ({ page }) => {
+  await page.goto('http://localhost:3000/recipes');
+  // Go to a specific recipe page
+  await page.getByRole('button', { name: 'View Recipe' }).nth(1).click();
+  // await page.goto('http://localhost:3000/recipe/2/chicken-breast-salad');
+  await expect(page.getByText('Chicken Breast SaladEasyMatch')).toBeVisible();
   await page.getByRole('button', { name: 'Add Missing Ingredients to' }).click();
   await page.getByRole('button', { name: 'Start Cooking' }).click();
-  await page.getByText('Close').click();
-  await page.getByRole('button', { name: 'View Recipe' }).first().click();
-  await page.getByLabel('Close').click();
-  // Browsing options visible
-  // await expect(page.getByText('Can\'t find what you\'re looking for?Try adding more ingredients to your kitchen')).toBeVisible();
-  // await expect(page.getByRole('button', { name: 'Browse All Recipes' })).toBeVisible();
-  // await expect(page.getByRole('button', { name: 'Add More Ingredients' })).toBeVisible();
-  // await page.getByRole('button', { name: 'Browse All Recipes' }).click();
-  // await page.getByRole('button', { name: 'View Recipe' }).first().click();
+  await page.locator('.lucide.lucide-plus').click();
+  await expect(page.getByText('Instructions1Season chicken')).toBeVisible();
+  await expect(page.locator('div').filter({ hasText: /^Nutrition Info$/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Ingredients' })).toBeVisible();
 });
 
