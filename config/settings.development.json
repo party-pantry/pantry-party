@@ -11,6 +11,7 @@
 
   "defaultHouses": [
     {
+      "id": 1,
       "name": "Main House",
       "address": "123 Test St",
       "storages": [1, 2, 3, 4]
@@ -19,18 +20,26 @@
 
   "defaultStorages": [
     {
+      "id": 1,
+      "houseId": 1,
       "name": "Kitchen Fridge",
       "type": "FRIDGE"
     },
     {
+      "id": 2,
+      "houseId": 1,
       "name": "Pantry Closet",
       "type": "PANTRY"
     },
     {
+      "id": 3,
+      "houseId": 1,
       "name": "Freezer Chest",
       "type": "FREEZER"
     },
     {
+      "id": 4,
+      "houseId": 1,
       "name": "Spice Rack",
       "type": "SPICE_RACK"
     }
