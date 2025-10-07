@@ -19,9 +19,19 @@
       }
     ],
     "paths": {
+      "@utils/*": ["./utils/*"],
       "@/*": ["./src/*"]
     }
   },
-  "include": ["prisma/**/*.ts", "config/**/*.json", "next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": [
+    "prisma/**/*.ts",
+    "config/**/*.json",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/**/*",
+    "src/app/**/*.tsx"
+  ],
+  "exclude": ["node_modules", "archive/**/*"]
 }

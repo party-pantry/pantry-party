@@ -1,12 +1,14 @@
 {
-    "defaultUsers": [
-        {
-            "email": "email@example.com",
-            "username": "Test User",
-            "password": "changeme",
-            "houses": [1]
-        }
-    ],
+  "defaultUsers": [
+    {
+      "id": 1,
+      "email": "email@example.com",
+      "username": "Test User",
+      "password": "changeme",
+      "houses": [1]
+    }
+  ],
+
   "defaultHouses": [
     {
       "name": "Main House",
@@ -35,128 +37,335 @@
   ],
 
   "defaultIngredients": [
-    { "name": "Milk", "price": 8 },
-    { "name": "Eggs", "price": 10 },
-    { "name": "Rice", "price": 10 },
-    { "name": "Chicken Breast", "price": 15 },
-    { "name": "Salt", "price": 2 },
-    { "name": "Bread", "price": 6 },
-    { "name": "Bananas", "price": 5 },
-    { "name": "Yougurt", "price": 4 },
-    { "name": "Pepper", "price": 2 },
-    { "name": "Olive Oil", "price": 4 },
-    { "name": "Ice Cream", "price": 7 },
-    { "name": "Swiss Cheese", "price": 5 },
-    { "name": "Lettuce", "price": 4 },
-    { "name": "Tomato", "price": 6 },
-    { "name": "Cereal", "price": 5 }
-  ],
+  { "id": 1, "name": "milk", "price": 8 },
+  { "id": 2, "name": "eggs", "price": 10 },
+  { "id": 3, "name": "rice", "price": 10 },
+  { "id": 4, "name": "chicken breast", "price": 15 },
+  { "id": 5, "name": "salt", "price": 2 },
+  { "id": 6, "name": "bread", "price": 6 },
+  { "id": 7, "name": "bananas", "price": 5 },
+  { "id": 8, "name": "yougurt", "price": 4 },
+  { "id": 9, "name": "pepper", "price": 2 },
+  { "id": 10, "name": "olive oil", "price": 4 },
+  { "id": 11, "name": "ice cream", "price": 7 },
+  { "id": 12, "name": "swiss cheese", "price": 5 },
+  { "id": 13, "name": "lettuce", "price": 4 },
+  { "id": 14, "name": "tomato", "price": 6 },
+  { "id": 15, "name": "cereal", "price": 5 },
+  { "id": 16, "name": "black pepper", "price": 3 },
+  { "id": 17, "name": "penne pasta", "price": 4 },
+  { "id": 18, "name": "lemon juice", "price": 3 },
+  { "id": 19, "name": "garlic", "price": 2 },
+  { "id": 20, "name": "red pepper flakes", "price": 3 },
+  { "id": 21, "name": "feta cheese", "price": 5 },
+  { "id": 22, "name": "beef tenderloin", "price": 30 },
+  { "id": 23, "name": "puff pastry", "price": 7 },
+  { "id": 24, "name": "mushrooms", "price": 6 },
+  { "id": 25, "name": "dijon mustard", "price": 4 },
+  { "id": 26, "name": "chickpeas", "price": 3 }
+  ], 
 
   "defaultStocks": [
     {
+      "ingredientId": 1,
+      "storageId": 1,
       "quantity": 1,
       "unit": "GALLON",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 2,
+      "storageId": 1,
       "quantity": 12,
       "unit": "PIECE",
       "status": "GOOD",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 3,
+      "storageId": 2,
       "quantity": 5,
       "unit": "POUND",
       "status": "LOW_STOCK",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
+      "ingredientId": 4,
+      "storageId": 3,
       "quantity": 10,
       "unit": "POUND",
       "status": "LOW_STOCK",
-      "category": "FREEZER",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FREEZER"
     },
     {
+      "ingredientId": 5,
+      "storageId": 4,
       "quantity": 1,
       "unit": "POUND",
       "status": "GOOD",
-      "category": "SPICE_RACK",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "SPICE_RACK"
     },
     {
+      "ingredientId": 6,
+      "storageId": 2,
       "quantity": 7,
       "unit": "LOAVES",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
+      "ingredientId": 7,
+      "storageId": 2,
       "quantity": 5,
       "unit": "BUNDLES",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
+      "ingredientId": 8,
+      "storageId": 1,
       "quantity": 2,
       "unit": "BOX",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 9,
+      "storageId": 4,
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
-      "category": "SPICE_RACK",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "SPICE_RACK"
     },
     {
+      "ingredientId": 10,
+      "storageId": 2,
       "quantity": 1,
       "unit": "BOTTLE",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "PANTRY"
     },
     {
+      "ingredientId": 11,
+      "storageId": 3,
       "quantity": 0,
       "unit": "PINT",
       "status": "OUT_OF_STOCK",
-      "category": "FREEZER",
-      "last_updated": "2025-09-20T00:00:00.000Z"
+      "category": "FREEZER"
     },
     {
+      "ingredientId": 12,
+      "storageId": 1,
       "quantity": 2,
       "unit": "PACKAGE",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-19T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 13,
+      "storageId": 1,
       "quantity": 6,
       "unit": "BUNDLES",
       "status": "GOOD",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-21T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 14,
+      "storageId": 1,
       "quantity": 2,
       "unit": "BUNDLES",
       "status": "LOW_STOCK",
-      "category": "FRIDGE",
-      "last_updated": "2025-09-18T00:00:00.000Z"
+      "category": "FRIDGE"
     },
     {
+      "ingredientId": 15,
+      "storageId": 2,
       "quantity": 4,
       "unit": "BOX",
       "status": "GOOD",
-      "category": "PANTRY",
-      "last_updated": "2025-09-21T00:00:00.000Z"
+      "category": "PANTRY"
+    }
+  ],
+
+  "defaultRecipes": [
+    {
+      "id": 1,
+      "userId": 1,
+      "name": "Tomato Scrambled Eggs",
+      "description": "A classic breakfast dish with fresh tomatoes and fluffy scrambled eggs.",
+      "difficulty": "EASY",
+      "prepTime": 5,
+      "cookTime": 10,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 2, "name": "Eggs", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Heat olive oil in a non-stick pan over medium heat." },
+        { "step": 2, "content": "Dice the tomatoes into small pieces and add to the pan." },
+        { "step": 3, "content": "Cook tomatoes for 2-3 minutes until they start to soften." },
+        { "step": 4, "content": "Beat the eggs in a bowl and season with salt and pepper." },
+        { "step": 5, "content": "Pour the beaten eggs into the pan with tomatoes." },
+        { "step": 6, "content": "Gently scramble the eggs, stirring frequently until cooked through." },
+        { "step": 7, "content": "Remove from heat and serve immediately while hot." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 200, "unit": "kcal" },
+        { "name": "Protein", "amount": 12, "unit": "g" },
+        { "name": "Carbs", "amount": 6, "unit": "g" },
+        { "name": "Fat", "amount": 15, "unit": "g" }
+      ],
+      "rating": 4.5
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "name": "Chicken Breast Salad",
+      "description": "Healthy and protein-rich salad with grilled chicken and fresh vegetables.",
+      "difficulty": "EASY",
+      "prepTime": 10,
+      "cookTime": 15,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 13, "name": "Lettuce", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 18, "name": "Lemon Juice", "quantity": 1, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Season chicken with salt and pepper." },
+        { "step": 2, "content": "Grill or pan-sear chicken until fully cooked (5–7 minutes per side)." },
+        { "step": 3, "content": "Slice chicken into strips." },
+        { "step": 4, "content": "Dice tomatoes and mix with lettuce in a bowl." },
+        { "step": 5, "content": "Top with chicken and drizzle with olive oil and optional lemon juice." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 250, "unit": "kcal" },
+        { "name": "Protein", "amount": 30, "unit": "g" },
+        { "name": "Carbs", "amount": 5, "unit": "g" },
+        { "name": "Fat", "amount": 12, "unit": "g" }
+      ],
+      "rating": 1.0
+    },
+    {
+      "id": 3,
+      "userId": 1,
+      "name": "Chicken Tomato Pasta",
+      "description": "Delicious pasta with tender chicken and rich tomato sauce.",
+      "difficulty": "MEDIUM",
+      "prepTime": 10,
+      "cookTime": 30,
+      "downTime": 10,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 17, "name": "Penne Pasta", "quantity": 1, "unit": "BOX" },
+        { "ingredientId": 19, "name": "Garlic", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 20, "name": "Red Pepper Flakes", "quantity": 0.25, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Cook pasta according to package instructions." },
+        { "step": 2, "content": "Drain and set aside." },
+        { "step": 3, "content": "Dice tomatoes and set aside." },
+        { "step": 4, "content": "Heat olive oil in a pan, sauté garlic for 30 sec." },
+        { "step": 5, "content": "Add chicken, cook until lightly browned and fully cooked." },
+        { "step": 6, "content": "Add tomatoes and simmer for 5–7 minutes to form sauce." },
+        { "step": 7, "content": "Mix pasta with chicken-tomato mixture, season with salt, pepper, and optional red pepper flakes." },
+        { "step": 8, "content": "Serve hot." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 350, "unit": "kcal" },
+        { "name": "Protein", "amount": 28, "unit": "g" },
+        { "name": "Carbs", "amount": 40, "unit": "g" },
+        { "name": "Fat", "amount": 10, "unit": "g" }
+      ],
+      "rating": 4.2
+    },
+    {
+      "id": 4,
+      "userId": 1,
+      "name": "Mediterranean Bowl",
+      "description": "A healthy Mediterranean-inspired bowl with fresh ingredients.",
+      "difficulty": "EASY",
+      "prepTime": 5,
+      "cookTime": 15,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 2, "name": "Eggs", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 14, "name": "Tomato", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 13, "name": "Lettuce", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 21, "name": "Feta Cheese", "quantity": 0.25, "unit": "CUP" },
+        { "ingredientId": 26, "name": "Chickpeas", "quantity": 1, "unit": "CUP" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Hard boil or poach eggs (8–10 min)." },
+        { "step": 2, "content": "Dice tomato and chop lettuce." },
+        { "step": 3, "content": "Mix chickpeas, lettuce, tomato, and feta in a bowl." },
+        { "step": 4, "content": "Peel and slice eggs, place on top." },
+        { "step": 5, "content": "Drizzle with olive oil, season with salt and pepper." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 300, "unit": "kcal" },
+        { "name": "Protein", "amount": 14, "unit": "g" },
+        { "name": "Carbs", "amount": 18, "unit": "g" },
+        { "name": "Fat", "amount": 18, "unit": "g" }
+      ],
+      "rating": 3.5
+    },
+    {
+      "id": 5,
+      "userId": 1,
+      "name": "Beef Wellington",
+      "description": "A gourmet dish featuring tender beef wrapped in puff pastry.",
+      "difficulty": "HARD",
+      "prepTime": 45,
+      "cookTime": 60,
+      "downTime": 30,
+      "servings": 6,
+      "ingredients": [
+        { "ingredientId": 22, "name": "Beef Tenderloin", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 23, "name": "Puff Pastry", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 24, "name": "Mushrooms", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 25, "name": "Dijon Mustard", "quantity": 1, "unit": "TABLESPOON" },
+        { "ingredientId": 2, "name": "Eggs", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 2, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Preheat oven to 200°C (400°F)." },
+        { "step": 2, "content": "Season beef with salt and pepper, sear in hot oil 2–3 min per side." },
+        { "step": 3, "content": "Brush seared beef with mustard." },
+        { "step": 4, "content": "Sauté mushrooms until moisture evaporates, cool slightly." },
+        { "step": 5, "content": "Roll puff pastry, place mushroom mixture in center, then beef on top, wrap pastry completely." },
+        { "step": 6, "content": "Brush with egg wash, bake at 200°C (400°F) for 35–40 min." },
+        { "step": 7, "content": "Rest 10 min, slice, and serve." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 600, "unit": "kcal" },
+        { "name": "Protein", "amount": 45, "unit": "g" },
+        { "name": "Carbs", "amount": 30, "unit": "g" },
+        { "name": "Fat", "amount": 35, "unit": "g" }
+      ],
+      "rating": 5.0
     }
   ]
 }

@@ -1,16 +1,112 @@
 /* eslint-disable no-await-in-loop */
+/* eslint-disable max-len */
 /* HOW TO IMPLEMENT SEED:
 1. npx prisma db push (updates the database schema)
 2. npx prisma db seed (runs this seed file)
 */
 
-import { PrismaClient, Category, Unit, Status } from '@prisma/client';
+import { PrismaClient, Category, Unit, Status, Difficulty } from '@prisma/client';
 import { hash } from 'bcrypt';
-// import config from '../config/settings.development.json' assert { type: 'json' };
-import * as config from '../config/settings.development.json';
-import settings from '../config/settings.development.json';
+// import slugify from 'slugify';
+import config from '../config/settings.development.json' assert { type: 'json' };
 
 const prisma = new PrismaClient();
+
+const getCategory = (category: string): Category => {
+  switch (category) {
+    case 'FRIDGE':
+      return Category.FRIDGE;
+    case 'PANTRY':
+      return Category.PANTRY;
+    case 'FREEZER':
+      return Category.FREEZER;
+    case 'SPICE_RACK':
+      return Category.SPICE_RACK;
+    case 'OTHER':
+      return Category.OTHER;
+    default:
+      return Category.OTHER;
+  }
+};
+
+const getUnit = (unit: string): Unit => {
+  switch (unit) {
+    case 'OUNCE':
+      return Unit.OUNCE;
+    case 'POUND':
+      return Unit.POUND;
+    case 'GRAM':
+      return Unit.GRAM;
+    case 'KILOGRAM':
+      return Unit.KILOGRAM;
+    case 'MILILITER':
+      return Unit.MILILITER;
+    case 'LITER':
+      return Unit.LITER;
+    case 'FLUID_OUNCE':
+      return Unit.FLUID_OUNCE;
+    case 'CUP':
+      return Unit.CUP;
+    case 'PINT':
+      return Unit.PINT;
+    case 'QUART':
+      return Unit.QUART;
+    case 'GALLON':
+      return Unit.GALLON;
+    case 'TEASPOON':
+      return Unit.TEASPOON;
+    case 'TABLESPOON':
+      return Unit.TABLESPOON;
+    case 'BAG':
+      return Unit.BAG;
+    case 'CAN':
+      return Unit.CAN;
+    case 'BOTTLE':
+      return Unit.BOTTLE;
+    case 'BOX':
+      return Unit.BOX;
+    case 'PIECE':
+      return Unit.PIECE;
+    case 'SACK':
+      return Unit.SACK;
+    case 'LOAVES':
+      return Unit.LOAVES;
+    case 'BUNDLES':
+      return Unit.BUNDLES;
+    case 'PACKAGE':
+      return Unit.PACKAGE;
+    default:
+      return Unit.PIECE;
+  }
+};
+
+const getStatus = (status: string): Status => {
+  switch (status) {
+    case 'GOOD':
+      return Status.GOOD;
+    case 'LOW_STOCK':
+      return Status.LOW_STOCK;
+    case 'OUT_OF_STOCK':
+      return Status.OUT_OF_STOCK;
+    case 'EXPIRED':
+      return Status.EXPIRED;
+    default:
+      return Status.EXPIRED;
+  }
+};
+
+const getDifficulty = (difficulty: string): Difficulty => {
+  switch (difficulty) {
+    case 'EASY':
+      return Difficulty.EASY;
+    case 'MEDIUM':
+      return Difficulty.MEDIUM;
+    case 'HARD':
+      return Difficulty.HARD;
+    default:
+      return Difficulty.EASY;
+  }
+};
 
 async function main() {
   // Clear tables and reset IDs
@@ -19,198 +115,173 @@ async function main() {
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "Storage" RESTART IDENTITY CASCADE;');
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "House" RESTART IDENTITY CASCADE;');
   await prisma.$executeRawUnsafe('TRUNCATE TABLE "User" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "Recipe" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "RecipeIngredient" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "RecipeInstruction" RESTART IDENTITY CASCADE;');
+  await prisma.$executeRawUnsafe('TRUNCATE TABLE "RecipeNutrition" RESTART IDENTITY CASCADE;');
 
   console.log('Seeding database...');
 
-  // Create and Seed Users
-  // await Promise.all(
-  //   config.defaultUsers.map(async (user) => {
-  //     const password = await hash(user.password, 10);
+  // Seed Users
+  for (const user of config.defaultUsers) {
+    const password = await hash(user.password, 10);
 
-  //     console.log(`Seeding user: ${user.email} with id: ${user.id}`);
+    console.log(`Seeding User: ${user.username} (Email: ${user.email}, ID: ${user.id})`);
 
-  //     await prisma.user.upsert({
-  //       where: { email: user.email },
-  //       update: {},
-  //       create: {
-  //         id: user.id,
-  //         email: user.email,
-  //         username: user.username,
-  //         password,
-  //       },
-  //     });
-  //   }),
-  // );
-
-  // // Seed Houses
-  // await Promise.all(
-  //   config.defaultHouses.map(async (house) => {
-  //     const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
-  //     if (!ownerUser) {
-  //       console.error(`No owner found for house ${house.name} (id: ${house.id})`);
-  //       return;
-  //     }
-
-  //     console.log(`Seeding house: ${house.name} with id: ${house.id}`);
-
-  //     await prisma.house.upsert({
-  //       where: { id: house.id },
-  //       update: {},
-  //       create: {
-  //         name: house.name,
-  //         address: house.address,
-  //         user: {
-  //           connect: { id: ownerUser.id },
-  //         },
-  //       },
-  //     });
-  //   }),
-  // );
-
-  // // Seed Storages
-  // await Promise.all(
-  //   config.defaultStorages.map(async (storage) => {
-  //     console.log(`Seeding storage: ${storage.name} with id: ${storage.id}`);
-
-  //     await prisma.storage.upsert({
-  //       where: { id: storage.id },
-  //       update: {},
-  //       create: {
-  //         houseId: storage.houseId,
-  //         name: storage.name,
-  //         type: getCategory(storage.type),
-  //       },
-  //     });
-  //   }),
-  // );
-
-  // // Seed Ingredients
-  // await Promise.all(
-  //   config.defaultIngredients.map(async (ingredient) => {
-  //     console.log(`Seeding ingredient: ${ingredient.name} with id: ${ingredient.id}`);
-
-  //     await prisma.ingredient.upsert({
-  //       where: { id: ingredient.id },
-  //       update: {},
-  //       create: {
-  //         name: ingredient.name,
-  //         price: ingredient.price,
-  //       },
-  //     });
-  //   }),
-  // );
-
-  // // Seed Stocks
-  // await Promise.all(
-  //   config.defaultStocks.map(async (stock) => {
-  //     console.log(`Seeding stock with id: ${stock.id}`);
-
-  //     await prisma.stock.upsert({
-  //       where: {
-  //         ingredientId_storageId: {
-  //           ingredientId: stock.ingredientId,
-  //           storageId: stock.storageId,
-  //         },
-  //       },
-  //       update: {
-  //       },
-  //       create: {
-  //         ingredientId: stock.ingredientId,
-  //         storageId: stock.storageId,
-  //         quantity: stock.quantity,
-  //         unit: getUnit(stock.unit),
-  //         category: getCategory(stock.category),
-  //         status: getStatus(stock.status),
-  //         last_updated: new Date(stock.last_updated),
-  //       },
-  //     });
-  //   }),
-  // );
-
-  // 1. Create users
-  const password = await hash('changeme', 10);
-  config.defaultUsers.forEach(async (u) => {
-    console.log(`  Creating user: ${u.email}`);
     await prisma.user.upsert({
-      where: { email: u.email },
+      where: { email: user.email },
       update: {},
       create: {
-        email: u.email,
-        username: u.username,
+        email: user.email,
+        username: user.username,
         password,
       },
     });
-    console.log(`  Created user: ${u.email} with username: ${u.username}`);
-  });
-
-    // 2. Create houses for this user
-    for (const houseName of u.houses) {
-      const houseConfig = settings.defaultHouses.find((h) => h.name === houseName);
-      if (!houseConfig) continue;
-
-      const house = await prisma.house.upsert({
-        where: { name: houseConfig.name },
-        update: {},
-        create: {
-          name: houseConfig.name,
-          address: houseConfig.address,
-          userId: user.id,
-        },
-      });
-
-      // 3. Create storages for this house
-      for (const storageName of houseConfig.storages) {
-        const storageConfig = settings.defaultStorages.find((s) => s.name === storageName);
-        if (!storageConfig) continue;
-
-        await prisma.storage.upsert({
-          where: { name: storageConfig.name },
-          update: {},
-          create: {
-            name: storageConfig.name,
-            type: storageConfig.type as any,
-            houseId: house.id,
-          },
-        });
-      }
-    }
   }
 
-  // 4. Ingredients
-  for (const ing of settings.defaultIngredients) {
-    await prisma.ingredient.upsert({
-      where: { name: ing.name },
+  // Seed Houses
+  for (const house of config.defaultHouses) {
+    const ownerUser = config.defaultUsers.find(user => user.houses.includes(house.id));
+
+    if (!ownerUser) {
+      console.error(`No owner found for house ${house.name}`);
+      // eslint-disable-next-line no-continue
+      continue;
+    }
+
+    console.log(`Seeding House: ${house.name} (ID: ${house.id}, Owner: ${ownerUser.username})`);
+
+    await prisma.house.upsert({
+      where: { id: house.id },
       update: {},
-      create: { name: ing.name, price: ing.price },
+      create: {
+        name: house.name,
+        address: house.address,
+        userId: ownerUser.id,
+      },
     });
   }
 
-  // 5. Stocks (link by ingredient + storage names)
-  for (const s of settings.defaultStocks) {
-    const ingredient = await prisma.ingredient.findUnique({ where: { name: s.ingredient } });
-    const storage = await prisma.storage.findUnique({ where: { name: s.storage } });
+  // Seed Storages
+  for (const storage of config.defaultStorages) {
+    console.log(`Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`);
 
-    if (!ingredient || !storage) continue;
+    await prisma.storage.upsert({
+      where: { id: storage.id },
+      update: {},
+      create: {
+        id: storage.id,
+        houseId: storage.houseId,
+        name: storage.name,
+        type: getCategory(storage.type),
+      },
+    });
+  }
+
+  // Seed Ingredients
+  for (const ingredient of config.defaultIngredients) {
+    console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
+
+    await prisma.ingredient.upsert({
+      where: { id: ingredient.id },
+      update: {},
+      create: {
+        name: ingredient.name,
+        price: ingredient.price,
+      },
+    });
+  }
+
+  // Seed Stocks
+  for (const stock of config.defaultStocks) {
+    console.log(`Seeding Stock: IngredientID=${stock.ingredientId}, StorageID=${stock.storageId}, Qty=${stock.quantity} ${stock.unit}, Status=${stock.status}`);
 
     await prisma.stock.upsert({
       where: {
         ingredientId_storageId: {
-          ingredientId: ingredient.id,
-          storageId: storage.id,
+          ingredientId: stock.ingredientId,
+          storageId: stock.storageId,
         },
       },
       update: {},
       create: {
-        ingredientId: ingredient.id,
-        storageId: storage.id,
-        quantity: s.quantity,
-        unit: s.unit as any,
-        status: s.status as any,
-        category: s.category as any,
-        last_updated: new Date(s.last_updated),
+        ingredientId: stock.ingredientId,
+        storageId: stock.storageId,
+        quantity: stock.quantity,
+        unit: getUnit(stock.unit),
+        status: getStatus(stock.status),
       },
     });
   }
+
+  // Seed Recipes
+  for (const recipe of config.defaultRecipes) {
+    console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
+
+    await prisma.recipe.upsert({
+      where: { id: recipe.id },
+      update: {},
+      create: {
+        id: recipe.id,
+        userId: recipe.userId,
+        name: recipe.name,
+        description: recipe.description,
+        difficulty: getDifficulty(recipe.difficulty),
+        prepTime: recipe.prepTime,
+        cookTime: recipe.cookTime,
+        downTime: recipe.downTime,
+        servings: recipe.servings,
+        rating: recipe.rating,
+        ingredients: {
+          create: recipe.ingredients.map((ing: any) => ({
+            ingredientId: ing.ingredientId,
+            name: ing.name,
+            quantity: ing.quantity,
+            unit: getUnit(ing.unit),
+          })),
+        },
+        instructions: {
+          create: recipe.instructions.map((inst: any) => ({
+            step: inst.step,
+            content: inst.content,
+          })),
+        },
+        nutrition: {
+          create: recipe.nutrition.map((nut: any) => ({
+            name: nut.name,
+            amount: nut.amount,
+            unit: nut.unit,
+          })),
+        },
+      },
+    });
+  }
+
+  // Reset auto-increment sequences to prevent ID conflicts
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"User"\', \'id\'), COALESCE(MAX(id), 1)) FROM "User";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"House"\', \'id\'), COALESCE(MAX(id), 1)) FROM "House";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Storage"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Storage";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Ingredient"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Ingredient";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"Recipe"\', \'id\'), COALESCE(MAX(id), 1)) FROM "Recipe";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeIngredient"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeIngredient";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeInstruction"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeInstruction";',
+  );
+  await prisma.$executeRawUnsafe(
+    'SELECT setval(pg_get_serial_sequence(\'"RecipeNutrition"\', \'id\'), COALESCE(MAX(id), 1)) FROM "RecipeNutrition";',
+  );
 
   console.log('Database seeded successfully!');
 }

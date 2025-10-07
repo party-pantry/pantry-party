@@ -11,18 +11,18 @@ assignees: ''
 <!-- This is a template when making a code review issue for pantry-party. -->
 ## Overview
 
-(Provide an introduction to this review. What are the goals? What should reviewers keep in mind as they do it?)
+The goal of this code review is to ... We should keep in mind ...
 
 ## Review Branch
 
-(Please indicate the review branch here. It should be named review-xxx, where xxx is this issue number.)
+[review-XX](URL)
 
 ## Files to review
 
 (Please list the files to be reviewed here. It would be great to provide the URL to each file in the review branch.)
 
-* [file1]()
-* [file2]()
+* [file1](URL)
+* [file2](URL)
 
 ## Checklists
 
@@ -37,7 +37,7 @@ assignees: ''
 
 ## Review date
 
-(enter due date)
+(enter due date), comments should be posted by (date) @ 9:30am (before meeting).
 
 ## More information
 

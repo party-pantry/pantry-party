@@ -2,12 +2,9 @@
 
 import React, { useState } from 'react';
 import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
-import {
-  ShoppingItem,
-  sortItemsByPriority,
-} from '../../utils/shoppingListUtils';
-import ShoppingItemCard from '../../components/ShoppingItemCard';
-import PurchasedItemCard from '../../components/PurchasedItemCard';
+import { ShoppingItem, sortItemsByPriority } from '../../utils/shoppingListUtils';
+import ShoppingItemCard from '../../components/shopping-list-components/ShoppingItemCard';
+import PurchasedItemCard from '../../components/shopping-list-components/PurchasedItemCard';
 
 const ShoppingList: React.FC = () => {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -98,20 +95,14 @@ const ShoppingList: React.FC = () => {
   const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
   return (
-    <Container style={{ marginTop: 100, marginBottom: 50 }}>
+    <Container className="mb-12 min-h-screen mt-5">
       {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          height: '30vh',
-          marginBottom: '5px',
-        }}
-      >
-        <h1 className="fs-1">Shopping List</h1>
-        <h6>Keep track of what you need to buy</h6>
-        <hr />
+      <div className="flex flex-col justify-center h-[30vh] mb-5">
+        <h1 className="text-4xl font-bold">Shopping List</h1>
+        <h6 className="text-gray-600 mt-2">Keep track of what you need to buy</h6>
+        <div className="flex justify-end mt-2">
+        </div>
+        <hr className="mt-4 border-gray-300"/>
       </div>
 
       <Row className="justify-content-end mb-4">
