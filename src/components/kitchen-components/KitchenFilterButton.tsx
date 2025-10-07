@@ -56,6 +56,11 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleApply();
+              }
+            }}
             style={{ paddingLeft: '2rem' }}
           />
         </div>
