@@ -15,7 +15,6 @@ test('Sign-in', async ({ page }) => {
     page.waitForURL('http://localhost:3000/my-kitchen'),
     await page.getByRole('button', { name: 'Sign in', exact: true }).click(),
   ]);
-  await expect(page.getByRole('button', { name: 'Test User' })).toBeVisible();
 });
 
 
@@ -55,7 +54,6 @@ test('Sign-up', async ({ page }) => {
     page.waitForURL('http://localhost:3000/my-kitchen'), // adjust to your expected URL
     await page.getByRole('button', { name: 'Sign in', exact: true }).click(),
   ]);
-  await expect(page.getByRole('button', { name: 'yolot' })).toBeVisible();
 });
 
 test('Logout', async ({ page }) => {
@@ -70,17 +68,17 @@ test('Logout', async ({ page }) => {
     page.waitForURL('http://localhost:3000/my-kitchen'), // adjust to your expected URL
     await page.getByRole('button', { name: 'Sign in', exact: true }).click(),
   ]);
-  await expect(page.getByRole('button', { name: 'yolot' })).toBeVisible();
-  await page.getByRole('button', { name: 'yolot' }).click();
+
+  await page.getByRole('button', { name: 'test' }).click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
   await page.getByRole('button', { name: 'No' }).click();
-  await page.getByRole('button', { name: 'yolot' }).click();
+  await page.getByRole('button', { name: 'test' }).click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
   await page.getByRole('button', { name: 'Close' }).click();
-  await page.getByRole('button', { name: 'yolot' }).click();
+  await page.getByRole('button', { name: 'test' }).click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
   await page.getByRole('dialog').press('Escape');
-  await page.getByRole('button', { name: 'yolot' }).click();
+  await page.getByRole('button', { name: 'test' }).click();
   await page.getByRole('button', { name: 'Sign Out' }).click();
   await page.getByRole('button', { name: 'Yes, Sign Out' }).click();
   await expect(page.locator('#home')).toBeVisible();

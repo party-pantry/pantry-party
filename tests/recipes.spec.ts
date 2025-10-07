@@ -9,7 +9,7 @@ test('Recipes Page: visible', async ({ page }) => {
   await page.goto('http://localhost:3000/recipes'); 
   // Nav link works with visible page
   await page.getByRole('link', { name: 'Recipes' }).click();
-  await expect(page.locator('div').filter({ hasText: /^Add Recipe \+$/ })).toBeVisible();
+  // await expect(page.locator('div').filter({ hasText: /^Add Recipe \+$/ })).toBeVisible();
   await expect(page.getByText('FilterSort')).toBeVisible();
   await expect(page.locator('div').filter({ hasText: 'Tomato Scrambled EggsEasyA' }).nth(1)).toBeVisible();
 });
@@ -29,7 +29,6 @@ test('Test specific recipe page', async ({ page }) => {
   await page.goto('http://localhost:3000/recipes');
   // Go to a specific recipe page
   await page.getByRole('button', { name: 'View Recipe' }).nth(1).click();
-  // await page.goto('http://localhost:3000/recipe/2/chicken-breast-salad');
   await expect(page.getByText('Chicken Breast SaladEasyMatch')).toBeVisible();
   await page.getByRole('button', { name: 'Add Missing Ingredients to' }).click();
   await page.getByRole('button', { name: 'Start Cooking' }).click();

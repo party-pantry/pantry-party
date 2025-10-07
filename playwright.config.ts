@@ -33,6 +33,11 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
+    // First run the setup for playwright testing (logged-in sessions)
+    {
+      name: 'setup',
+      testMatch: /.*auth\.setup\.ts/,
+    },
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
@@ -46,12 +51,6 @@ export default defineConfig({
     {
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
-    },
-
-    // First run the setup for playwright testing (logged-in sessions)
-    {
-      name: 'setup',
-      testMatch: /.*auth\.setup\.ts/,
     },
     // Then run other tests with that state
     // {
