@@ -93,20 +93,8 @@ export async function addItem(data: {
   const ingredientId = ingredient.id;
 
   // Create new stock
-  await prisma.stock.upsert({
-    where: {
-      ingredientId_storageId: {
-        ingredientId,
-        storageId: data.storageId,
-      },
-    },
-    update: {
-      quantity: Number(data.quantity),
-      unit: data.units,
-      status: data.status,
-      last_updated: new Date(),
-    },
-    create: {
+  await prisma.stock.create({
+    data: {
       ingredientId,
       storageId: data.storageId,
       quantity: Number(data.quantity),

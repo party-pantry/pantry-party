@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
-import authOptions from '../../../lib/authOptions';
+import { authOptions } from '@/lib/authOptions';
 
 interface SessionWithUser {
   user: {
