@@ -196,9 +196,13 @@ const MyKitchen = () => {
               <Row className="justify-content-end mb-3 pr-4">
                 <KitchenFilterButton
                   onApply={(appliedFilters) =>
-                    setFilters({ ...filters, status: appliedFilters.status })
-                  }
-                />
+                    setFilters({
+                      search: appliedFilters.search,
+                      status: appliedFilters.status,
+                    })
+  }
+/>
+
                 <Button
                   style={{
                     width: '125px',

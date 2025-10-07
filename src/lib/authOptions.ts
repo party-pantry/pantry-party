@@ -1,9 +1,13 @@
-import NextAuth, { NextAuthOptions } from 'next-auth';
+/* eslint-disable arrow-body-style */
+import { compare } from 'bcrypt';
+import { type NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from '@/lib/prisma';
-import { compare } from 'bcryptjs';
 
 const authOptions: NextAuthOptions = {
+  session: {
+    strategy: 'jwt',
+  },
   providers: [
     CredentialsProvider({
       name: 'Email and Password',
@@ -12,7 +16,7 @@ const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.identifier || !credentials?.password) return null;
+        if (!credentials?.identifier || !credentials.password) { return null; }
 
         // try to find user by email or username using findFirst
         const user = await prisma.user.findFirst({
@@ -20,49 +24,45 @@ const authOptions: NextAuthOptions = {
             OR: [{ email: credentials.identifier }, { username: credentials.identifier }],
           },
         });
-        if (!user) return null;
+        if (!user) {
+          return null;
+        }
 
-        // checking if password matches in database
-        const validPassword = await compare(credentials.password, user.password);
-        if (!validPassword) return null;
+        const isPasswordValid = await compare(credentials.password, user.password);
+        if (!isPasswordValid) {
+          return null;
+        }
 
         return {
           id: `${user.id}`,
           email: user.email,
-          name: user.username,
         };
       },
     }),
   ],
-  session: {
-    strategy: 'jwt' as const,
-    maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
-  },
-  cookies: {
-    sessionToken: {
-      name: 'next-auth.session-token',
-      options: {
-        httpOnly: true,
-        sameSite: 'lax' as const,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-      },
-    },
+  pages: {
+    // signIn: '/auth/signin',
+    // signOut: '/auth/signout',
+    //   error: '/auth/error',
+    //   verifyRequest: '/auth/verify-request',
+    //   newUser: '/auth/new-user'
   },
   callbacks: {
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.id as string,
-      },
-    }),
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+    },
     jwt: ({ token, user }) => {
       if (user) {
+        const u = user as unknown as any;
         return {
           ...token,
-          id: user.id,
+          id: u.id,
         };
       }
       return token;
