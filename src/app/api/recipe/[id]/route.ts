@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 
 // get a specific recipe by ID with its ingredients, instructions, nutrition, and user
 export const GET = async (req: Request, { params }: { params: { id: string } }) => {
-  const id = Number(params.id);
+  const id = Number(await params.id);
 
   const recipe = await prisma.recipe.findUnique({
     where: { id },
