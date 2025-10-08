@@ -182,18 +182,6 @@ body {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.recipe-card-title-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  margin-bottom: 0.5rem;
-}
-
-.recipe-card-title {
-  font-size: 1.5rem;
-  margin: 0;
-}
-
 .recipe-description {
   font-size: 1rem;
   overflow: hidden;
@@ -210,18 +198,6 @@ body {
 
 .recipe-card-time svg {
   margin-right: 0.25rem;
-}
-
-.recipe-card-view-cook-buttons,
-.recipe-card-missing-button {
-  display: flex;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.recipe-card-view-cook-buttons .btn,
-.recipe-card-missing-button .btn {
-  flex: 1;
 }
 
 .recipe-card:hover {

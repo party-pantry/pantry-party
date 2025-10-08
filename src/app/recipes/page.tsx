@@ -101,7 +101,6 @@ const Recipes: React.FC = () => {
         <RecipesFilterButton />
         <RecipesSortButton />
       </div>
-
       {filteredRecipes.length === 0 ? (
         <div className="min-h-[50vh] d-flex flex-column justify-content-center align-items-center">
           <p>No recipes match your search. Try adjusting your filters!</p>
@@ -109,7 +108,7 @@ const Recipes: React.FC = () => {
       ) : (
         <Row className="g-4 justify-content-center">
           {filteredRecipes.map(recipe => (
-            <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+            <Col key={recipe.id} xl={4} lg={4} md={6} sm={12} className="d-flex">
               <RecipeCard recipe={recipe} userIngredientsId={userIngredients} />
             </Col>
           ))}
