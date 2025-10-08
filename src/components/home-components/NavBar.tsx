@@ -16,9 +16,8 @@ import {
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import SignInModal from '../auth-components/SignInModal';
-import SignUpModal from '../auth-components/SignUpModal';
+import SignUpParentModal from '../auth-components/SignUpParentModal';
 import SignOutModal from '../auth-components/SignOutModal';
-import NewHouseModal from '../NewHouseModal';
 
 const NavBar: React.FC = () => {
   const { data: session } = useSession();
@@ -45,9 +44,6 @@ const NavBar: React.FC = () => {
 
   const displayName = getDisplayName();
 
-  /* Temporary settings */
-  const [houseModal, setHouseModal] = useState(false);
-
   return (
     <>
       <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar">
@@ -63,14 +59,6 @@ const NavBar: React.FC = () => {
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav>
-              <Nav.Item onClick={() => setHouseModal(true)} className="nav-link-icon">
-                New House
-              </Nav.Item>
-            </Nav>
-            <Nav className="mx-3">
-              <Nav.Item className="nav-separator">|</Nav.Item>
-            </Nav>
             <Nav className="ms-auto">
               {currentUser && (
                 <>
@@ -142,13 +130,8 @@ const NavBar: React.FC = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
-      <NewHouseModal
-        show={houseModal}
-        handleClose={() => setHouseModal(false)}
-      />
       <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
-      <SignUpModal show={showSignUp} onHide={() => setShowSignUp(false)} />
+      <SignUpParentModal showSignUp={showSignUp} setShowSignUp={setShowSignUp} />
       <SignOutModal show={showSignOut} onHide={() => setShowSignOut(false)} />
     </>
   );

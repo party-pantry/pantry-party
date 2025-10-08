@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id       Int      @id @default(autoincrement())
-  email    String   @unique
-  username String   @unique
-  password String
-  houses   House[]
-  recipes  Recipe[]
+  id                Int                @id @default(autoincrement())
+  email             String             @unique
+  username          String             @unique
+  password          String
+  houses            House[]
+  recipes           Recipe[]
+  shoppingListItems ShoppingListItem[]
 }
 
 model House {
@@ -35,11 +36,12 @@ model Storage {
 }
 
 model Ingredient {
-  id      Int                @id @default(autoincrement())
-  name    String
-  price   Int?
-  recipes RecipeIngredient[]
-  stocks  Stock[]
+  id                Int                @id @default(autoincrement())
+  name              String
+  price             Int?
+  recipes           RecipeIngredient[]
+  shoppingListItems ShoppingListItem[]
+  stocks            Stock[]
 }
 
 model Stock {
@@ -62,11 +64,11 @@ model Recipe {
   name         String
   description  String?
   difficulty   Difficulty
-  postDate     DateTime            @default(now()) @updatedAt
   prepTime     Int
   cookTime     Int
   downTime     Int?
   servings     Int
+  postDate     DateTime            @default(now()) @updatedAt
   rating       Int
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
@@ -100,6 +102,24 @@ model RecipeNutrition {
   amount   Float
   unit     String
   recipe   Recipe @relation(fields: [recipeId], references: [id])
+}
+
+model ShoppingListItem {
+  id                      Int         @id @default(autoincrement())
+  userId                  Int
+  ingredientId            Int?
+  name                    String
+  quantity                String
+  category                String
+  priority                String
+  purchased               Boolean     @default(false)
+  source                  String
+  addedDate               DateTime    @default(now())
+  sourceStockIngredientId Int?
+  sourceStorageId         Int?
+  price                   Float?
+  ingredient              Ingredient? @relation(fields: [ingredientId], references: [id])
+  user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 enum Unit {

@@ -27,7 +27,7 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => (
           <input type="checkbox" />
         </th>
         <th className="p-3 text-left">Items</th>
-        <th className="p-3 text-left">Image</th>
+        {/* <th className="p-3 text-left">Image</th> */}
         <th className="p-3 text-left">Quantity</th>
         <th className="p-3 text-left">Last Updated</th>
         <th className="p-3 text-left">Status</th>
