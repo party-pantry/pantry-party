@@ -77,33 +77,39 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
           drop="down"
           flip={false}
         >
-          <Form.Label className="d-block mt-2 mb-1">Quantity {'<='} {quantity}</Form.Label>
-          <Form.Range
-            min={0}
-            max={50}
-            value={quantity}
-            onChange={(e) => setQuantity(Number(e.target.value))}
-            className="mb-2"
-          />
-          <Form.Text className="d-block mb-1">Status</Form.Text>
-          {statusOptions.map((option) => (
-            <Form.Check
-              key={option}
-              type="checkbox"
-              label={option}
-              name="status"
-              onChange={() => handleStatusChange(option)}
-              checked={status.includes(option)}
-              className="mb-1"
+          <div style={{
+            paddingLeft: '30px',
+            paddingRight: '30px',
+            paddingBottom: '15px',
+          }}>
+            <Form.Label className="d-block mt-2 mb-1">Quantity {'<='} {quantity}</Form.Label>
+            <Form.Range
+              min={0}
+              max={50}
+              value={quantity}
+              onChange={(e) => setQuantity(Number(e.target.value))}
+              className="mb-2"
             />
-          ))}
-          <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
-            <Button variant="danger" onClick={handleReset}>
-              Reset
-            </Button>
-            <Button variant="primary" onClick={handleApply}>
-              Apply
-            </Button>
+            <Form.Text className="d-block mb-1">Status</Form.Text>
+            {statusOptions.map((option) => (
+              <Form.Check
+                key={option}
+                type="checkbox"
+                label={option}
+                name="status"
+                onChange={() => handleStatusChange(option)}
+                checked={status.includes(option)}
+                className="mb-1"
+              />
+            ))}
+            <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
+              <Button variant="danger" onClick={handleReset}>
+                Reset
+              </Button>
+              <Button variant="primary" onClick={handleApply}>
+                Apply
+              </Button>
+            </div>
           </div>
         </DropdownButton>
       </div>
