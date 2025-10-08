@@ -23,6 +23,7 @@ const Recipes: React.FC = () => {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
+  const [showAddRecipeModal, setShowAddRecipeModal] = useState<boolean>(false); // State to control modal visibility
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -57,6 +58,11 @@ const Recipes: React.FC = () => {
     fetchUserIngredients();
   }, []);
 
+  const handleAddRecipe = (newRecipe: RecipeWithIngredients) => {
+    setRecipes(prevRecipes => [...prevRecipes, newRecipe]); // Add the new recipe to the list
+    setShowAddRecipeModal(false); // Close the modal after submission
+  };
+
   if (loading) {
     return <div className="min-h-screen d-flex justify-content-center align-items-center"><Loading /></div>;
   }
@@ -68,14 +74,18 @@ const Recipes: React.FC = () => {
   return (
     <Container className="mb-12 min-h-screen mt-5">
       <div className="d-flex justify-content-end flex-wrap gap-2 mb-2">
-        <AddRecipesModal />
       </div>
       <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
         <RecipesSearch />
         <RecipesFilterButton />
         <RecipesSortButton />
+        <button
+          className="btn btn-success"
+          onClick={() => setShowAddRecipeModal(true)} // Open the modal
+        >
+          Add Recipe
+        </button>
       </div>
-
       <Row className="g-4 justify-content-center">
         {recipes.map(recipe => (
           <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
@@ -83,6 +93,12 @@ const Recipes: React.FC = () => {
           </Col>
         ))}
       </Row>
+
+      <AddRecipesModal
+        show={showAddRecipeModal}
+        onHide={() => setShowAddRecipeModal(false)} // Close the modal
+        onSubmit={handleAddRecipe} // Handle adding a new recipe
+      />
     </Container>
   );
 };
