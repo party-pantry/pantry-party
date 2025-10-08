@@ -27,75 +27,74 @@ const Recipes: React.FC = () => {
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
 
-  // Add filters state
-  const [filters, setFilters] = useState<{
-    difficulty: string[];
-    totalTime: string[];
-    servings: string[];
-    rating: string[];
-  }>({
-    difficulty: [],
-    totalTime: [],
-    servings: [],
-    rating: [],
-  });
+  
 
-  // Filter the recipes by ingredients available AND applied filters
-  const filteredRecipes = useMemo(() => {
-    let filtered = recipes;
+  // Update your filters state type
+const [filters, setFilters] = useState<{
+  difficulty: string[];
+  totalTime: string[];
+  servings: string[];
+  rating: number | null;
+}>({
+  difficulty: [],
+  totalTime: [],
+  servings: [],
+  rating: null,
+});
 
-    // Filter by "can make only"
-    if (canMakeOnly) {
-      filtered = filtered.filter(recipe => {
-        const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredientsId);
-        return missingIngredients.length === 0;
+// Update the filteredRecipes useMemo
+const filteredRecipes = useMemo(() => {
+  let filtered = recipes;
+
+  // Filter by "can make only"
+  if (canMakeOnly) {
+    filtered = filtered.filter(recipe => {
+      const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredientsId);
+      return missingIngredients.length === 0;
+    });
+  }
+
+  // Filter by difficulty
+  if (filters.difficulty.length > 0) {
+    filtered = filtered.filter(recipe => {
+      const upperCaseDifficulties = filters.difficulty.map(d => d.toUpperCase());
+      return upperCaseDifficulties.includes(recipe.difficulty);
+    });
+  }
+
+  // Filter by total time
+  if (filters.totalTime.length > 0) {
+    filtered = filtered.filter(recipe => {
+      const totalTime = recipe.prepTime + recipe.cookTime + (recipe.downTime || 0);
+      
+      return filters.totalTime.some((timeRange) => {
+        if (timeRange === '< 30 mins') return totalTime < 30;
+        if (timeRange === '30 - 60 mins') return totalTime >= 30 && totalTime <= 60;
+        if (timeRange === '> 60 mins') return totalTime > 60;
+        return false;
       });
-    }
+    });
+  }
 
-    // Filter by difficulty
-    if (filters.difficulty.length > 0) {
-      filtered = filtered.filter(recipe => {
-      // Convert filter values to uppercase to match database enum
-        const upperCaseDifficulties = filters.difficulty.map(d => d.toUpperCase());
-        return upperCaseDifficulties.includes(recipe.difficulty);
-      });
-    }
-
-    // Filter by total time (prepTime + cookTime + downTime)
-    if (filters.totalTime.length > 0) {
-      filtered = filtered.filter(recipe => {
-      // Calculate total time from prepTime, cookTime, and downTime
-        const totalTime = recipe.prepTime + recipe.cookTime + (recipe.downTime || 0);
-
-        return filters.totalTime.some((timeRange) => {
-          if (timeRange === '< 30 mins') return totalTime < 30;
-          if (timeRange === '30 - 60 mins') return totalTime >= 30 && totalTime <= 60;
-          if (timeRange === '> 60 mins') return totalTime > 60;
-          return false;
-        });
-      });
-    }
-
-    // Filter by servings
-    if (filters.servings.length > 0) {
-      filtered = filtered.filter(recipe => filters.servings.some((servingRange) => {
+  // Filter by servings
+  if (filters.servings.length > 0) {
+    filtered = filtered.filter(recipe => 
+      filters.servings.some((servingRange) => {
         if (servingRange === '1-2') return recipe.servings >= 1 && recipe.servings <= 2;
         if (servingRange === '3-4') return recipe.servings >= 3 && recipe.servings <= 4;
         if (servingRange === '5+') return recipe.servings >= 5;
         return false;
-      }));
-    }
+      })
+    );
+  }
 
-    // Filter by rating
-    if (filters.rating.length > 0) {
-      filtered = filtered.filter(recipe => filters.rating.some((ratingOption) => {
-        const minRating = parseInt(ratingOption.charAt(0), 10);
-        return recipe.rating >= minRating;
-      }));
-    }
+  // Filter by exact rating (not "& up")
+  if (filters.rating !== null) {
+    filtered = filtered.filter(recipe => recipe.rating === filters.rating);
+  }
 
-    return filtered;
-  }, [recipes, userIngredientsId, canMakeOnly, filters]);
+  return filtered;
+}, [recipes, userIngredientsId, canMakeOnly, filters]);
 
   useEffect(() => {
     const fetchRecipes = async () => {

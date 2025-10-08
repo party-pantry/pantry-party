@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { DropdownButton, Dropdown, Form, Button } from 'react-bootstrap';
-import { Filter } from 'lucide-react';
+import { Filter, Star } from 'lucide-react';
 
 interface RecipesFilterButtonProps {
   onApply?: (filters: {
     difficulty: string[];
     totalTime: string[];
     servings: string[];
-    rating: string[];
+    rating: number | null;
   }) => void;
 }
 
@@ -15,7 +15,9 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
   const [difficulty, setDifficulty] = useState<string[]>([]);
   const [totalTime, setTotalTime] = useState<string[]>([]);
   const [servings, setServings] = useState<string[]>([]);
-  const [rating, setRating] = useState<string[]>([]);
+  const [rating, setRating] = useState<number | null>(null);
+  const [hoveredRating, setHoveredRating] = useState<number | null>(null);
+  const [show, setShow] = useState(false);
 
   const handleDifficultyChange = (option: string) => {
     setDifficulty((prev) => {
@@ -44,22 +46,22 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
     });
   };
 
-  const handleRatingChange = (option: string) => {
-    setRating((prev) => {
-      if (prev.includes(option)) {
-        return prev.filter((r) => r !== option);
-      }
-      return [...prev, option];
-    });
+  const handleStarClick = (starCount: number) => {
+    if (rating === starCount) {
+      setRating(null);
+    } else {
+      setRating(starCount);
+    }
   };
 
   const handleReset = () => {
     setDifficulty([]);
     setTotalTime([]);
     setServings([]);
-    setRating([]);
+    setRating(null);
+    setHoveredRating(null);
     if (onApply) {
-      onApply({ difficulty: [], totalTime: [], servings: [], rating: [] });
+      onApply({ difficulty: [], totalTime: [], servings: [], rating: null });
     }
   };
 
@@ -81,6 +83,8 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
       variant="outline-dark"
       align="end"
       drop="down"
+      show={show}
+      onToggle={(isOpen) => setShow(isOpen)}
     >
       <Form className="w-[250px]">
         <Form.Group className="m-3">
@@ -151,36 +155,46 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
           <Dropdown.Divider />
 
           <Form.Label className="fw-bold fs-6 text-bold">Rating</Form.Label>
-          <Form.Check
-            type="checkbox"
-            label="1 Star & Up"
-            checked={rating.includes('1 Star & Up')}
-            onChange={() => handleRatingChange('1 Star & Up')}
-          />
-          <Form.Check
-            type="checkbox"
-            label="2 Stars & Up"
-            checked={rating.includes('2 Stars & Up')}
-            onChange={() => handleRatingChange('2 Stars & Up')}
-          />
-          <Form.Check
-            type="checkbox"
-            label="3 Stars & Up"
-            checked={rating.includes('3 Stars & Up')}
-            onChange={() => handleRatingChange('3 Stars & Up')}
-          />
-          <Form.Check
-            type="checkbox"
-            label="4 Stars & Up"
-            checked={rating.includes('4 Stars & Up')}
-            onChange={() => handleRatingChange('4 Stars & Up')}
-          />
-          <Form.Check
-            type="checkbox"
-            label="5 Stars"
-            checked={rating.includes('5 Stars')}
-            onChange={() => handleRatingChange('5 Stars')}
-          />
+            <div
+            className="d-flex align-items-center gap-2 mb-2"
+            onMouseLeave={() => setHoveredRating(null)}
+            >
+            {[1, 2, 3, 4, 5].map((star) => {
+              const displayRating = hoveredRating !== null ? hoveredRating : rating;
+              const isFilled = star <= (displayRating || 0);
+
+              return (
+                <div
+                    key={star}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      backgroundColor: isFilled ? '#3c5c50' : '#e9ecef',
+                      borderRadius: '11px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      border: isFilled ? '1px solid #3c5c50' : '1px solid #d9d9d9',
+                    }}
+                    onMouseEnter={() => setHoveredRating(star)}
+                    onClick={() => handleStarClick(star)}
+                >
+                    <Star
+                    size={18}
+                    fill="white"
+                    stroke="white"
+                    />
+                </div>
+              );
+            })}
+            </div>
+            {rating !== null && (
+            <Form.Text className="text-muted d-block mb-2">
+                Selected: {rating} Star{rating !== 1 ? 's' : ''}
+            </Form.Text>
+            )}
 
           <div className="mt-3 d-flex justify-content-between align-items-center">
             <Button
