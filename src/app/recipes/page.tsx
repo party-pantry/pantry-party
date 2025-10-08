@@ -12,8 +12,6 @@ const RecipesPage = async () => {
     } | null,
   );
 
-  // Chain other filters (difficulty, time, serving, ratings, etc) later
-
   return (
     <main>
       <Recipes />

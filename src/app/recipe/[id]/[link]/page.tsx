@@ -74,6 +74,10 @@ const RecipePage: React.FC = () => {
     );
   }
 
+  const handleStartCooking = () => {
+    router.push(`/cooking/${recipe.id}/${slugify(recipe.name, { lower: true, strict: true })}`);
+  };
+
   const difficulty = getDifficulty(recipe.difficulty);
 
   const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
@@ -188,7 +192,7 @@ const RecipePage: React.FC = () => {
                                     </div>
                               ))}
                         </div>
-                        <Button className="mt-3" style={{ fontSize: '1rem', width: 250, height: 50 }} variant="success">Start Cooking</Button>
+                        <Button className="mt-3" style={{ fontSize: '1rem', width: 250, height: 50 }} onClick={handleStartCooking} variant="success">Start Cooking</Button>
                     </Col>
                 </Row>
             </div>
