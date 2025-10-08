@@ -54,7 +54,7 @@
   { "id": 6, "name": "bread", "price": 6 },
   { "id": 7, "name": "bananas", "price": 5 },
   { "id": 8, "name": "yougurt", "price": 4 },
-  { "id": 9, "name": "pepper", "price": 2 },
+  { "id": 9, "name": "basil", "price": 2 },
   { "id": 10, "name": "olive oil", "price": 4 },
   { "id": 11, "name": "ice cream", "price": 7 },
   { "id": 12, "name": "swiss cheese", "price": 5 },
@@ -71,7 +71,31 @@
   { "id": 23, "name": "puff pastry", "price": 7 },
   { "id": 24, "name": "mushrooms", "price": 6 },
   { "id": 25, "name": "dijon mustard", "price": 4 },
-  { "id": 26, "name": "chickpeas", "price": 3 }
+  { "id": 26, "name": "chickpeas", "price": 3 },
+  { "id": 27, "name": "spinach", "price": 4 },
+  { "id": 28, "name": "ground turkey", "price": 12 },
+  { "id": 29, "name": "shrimp", "price": 16 },
+  { "id": 30, "name": "onions", "price": 3 },
+  { "id": 31, "name": "potatoes", "price": 5 },
+  { "id": 32, "name": "carrots", "price": 4 },
+  { "id": 33, "name": "bell peppers", "price": 6 },
+  { "id": 34, "name": "broccoli", "price": 5 },
+  { "id": 35, "name": "avocados", "price": 8 },
+  { "id": 36, "name": "strawberries", "price": 7 },
+  { "id": 37, "name": "blueberries", "price": 9 },
+  { "id": 38, "name": "almonds", "price": 10 },
+  { "id": 39, "name": "peanut butter", "price": 6 },
+  { "id": 40, "name": "soy sauce", "price": 3 },
+  { "id": 41, "name": "honey", "price": 5 },
+  { "id": 42, "name": "brown sugar", "price": 4 },
+  { "id": 43, "name": "baking powder", "price": 3 },
+  { "id": 44, "name": "flour", "price": 5 },
+  { "id": 45, "name": "cocoa powder", "price": 6 },
+  { "id": 46, "name": "oats", "price": 5 },
+  { "id": 47, "name": "tofu", "price": 4 },
+  { "id": 48, "name": "fish sauce", "price": 4 },
+  { "id": 49, "name": "coconut milk", "price": 5 },
+  { "id": 50, "name": "apple cider vinegar", "price": 4 }
   ], 
 
   "defaultStocks": [
@@ -194,7 +218,288 @@
       "unit": "BOX",
       "status": "GOOD",
       "category": "PANTRY"
+    },
+    {
+      "ingredientId": 16,
+      "storageId": 4,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 17,
+      "storageId": 2,
+      "quantity": 6,
+      "unit": "BOX",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 18,
+      "storageId": 1,
+      "quantity": 2,
+      "unit": "BOTTLE",
+      "status": "LOW_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 19,
+      "storageId": 1,
+      "quantity": 8,
+      "unit": "BULB",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 20,
+      "storageId": 4,
+      "quantity": 0,
+      "unit": "BOTTLE",
+      "status": "OUT_OF_STOCK",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 21,
+      "storageId": 1,
+      "quantity": 2,
+      "unit": "BLOCK",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 22,
+      "storageId": 3,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 23,
+      "storageId": 3,
+      "quantity": 4,
+      "unit": "PACKAGE",
+      "status": "GOOD",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 24,
+      "storageId": 1,
+      "quantity": 3,
+      "unit": "BOX",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 25,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 26,
+      "storageId": 2,
+      "quantity": 0,
+      "unit": "CAN",
+      "status": "OUT_OF_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 27,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "BUNDLES",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 28,
+      "storageId": 3,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 29,
+      "storageId": 3,
+      "quantity": 8,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 30,
+      "storageId": 2,
+      "quantity": 6,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 31,
+      "storageId": 2,
+      "quantity": 10,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 32,
+      "storageId": 2,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 33,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "PIECE",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 34,
+      "storageId": 1,
+      "quantity": 3,
+      "unit": "BUNCH",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 35,
+      "storageId": 1,
+      "quantity": 6,
+      "unit": "PIECE",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 36,
+      "storageId": 1,
+      "quantity": 2,
+      "unit": "CARTON",
+      "status": "LOW_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 37,
+      "storageId": 1,
+      "quantity": 3,
+      "unit": "CARTON",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 38,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 39,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 40,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 41,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 42,
+      "storageId": 2,
+      "quantity": 0,
+      "unit": "PACKAGE",
+      "status": "OUT_OF_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 43,
+      "storageId": 4,
+      "quantity": 1,
+      "unit": "CAN",
+      "status": "GOOD",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 44,
+      "storageId": 2,
+      "quantity": 10,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 45,
+      "storageId": 4,
+      "quantity": 0,
+      "unit": "CAN",
+      "status": "OUT_OF_STOCK",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 46,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 47,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "BLOCK",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 48,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 49,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "CAN",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 50,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
     }
+
   ],
 
   "defaultRecipes": [
