@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
   --background: #E5E5E3;
   --foreground: #171717;
@@ -297,4 +298,35 @@ h1 {
 
 h5 {
   font-family: var(--font-nunito-sans), sans-serif;
+}
+
+/* Shopping List Food Category classes color scheme */
+.badge.category-produce {
+  background-color: #9cde9e; 
+  color: #0C5020;
+}
+
+.category-meat {
+  background-color: #f7968f; 
+  color: #7f4d49;
+}
+
+.category-frozen {
+  background-color: #7ae0d8; 
+  color: #305956;
+}
+
+.category-dairy {
+  background-color: #c2a5ee; 
+  color: #6631b5;
+}
+
+.category-other {
+  background-color: #9e9e9e; 
+  color: white;
+}
+
+.custom-modal{
+  min-height: 61vh;
+  max-height: 90vh;
 }

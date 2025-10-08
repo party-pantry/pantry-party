@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, Badge, Button, Form } from 'react-bootstrap';
+
 import {
   ShoppingItem,
   getCategoryVariant,
@@ -33,7 +34,7 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           </div>
         </div>
         <div className="d-flex align-items-center gap-2">
-          <Badge bg={getCategoryVariant(item.category)}>{item.category}</Badge>
+          <Badge bg="" className={getCategoryVariant(item.category)}>{item.category}</Badge>
           <Badge bg={getPriorityVariant(item.priority)}>{item.priority}</Badge>
           <Button
             variant="outline-danger"
