@@ -46,10 +46,10 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
               <Badge bg={statusBadgeVariant}>
                 {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
               </Badge>
-              <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}>
+              {/* <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}>
                 {item.suggestedPriority}
-              </Badge>
-              <Button variant="success" size="sm" onClick={() => setShowModal(true)}>
+              </Badge> */}
+              <Button variant="primary" size="sm" onClick={() => setShowModal(true)}>
                 Add to List
               </Button>
             </div>

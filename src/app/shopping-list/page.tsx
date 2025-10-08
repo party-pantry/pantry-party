@@ -174,90 +174,12 @@ const ShoppingList: React.FC = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div className="flex flex-col justify-center h-[30vh] mb-5">
+      {/* <div className="flex flex-col justify-center h-[30vh] mb-5">
         <h1 className="text-4xl font-bold">Shopping List</h1>
         <h6 className="text-gray-600 mt-2">Keep track of what you need to buy</h6>
         <div className="flex justify-end mt-2" />
         <hr className="mt-4 border-gray-300" />
-      </div>
-
-      <Row className="justify-content-end mb-4">
-        <Button
-          variant={showAddForm ? 'outline-secondary' : 'success'}
-          onClick={() => setShowAddForm(!showAddForm)}
-          style={{ width: '125px' }}
-        >
-          <strong>{showAddForm ? 'Cancel' : 'Add Item +'}</strong>
-        </Button>
-      </Row>
-
-      {showAddForm && (
-        <Card className="mb-4 shadow-sm">
-          <Card.Body>
-            <Form onSubmit={handleAddItem}>
-              <Row className="g-3 align-items-end">
-                <Col md={3}>
-                  <Form.Label>Item Name</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Enter item name"
-                    value={newItem.name}
-                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                    required
-                  />
-                </Col>
-                <Col md={2}>
-                  <Form.Label>Quantity</Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="e.g., 2 lbs"
-                    value={newItem.quantity}
-                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                    required
-                  />
-                </Col>
-                <Col md={2}>
-                  <Form.Label>Category</Form.Label>
-                  <Form.Select
-                    value={newItem.category}
-                    onChange={(e) => setNewItem({
-                      ...newItem,
-                      category: e.target.value as ShoppingItem['category'],
-                    })}
-                  >
-                    <option value="Produce">Produce</option>
-                    <option value="Meat">Meat</option>
-                    <option value="Dairy">Dairy</option>
-                    <option value="Pantry">Pantry</option>
-                    <option value="Other">Other</option>
-                  </Form.Select>
-                </Col>
-                <Col md={2}>
-                  <Form.Label>Priority</Form.Label>
-                  <Form.Select
-                    value={newItem.priority}
-                    onChange={(e) => setNewItem({
-                      ...newItem,
-                      priority: e.target.value as ShoppingItem['priority'],
-                    })}
-                  >
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </Form.Select>
-                </Col>
-                <Col md={3}>
-                  <Button type="submit" variant="primary" className="w-100">
-                    <strong>Add to List</strong>
-                  </Button>
-                </Col>
-              </Row>
-            </Form>
-          </Card.Body>
-        </Card>
-      )}
-
-      <SuggestedItemsSection suggestions={suggestions} onAdd={handleAddSuggestion} />
+      </div> */}
 
       <Row className="mb-4">
         <Col md={4}>
@@ -288,11 +210,95 @@ const ShoppingList: React.FC = () => {
         </Col>
       </Row>
 
-      <Row>
+      <Row className="mb-4">
         <Col lg={8}>
           <Card className="shadow-sm">
             <Card.Header>
-              <h5 className="mb-0">Items to Buy ({unpurchasedItems.length})</h5>
+
+              <Row>
+                <Col md={8}>
+                  <h4 className="mt-1">Items to Buy ({unpurchasedItems.length})</h4>
+                </Col >
+                {/* Add Item to a list */}
+                {/* <Row className="justify-content-end mb-4"> */}
+                    <Col md={4} className="text-end">
+                      <Button
+                        variant={showAddForm ? 'outline-secondary' : 'success'}
+                        onClick={() => setShowAddForm(!showAddForm)}
+                        // style={{ width: '125px' }}
+                      >
+                        <strong>{showAddForm ? 'Cancel' : '+'}</strong>
+                      </Button>
+                    </Col>
+                  {/* </Row> */}
+              </Row>
+
+            {showAddForm && (
+              <Card className="mb-4 shadow-sm">
+                <Card.Body>
+                  <Form onSubmit={handleAddItem}>
+                    <Row className="g-3 align-items-end">
+                      <Col md={4}>
+                        <Form.Label>Item Name</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Enter item name"
+                          value={newItem.name}
+                          onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                          required
+                        />
+                      </Col>
+                      <Col md={2}>
+                        <Form.Label>Quantity</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="e.g., 2 lbs"
+                          value={newItem.quantity}
+                          onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                          required
+                        />
+                      </Col>
+                      <Col md={2}>
+                        <Form.Label>Category</Form.Label>
+                        <Form.Select
+                          value={newItem.category}
+                          onChange={(e) => setNewItem({
+                            ...newItem,
+                            category: e.target.value as ShoppingItem['category'],
+                          })}
+                        >
+                          <option value="Produce">Produce</option>
+                          <option value="Meat">Meat</option>
+                          <option value="Dairy">Dairy</option>
+                          <option value="Pantry">Pantry</option>
+                          <option value="Other">Other</option>
+                        </Form.Select>
+                      </Col>
+                      <Col md={2}>
+                        <Form.Label>Priority</Form.Label>
+                        <Form.Select
+                          value={newItem.priority}
+                          onChange={(e) => setNewItem({
+                            ...newItem,
+                            priority: e.target.value as ShoppingItem['priority'],
+                          })}
+                        >
+                          <option value="High">High</option>
+                          <option value="Medium">Medium</option>
+                          <option value="Low">Low</option>
+                        </Form.Select>
+                      </Col>
+                      {/* <Col md={1} /> */}
+                      <Col md={2}>
+                        <Button type="submit" variant="primary" className="w-100">
+                          Add to List
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
+                </Card.Body>
+              </Card>
+            )}
             </Card.Header>
             <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
               {unpurchasedItems.length === 0 ? (
@@ -316,7 +322,7 @@ const ShoppingList: React.FC = () => {
         <Col lg={4}>
           <Card className="shadow-sm">
             <Card.Header>
-              <h5 className="mb-0">Recently Purchased ({purchasedItems.length})</h5>
+              <h4 className="mt-1">Recently Purchased ({purchasedItems.length})</h4>
             </Card.Header>
             <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
               {purchasedItems.length === 0 ? (
@@ -337,6 +343,9 @@ const ShoppingList: React.FC = () => {
           </Card>
         </Col>
       </Row>
+
+      <SuggestedItemsSection suggestions={suggestions} onAdd={handleAddSuggestion} />
+
     </Container>
   );
 };

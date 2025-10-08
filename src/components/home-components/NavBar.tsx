@@ -64,12 +64,16 @@ const NavBar: React.FC = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
-              <Nav.Item onClick={() => setHouseModal(true)} className="nav-link-icon">
-                New House
-              </Nav.Item>
-            </Nav>
-            <Nav className="mx-3">
-              <Nav.Item className="nav-separator">|</Nav.Item>
+              {currentUser && (
+                <>
+                <Nav.Item onClick={() => setHouseModal(true)} className="nav-link-icon">
+                  New House
+                </Nav.Item>
+                <Nav className="mx-3">
+                  <Nav.Item className="nav-separator">|</Nav.Item>
+                </Nav>
+                </>
+              )}
             </Nav>
             <Nav className="ms-auto">
               {currentUser && (
