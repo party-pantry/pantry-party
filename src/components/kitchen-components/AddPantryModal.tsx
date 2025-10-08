@@ -1,13 +1,12 @@
+'use client';
+
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/prop-types */
-
-'use client';
 
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
 import { Category } from '@prisma/client';
 import { LocalCategory } from '@/lib/Units';
-import { addStorage } from '@/lib/dbFunctions';
 
 interface Props {
   show: boolean;
@@ -19,16 +18,22 @@ interface Props {
 const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId }) => {
   const [formData, setFormData] = useState({
     name: '',
-    type: '' as Category,
+    type: 'FRIDGE' as Category,
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (formData.name && formData.type) {
       try {
-        await addStorage({ name: formData.name, type: formData.type, houseId });
+        await fetch('/api/kitchen/storages', {
+          method: 'POST',
+          body: JSON.stringify({ ...formData, houseId }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         onAddPantry({ ...formData });
-        setFormData({ name: '', type: '' as Category });
+        setFormData({ name: '', type: 'FRIDGE' as Category });
         onHide();
       } catch (error) {
         // Handle error appropriately
