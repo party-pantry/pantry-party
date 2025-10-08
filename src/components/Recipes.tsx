@@ -35,10 +35,9 @@ const Recipes: React.FC = () => {
     // Only recipes the user can make
     return recipes.filter(recipe => {
       const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredientsId);
-      return missingIngredients.length === 0; 
+      return missingIngredients.length === 0;
     });
   }, [recipes, userIngredientsId, canMakeOnly]);
-
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -84,11 +83,9 @@ const Recipes: React.FC = () => {
   return (
       <Container className="mb-12 min-h-screen mt-5">
         <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
-          
           <RecipesSearch />
           <RecipesFilterButton />
           <RecipesSortButton />
-          
         </div>
         <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />

@@ -6,7 +6,7 @@
 /* eslint-disable no-nested-ternary */
 
 import { Container, Button, Row } from 'react-bootstrap';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import IngredientTable from '@/components/kitchen-components/IngredientTable';
 import StorageContainer from '@/components/kitchen-components/StorageContainer';
@@ -72,7 +72,7 @@ const MyKitchen = () => {
   Record<number, 'asc' | 'desc'>
   >({});
 
-  const fetchHouses = async () => {
+  const fetchHouses = useCallback(async () => {
     if (!userId) return;
     const res = await fetch(`/api/kitchen?userId=${userId}`);
     const data = await res.json();
@@ -86,11 +86,11 @@ const MyKitchen = () => {
 
     setHouses(houseArray);
     if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
-  };
+  }, [userId]);
 
   useEffect(() => {
     fetchHouses();
-  }, [userId]);
+  }, [fetchHouses]);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEditItem = (id: number) => {
