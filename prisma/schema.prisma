@@ -40,8 +40,8 @@ model Ingredient {
   name              String
   price             Int?
   recipes           RecipeIngredient[]
-  stocks            Stock[]
   shoppingListItems ShoppingListItem[]
+  stocks            Stock[]
 }
 
 model Stock {
@@ -64,11 +64,11 @@ model Recipe {
   name         String
   description  String?
   difficulty   Difficulty
-  postDate     DateTime            @default(now()) @updatedAt
   prepTime     Int
   cookTime     Int
   downTime     Int?
   servings     Int
+  postDate     DateTime            @default(now()) @updatedAt
   rating       Int
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
@@ -113,13 +113,13 @@ model ShoppingListItem {
   category                String
   priority                String
   purchased               Boolean     @default(false)
-  price     Float? 
   source                  String
   addedDate               DateTime    @default(now())
   sourceStockIngredientId Int?
   sourceStorageId         Int?
+  price                   Float?
+  ingredient              Ingredient? @relation(fields: [ingredientId], references: [id])
   user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ingredient              Ingredient? @relation(fields: [ingredientId], references: [id], onDelete: SetNull)
 }
 
 enum Unit {

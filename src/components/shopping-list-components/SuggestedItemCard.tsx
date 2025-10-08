@@ -43,13 +43,13 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
               </small>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <Badge bg={statusBadgeVariant}>
+              <Badge className='me-12' bg={statusBadgeVariant}>
                 {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
               </Badge>
               {/* <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}>
                 {item.suggestedPriority}
               </Badge> */}
-              <Button variant="primary" size="sm" onClick={() => setShowModal(true)}>
+              <Button variant="outline-primary" size="sm" onClick={() => setShowModal(true)}>
                 Add to List
               </Button>
             </div>

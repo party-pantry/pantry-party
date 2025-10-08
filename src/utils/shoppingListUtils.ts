@@ -7,6 +7,7 @@ export type ShoppingItem = {
   category: 'Produce' | 'Meat' | 'Dairy' | 'Frozen' | 'Other';
   priority: 'High' | 'Medium' | 'Low';
   purchased: boolean;
+  price?: number;
   addedDate: string;
 };
 
