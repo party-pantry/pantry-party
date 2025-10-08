@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Recipe } from '@prisma/client';
-import { Clock, Heart } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { Card, CardBody, CardTitle, CardText, Badge, Button } from 'react-bootstrap';
 import {
   calculateTotalTime,
@@ -31,10 +31,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
     router.push(`/recipe/${recipe.id}/${link}`);
   };
 
-  const [isPinned, setIsPinned] = useState(false);
+  const [isFavorited, setIsFavorited] = useState(false);
 
   // TODO: implement pinned recipes functionality
-  const togglePin = () => setIsPinned(!isPinned);
+  const toggleFavorite = () => setIsFavorited(!isFavorited);
 
   const difficulty = getDifficulty(recipe.difficulty);
 
@@ -55,10 +55,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
         <div className="position-absolute top-5 right-5">
           <Heart 
             size={20}
-            stroke={isPinned ? 'black' : 'currentColor'}
-            fill={isPinned ? 'red' : 'none'}
+            stroke={isFavorited ? 'black' : 'currentColor'}
+            fill={isFavorited ? 'red' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
-            onClick={togglePin}
+            onClick={toggleFavorite}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
             onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           />
