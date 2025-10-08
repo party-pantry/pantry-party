@@ -267,7 +267,7 @@ const ShoppingList: React.FC = () => {
                           required
                         />
                       </Col>
-                      {/* <Col md={2}>
+                      <Col md={2}>
                         <Form.Label>Price ($)</Form.Label>
                         <Form.Control
                           type="number"
@@ -278,7 +278,7 @@ const ShoppingList: React.FC = () => {
                           onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                           required
                         />
-                      </Col> */}
+                      </Col>
                       <Col md={2}>
                         <Form.Label>Category</Form.Label>
                         <Form.Select
@@ -303,11 +303,14 @@ const ShoppingList: React.FC = () => {
                           <option value="Low">Low</option>
                         </Form.Select>
                       </Col>
-                      <Col md={2}>
-                        <Button type="submit" variant="primary" className="w-100">
-                          Add
-                        </Button>
-                      </Col>
+                    </Row>
+                    <Row className='g-3 mt-2 align-items-end'>
+                        <Col md={10} />
+                        <Col md={2}>
+                          <Button type="submit" variant="primary" className="w-100">
+                            Add
+                          </Button>
+                        </Col>
                     </Row>
                   </Form>
                 </Card.Body>
