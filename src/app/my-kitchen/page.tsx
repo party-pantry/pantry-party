@@ -169,15 +169,6 @@ const MyKitchen = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div className="flex flex-col justify-center h-[30vh] mb-5">
-        <h1 className="text-4xl font-bold">My Kitchen</h1>
-        <h6 className="text-gray-600 mt-2">
-          Here you can see what is in your kitchen
-        </h6>
-        <div className="flex justify-end mt-2"></div>
-        <hr className="mt-4 border-gray-300" />
-      </div>
-
       <div
         style={{
           justifyContent: 'center',

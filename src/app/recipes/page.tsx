@@ -67,14 +67,6 @@ const Recipes: React.FC = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div className="flex flex-col justify-center h-[30vh]">
-        <h1 className="text-4xl font-bold">Recipe Suggestions</h1>
-        <h6 className="text-gray-600 mt-2">Find recipes based on ingredients you already have!</h6>
-        <div className="flex justify-end mt-2">
-        </div>
-        <hr className="mt-4 border-gray-300"/>
-      </div>
-
       <div className="d-flex justify-content-end flex-wrap gap-2 mb-2">
         <AddRecipesModal />
       </div>
