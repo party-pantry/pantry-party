@@ -4,22 +4,19 @@ import { Search, Filter } from 'lucide-react';
 
 const statusOptions = ['Good', 'Low Stock', 'Out of Stock', 'Expired'];
 
-interface KitchenFilterButtonProps {
+const KitchenFilterButton: React.FC<{
   onApply?: (filters: { search: string; quantity: number; status: string[] }) => void;
-}
-
-const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) => {
+}> = ({ onApply }) => {
   const [quantity, setQuantity] = useState(25);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string[]>([]);
 
   const handleStatusChange = (option: string) => {
-    setStatus((prev) => {
-      if (prev.includes(option)) {
-        return prev.filter((s) => s !== option);
-      }
-      return [...prev, option];
-    });
+    setStatus((prev) => (
+      prev.includes(option)
+        ? prev.filter((s) => s !== option)
+        : [...prev, option]
+    ));
   };
 
   const handleReset = () => {
@@ -33,6 +30,13 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
     if (onApply) onApply({ search, quantity, status });
   };
 
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); // Prevent form submission reload
+      handleApply(); // Trigger filtering
+    }
+  };
+
   return (
     <div
       style={{
@@ -40,13 +44,12 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
         justifyContent: 'flex-end',
         padding: '20px',
         marginRight: '120px',
-        paddingTop: '20px',
-        marginTop: '10px',
-        marginBottom: '-58px',
-        marginLeft: '20px',
+        paddingTop: '5px',
+        marginTop: '-10px',
       }}
     >
       <div className="d-flex align-items-center gap-2">
+        {/* Search Bar */}
         <div className="position-relative" style={{ maxWidth: '250px' }}>
           <Search
             size={18}
@@ -56,14 +59,12 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
             placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleApply();
-              }
-            }}
+            onKeyDown={handleSearchKeyDown} // 👈 Handles Enter key
             style={{ paddingLeft: '2rem' }}
           />
         </div>
+
+        {/* Filter Dropdown */}
         <DropdownButton
           id="kitchen-filter-dropdown"
           title={
@@ -77,7 +78,9 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
           drop="down"
           flip={false}
         >
-          <Form.Label className="d-block mt-2 mb-1">Quantity {'<='} {quantity}</Form.Label>
+          <Form.Label className="d-block mt-2 mb-1">
+            Quantity {'<='} {quantity}
+          </Form.Label>
           <Form.Range
             min={0}
             max={50}
@@ -97,7 +100,10 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
               className="mb-1"
             />
           ))}
-          <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
+          <div
+            className="mt-3 d-flex justify-content-between"
+            style={{ gap: '10px' }}
+          >
             <Button variant="danger" onClick={handleReset}>
               Reset
             </Button>

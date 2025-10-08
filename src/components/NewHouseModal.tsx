@@ -1,15 +1,17 @@
+/* eslint-disable max-len */
+
 'use client';
 
-import React from "react";
-import { Form, Modal } from "react-bootstrap";
-import { useSession } from "next-auth/react";
-import { addHouse } from "../lib/dbFunctions";
+import React from 'react';
+import { Form, Modal } from 'react-bootstrap';
+import { useSession } from 'next-auth/react';
+import { addHouse } from '../lib/dbFunctions';
 
 const NewHouseModal: React.FC<{
   show: boolean;
   handleClose: () => void;
 }> = ({ show, handleClose }) => {
-  const [houseName, setHouseName] = React.useState("");
+  const [houseName, setHouseName] = React.useState('');
 
   const userId = (useSession().data?.user as { id?: number })?.id;
 
@@ -38,12 +40,12 @@ const NewHouseModal: React.FC<{
         <button className="btn btn-secondary" onClick={handleClose}>
           Cancel
         </button>
-        <button className="btn btn-primary" onClick={() => addHouse(houseName, userId as number).then(handleClose)}>
+        <button className="btn btn-primary" onClick={() => addHouse({ name: houseName, userId: userId as number }).then(handleClose)}>
           Add House
         </button>
       </Modal.Footer>
     </Modal>
-  )
+  );
 };
 
 export default NewHouseModal;

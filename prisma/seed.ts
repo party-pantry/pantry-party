@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 /* eslint-disable max-len */
 /* HOW TO IMPLEMENT SEED:
 1. npx prisma db push (updates the database schema)
@@ -6,7 +7,7 @@
 
 import { PrismaClient, Category, Unit, Status, Difficulty } from '@prisma/client';
 import { hash } from 'bcrypt';
-import slugify from 'slugify';
+// import slugify from 'slugify';
 import config from '../config/settings.development.json' assert { type: 'json' };
 
 const prisma = new PrismaClient();
@@ -144,6 +145,7 @@ async function main() {
 
     if (!ownerUser) {
       console.error(`No owner found for house ${house.name}`);
+      // eslint-disable-next-line no-continue
       continue;
     }
 
@@ -211,7 +213,7 @@ async function main() {
       },
     });
   }
-  
+
   // Seed Recipes
   for (const recipe of config.defaultRecipes) {
     console.log(`Seeding Recipe: ${recipe.name} (ID: ${recipe.id}, UserID: ${recipe.userId})`);
