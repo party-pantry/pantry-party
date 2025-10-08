@@ -21,7 +21,7 @@ interface SuggestedItemCardProps {
 
 const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) => {
   const [showModal, setShowModal] = useState(false);
-  const [category, setCategory] = useState('Pantry');
+  const [category, setCategory] = useState('Dairy');
   const [quantity, setQuantity] = useState('1');
 
   const handleAdd = () => {
@@ -78,7 +78,7 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
                 <option value="Produce">Produce</option>
                 <option value="Meat">Meat</option>
                 <option value="Dairy">Dairy</option>
-                <option value="Pantry">Pantry</option>
+                <option value="Frozen">Frozen</option>
                 <option value="Other">Other</option>
               </Form.Select>
             </Col>

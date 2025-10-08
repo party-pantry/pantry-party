@@ -270,7 +270,7 @@ const ShoppingList: React.FC = () => {
                           <option value="Produce">Produce</option>
                           <option value="Meat">Meat</option>
                           <option value="Dairy">Dairy</option>
-                          <option value="Pantry">Pantry</option>
+                          <option value="Frozen">Frozen</option>
                           <option value="Other">Other</option>
                         </Form.Select>
                       </Col>
@@ -291,7 +291,7 @@ const ShoppingList: React.FC = () => {
                       {/* <Col md={1} /> */}
                       <Col md={2}>
                         <Button type="submit" variant="primary" className="w-100">
-                          Add to List
+                          Add
                         </Button>
                       </Col>
                     </Row>

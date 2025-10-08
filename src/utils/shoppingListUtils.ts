@@ -4,7 +4,7 @@ export type ShoppingItem = {
   id: number;
   name: string;
   quantity: string;
-  category: 'Produce' | 'Meat' | 'Dairy' | 'Pantry' | 'Other';
+  category: 'Produce' | 'Meat' | 'Dairy' | 'Frozen' | 'Other';
   priority: 'High' | 'Medium' | 'Low';
   purchased: boolean;
   addedDate: string;
@@ -27,11 +27,11 @@ export const getCategoryVariant = (
   category: ShoppingItem['category'],
 ): string => {
   const categoryMap = {
-    Produce: 'success',
-    Meat: 'danger',
-    Dairy: 'info',
-    Pantry: 'warning',
-    Other: 'secondary',
+    Produce: 'category-produce',
+    Meat: 'category-meat',
+    Dairy: 'category-dairy',
+    Frozen: 'category-frozen',
+    Other: 'category-other',
   } as const;
   return categoryMap[category];
 };
