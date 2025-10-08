@@ -44,9 +44,6 @@ const NavBar: React.FC = () => {
 
   const displayName = getDisplayName();
 
-  /* Temporary settings */
-  const [houseModal, setHouseModal] = useState(false);
-
   return (
     <>
       <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar">

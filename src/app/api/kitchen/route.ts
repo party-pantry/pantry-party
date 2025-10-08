@@ -4,7 +4,7 @@ import { prisma } from '../../../lib/prisma';
 // eslint-disable-next-line import/prefer-default-export
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const id  = searchParams.get('userId');
+  const id = searchParams.get('userId');
 
   if (!id) {
     return NextResponse.json({ error: 'Missing userId' }, { status: 400 });
