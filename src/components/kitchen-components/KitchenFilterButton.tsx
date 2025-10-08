@@ -9,7 +9,7 @@ interface KitchenFilterButtonProps {
 }
 
 const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) => {
-  const [quantity, setQuantity] = useState(25);
+  const [quantity, setQuantity] = useState(1000);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string[]>([]);
 
@@ -26,7 +26,7 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
     setSearch('');
     setQuantity(25);
     setStatus([]);
-    if (onApply) onApply({ search: '', quantity: 25, status: [] });
+    if (onApply) onApply({ search: '', quantity: 1000, status: [] });
   };
 
   const handleApply = () => {
