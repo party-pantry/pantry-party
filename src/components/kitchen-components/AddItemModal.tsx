@@ -50,7 +50,7 @@ const AddItemModal: React.FC<Props> = ({
       try {
         await fetch('/api/kitchen/stocks', {
           method: 'POST',
-          body: JSON.stringify({ ...formData }),
+          body: JSON.stringify(formData),
           headers: { 'Content-Type': 'application/json' },
         });
         onAddItem({
