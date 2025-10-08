@@ -236,14 +236,6 @@
       "category": "PANTRY"
     },
     {
-      "ingredientId": 18,
-      "storageId": 1,
-      "quantity": 2,
-      "unit": "BOTTLE",
-      "status": "LOW_STOCK",
-      "category": "FRIDGE"
-    },
-    {
       "ingredientId": 19,
       "storageId": 1,
       "quantity": 8,
