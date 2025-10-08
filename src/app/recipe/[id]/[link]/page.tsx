@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
 import { Check, X } from 'lucide-react';
+import StarRating from '@/components/recipes-components/StarRating';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
 import Loading from '@/components/home-components/Loading';
 import {
@@ -74,28 +75,30 @@ const RecipePage: React.FC = () => {
   }
 
   const difficulty = getDifficulty(recipe.difficulty);
+
   const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
+  
   const { haveIngredients, missingIngredients, matchPercent } = checkIngredients(
     recipe.ingredients,
     userIngredients,
   );
 
-  const ingredientsList = recipe.ingredients.map((ri: { ingredient: { id: number; name: string }; quantity: number; unit: string }) => ({
-    id: ri.ingredient.id,
-    name: ri.ingredient.name,
-    quantity: ri.quantity,
-    unit: ri.unit,
-  }));
-
   return (
         <Container className="min-h-screen py-10">
             <div className="flex flex-col items-start gap-1">
+              
                 <div className="flex items-center gap-4">
-                    <h1 className="text-5xl font-bold">{recipe.name}</h1>
+                    <h1 className="text-5xl font-bold m-0">{recipe.name}</h1>
                     <Badge className="fs-6 py-1 px-3" bg={difficulty.variant}>{difficulty.label}</Badge>
-                    <span className="text-muted">Match: {matchPercent.toFixed(0)}%</span>
+                    <span className="text-muted">Ingredients Match: {matchPercent.toFixed(0)}%</span>
                 </div>
-                <p className="text-sm m-0">By {recipe.user.username}</p>
+
+                <div className="d-flex align-items-center gap-2 mt-1 mb-1">
+                  <StarRating rating={recipe.rating} size={20} />
+                  <span className="text-muted">{recipe.rating.toFixed(1)}</span>
+                </div>
+                <span className="text-sm">By {recipe.user.username} | Posted on {new Date(recipe.postDate).toLocaleDateString()}</span>
+
                 <hr className="my-4 w-100" />
 
                 <Row className="gap-5 w-100">
@@ -117,19 +120,57 @@ const RecipePage: React.FC = () => {
                         </div>
 
                         <h3 className="text-2xl font-semibold pt-4">Ingredients</h3>
-                        <ul className="list-disc pl-6 space-y-1">
-                            {ingredientsList.map((ingredient: { id: number; name: string; quantity: number; unit: string }) => (
-                                <li key={ingredient.id} className="flex items-center gap-2 list-item">
-                                    <span className="flex items-center gap-2">
-                                        {ingredient.quantity} {ingredient.unit.toLowerCase()} {ingredient.name}
-                                        <span className={`ms-2 ${userIngredients.has(ingredient.id) ? 'text-success' : 'text-danger'}`}>
-                                            {userIngredients.has(ingredient.id) ? <Check size={16} /> : <X size={16} />}
-                                        </span>
-                                    </span>
-                                </li>
-                            ))}
-                        </ul>
+
+                        <Row className="w-100">
+                          <Col md={6} sm={12}>
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                              <h6 className="fw-semi-bold m-0">Available:</h6>
+                            </div>
+
+                            {haveIngredients.length > 0 ? (
+                              <ul className="list-disc ps-4">
+                                {recipe.ingredients
+                                  .filter((ri: any) => userIngredients.has(ri.ingredient.id))
+                                  .map((ri: any) => (
+                                    <li key={ri.ingredient.id} className="mb-1 list-item">
+                                      <span className="d-inline-flex align-items-center gap-1">
+                                        {ri.quantity} {ri.unit.toLowerCase()} {ri.ingredient.name}
+                                        <Check size={16} className="text-success" style={{ width: 16, height: 16, flexShrink: 0 }} />
+                                      </span>
+                                    </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-muted small fst-italic ps-0 m-0">N/A</p>
+                            )}
+                          </Col>
+                          
+                          <Col md={6} sm={12}>
+                            <div className="d-flex align-items-center gap-2 mb-2">
+                              <h6 className="fw-semi-bold m-0">Missing:</h6>
+                            </div>
+
+                            {missingIngredients.length > 0 ? (
+                              <ul className="list-disc ps-4">
+                                {recipe.ingredients
+                                  .filter((ri: any) => !userIngredients.has(ri.ingredient.id))
+                                  .map((ri: any) => (
+                                    <li key={ri.ingredient.id} className="mb-1 list-item">
+                                      <span className="d-inline-flex align-items-center gap-1">
+                                        {ri.quantity} {ri.unit.toLowerCase()} {ri.ingredient.name}
+                                        <X size={16} className="text-danger" style={{ width: 16, height: 16, flexShrink: 0 }} />
+                                      </span>
+                                    </li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-muted small fst-italic ps-0 m-0">N/A</p>
+                            )}
+                          </Col>
+                        </Row>
+
                         <Button className="mt-1 mb-2" style={{ width: 250, height: 50 }} variant="outline-success">Add Missing Ingredients to Cart</Button>
+                        
                         <NutritionAccordion nutrition={recipe.nutrition} />
                     </Col>
 

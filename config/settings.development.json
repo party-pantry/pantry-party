@@ -8,7 +8,6 @@
       "houses": [1]
     }
   ],
-
   "defaultHouses": [
     {
       "id": 1,
@@ -17,7 +16,6 @@
       "storages": [1, 2, 3, 4]
     }
   ],
-
   "defaultStorages": [
     {
       "id": 1,
@@ -44,7 +42,6 @@
       "type": "SPICE_RACK"
     }
   ],
-
   "defaultIngredients": [
   { "id": 1, "name": "milk", "price": 8 },
   { "id": 2, "name": "eggs", "price": 10 },
@@ -95,7 +92,31 @@
   { "id": 47, "name": "tofu", "price": 4 },
   { "id": 48, "name": "fish sauce", "price": 4 },
   { "id": 49, "name": "coconut milk", "price": 5 },
-  { "id": 50, "name": "apple cider vinegar", "price": 4 }
+  { "id": 50, "name": "apple cider vinegar", "price": 4 },
+    { "id": 51, "name": "avocado", "price": 3 },
+    { "id": 52, "name": "tortilla", "price": 2 },
+    { "id": 53, "name": "ginger", "price": 2 },
+    { "id": 54, "name": "scallions", "price": 2 },
+    { "id": 55, "name": "bell pepper", "price": 4 },
+    { "id": 56, "name": "taco seasoning", "price": 3 },
+    { "id": 57, "name": "cheddar cheese", "price": 4 },
+    { "id": 58, "name": "cucumber", "price": 3 },
+    { "id": 59, "name": "cream cheese", "price": 4 },
+    { "id": 60, "name": "smoked salmon", "price": 15 },
+    { "id": 61, "name": "pasta sauce", "price": 5 },
+    { "id": 62, "name": "instant cup noodles", "price": 3 },
+    { "id": 63, "name": "salmon fillet", "price": 20 },
+    { "id": 64, "name": "asparagus", "price": 6 },
+    { "id": 65, "name": "parmesan cheese", "price": 5 },
+    { "id": 66, "name": "risotto rice", "price": 8 },
+    { "id": 67, "name": "white wine", "price": 10 },
+    { "id": 68, "name": "thyme", "price": 2 },
+    { "id": 69, "name": "linguine pasta", "price": 5 },
+    { "id": 70, "name": "heavy cream", "price": 4 },
+    { "id": 71, "name": "lobster tail", "price": 35 },
+    { "id": 72, "name": "butter", "price": 3 },
+    { "id": 73, "name": "shallots", "price": 3 },
+    { "id": 74, "name": "lemon zest", "price": 2 }
   ], 
 
   "defaultStocks": [
@@ -461,7 +482,6 @@
     }
 
   ],
-
   "defaultRecipes": [
     {
       "id": 1,
@@ -529,7 +549,7 @@
         { "name": "Carbs", "amount": 5, "unit": "g" },
         { "name": "Fat", "amount": 12, "unit": "g" }
       ],
-      "rating": 1.0
+      "rating": 4.0
     },
     {
       "id": 3,
@@ -638,6 +658,243 @@
         { "name": "Protein", "amount": 45, "unit": "g" },
         { "name": "Carbs", "amount": 30, "unit": "g" },
         { "name": "Fat", "amount": 35, "unit": "g" }
+      ],
+      "rating": 5.0
+    },
+    {
+      "id": 6,
+      "userId": 1,
+      "name": "Shrimp Stir Fry",
+      "description": "Quick and healthy stir-fry with shrimp and colorful vegetables.",
+      "difficulty": "MEDIUM",
+      "prepTime": 10,
+      "cookTime": 15,
+      "downTime": 0,
+      "servings": 2,
+      "ingredients": [
+        { "ingredientId": 29, "name": "Shrimp", "quantity": 200, "unit": "GRAM" },
+        { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 55, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 53, "name": "Ginger", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 40, "name": "Soy Sauce", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 54, "name": "Scallions", "quantity": 2, "unit": "STALK" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 1, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Heat olive oil in a large pan or wok over medium heat." },
+        { "step": 2, "content": "Add ginger and sauté for 30 seconds." },
+        { "step": 3, "content": "Add shrimp and cook 2–3 minutes until pink and cooked through." },
+        { "step": 4, "content": "Add carrots and bell pepper, stir-fry 3–4 minutes until tender-crisp." },
+        { "step": 5, "content": "Add soy sauce and scallions, toss everything together." },
+        { "step": 6, "content": "Serve hot with rice or noodles." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 250, "unit": "kcal" },
+        { "name": "Protein", "amount": 25, "unit": "g" },
+        { "name": "Carbs", "amount": 10, "unit": "g" },
+        { "name": "Fat", "amount": 12, "unit": "g" }
+      ],
+      "rating": 4.3
+    },
+    {
+      "id": 7,
+      "userId": 1,
+      "name": "Avocado Toast with Egg",
+      "description": "Creamy avocado on toasted bread topped with a perfectly fried egg.",
+      "difficulty": "EASY",
+      "prepTime": 5,
+      "cookTime": 5,
+      "downTime": 0,
+      "servings": 1,
+      "ingredients": [
+        { "ingredientId": 6, "name": "Bread", "quantity": 2, "unit": "SLICE" },
+        { "ingredientId": 51, "name": "Avocado", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 2, "name": "Eggs", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 1, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Toast bread slices until golden." },
+        { "step": 2, "content": "Mash avocado and season with salt and pepper." },
+        { "step": 3, "content": "Spread avocado on toast." },
+        { "step": 4, "content": "Fry egg to your preferred doneness and place on top of toast." },
+        { "step": 5, "content": "Drizzle with olive oil and serve immediately." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 300, "unit": "kcal" },
+        { "name": "Protein", "amount": 12, "unit": "g" },
+        { "name": "Carbs", "amount": 30, "unit": "g" },
+        { "name": "Fat", "amount": 18, "unit": "g" }
+      ],
+      "rating": 4.0
+    },
+    {
+      "id": 8,
+      "userId": 1,
+      "name": "Veggie Tacos",
+      "description": "Quick and flavorful vegetarian tacos with fresh vegetables and cheese.",
+      "difficulty": "EASY",
+      "prepTime": 10,
+      "cookTime": 10,
+      "downTime": 0,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 52, "name": "Tortilla", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 55, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 57, "name": "Cheddar Cheese", "quantity": 0.5, "unit": "CUP" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 0.5, "unit": "TEASPOON" },
+        { "ingredientId": 56, "name": "Taco Seasoning", "quantity": 1, "unit": "TABLESPOON" },
+        { "ingredientId": 10, "name": "Olive Oil", "quantity": 1, "unit": "TABLESPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Heat olive oil in a pan over medium heat." },
+        { "step": 2, "content": "Add carrots and bell peppers, sauté for 5 minutes." },
+        { "step": 3, "content": "Add taco seasoning and salt, stir well." },
+        { "step": 4, "content": "Warm tortillas in a separate pan." },
+        { "step": 5, "content": "Fill tortillas with vegetables and top with cheddar cheese." },
+        { "step": 6, "content": "Serve immediately." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 220, "unit": "kcal" },
+        { "name": "Protein", "amount": 8, "unit": "g" },
+        { "name": "Carbs", "amount": 28, "unit": "g" },
+        { "name": "Fat", "amount": 10, "unit": "g" }
+      ],
+      "rating": 4.2
+    },
+    {
+      "id": 9,
+      "userId": 1,
+      "name": "Smoked Salmon Sushi Roll",
+      "description": "Simple sushi rolls with smoked salmon, cucumber, and cream cheese.",
+      "difficulty": "MEDIUM",
+      "prepTime": 15,
+      "cookTime": 0,
+      "downTime": 0,
+      "servings": 2,
+      "ingredients": [
+        { "ingredientId": 60, "name": "Smoked Salmon", "quantity": 100, "unit": "GRAM" },
+        { "ingredientId": 58, "name": "Cucumber", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 59, "name": "Cream Cheese", "quantity": 50, "unit": "GRAM" },
+        { "ingredientId": 52, "name": "Tortilla", "quantity": 2, "unit": "PIECE" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Lay tortilla flat and spread cream cheese evenly." },
+        { "step": 2, "content": "Place smoked salmon and thin cucumber strips on top." },
+        { "step": 3, "content": "Roll tightly and slice into bite-sized pieces." },
+        { "step": 4, "content": "Serve immediately with soy sauce or wasabi if desired." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 250, "unit": "kcal" },
+        { "name": "Protein", "amount": 15, "unit": "g" },
+        { "name": "Carbs", "amount": 20, "unit": "g" },
+        { "name": "Fat", "amount": 12, "unit": "g" }
+      ],
+      "rating": 4.4
+    },
+    {
+      "id": 10,
+      "userId": 1,
+      "name": "Cup Noodle Soup",
+      "description": "Instant cup noodles. Quick and easy meal for any time.",
+      "difficulty": "EASY",
+      "prepTime": 0,
+      "cookTime": 2,
+      "downTime": 0,
+      "servings": 1,
+      "ingredients": [
+        { "ingredientId": 62, "name": "Instant Cup Noodles", "quantity": 1, "unit": "PACKAGE" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Open the lid of the cup noodle partially." },
+        { "step": 2, "content": "Pour hot water up to the indicated line." },
+        { "step": 3, "content": "Microwave or let sit for 2 minutes until noodles are cooked." },
+        { "step": 4, "content": "Stir well and enjoy." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 350, "unit": "kcal" },
+        { "name": "Protein", "amount": 8, "unit": "g" },
+        { "name": "Carbs", "amount": 50, "unit": "g" },
+        { "name": "Fat", "amount": 12, "unit": "g" }
+      ],
+      "rating": 1.0
+    },
+    {
+      "id": 11,
+      "userId": 1,
+      "name": "Pan-Seared Salmon with Asparagus Risotto",
+      "description": "A gourmet dish featuring perfectly seared salmon with creamy asparagus risotto.",
+      "difficulty": "HARD",
+      "prepTime": 20,
+      "cookTime": 40,
+      "downTime": 5,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 63, "name": "Salmon Fillet", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 64, "name": "Asparagus", "quantity": 1, "unit": "BUNCH" },
+        { "ingredientId": 66, "name": "Risotto Rice", "quantity": 1.5, "unit": "CUP" },
+        { "ingredientId": 67, "name": "White Wine", "quantity": 0.5, "unit": "CUP" },
+        { "ingredientId": 65, "name": "Parmesan Cheese", "quantity": 0.75, "unit": "CUP" },
+        { "ingredientId": 68, "name": "Thyme", "quantity": 2, "unit": "TEASPOON" },
+        { "ingredientId": 72, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Trim and blanch asparagus until tender-crisp, set aside." },
+        { "step": 2, "content": "Heat butter in a pan, sauté risotto rice for 2 minutes until slightly translucent." },
+        { "step": 3, "content": "Add white wine and cook until absorbed." },
+        { "step": 4, "content": "Gradually add hot water/broth, stirring constantly until creamy (approx. 25 min)." },
+        { "step": 5, "content": "Stir in Parmesan cheese, asparagus, and thyme, season with salt and pepper." },
+        { "step": 6, "content": "Season salmon with salt and pepper, sear skin-side down for 4–5 min per side until golden." },
+        { "step": 7, "content": "Serve salmon atop risotto, garnish with extra Parmesan and thyme." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 550, "unit": "kcal" },
+        { "name": "Protein", "amount": 35, "unit": "g" },
+        { "name": "Carbs", "amount": 50, "unit": "g" },
+        { "name": "Fat", "amount": 25, "unit": "g" }
+      ],
+      "rating": 4.8
+    },
+    {
+      "id": 12,
+      "userId": 1,
+      "name": "Lobster and Shrimp Linguine with Creamy Spinach Sauce",
+      "description": "A decadent seafood pasta featuring lobster, shrimp, and a rich spinach cream sauce.",
+      "difficulty": "HARD",
+      "prepTime": 25,
+      "cookTime": 35,
+      "downTime": 10,
+      "servings": 4,
+      "ingredients": [
+        { "ingredientId": 69, "name": "Linguine Pasta", "quantity": 1, "unit": "POUND" },
+        { "ingredientId": 71, "name": "Lobster Tail", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 29, "name": "Shrimp", "quantity": 12, "unit": "PIECE" },
+        { "ingredientId": 27, "name": "Spinach", "quantity": 2, "unit": "CUP" },
+        { "ingredientId": 70, "name": "Heavy Cream", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 73, "name": "Shallots", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 72, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
+        { "ingredientId": 74, "name": "Lemon Zest", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" }
+      ],
+      "instructions": [
+        { "step": 1, "content": "Cook linguine according to package instructions; drain and set aside." },
+        { "step": 2, "content": "Poach lobster tails in salted water for 5–6 minutes, remove meat and cut into chunks." },
+        { "step": 3, "content": "Sauté shallots in butter until soft, add shrimp and cook until pink." },
+        { "step": 4, "content": "Add spinach and heavy cream, simmer until sauce thickens slightly." },
+        { "step": 5, "content": "Stir in lobster meat and lemon zest, season with salt and pepper." },
+        { "step": 6, "content": "Toss linguine in the creamy sauce until evenly coated." },
+        { "step": 7, "content": "Serve immediately with a sprinkle of extra black pepper and garnish if desired." }
+      ],
+      "nutrition": [
+        { "name": "Calories", "amount": 650, "unit": "kcal" },
+        { "name": "Protein", "amount": 40, "unit": "g" },
+        { "name": "Carbs", "amount": 60, "unit": "g" },
+        { "name": "Fat", "amount": 30, "unit": "g" }
       ],
       "rating": 5.0
     }

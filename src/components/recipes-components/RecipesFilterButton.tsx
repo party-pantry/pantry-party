@@ -49,13 +49,6 @@ const RecipesFilterButton: React.FC = () => (
 
             <Dropdown.Divider />
 
-            <Form.Label className="fw-bold fs-6 text-bold">Servings</Form.Label>
-            <Form.Check type="checkbox" label="1-2" />
-            <Form.Check type="checkbox" label="3-4" />
-            <Form.Check type="checkbox" label="5+" />
-
-            <Dropdown.Divider />
-
             <Form.Label className="fw-bold fs-6 text-bold">Rating</Form.Label>
             <Form.Check type="checkbox" label="1 Star & Up" />
             <Form.Check type="checkbox" label="2 Stars & Up" />
