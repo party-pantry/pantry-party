@@ -25,6 +25,7 @@ type Item = {
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
+  rawQuantity?: number;
 };
 
 type Stock = {
@@ -63,8 +64,9 @@ const MyKitchen = () => {
 
   const userId = (useSession().data?.user as { id?: number })?.id;
 
-  const [filters, setFilters] = useState<{ search: string; status: string[] }>({
+  const [filters, setFilters] = useState<{ search: string; quantity?: number; status: string[] }>({
     search: '',
+    quantity: undefined, // Set a default max value
     status: [],
   });
 
@@ -149,13 +151,17 @@ const MyKitchen = () => {
                   | 'Low Stock'
                   | 'Out of Stock'
                   | 'Expired'),
+        rawQuantity: stock.quantity,
       }))
       .filter((item) => {
         const searchMatch = filters.search
           ? item.name.toLowerCase().includes(filters.search.toLowerCase())
           : true;
         const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
-        return searchMatch && statusMatch;
+        const quantityMatch = filters.quantity !== undefined
+          ? item.rawQuantity <= filters.quantity
+          : true; // Only filter if quantity is explicitly set
+        return searchMatch && statusMatch && quantityMatch;
       });
 
     const direction = sortDirections[storage.id] || 'asc';
@@ -194,6 +200,7 @@ const MyKitchen = () => {
                       onApply={(appliedFilters) =>
                         setFilters({
                           search: appliedFilters.search,
+                          quantity: appliedFilters.quantity, // Add this line
                           status: appliedFilters.status,
                         })
                       }
