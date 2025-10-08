@@ -276,7 +276,8 @@ export async function getSuggestedItems(userId: number) {
     .filter(([, stocks]) => stocks.every(
       (stock) => stock.quantity === 0
         || stock.status === Status.OUT_OF_STOCK
-        || stock.status === Status.LOW_STOCK,
+        || stock.status === Status.LOW_STOCK
+        || stock.status === Status.EXPIRED,
     ))
     .map(([, stocks]) => {
       const firstStock = stocks[0];

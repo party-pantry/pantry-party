@@ -21,7 +21,7 @@ interface SuggestedItemCardProps {
 
 const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) => {
   const [showModal, setShowModal] = useState(false);
-  const [category, setCategory] = useState('Pantry');
+  const [category, setCategory] = useState('Dairy');
   const [quantity, setQuantity] = useState('1');
 
   const handleAdd = () => {
@@ -43,13 +43,13 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
               </small>
             </div>
             <div className="d-flex align-items-center gap-2">
-              <Badge bg={statusBadgeVariant}>
+              <Badge className='me-12' bg={statusBadgeVariant}>
                 {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
               </Badge>
-              <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}>
+              {/* <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}>
                 {item.suggestedPriority}
-              </Badge>
-              <Button variant="success" size="sm" onClick={() => setShowModal(true)}>
+              </Badge> */}
+              <Button variant="outline-primary" size="sm" onClick={() => setShowModal(true)}>
                 Add to List
               </Button>
             </div>
@@ -78,7 +78,7 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
                 <option value="Produce">Produce</option>
                 <option value="Meat">Meat</option>
                 <option value="Dairy">Dairy</option>
-                <option value="Pantry">Pantry</option>
+                <option value="Frozen">Frozen</option>
                 <option value="Other">Other</option>
               </Form.Select>
             </Col>
