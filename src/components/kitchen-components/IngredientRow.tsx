@@ -32,19 +32,27 @@ const IngredientRow: React.FC<Props> = ({
   onEdit,
 }) => (
   <tr key={id} className="border-b">
-    <td className="p-3">
+    <td className="p-3 align-middle">
       <input type="checkbox" />
     </td>
-    <td className="p-3">{name}</td>
-    <td className="p-3 text-xl">{image}</td>
-    <td className="p-3">{quantity}</td>
-    <td className="p-3">{updated}</td>
-    <td className="p-3">
+    <td className="p-3 align-middle max-w-[100px]">
+      <div className="break-words">
+        {name}
+      </div>
+    </td>
+    <td className="p-3 align-middle text-xl">{image}</td>
+    <td className="p-3 align-middle max-w-[100px]">
+      <div className="break-words">
+        {quantity}
+      </div>
+    </td>
+    <td className="p-3 align-middle">{updated}</td>
+    <td className="p-3 align-middle">
       <span className={`px-2 py-1 rounded text-sm ${statusColors[status]}`}>
         {status}
       </span>
     </td>
-    <td className="p-3 flex gap-2">
+    <td className="p-3 flex gap-2 align-middle">
       <button
         className="text-gray-600 hover:text-blue-600"
         onClick={() => onEdit(id)}
