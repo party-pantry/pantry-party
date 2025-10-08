@@ -24,7 +24,7 @@ const statusColors: Record<Props['status'], string> = {
 const IngredientRow: React.FC<Props> = ({
   id,
   name,
-  image,
+  // image,
   quantity,
   updated,
   status,
