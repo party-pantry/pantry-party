@@ -72,27 +72,27 @@ const MyKitchen = () => {
   Record<number, 'asc' | 'desc'>
   >({});
 
-  useEffect(() => {
+  const fetchHouses = async () => {
     if (!userId) return;
+    const res = await fetch(`/api/kitchen?userId=${userId}`);
+    const data = await res.json();
 
-    async function fetchHouses() {
-      const res = await fetch(`/api/kitchen?userId=${userId}`);
-      const data = await res.json();
+    // Ensure we always store an array
+    const houseArray = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.houses)
+        ? data.houses
+        : [];
 
-      // Ensure we always store an array
-      const houseArray = Array.isArray(data)
-        ? data
-        : Array.isArray(data?.houses)
-          ? data.houses
-          : [];
+    setHouses(houseArray);
+    if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
+  };
 
-      setHouses(houseArray);
-      if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
-    }
-
+  useEffect(() => {
     fetchHouses();
   }, [userId]);
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEditItem = (id: number) => {
     const allItems: Item[] = houses.flatMap((house) =>
       house.storages.flatMap((storage) =>
@@ -134,8 +134,7 @@ const MyKitchen = () => {
         id: stock.id,
         name: stock.ingredient.name,
         image: stock.ingredient.image || '',
-        quantity: `${stock.quantity} ${
-          LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit
+        quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit
         }`,
         updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
         status:
@@ -146,10 +145,10 @@ const MyKitchen = () => {
               : stock.status === 'OUT_OF_STOCK'
                 ? 'Out of Stock'
                 : ('Expired' as
-                    | 'Good'
-                    | 'Low Stock'
-                    | 'Out of Stock'
-                    | 'Expired'),
+                  | 'Good'
+                  | 'Low Stock'
+                  | 'Out of Stock'
+                  | 'Expired'),
       }))
       .filter((item) => {
         const searchMatch = filters.search
@@ -188,6 +187,7 @@ const MyKitchen = () => {
                   houseArray={houses.map((h) => ({ id: h.id, name: h.name }))}
                   activeHouseId={activeHouseId}
                   selectActiveHouseId={setActiveHouseId}
+                  onHouseAdded={fetchHouses}
                 >
                   <Row className="justify-content-end mb-3 pr-4">
                     <KitchenFilterButton
@@ -227,7 +227,7 @@ const MyKitchen = () => {
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={() => {}}
-                        onEdit={handleEditItem}
+                        onEdit={() => {}}
                       />
                     </StorageContainer>
                   ))}
@@ -251,7 +251,10 @@ const MyKitchen = () => {
       <AddItemModal
         show={showAddModal}
         onHide={() => setShowAddModal(false)}
-        onAddItem={() => {}}
+        onAddItem={async () => {
+          await fetchHouses();
+          setShowAddModal(false);
+        }}
         storages={
           houses.find((house) => house.id === activeHouseId)?.storages || []
         }
@@ -259,14 +262,17 @@ const MyKitchen = () => {
       <AddPantryModal
         show={showPantryModal}
         onHide={() => setShowPantryModal(false)}
-        onAddPantry={() => {}}
+        onAddPantry={async () => {
+          await fetchHouses();
+          setShowPantryModal(false);
+        }}
         houseId={activeHouseId}
       />
       <EditItemModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
         itemToEdit={itemToEdit}
-        onUpdateItem={() => {}}
+        onUpdateItem={fetchHouses}
       />
     </Container>
   );

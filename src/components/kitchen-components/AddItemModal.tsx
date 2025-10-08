@@ -1,12 +1,11 @@
+'use client';
+
 /* eslint-disable max-len */
 /* eslint-disable no-tabs */
 /* eslint-disable react/prop-types */
 
-'use client';
-
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 import { useState } from 'react';
-import { addItem } from '@/lib/dbFunctions';
 import { Unit, Status } from '@prisma/client';
 import { LocalUnit, LocalStatus } from '@/lib/Units';
 
@@ -49,10 +48,10 @@ const AddItemModal: React.FC<Props> = ({
     e.preventDefault();
     if (formData.name && formData.quantity) {
       try {
-        await addItem({
-          ...formData,
-          units: formData.units as Unit,
-          status: formData.status as Status,
+        await fetch('/api/kitchen/stocks', {
+          method: 'POST',
+          body: JSON.stringify({ ...formData }),
+          headers: { 'Content-Type': 'application/json' },
         });
         onAddItem({
           ...formData,

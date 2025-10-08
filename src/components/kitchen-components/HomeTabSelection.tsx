@@ -7,7 +7,6 @@ import React from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
-import { deleteHouse } from '@/lib/dbFunctions';
 import AddHouseModal from '@/components/AddHouseModal';
 
 interface HomeTabSelectionProps {
@@ -21,6 +20,7 @@ interface HomeTabSelectionProps {
   }[];
   activeHouseId: number;
   selectActiveHouseId: (id: number) => void;
+  onHouseAdded?: () => void;
 }
 
 const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
@@ -29,8 +29,23 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   houseArray = [],
   activeHouseId,
   selectActiveHouseId,
+  onHouseAdded,
 }) => {
+  // State to control the visibility of the AddHouseModal
   const [showHouseModal, setShowHouseModal] = React.useState(false);
+
+  const handleDeleteHouse = async (houseId: number) => {
+    try {
+      await fetch(`/api/kitchen/houses/${houseId}`, {
+        method: 'DELETE',
+      });
+      if (onHouseAdded) {
+        await onHouseAdded();
+      }
+    } catch (error) {
+      console.error('Error deleting house:', error);
+    }
+  };
 
   return (
     <>
@@ -61,7 +76,7 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
                 size={32}
                 className="me-3"
                 style={{ cursor: 'pointer', color: '#ffffffff' }}
-                onClick={() => deleteHouse(activeHouseId)}
+                onClick={() => handleDeleteHouse(activeHouseId)}
               />
               <PlusCircle
                 size={32}
@@ -83,8 +98,11 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
       <AddHouseModal
         show={showHouseModal}
         onHide={() => setShowHouseModal(false)}
-        onAddHouse={() => {
+        onAddHouse={async () => {
           setShowHouseModal(false);
+          if (onHouseAdded) {
+            await onHouseAdded();
+          }
         }}
       />
     </>

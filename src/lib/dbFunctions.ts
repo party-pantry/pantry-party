@@ -158,7 +158,7 @@ export async function addShoppingListItem(data: {
       sourceStorageId: data.sourceStorageId,
     },
     include: {
-      ingredient: true,
+      Ingredient: true,
     },
   });
 
@@ -170,7 +170,7 @@ export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
     where: { userId },
     include: {
-      ingredient: true,
+      Ingredient: true,
     },
     orderBy: {
       addedDate: 'desc',
