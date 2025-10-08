@@ -2,15 +2,17 @@
 
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
 import Loading from './home-components/Loading';
 import RecipeCard from './recipes-components/RecipeCard';
 import RecipesSearch from './recipes-components/RecipesSearch';
 import RecipesFilterButton from './recipes-components/RecipesFilterButton';
+import ToggleReceipesCanMake from './recipes-components/ToggleRecepiesCanMake';
 import RecipesSortButton from './recipes-components/RecipesSortButton';
 import AddRecipesModal from './recipes-components/AddRecipesModal';
+import { checkIngredients } from '../utils/recipeUtils';
 
 interface RecipeWithIngredients extends Recipe {
   ingredients: {
@@ -24,6 +26,20 @@ const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
   const [showAddRecipeModal, setShowAddRecipeModal] = useState<boolean>(false); // State to control modal visibility
+  const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
+  const [canMakeOnly, setCanMakeOnly] = useState(false);
+
+  // Filter the recipes by ingredients available
+  const filteredRecipes = useMemo(() => {
+    // If not filtering by "can make only", return all recipes
+    if (!canMakeOnly) return recipes;
+
+    // Only recipes the user can make
+    return recipes.filter(recipe => {
+      const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredientsId);
+      return missingIngredients.length === 0;
+    });
+  }, [recipes, userIngredientsId, canMakeOnly]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -51,7 +67,7 @@ const Recipes: React.FC = () => {
     const fetchUserIngredients = async () => {
       const res = await fetch('/api/user-ingredients');
       const data = await res.json();
-      setUserIngredients(new Set(data.ingredientIds));
+      setUserIngredientsId(new Set(data.ingredientIds));
     };
 
     fetchRecipes();

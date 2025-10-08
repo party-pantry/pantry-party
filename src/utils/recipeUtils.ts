@@ -50,5 +50,3 @@ export const checkIngredients = (
     matchPercent,
   };
 };
-
-export const formatIngredientsDisplay = (ingredients: string[]): string => ingredients.join(', ') || 'None';

@@ -15,10 +15,8 @@ const RecipesSortButton: React.FC = () => (
         >
             <Dropdown.Item eventKey="name">Name</Dropdown.Item>
             <Dropdown.Item eventKey="difficulty">Difficulty</Dropdown.Item>
-            <Dropdown.Divider />
             <Dropdown.Item eventKey="time">Total Time</Dropdown.Item>
-            <Dropdown.Item eventKey="servings">Servings</Dropdown.Item>
-            <Dropdown.Divider />
+            <Dropdown.Item eventKey="match-percent">Match Percent</Dropdown.Item>
             <Dropdown.Item eventKey="rating">Rating</Dropdown.Item>
             <Dropdown.Item eventKey="postdate">Post Date</Dropdown.Item>
         </DropdownButton>
