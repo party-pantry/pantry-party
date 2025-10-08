@@ -12,17 +12,6 @@ const RecipesPage = async () => {
     } | null,
   );
 
-  let filteredRecipes = recipes;
-
-  // Improve search to be more strict (ex. match whole words)?
-  filteredRecipes = filteredRecipes.filter(recipe => {
-    const nameMatch = recipe.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const ingredientMatch = recipe.ingredients.some(ing =>
-      ing.ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    return nameMatch || ingredientMatch;
-  });
-
   // Chain other filters (difficulty, time, serving, ratings, etc) later
 
   return (

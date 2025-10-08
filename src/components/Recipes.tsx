@@ -83,6 +83,7 @@ const Recipes: React.FC = () => {
   return (
       <Container className="mb-12 min-h-screen mt-5">
         <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
+          {/* TODO: Implement search, filter, and sort functionalities */}
           <RecipesSearch />
           <RecipesFilterButton />
           <RecipesSortButton />

@@ -479,8 +479,15 @@
       "unit": "BOTTLE",
       "status": "GOOD",
       "category": "PANTRY"
+    },
+    {
+      "ingredientId": 62,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "PACKAGE",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
     }
-
   ],
   "defaultRecipes": [
     {
