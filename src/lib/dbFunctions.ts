@@ -132,3 +132,171 @@ export async function addStorage(data: { name: string; type: Category; houseId: 
     },
   });
 }
+
+/* Add item to shopping list (manual or from suggestion) */
+export async function addShoppingListItem(data: {
+  userId: number;
+  ingredientId?: number;
+  name: string;
+  quantity: string;
+  category: string;
+  priority: string;
+  source: string;
+  sourceStockIngredientId?: number;
+  sourceStorageId?: number;
+}) {
+  const item = await prisma.shoppingListItem.create({
+    data: {
+      userId: data.userId,
+      ingredientId: data.ingredientId,
+      name: data.name,
+      quantity: data.quantity,
+      category: data.category,
+      priority: data.priority,
+      source: data.source,
+      sourceStockIngredientId: data.sourceStockIngredientId,
+      sourceStorageId: data.sourceStorageId,
+    },
+    include: {
+      ingredient: true,
+    },
+  });
+
+  return item;
+}
+
+/* Get all shopping list items for a user */
+export async function getShoppingListItems(userId: number) {
+  const items = await prisma.shoppingListItem.findMany({
+    where: { userId },
+    include: {
+      ingredient: true,
+    },
+    orderBy: {
+      addedDate: 'desc',
+    },
+  });
+
+  return items;
+}
+
+/* Update shopping list item */
+export async function updateShoppingListItem(
+  itemId: number,
+  data: {
+    name?: string;
+    quantity?: string;
+    category?: string;
+    priority?: string;
+  },
+) {
+  const item = await prisma.shoppingListItem.update({
+    where: { id: itemId },
+    data,
+  });
+
+  return item;
+}
+
+/* Toggle purchased status for shopping list item */
+export async function toggleShoppingListItemPurchased(itemId: number) {
+  const item = await prisma.shoppingListItem.findUnique({
+    where: { id: itemId },
+  });
+
+  if (!item) {
+    throw new Error(`Shopping list item with ID ${itemId} does not exist`);
+  }
+
+  const updatedItem = await prisma.shoppingListItem.update({
+    where: { id: itemId },
+    data: { purchased: !item.purchased },
+  });
+
+  return updatedItem;
+}
+
+/* Delete shopping list item */
+export async function deleteShoppingListItem(itemId: number) {
+  await prisma.shoppingListItem.delete({
+    where: { id: itemId },
+  });
+}
+
+/* Get suggested items based on low/out of stock inventory */
+export async function getSuggestedItems(userId: number) {
+  // Get all items already in shopping list to filter them out
+  const existingShoppingListItems = await prisma.shoppingListItem.findMany({
+    where: {
+      userId,
+      purchased: false,
+    },
+    select: {
+      ingredientId: true,
+    },
+  });
+
+  const existingIngredientIds = existingShoppingListItems
+    .map((item) => item.ingredientId)
+    .filter((id): id is number => id !== null);
+
+  // Get ALL user's stocks to check if they have the ingredient anywhere
+  const allUserStocks = await prisma.stock.findMany({
+    where: {
+      storage: {
+        house: {
+          userId,
+        },
+      },
+      ingredientId: {
+        notIn: existingIngredientIds,
+      },
+    },
+    include: {
+      ingredient: true,
+      storage: {
+        include: {
+          house: true,
+        },
+      },
+    },
+  });
+
+  // Group stocks by ingredient
+  const stocksByIngredient = allUserStocks.reduce((acc, stock) => {
+    if (!acc[stock.ingredientId]) {
+      acc[stock.ingredientId] = [];
+    }
+    acc[stock.ingredientId].push(stock);
+    return acc;
+  }, {} as Record<number, typeof allUserStocks>);
+
+  // Only suggest if ALL instances of ingredient are low/out
+  const suggestions = Object.entries(stocksByIngredient)
+    .filter(([, stocks]) => stocks.every(
+      (stock) => stock.quantity === 0
+        || stock.status === Status.OUT_OF_STOCK
+        || stock.status === Status.LOW_STOCK,
+    ))
+    .map(([, stocks]) => {
+      const firstStock = stocks[0];
+      const isOutOfStock = stocks.every(
+        (s) => s.quantity === 0 || s.status === Status.OUT_OF_STOCK,
+      );
+
+      return {
+        ingredientId: firstStock.ingredientId,
+        name: firstStock.ingredient.name,
+        unit: firstStock.unit,
+        status: firstStock.status,
+        storageId: firstStock.storageId,
+        storageName: firstStock.storage.name || firstStock.storage.type,
+        storageType: firstStock.storage.type,
+        houseName: firstStock.storage.house.name,
+        suggestedPriority: isOutOfStock ? 'High' : 'Medium',
+        currentQuantity: firstStock.quantity,
+      };
+    });
+
+  return suggestions;
+}
