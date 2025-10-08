@@ -29,12 +29,7 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           />
           <div>
             <div className="fw-bold text-dark">{item.name}</div>
-            <small className="text-dark">
-              {item.quantity}
-              {' '}
-              • Added
-              {item.addedDate}
-            </small>
+            <small className="text-dark">{item.quantity}</small>
           </div>
         </div>
         <div className="d-flex align-items-center gap-2">
