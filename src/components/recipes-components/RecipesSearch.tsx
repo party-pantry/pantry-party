@@ -2,8 +2,8 @@ import { Form } from 'react-bootstrap';
 import { Search } from 'lucide-react';
 
 interface RecipesSearchProps {
-    searchTerm: string;
-    setSearchTerm: (term: string) => void;
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
 }
 
 const RecipesSearch: React.FC<RecipesSearchProps> = ({ searchTerm, setSearchTerm }) => (

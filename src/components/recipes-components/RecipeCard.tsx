@@ -39,7 +39,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
   const difficulty = getDifficulty(recipe.difficulty);
 
   const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
-  
+
   const { matchPercent } = checkIngredients(recipe.ingredients, userIngredientsId);
 
   const rating = Math.min(Math.max(recipe.rating ?? 0, 0), 5);
@@ -50,7 +50,7 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
 
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
-          <Heart 
+          <Heart
             size={20}
             stroke={isFavorited ? 'black' : 'currentColor'}
             fill={isFavorited ? 'red' : 'none'}
@@ -69,9 +69,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
 
         <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
           {[
-            { label: 'Total Time', value: `${totalTime} mins`},
+            { label: 'Total Time', value: `${totalTime} mins` },
             { label: 'Ingredients Match', value: `${matchPercent.toFixed(0)}%` },
-            { label: 'Rating', value: `${rating.toFixed(1)}`},
+            { label: 'Rating', value: `${rating.toFixed(1)}` },
           ].map((item) => (
             <div key={item.label} className="flex-fill">
               <div className="fw-bold fs-5">{item.value}</div>
@@ -81,8 +81,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
         </div>
 
         <div className="d-flex justify-content-center">
-          <Button 
-            variant="success" 
+          <Button
+            variant="success"
             className="w-75 py-2 fw-semibold"
             onClick={handleViewDetails}
           >
