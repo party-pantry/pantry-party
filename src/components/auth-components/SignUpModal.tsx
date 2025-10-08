@@ -16,6 +16,7 @@ import { createUser } from '../../lib/dbFunctions';
 interface Props {
   show: boolean;
   onHide: () => void;
+  onSignUpSuccess?: () => void;
 }
 
 type SignUpData = {
@@ -25,7 +26,7 @@ type SignUpData = {
   confirmPassword: string;
 };
 
-const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
+const SignUpModal: React.FC<Props> = ({ show, onHide, onSignUpSuccess }) => {
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
     email: Yup.string().required('Email is required').email('Email is invalid'),
@@ -51,8 +52,11 @@ const SignUpModal: React.FC<Props> = ({ show, onHide }) => {
       identifier: data.email,
       password: data.password,
       callbackUrl: '/my-kitchen',
-      redirect: true,
+      redirect: false,
     });
+    if (onSignUpSuccess) {
+      onSignUpSuccess();
+    }
   };
 
   const [passwordVisible, setPasswordVisible] = useState(false);

@@ -113,6 +113,7 @@ model ShoppingListItem {
   category                String
   priority                String
   purchased               Boolean     @default(false)
+  price     Float? 
   source                  String
   addedDate               DateTime    @default(now())
   sourceStockIngredientId Int?
