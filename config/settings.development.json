@@ -247,7 +247,7 @@
       "ingredientId": 19,
       "storageId": 1,
       "quantity": 8,
-      "unit": "BULB",
+      "unit": "PIECE",
       "status": "GOOD",
       "category": "FRIDGE"
     },
@@ -258,38 +258,6 @@
       "unit": "BOTTLE",
       "status": "OUT_OF_STOCK",
       "category": "SPICE_RACK"
-    },
-    {
-      "ingredientId": 21,
-      "storageId": 1,
-      "quantity": 2,
-      "unit": "BLOCK",
-      "status": "GOOD",
-      "category": "FRIDGE"
-    },
-    {
-      "ingredientId": 22,
-      "storageId": 3,
-      "quantity": 5,
-      "unit": "POUND",
-      "status": "GOOD",
-      "category": "FREEZER"
-    },
-    {
-      "ingredientId": 23,
-      "storageId": 3,
-      "quantity": 4,
-      "unit": "PACKAGE",
-      "status": "GOOD",
-      "category": "FREEZER"
-    },
-    {
-      "ingredientId": 24,
-      "storageId": 1,
-      "quantity": 3,
-      "unit": "BOX",
-      "status": "GOOD",
-      "category": "FRIDGE"
     },
     {
       "ingredientId": 25,
