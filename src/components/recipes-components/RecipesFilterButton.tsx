@@ -155,46 +155,35 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
           <Dropdown.Divider />
 
           <Form.Label className="fw-bold fs-6 text-bold">Rating</Form.Label>
-            <div
-            className="d-flex align-items-center gap-2 mb-2"
+          <div 
+            className="star-container"
             onMouseLeave={() => setHoveredRating(null)}
-            >
+          >
             {[1, 2, 3, 4, 5].map((star) => {
               const displayRating = hoveredRating !== null ? hoveredRating : rating;
               const isFilled = star <= (displayRating || 0);
 
               return (
                 <div
-                    key={star}
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      backgroundColor: isFilled ? '#3c5c50' : '#e9ecef',
-                      borderRadius: '11px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      border: isFilled ? '1px solid #3c5c50' : '1px solid #d9d9d9',
-                    }}
-                    onMouseEnter={() => setHoveredRating(star)}
-                    onClick={() => handleStarClick(star)}
+                  key={star}
+                  className={`star-box ${isFilled ? 'star-box-filled' : 'star-box-unfilled'}`}
+                  onMouseEnter={() => setHoveredRating(star)}
+                  onClick={() => handleStarClick(star)}
                 >
-                    <Star
+                  <Star
                     size={18}
                     fill="white"
                     stroke="white"
-                    />
+                  />
                 </div>
               );
             })}
-            </div>
-            {rating !== null && (
+          </div>
+          {rating !== null && (
             <Form.Text className="text-muted d-block mb-2">
-                Selected: {rating} Star{rating !== 1 ? 's' : ''}
+              Selected: {rating} Star{rating !== 1 ? 's' : ''}
             </Form.Text>
-            )}
+          )}
 
           <div className="mt-3 d-flex justify-content-between align-items-center">
             <Button
