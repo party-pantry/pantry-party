@@ -47,12 +47,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
   return (
     <Card className="recipe-card h-100">
       <CardBody>
-        <div className="d-flex align-items-center gap-2 mb-2">
-          <CardTitle className="fs-4 mb-0">{recipe.name}</CardTitle>
-          <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
-        </div>
 
-        <div className="position-absolute top-5 right-5">
+        <div className="d-flex justify-content-between align-items-center mb-2">
+          <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
           <Heart 
             size={20}
             stroke={isFavorited ? 'black' : 'currentColor'}
@@ -62,6 +59,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
             onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
           />
+        </div>
+
+        <div className="d-flex align-items-center mb-2">
+          <CardTitle className="fs-4 mb-0">{recipe.name}</CardTitle>
         </div>
 
         <CardText className="recipe-card-description text-muted">{recipe.description}</CardText>
