@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import ChangePasswordModal from '../auth-components/ChangePasswordModal';
 import SignInModal from '../auth-components/SignInModal';
 import SignUpParentModal from '../auth-components/SignUpParentModal';
 import SignOutModal from '../auth-components/SignOutModal';
@@ -22,6 +23,7 @@ import SignOutModal from '../auth-components/SignOutModal';
 const NavBar: React.FC = () => {
   const { data: session } = useSession();
   const currentUser = session?.user;
+  const [showChangePassword, setShowChangePassword] = useState(false);
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
@@ -112,9 +114,14 @@ const NavBar: React.FC = () => {
                 }
               >
                 {session ? (
-                  <NavDropdown.Item onClick={() => setShowSignOut(true)}>
-                    Sign Out
-                  </NavDropdown.Item>
+                  <>
+                    <NavDropdown.Item onClick={() => setShowChangePassword(true)}>
+                      Change Password
+                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={() => setShowSignOut(true)}>
+                      Sign Out
+                    </NavDropdown.Item>
+                  </>
                 ) : (
                   <>
                     <NavDropdown.Item onClick={() => setShowSignIn(true)}>
@@ -130,6 +137,7 @@ const NavBar: React.FC = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
+      <ChangePasswordModal show={showChangePassword} onHide={() => setShowChangePassword(false)} />
       <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
       <SignUpParentModal showSignUp={showSignUp} setShowSignUp={setShowSignUp} />
       <SignOutModal show={showSignOut} onHide={() => setShowSignOut(false)} />
