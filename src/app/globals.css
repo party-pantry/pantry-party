@@ -325,3 +325,8 @@ h5 {
   background-color: #9e9e9e; 
   color: white;
 }
+
+.custom-modal{
+  min-height: 61vh;
+  max-height: 90vh;
+}

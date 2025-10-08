@@ -86,6 +86,13 @@ const AddItemModal: React.FC<Props> = ({
     }
   };
 
+  const statusColorMap: Record<string, string> = {
+    GOOD: 'bg-green-100 text-green-700',
+    LOW_STOCK: 'bg-yellow-100 text-yellow-700',
+    OUT_OF_STOCK: 'bg-red-100 text-red-700',
+    EXPIRED: 'bg-red-100 text-red-700',
+  };
+
   return (
     <Modal
       show={show}
@@ -101,9 +108,9 @@ const AddItemModal: React.FC<Props> = ({
       />
       <Modal.Body
         className="text-center"
-        style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
+        style={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto', paddingTop: '0px' }}
       >
-        <h5 className="text-center">
+        <h5 className="text-center mt-4">
           <strong>Add New Item!</strong>
         </h5>
         {error && (
@@ -173,22 +180,21 @@ const AddItemModal: React.FC<Props> = ({
           </Row>
           {/* Item status */}
           <Form.Group className="mb-3" controlId="itemStatus">
-            <Form.Select
-              className="text-center"
-              value={formData.status}
-              onChange={(e) => handleChange('status', e.target.value)}
+            <div
+              className={`rounded-md overflow-hidden border border-gray-300 ${statusColorMap[formData.status]}`}
             >
-              {/* {Object.values(LocalStatus).map((status) => (
-                <option key={status} value={status}>
-                  {status}
-                </option>
-              ))} */}
-              {Object.entries(LocalStatus).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
-                    </option>
-              ))}
-            </Form.Select>
+              <Form.Select
+                className="text-center bg-transparent border-0 focus:ring-0 focus:outline-none shadow-none"
+                value={formData.status}
+                onChange={(e) => handleChange('status', e.target.value)}
+              >
+                {Object.entries(LocalStatus).map(([key, value]) => (
+                  <option key={key} value={key}>
+                    {value}
+                  </option>
+                ))}
+              </Form.Select>
+            </div>
           </Form.Group>
           <Button className="mb-2" variant="success" type="submit">
             Add Item
