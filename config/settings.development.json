@@ -43,61 +43,82 @@
     }
   ],
   "defaultIngredients": [
-    { "id": 1, "name": "milk", "price": 8 },
-    { "id": 2, "name": "eggs", "price": 10 },
-    { "id": 3, "name": "rice", "price": 10 },
-    { "id": 4, "name": "chicken breast", "price": 15 },
-    { "id": 5, "name": "salt", "price": 2 },
-    { "id": 6, "name": "bread", "price": 6 },
-    { "id": 7, "name": "bananas", "price": 5 },
-    { "id": 8, "name": "yougurt", "price": 4 },
-    { "id": 9, "name": "pepper", "price": 2 },
-    { "id": 10, "name": "olive oil", "price": 4 },
-    { "id": 11, "name": "ice cream", "price": 7 },
-    { "id": 12, "name": "swiss cheese", "price": 5 },
-    { "id": 13, "name": "lettuce", "price": 4 },
-    { "id": 14, "name": "tomato", "price": 6 },
-    { "id": 15, "name": "cereal", "price": 5 },
-    { "id": 16, "name": "black pepper", "price": 3 },
-    { "id": 17, "name": "penne pasta", "price": 4 },
-    { "id": 18, "name": "lemon juice", "price": 3 },
-    { "id": 19, "name": "garlic", "price": 2 },
-    { "id": 20, "name": "red pepper flakes", "price": 3 },
-    { "id": 21, "name": "feta cheese", "price": 5 },
-    { "id": 22, "name": "beef tenderloin", "price": 30 },
-    { "id": 23, "name": "puff pastry", "price": 7 },
-    { "id": 24, "name": "mushrooms", "price": 6 },
-    { "id": 25, "name": "dijon mustard", "price": 4 },
-    { "id": 26, "name": "chickpeas", "price": 3 },
-    { "id": 27, "name": "avocado", "price": 3 },
-    { "id": 28, "name": "tortilla", "price": 2 },
-    { "id": 29, "name": "shrimp", "price": 20 },
-    { "id": 30, "name": "soy sauce", "price": 3 },
-    { "id": 31, "name": "ginger", "price": 2 },
-    { "id": 32, "name": "scallions", "price": 2 },
-    { "id": 33, "name": "carrots", "price": 3 },
-    { "id": 34, "name": "bell pepper", "price": 4 },
-    { "id": 35, "name": "taco seasoning", "price": 3 },
-    { "id": 36, "name": "cheddar cheese", "price": 4 },
-    { "id": 37, "name": "cucumber", "price": 3 },
-    { "id": 38, "name": "cream cheese", "price": 4 },
-    { "id": 39, "name": "smoked salmon", "price": 15 },
-    { "id": 40, "name": "pasta sauce", "price": 5 },
-    { "id": 41, "name": "instant cup noodles", "price": 3 },
-    { "id": 42, "name": "salmon fillet", "price": 20 },
-    { "id": 43, "name": "asparagus", "price": 6 },
-    { "id": 44, "name": "parmesan cheese", "price": 5 },
-    { "id": 45, "name": "risotto rice", "price": 8 },
-    { "id": 46, "name": "white wine", "price": 10 },
-    { "id": 47, "name": "thyme", "price": 2 },
-    { "id": 48, "name": "linguine pasta", "price": 5 },
-    { "id": 49, "name": "heavy cream", "price": 4 },
-    { "id": 50, "name": "lobster tail", "price": 35 },
-    { "id": 51, "name": "butter", "price": 3 },
-    { "id": 52, "name": "shallots", "price": 3 },
-    { "id": 53, "name": "lemon zest", "price": 2 },
-    { "id": 54, "name": "spinach", "price": 5 }
-    ],
+  { "id": 1, "name": "milk", "price": 8 },
+  { "id": 2, "name": "eggs", "price": 10 },
+  { "id": 3, "name": "rice", "price": 10 },
+  { "id": 4, "name": "chicken breast", "price": 15 },
+  { "id": 5, "name": "salt", "price": 2 },
+  { "id": 6, "name": "bread", "price": 6 },
+  { "id": 7, "name": "bananas", "price": 5 },
+  { "id": 8, "name": "yougurt", "price": 4 },
+  { "id": 9, "name": "basil", "price": 2 },
+  { "id": 10, "name": "olive oil", "price": 4 },
+  { "id": 11, "name": "ice cream", "price": 7 },
+  { "id": 12, "name": "swiss cheese", "price": 5 },
+  { "id": 13, "name": "lettuce", "price": 4 },
+  { "id": 14, "name": "tomato", "price": 6 },
+  { "id": 15, "name": "cereal", "price": 5 },
+  { "id": 16, "name": "black pepper", "price": 3 },
+  { "id": 17, "name": "penne pasta", "price": 4 },
+  { "id": 18, "name": "lemon juice", "price": 3 },
+  { "id": 19, "name": "garlic", "price": 2 },
+  { "id": 20, "name": "red pepper flakes", "price": 3 },
+  { "id": 21, "name": "feta cheese", "price": 5 },
+  { "id": 22, "name": "beef tenderloin", "price": 30 },
+  { "id": 23, "name": "puff pastry", "price": 7 },
+  { "id": 24, "name": "mushrooms", "price": 6 },
+  { "id": 25, "name": "dijon mustard", "price": 4 },
+  { "id": 26, "name": "chickpeas", "price": 3 },
+  { "id": 27, "name": "spinach", "price": 4 },
+  { "id": 28, "name": "ground turkey", "price": 12 },
+  { "id": 29, "name": "shrimp", "price": 16 },
+  { "id": 30, "name": "onions", "price": 3 },
+  { "id": 31, "name": "potatoes", "price": 5 },
+  { "id": 32, "name": "carrots", "price": 4 },
+  { "id": 33, "name": "bell peppers", "price": 6 },
+  { "id": 34, "name": "broccoli", "price": 5 },
+  { "id": 35, "name": "avocados", "price": 8 },
+  { "id": 36, "name": "strawberries", "price": 7 },
+  { "id": 37, "name": "blueberries", "price": 9 },
+  { "id": 38, "name": "almonds", "price": 10 },
+  { "id": 39, "name": "peanut butter", "price": 6 },
+  { "id": 40, "name": "soy sauce", "price": 3 },
+  { "id": 41, "name": "honey", "price": 5 },
+  { "id": 42, "name": "brown sugar", "price": 4 },
+  { "id": 43, "name": "baking powder", "price": 3 },
+  { "id": 44, "name": "flour", "price": 5 },
+  { "id": 45, "name": "cocoa powder", "price": 6 },
+  { "id": 46, "name": "oats", "price": 5 },
+  { "id": 47, "name": "tofu", "price": 4 },
+  { "id": 48, "name": "fish sauce", "price": 4 },
+  { "id": 49, "name": "coconut milk", "price": 5 },
+  { "id": 50, "name": "apple cider vinegar", "price": 4 },
+    { "id": 51, "name": "avocado", "price": 3 },
+    { "id": 52, "name": "tortilla", "price": 2 },
+    { "id": 53, "name": "ginger", "price": 2 },
+    { "id": 54, "name": "scallions", "price": 2 },
+    { "id": 55, "name": "bell pepper", "price": 4 },
+    { "id": 56, "name": "taco seasoning", "price": 3 },
+    { "id": 57, "name": "cheddar cheese", "price": 4 },
+    { "id": 58, "name": "cucumber", "price": 3 },
+    { "id": 59, "name": "cream cheese", "price": 4 },
+    { "id": 60, "name": "smoked salmon", "price": 15 },
+    { "id": 61, "name": "pasta sauce", "price": 5 },
+    { "id": 62, "name": "instant cup noodles", "price": 3 },
+    { "id": 63, "name": "salmon fillet", "price": 20 },
+    { "id": 64, "name": "asparagus", "price": 6 },
+    { "id": 65, "name": "parmesan cheese", "price": 5 },
+    { "id": 66, "name": "risotto rice", "price": 8 },
+    { "id": 67, "name": "white wine", "price": 10 },
+    { "id": 68, "name": "thyme", "price": 2 },
+    { "id": 69, "name": "linguine pasta", "price": 5 },
+    { "id": 70, "name": "heavy cream", "price": 4 },
+    { "id": 71, "name": "lobster tail", "price": 35 },
+    { "id": 72, "name": "butter", "price": 3 },
+    { "id": 73, "name": "shallots", "price": 3 },
+    { "id": 74, "name": "lemon zest", "price": 2 }
+  ], 
+
   "defaultStocks": [
     {
       "ingredientId": 1,
@@ -218,7 +239,248 @@
       "unit": "BOX",
       "status": "GOOD",
       "category": "PANTRY"
+    },
+    {
+      "ingredientId": 16,
+      "storageId": 4,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 17,
+      "storageId": 2,
+      "quantity": 6,
+      "unit": "BOX",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 19,
+      "storageId": 1,
+      "quantity": 8,
+      "unit": "PIECE",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 20,
+      "storageId": 4,
+      "quantity": 0,
+      "unit": "BOTTLE",
+      "status": "OUT_OF_STOCK",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 25,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 26,
+      "storageId": 2,
+      "quantity": 0,
+      "unit": "CAN",
+      "status": "OUT_OF_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 27,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "BUNDLES",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 28,
+      "storageId": 3,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 29,
+      "storageId": 3,
+      "quantity": 8,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "FREEZER"
+    },
+    {
+      "ingredientId": 30,
+      "storageId": 2,
+      "quantity": 6,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 31,
+      "storageId": 2,
+      "quantity": 10,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 32,
+      "storageId": 2,
+      "quantity": 5,
+      "unit": "POUND",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 33,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "PIECE",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 34,
+      "storageId": 1,
+      "quantity": 3,
+      "unit": "BUNCH",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 35,
+      "storageId": 1,
+      "quantity": 6,
+      "unit": "PIECE",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 36,
+      "storageId": 1,
+      "quantity": 2,
+      "unit": "CARTON",
+      "status": "LOW_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 37,
+      "storageId": 1,
+      "quantity": 3,
+      "unit": "CARTON",
+      "status": "GOOD",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 38,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 39,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 40,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 41,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 42,
+      "storageId": 2,
+      "quantity": 0,
+      "unit": "PACKAGE",
+      "status": "OUT_OF_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 43,
+      "storageId": 4,
+      "quantity": 1,
+      "unit": "CAN",
+      "status": "GOOD",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 44,
+      "storageId": 2,
+      "quantity": 10,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 45,
+      "storageId": 4,
+      "quantity": 0,
+      "unit": "CAN",
+      "status": "OUT_OF_STOCK",
+      "category": "SPICE_RACK"
+    },
+    {
+      "ingredientId": 46,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "POUND",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 47,
+      "storageId": 1,
+      "quantity": 0,
+      "unit": "BLOCK",
+      "status": "OUT_OF_STOCK",
+      "category": "FRIDGE"
+    },
+    {
+      "ingredientId": 48,
+      "storageId": 2,
+      "quantity": 1,
+      "unit": "BOTTLE",
+      "status": "LOW_STOCK",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 49,
+      "storageId": 2,
+      "quantity": 4,
+      "unit": "CAN",
+      "status": "GOOD",
+      "category": "PANTRY"
+    },
+    {
+      "ingredientId": 50,
+      "storageId": 2,
+      "quantity": 2,
+      "unit": "BOTTLE",
+      "status": "GOOD",
+      "category": "PANTRY"
     }
+
   ],
   "defaultRecipes": [
     {
@@ -411,11 +673,11 @@
       "servings": 2,
       "ingredients": [
         { "ingredientId": 29, "name": "Shrimp", "quantity": 200, "unit": "GRAM" },
-        { "ingredientId": 33, "name": "Carrots", "quantity": 1, "unit": "CUP" },
-        { "ingredientId": 34, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
-        { "ingredientId": 31, "name": "Ginger", "quantity": 1, "unit": "TEASPOON" },
-        { "ingredientId": 30, "name": "Soy Sauce", "quantity": 2, "unit": "TABLESPOON" },
-        { "ingredientId": 32, "name": "Scallions", "quantity": 2, "unit": "STALK" },
+        { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 55, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 53, "name": "Ginger", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 40, "name": "Soy Sauce", "quantity": 2, "unit": "TABLESPOON" },
+        { "ingredientId": 54, "name": "Scallions", "quantity": 2, "unit": "STALK" },
         { "ingredientId": 10, "name": "Olive Oil", "quantity": 1, "unit": "TABLESPOON" }
       ],
       "instructions": [
@@ -446,7 +708,7 @@
       "servings": 1,
       "ingredients": [
         { "ingredientId": 6, "name": "Bread", "quantity": 2, "unit": "SLICE" },
-        { "ingredientId": 27, "name": "Avocado", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 51, "name": "Avocado", "quantity": 1, "unit": "PIECE" },
         { "ingredientId": 2, "name": "Eggs", "quantity": 1, "unit": "PIECE" },
         { "ingredientId": 5, "name": "Salt", "quantity": 0.25, "unit": "TEASPOON" },
         { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.25, "unit": "TEASPOON" },
@@ -478,12 +740,12 @@
       "downTime": 0,
       "servings": 4,
       "ingredients": [
-        { "ingredientId": 28, "name": "Tortilla", "quantity": 4, "unit": "PIECE" },
-        { "ingredientId": 33, "name": "Carrots", "quantity": 1, "unit": "CUP" },
-        { "ingredientId": 34, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
-        { "ingredientId": 36, "name": "Cheddar Cheese", "quantity": 0.5, "unit": "CUP" },
+        { "ingredientId": 52, "name": "Tortilla", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 55, "name": "Bell Pepper", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 57, "name": "Cheddar Cheese", "quantity": 0.5, "unit": "CUP" },
         { "ingredientId": 5, "name": "Salt", "quantity": 0.5, "unit": "TEASPOON" },
-        { "ingredientId": 35, "name": "Taco Seasoning", "quantity": 1, "unit": "TABLESPOON" },
+        { "ingredientId": 56, "name": "Taco Seasoning", "quantity": 1, "unit": "TABLESPOON" },
         { "ingredientId": 10, "name": "Olive Oil", "quantity": 1, "unit": "TABLESPOON" }
       ],
       "instructions": [
@@ -513,10 +775,10 @@
       "downTime": 0,
       "servings": 2,
       "ingredients": [
-        { "ingredientId": 39, "name": "Smoked Salmon", "quantity": 100, "unit": "GRAM" },
-        { "ingredientId": 37, "name": "Cucumber", "quantity": 1, "unit": "PIECE" },
-        { "ingredientId": 38, "name": "Cream Cheese", "quantity": 50, "unit": "GRAM" },
-        { "ingredientId": 28, "name": "Tortilla", "quantity": 2, "unit": "PIECE" }
+        { "ingredientId": 60, "name": "Smoked Salmon", "quantity": 100, "unit": "GRAM" },
+        { "ingredientId": 58, "name": "Cucumber", "quantity": 1, "unit": "PIECE" },
+        { "ingredientId": 59, "name": "Cream Cheese", "quantity": 50, "unit": "GRAM" },
+        { "ingredientId": 52, "name": "Tortilla", "quantity": 2, "unit": "PIECE" }
       ],
       "instructions": [
         { "step": 1, "content": "Lay tortilla flat and spread cream cheese evenly." },
@@ -543,7 +805,7 @@
       "downTime": 0,
       "servings": 1,
       "ingredients": [
-        { "ingredientId": 41, "name": "Instant Cup Noodles", "quantity": 1, "unit": "PACKAGE" }
+        { "ingredientId": 62, "name": "Instant Cup Noodles", "quantity": 1, "unit": "PACKAGE" }
       ],
       "instructions": [
         { "step": 1, "content": "Open the lid of the cup noodle partially." },
@@ -570,13 +832,13 @@
       "downTime": 5,
       "servings": 4,
       "ingredients": [
-        { "ingredientId": 42, "name": "Salmon Fillet", "quantity": 4, "unit": "PIECE" },
-        { "ingredientId": 43, "name": "Asparagus", "quantity": 1, "unit": "BUNCH" },
-        { "ingredientId": 45, "name": "Risotto Rice", "quantity": 1.5, "unit": "CUP" },
-        { "ingredientId": 46, "name": "White Wine", "quantity": 0.5, "unit": "CUP" },
-        { "ingredientId": 44, "name": "Parmesan Cheese", "quantity": 0.75, "unit": "CUP" },
-        { "ingredientId": 47, "name": "Thyme", "quantity": 2, "unit": "TEASPOON" },
-        { "ingredientId": 51, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
+        { "ingredientId": 63, "name": "Salmon Fillet", "quantity": 4, "unit": "PIECE" },
+        { "ingredientId": 64, "name": "Asparagus", "quantity": 1, "unit": "BUNCH" },
+        { "ingredientId": 66, "name": "Risotto Rice", "quantity": 1.5, "unit": "CUP" },
+        { "ingredientId": 67, "name": "White Wine", "quantity": 0.5, "unit": "CUP" },
+        { "ingredientId": 65, "name": "Parmesan Cheese", "quantity": 0.75, "unit": "CUP" },
+        { "ingredientId": 68, "name": "Thyme", "quantity": 2, "unit": "TEASPOON" },
+        { "ingredientId": 72, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
         { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
         { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" }
       ],
@@ -608,14 +870,14 @@
       "downTime": 10,
       "servings": 4,
       "ingredients": [
-        { "ingredientId": 48, "name": "Linguine Pasta", "quantity": 1, "unit": "POUND" },
-        { "ingredientId": 50, "name": "Lobster Tail", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 69, "name": "Linguine Pasta", "quantity": 1, "unit": "POUND" },
+        { "ingredientId": 71, "name": "Lobster Tail", "quantity": 2, "unit": "PIECE" },
         { "ingredientId": 29, "name": "Shrimp", "quantity": 12, "unit": "PIECE" },
-        { "ingredientId": 54, "name": "Spinach", "quantity": 2, "unit": "CUP" },
-        { "ingredientId": 49, "name": "Heavy Cream", "quantity": 1, "unit": "CUP" },
-        { "ingredientId": 52, "name": "Shallots", "quantity": 2, "unit": "PIECE" },
-        { "ingredientId": 51, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
-        { "ingredientId": 53, "name": "Lemon Zest", "quantity": 1, "unit": "TEASPOON" },
+        { "ingredientId": 27, "name": "Spinach", "quantity": 2, "unit": "CUP" },
+        { "ingredientId": 70, "name": "Heavy Cream", "quantity": 1, "unit": "CUP" },
+        { "ingredientId": 73, "name": "Shallots", "quantity": 2, "unit": "PIECE" },
+        { "ingredientId": 72, "name": "Butter", "quantity": 3, "unit": "TABLESPOON" },
+        { "ingredientId": 74, "name": "Lemon Zest", "quantity": 1, "unit": "TEASPOON" },
         { "ingredientId": 5, "name": "Salt", "quantity": 1, "unit": "TEASPOON" },
         { "ingredientId": 16, "name": "Black Pepper", "quantity": 0.5, "unit": "TEASPOON" }
       ],

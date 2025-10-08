@@ -1,6 +1,5 @@
 'use client';
 
-import { addHouse } from '@/lib/dbFunctions';
 import { useSession } from 'next-auth/react';
 import React from 'react';
 import { Form, Modal } from 'react-bootstrap';
@@ -25,7 +24,11 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
     e.preventDefault();
     if (formData.name) {
       try {
-        await addHouse({ ...formData });
+        await fetch('/api/kitchen/houses', {
+          method: 'POST',
+          body: JSON.stringify(formData),
+          headers: { 'Content-Type': 'application/json' },
+        });
         onAddHouse(formData);
         setFormData({ name: '', address: '', userId });
         setError(null);
