@@ -10,7 +10,8 @@ import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
 import { Check, X } from 'lucide-react';
 import StarRating from '@/components/recipes-components/StarRating';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
-import Loading from '@/components/home-components/Loading';
+// import Loading from '@/components/home-components/Loading';
+import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
 import {
   calculateTotalTime,
   getDifficulty,
@@ -58,12 +59,16 @@ const RecipePage: React.FC = () => {
       .then(data => setUserIngredients(new Set(data.ingredientIds)));
   }, [params.id, params.link, router]);
 
+  // if (loading) {
+  //   return (
+  //       <div className="min-h-screen d-flex justify-content-center align-items-center">
+  //           <Loading />
+  //       </div>
+  //   );
+  // }
+
   if (loading) {
-    return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
-            <Loading />
-        </div>
-    );
+    return <RecipeSkeleton />;
   }
 
   if (notFound) {
