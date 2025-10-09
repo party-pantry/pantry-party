@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 'use client';
 
 import slugify from 'slugify';
@@ -9,6 +7,7 @@ import { Container, Col, Row } from 'react-bootstrap';
 import Loading from '@/components/home-components/Loading';
 import CookingTimer from '@/components/cooking-components/CookingTimer';
 import CookingGuide from '@/components/cooking-components/CookingGuide';
+import CookingProgressBar from '@/components/cooking-components/CookingProgressBar';
 import CustomAlert from '@/components/CustomAlert';
 
 const CookingPage: React.FC = () => {
@@ -18,6 +17,7 @@ const CookingPage: React.FC = () => {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [recipe, setRecipe] = useState<any>(null);
+  const [currentStep, setCurrentStep] = useState<number>(-1);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -64,12 +64,15 @@ const CookingPage: React.FC = () => {
     );
   }
 
+  const handleStepChange = (step: number) => {
+    setCurrentStep(step);
+  }
+
   return (
     <>
-    <Container className='min-h-screen py-10'>
+    <Container className='min-h-screen py-5'>
         <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
-          <p className='text-muted'>Follow the step-by-step guide below</p>
         </div>
 
         <Row className="gap-4 mt-5">
@@ -88,10 +91,18 @@ const CookingPage: React.FC = () => {
 
           <Col>
             <div className="sticky-top top-5">
-              <CookingGuide recipe={recipe} />
+              <CookingGuide 
+                recipe={recipe}
+                currentStep={currentStep}
+                onStepChange={handleStepChange} 
+              />
             </div>
           </Col>
         </Row>
+
+        <div className="mt-auto pt-2">
+          <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
+        </div>
     </Container>
 
     <CustomAlert

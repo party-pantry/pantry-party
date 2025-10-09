@@ -1,6 +1,7 @@
 /* eslint-disable max-len */
-import React from 'react';
-import { Button, Card, Badge } from 'react-bootstrap';
+import React, { useEffect, useRef } from 'react';
+import { Button, Card } from 'react-bootstrap';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Instruction {
   id: number;
@@ -12,80 +13,77 @@ interface CookingInstructionsProps {
   instructions: Instruction[];
   currentStep: number;
   onNext: () => void;
-  onPrevious: () => void;
+  onBack: () => void;
 }
 
-const CookingInstructions: React.FC<CookingInstructionsProps> = ({
-  instructions,
-  currentStep,
-  onNext,
-  onPrevious,
-}) => {
+const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions, currentStep, onNext, onBack }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const lastStepRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (lastStepRef.current) {
+      lastStepRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+  }, [currentStep]);
+
   const sortedInstructions = instructions?.sort((a, b) => a.step - b.step) || [];
-  const currentInstruction = sortedInstructions[currentStep];
+  const visibleSteps = sortedInstructions.slice(0, Math.min(currentStep + 1, sortedInstructions.length));
   const isLastStep = currentStep === sortedInstructions.length - 1;
 
   return (
-    <Card className="h-100">
-      <Card.Header className="bg-success text-white">
-        <div className="d-flex justify-content-between align-items-center">
-          <h4 className="mb-0">Step {currentInstruction?.step || currentStep + 1}</h4>
-          <Badge bg="light" text="dark">
-            {currentStep + 1} / {sortedInstructions.length}
-          </Badge>
-        </div>
+    <Card className="mb-3 d-flex flex-column" 
+          style={{ 
+            minHeight: '40vh',
+            maxHeight: '60vh'
+          }}
+    >
+      <Card.Header className="bg-success-custom text-white py-3 d-flex flex-column align-items-start justify-content-center">
+        <h4 className="mb-1">Instructions Guide</h4>
+        <small>Follow the steps to prepare your dish</small>
       </Card.Header>
-      <Card.Body className="d-flex flex-column">
-        <div className="flex-grow-1 d-flex align-items-start justify-content-start">
-          <div className="w-100 p-4">
-            <div className="d-flex align-items-start gap-4 mb-4">
-              <div
-                className="flex-shrink-0 rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold"
-                style={{ width: '40px', height: '40px', fontSize: '1.2rem' }}
-              >
-                {currentInstruction?.step || currentStep + 1}
-              </div>
-              <div className="flex-grow-1">
-                <p className="mb-0" style={{ fontSize: '1.1rem', lineHeight: '1.6' }}>
-                  {currentInstruction?.content || 'No instruction available'}
-                </p>
-              </div>
-            </div>
-          </div>
+
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden" 
+        style={{ height: 'calc(60vh - 56px)' }}
+      >
+        <div
+          className="flex-grow-1 p-3 overflow-y-auto"
+          style={{ minHeight: 0 }}
+        >
+            <AnimatePresence>
+              {visibleSteps.map((instruction, index) => (
+                <motion.div
+                  key={instruction.id}
+                  ref={index === visibleSteps.length - 1 ? lastStepRef : null}
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{ duration: 0.4, ease: 'easeInOut' }}
+                  className="flex items-start gap-4 p-3"
+                >
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-success-custom text-white flex items-center justify-center font-bold">
+                    {instruction.step}
+                  </div>
+                  <p className="flex-1">{instruction.content}</p>
+                </motion.div>
+              ))}
+            </AnimatePresence>
         </div>
 
-        <div className="mb-3">
-          <div className="progress" style={{ height: '8px' }}>
-            <div
-              className="progress-bar bg-success"
-              style={{
-                width: `${((currentStep + 1) / sortedInstructions.length) * 100}%`,
-              }}
-            />
-          </div>
-          <small className="text-muted mt-1 d-block">
-            Progress: {currentStep + 1} of {sortedInstructions.length} steps
-          </small>
-        </div>
-
-        <div className="d-flex justify-content-between">
+        <div className="d-flex justify-content-between mt-3">
           <Button
-            variant="outline-secondary"
-            onClick={onPrevious}
-            size="lg"
+            className="w-20"
+            variant="success"
+            onClick={onBack}
           >
-            ← {currentStep === 0 ? 'Ingredients' : 'Previous'}
+            Back
           </Button>
-
-          {!isLastStep ? (
-            <Button variant="primary" onClick={onNext} size="lg">
-              Next →
-            </Button>
-          ) : (
-            <Button variant="success" disabled size="lg">
-              Complete!
-            </Button>
-          )}
+          <Button
+            className="w-20"
+            variant="success"
+            onClick={onNext}
+          >
+            {isLastStep ? 'Done' : 'Next'}
+          </Button>
         </div>
       </Card.Body>
     </Card>

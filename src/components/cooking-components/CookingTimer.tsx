@@ -95,7 +95,10 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
               text={formatTime(timeLeft)}
               styles={buildStyles({
                 textSize: '16px',
-                pathColor: timeLeft < 60 ? 'red' : 'green',
+                pathColor:
+                  progressPercentage >= 90 ? 'red' :
+                  progressPercentage >= 50 ? 'goldenrod' :
+                  'green',
                 textColor: 'black',
                 trailColor: '#D3D3D3',
                 backgroundColor: 'white',

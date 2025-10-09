@@ -29,10 +29,11 @@ interface Recipe {
 
 interface CookingGuideProps {
   recipe: Recipe;
+  currentStep: number;
+  onStepChange: (step: number) => void;
 }
 
-const CookingGuide: React.FC<CookingGuideProps> = ({ recipe }) => {
-  const [currentStep, setCurrentStep] = useState<number>(-1);
+const CookingGuide: React.FC<CookingGuideProps> = ({ recipe, currentStep, onStepChange }) => {
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
 
   const sortedInstructions = recipe.instructions?.sort((a, b) => a.step - b.step) || [];
@@ -47,19 +48,19 @@ const CookingGuide: React.FC<CookingGuideProps> = ({ recipe }) => {
     setCheckedIngredients(newChecked);
   };
 
-  const handleNext = () => {
-    if (currentStep === -1) {
-      setCurrentStep(0);
-    } else if (currentStep < sortedInstructions.length - 1) {
-      setCurrentStep(currentStep + 1);
+  const handleBack = () => {
+    if (currentStep === 0) {
+      onStepChange(-1);
+    } else if (currentStep > 0) {
+      onStepChange(currentStep - 1);
     }
   };
 
-  const handlePrevious = () => {
-    if (currentStep === 0) {
-      setCurrentStep(-1);
-    } else if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+  const handleNext = () => {
+    if (currentStep === -1) {
+      onStepChange(0);
+    } else if (currentStep < sortedInstructions.length - 1) {
+      onStepChange(currentStep + 1);
     }
   };
 
@@ -78,8 +79,8 @@ const CookingGuide: React.FC<CookingGuideProps> = ({ recipe }) => {
     <CookingInstructions
       instructions={recipe.instructions}
       currentStep={currentStep}
+      onBack={handleBack}
       onNext={handleNext}
-      onPrevious={handlePrevious}
     />
   );
 };
