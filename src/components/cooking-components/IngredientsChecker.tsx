@@ -29,10 +29,10 @@ const IngredientsChecker: React.FC<IngredientsCheckerProps> = ({
   const isAllIngredientsChecked = checkedIngredients.size === ingredients?.length;
 
   return (
-    <Card className="mb-3 d-flex flex-column" 
-      style={{ 
+    <Card className="mb-3 d-flex flex-column"
+      style={{
         minHeight: '40vh',
-        maxHeight: '60vh'
+        maxHeight: '60vh',
       }}
     >
       <Card.Header className="bg-success-custom text-white py-3 d-flex flex-column align-items-start justify-content-center">
@@ -40,7 +40,7 @@ const IngredientsChecker: React.FC<IngredientsCheckerProps> = ({
         <small>Check off ingredients as you prepare them</small>
       </Card.Header>
 
-      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden" 
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden"
         style={{ height: 'calc(60vh - 56px)' }}
       >
           <div className="mb-3">

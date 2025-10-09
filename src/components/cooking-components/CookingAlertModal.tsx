@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+
 'use client';
 
 import { Modal, Button } from 'react-bootstrap';
@@ -18,7 +20,7 @@ const CookingAlertModal: React.FC<Props> = ({ show, onHide, onConfirm, missingIn
         <strong>Missing Ingredients Detected</strong>
       </h5>
       <p className="text-muted mb-4">
-        You're missing <strong>{missingIngredientsCount}</strong> out of <strong>{totalIngredientsCount}</strong> ingredients...
+        You are missing <strong>{missingIngredientsCount}</strong> out of <strong>{totalIngredientsCount}</strong> ingredients...
         <br/>Are you sure you want to start cooking?
       </p>
 

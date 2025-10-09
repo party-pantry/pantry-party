@@ -22,6 +22,29 @@ const RecipePage: React.FC = () => {
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
   const [showCookingAlert, setShowCookingAlert] = useState<boolean>(false);
 
+  const navigateToCooking = () => {
+    router.push(`/cooking/${recipe.id}/${slugify(recipe.name, { lower: true, strict: true })}`);
+  };
+
+  const handleConfirmCooking = () => {
+    setShowCookingAlert(false);
+    navigateToCooking();
+  };
+
+  const handleCloseAlert = () => {
+    setShowCookingAlert(false);
+  };
+
+  const handleStartCooking = () => {
+    const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredients);
+
+    if (missingIngredients.length > 0) {
+      setShowCookingAlert(true);
+    } else {
+      navigateToCooking();
+    }
+  };
+
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
@@ -70,28 +93,6 @@ const RecipePage: React.FC = () => {
         </div>
     );
   }
-
-  const handleStartCooking = () => {
-    const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredients);
-
-    if (missingIngredients.length > 0) {
-      setShowCookingAlert(true);
-    } else {
-      navigateToCooking();}
-  };
-
-  const navigateToCooking = () => {
-    router.push(`/cooking/${recipe.id}/${slugify(recipe.name, { lower: true, strict: true })}`);
-  };
-
-  const handleConfirmCooking = () => {
-    setShowCookingAlert(false);
-    navigateToCooking();
-  };
-  
-  const handleCloseAlert = () => {
-    setShowCookingAlert(false);
-  };
 
   const difficulty = getDifficulty(recipe.difficulty);
 
@@ -213,7 +214,7 @@ const RecipePage: React.FC = () => {
         </Row>
       </div>
     </Container>
-    
+
     <CookingAlertModal
         show={showCookingAlert}
         onHide={handleCloseAlert}

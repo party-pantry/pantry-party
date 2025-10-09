@@ -34,7 +34,7 @@ const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions,
       container.scrollTo({
         top: Math.max(0, scrollPosition),
         behavior: 'smooth',
-      })
+      });
     }
   }, [currentStep]);
 
@@ -43,10 +43,10 @@ const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions,
   const isLastStep = currentStep === sortedInstructions.length - 1;
 
   return (
-    <Card className="mb-3 d-flex flex-column" 
-          style={{ 
+    <Card className="mb-3 d-flex flex-column"
+          style={{
             minHeight: '40vh',
-            maxHeight: '60vh'
+            maxHeight: '60vh',
           }}
     >
       <Card.Header className="bg-success-custom text-white py-3 d-flex flex-column align-items-start justify-content-center">
@@ -54,7 +54,7 @@ const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions,
         <small>Follow the steps to prepare your dish</small>
       </Card.Header>
 
-      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden" 
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden"
         style={{ height: 'calc(60vh - 56px)' }}
       >
         <div

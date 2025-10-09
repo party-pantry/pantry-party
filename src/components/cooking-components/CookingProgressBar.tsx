@@ -6,20 +6,20 @@ interface CookingProgressBarProps {
 }
 
 const CookingProgressBar: React.FC<CookingProgressBarProps> = ({ currentStep, totalInstructions }) => {
-    const totalSteps = totalInstructions;
-    const currentProgressStep = currentStep + 1;
+  const totalSteps = totalInstructions;
+  const currentProgressStep = currentStep + 1;
 
-    const progressPercentage = totalSteps > 0 ?
-        (currentProgressStep / totalSteps) * 100 : 0;
-    
-    return (
+  const progressPercentage = totalSteps > 0
+    ? (currentProgressStep / totalSteps) * 100 : 0;
+
+  return (
         <div className="mb-4">
             <div className="progress" style={{ height: '12px' }}>
-                <div 
+                <div
                     className="progress-bar bg-success"
-                    style={{ 
-                        width: `${progressPercentage}%`,
-                        transition: 'width 0.3s ease'
+                    style={{
+                      width: `${progressPercentage}%`,
+                      transition: 'width 0.3s ease',
                     }}
                 />
             </div>
@@ -29,7 +29,7 @@ const CookingProgressBar: React.FC<CookingProgressBarProps> = ({ currentStep, to
                 </small>
             </div>
         </div>
-    );
+  );
 };
 
 export default CookingProgressBar;

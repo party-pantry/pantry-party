@@ -1,7 +1,7 @@
 'use client';
 
 import slugify from 'slugify';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Col, Row } from 'react-bootstrap';
 import Loading from '@/components/home-components/Loading';
@@ -18,6 +18,14 @@ const CookingPage: React.FC = () => {
   const [showAlert, setShowAlert] = useState<boolean>(false);
   const [recipe, setRecipe] = useState<any>(null);
   const [currentStep, setCurrentStep] = useState<number>(-1);
+
+  const handleStepChange = (step: number) => {
+    setCurrentStep(step);
+  };
+
+  const handleTimerFinish = useCallback(() => {
+    setShowAlert(true);
+  }, []);
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -64,10 +72,6 @@ const CookingPage: React.FC = () => {
     );
   }
 
-  const handleStepChange = (step: number) => {
-    setCurrentStep(step);
-  }
-
   return (
     <>
     <Container className='min-h-screen py-5'>
@@ -77,13 +81,13 @@ const CookingPage: React.FC = () => {
 
         <Row className="gap-4 mt-5">
           <Col md={4} lg={3}>
-            <div className="sticky-top top-8">
+            <div className="sticky-top top-5">
               <div className="text-center mb-3">
-                <CookingTimer 
-                  cookTime={recipe.cookTime} 
-                  prepTime={recipe.prepTime} 
-                  downTime={recipe.downTime} 
-                  onTimerFinish={() => {setShowAlert(true)}}
+                <CookingTimer
+                  cookTime={recipe.cookTime}
+                  prepTime={recipe.prepTime}
+                  downTime={recipe.downTime}
+                  onTimerFinish={handleTimerFinish}
                 />
               </div>
             </div>
@@ -91,10 +95,10 @@ const CookingPage: React.FC = () => {
 
           <Col>
             <div className="top-5">
-              <CookingGuide 
+              <CookingGuide
                 recipe={recipe}
                 currentStep={currentStep}
-                onStepChange={handleStepChange} 
+                onStepChange={handleStepChange}
               />
             </div>
           </Col>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { Button } from 'react-bootstrap';
@@ -17,6 +17,14 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   const totalTime = prepTime + cookTime + (downTime || 0);
+
+  const memoizedOnTimerFinish = useCallback(() => {
+    if (onTimerFinish) {
+      setTimeout(() => {
+        onTimerFinish();
+      }, 0);
+    }
+  }, [onTimerFinish]);
 
   useEffect(() => {
     setTimeLeft(totalTime * 60);
@@ -57,7 +65,7 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
           if (prevTime <= 1) {
             setIsActive(false);
             setIsPaused(false);
-            if (onTimerFinish) onTimerFinish();
+            memoizedOnTimerFinish();
             return 0;
           }
           return prevTime - 1;
@@ -70,7 +78,7 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
         clearInterval(timerRef.current);
       }
     };
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, memoizedOnTimerFinish]);
 
   const formatTime = (time: number): string => {
     if (typeof time !== 'number' || Number.isNaN(time) || time < 0) {
@@ -86,19 +94,22 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
     ? ((totalTimeInSeconds - timeLeft) / totalTimeInSeconds) * 100
     : 0;
 
+  const getPathColor = (): string => {
+    if (progressPercentage >= 90) return 'red';
+    if (progressPercentage >= 50) return 'goldenrod';
+    return 'green';
+  };
+
   return (
       <div className='flex flex-col items-center p-6 bg-white rounded-2xl shadow-md'>
         <div className='relative mb-6'>
           <div className='relative w-48 h-48'>
-            <CircularProgressbar 
+            <CircularProgressbar
               value={progressPercentage}
               text={formatTime(timeLeft)}
               styles={buildStyles({
                 textSize: '16px',
-                pathColor:
-                  progressPercentage >= 90 ? 'red' :
-                  progressPercentage >= 50 ? 'goldenrod' :
-                  'green',
+                pathColor: getPathColor(),
                 textColor: 'black',
                 trailColor: '#D3D3D3',
                 backgroundColor: 'white',
