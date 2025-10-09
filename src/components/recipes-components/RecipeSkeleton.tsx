@@ -98,6 +98,6 @@ const RecipeSkeleton: React.FC = () => (
         </Row>
       </div>
     </Container>
-  );
+);
 
 export default RecipeSkeleton;

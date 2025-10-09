@@ -340,7 +340,7 @@ const MyKitchen = () => {
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={() => {}}
-                        onEdit={() => {}}
+                        onEdit={(id) => handleEditItem(id)}
                       />
                     </StorageContainer>
                   ))}

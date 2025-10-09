@@ -25,7 +25,7 @@ type ChangePasswordForm = {
 };
 
 const ChangePasswordModal: React.FC<Props> = ({ show, onHide }) => {
-  const { data: session, status } = useSession();
+  const { data: session } = useSession();
   const email = session?.user?.email || '';
 
   const [oldPasswordVisible, setOldPasswordVisible] = useState(false);
@@ -61,9 +61,9 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onHide }) => {
     onHide();
   };
 
-//   if (status === 'loading') {
-//     return <LoadingSpinner />;
-//   }
+  //   if (status === 'loading') {
+  //     return <LoadingSpinner />;
+  //   }
 
   return (
     <Modal show={show} onHide={onHide} centered>

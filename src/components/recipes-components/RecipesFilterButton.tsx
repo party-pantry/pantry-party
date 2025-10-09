@@ -155,7 +155,7 @@ const RecipesFilterButton: React.FC<RecipesFilterButtonProps> = ({ onApply }) =>
           <Dropdown.Divider />
 
           <Form.Label className="fw-bold fs-6 text-bold">Rating</Form.Label>
-          <div 
+          <div
             className="star-container"
             onMouseLeave={() => setHoveredRating(null)}
           >
