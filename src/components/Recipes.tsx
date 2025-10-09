@@ -4,7 +4,7 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { Container, Row, Col, Card, Placeholder } from 'react-bootstrap';
+import { Container, Row, Col, Card, Placeholder, Button } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
 import RecipeCard from './recipes-components/RecipeCard';
 import RecipesSearch from './recipes-components/RecipesSearch';
@@ -102,6 +102,8 @@ const Recipes: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState<boolean>(false);
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
+  // const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
+  const [showAddRecipeModal, setShowAddRecipeModal] = useState<boolean>(false); // State to control modal visibility
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -257,6 +259,11 @@ const Recipes: React.FC = () => {
     fetchUserIngredients();
   }, []);
 
+  const handleAddRecipe = (newRecipe: RecipeWithIngredients) => {
+    setRecipes(prevRecipes => [...prevRecipes, newRecipe]); // Add the new recipe to the list
+    setShowAddRecipeModal(false); // Close the modal after submission
+  };
+
   // Show skeleton while loading
   if (loading) {
     return <RecipesSkeleton />;
@@ -275,7 +282,12 @@ const Recipes: React.FC = () => {
         </div>
         <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-          <AddRecipesModal />
+          <Button
+            variant="success"
+            onClick={() => setShowAddRecipeModal(true)}
+          >
+            <strong>Add Recipe +</strong>
+          </Button>
         </div>
 
         <Row className="g-4 justify-content-center">
@@ -285,6 +297,13 @@ const Recipes: React.FC = () => {
             </Col>
           ))}
         </Row>
+
+      {/** Modals: AddRecipes Modal */}
+      <AddRecipesModal
+            show={showAddRecipeModal}
+            onHide={() => setShowAddRecipeModal(false)}
+            onSubmit={handleAddRecipe}
+      />
       </Container>
   );
 };
