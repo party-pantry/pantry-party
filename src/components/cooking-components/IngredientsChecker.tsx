@@ -43,7 +43,7 @@ const IngredientsChecker: React.FC<IngredientsCheckerProps> = ({
       <Card.Body className="d-flex flex-column flex-grow-1 overflow-hidden"
         style={{ height: 'calc(60vh - 56px)' }}
       >
-          <div className="mb-3">
+          <div className="mb-3 pr-5 align-self-end">
             <Badge bg='success-custom'>
               {checkedIngredients.size} / {ingredients?.length || 0} prepared
             </Badge>
