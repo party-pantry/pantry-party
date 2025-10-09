@@ -46,43 +46,43 @@ const RecipesSortButton: React.FC<RecipesSortButtonProps> = ({ onSort }) => {
       align="end"
       drop="down"
     >
-      <Dropdown.Item 
-        eventKey="name" 
+      <Dropdown.Item
+        eventKey="name"
         onClick={() => handleSort('name')}
         active={selectedSort === 'name'}
       >
         Name (A-Z){getSortLabel('name')}
       </Dropdown.Item>
-      <Dropdown.Item 
-        eventKey="difficulty" 
+      <Dropdown.Item
+        eventKey="difficulty"
         onClick={() => handleSort('difficulty')}
         active={selectedSort === 'difficulty'}
       >
         Difficulty (Easy-Hard){getSortLabel('difficulty')}
       </Dropdown.Item>
-      <Dropdown.Item 
-        eventKey="time" 
+      <Dropdown.Item
+        eventKey="time"
         onClick={() => handleSort('time')}
         active={selectedSort === 'time'}
       >
         Total Time{getSortLabel('time')}
       </Dropdown.Item>
-      <Dropdown.Item 
-        eventKey="match-percent" 
+      <Dropdown.Item
+        eventKey="match-percent"
         onClick={() => handleSort('match-percent')}
         active={selectedSort === 'match-percent'}
       >
         Match % (High-Low){getSortLabel('match-percent')}
       </Dropdown.Item>
-      <Dropdown.Item 
-        eventKey="rating" 
+      <Dropdown.Item
+        eventKey="rating"
         onClick={() => handleSort('rating')}
         active={selectedSort === 'rating'}
       >
         Rating (High-Low){getSortLabel('rating')}
       </Dropdown.Item>
-      <Dropdown.Item 
-        eventKey="postdate" 
+      <Dropdown.Item
+        eventKey="postdate"
         onClick={() => handleSort('postdate')}
         active={selectedSort === 'postdate'}
       >

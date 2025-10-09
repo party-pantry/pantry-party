@@ -27,8 +27,7 @@ const Recipes: React.FC = () => {
   const [recipes, setRecipes] = useState<RecipeWithIngredients[]>([]);
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
-
-  // Move filters state declaration HERE, before the useMemo
+  const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<{
     difficulty: string[];
     totalTime: string[];
@@ -41,7 +40,6 @@ const Recipes: React.FC = () => {
     rating: null,
   });
 
-  // Add sort state
   const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
 
@@ -50,9 +48,13 @@ const Recipes: React.FC = () => {
     setSortOrder(order);
   };
 
-  // NOW the useMemo can use filters
   const filteredAndSortedRecipes = useMemo(() => {
     let filtered = recipes;
+
+    // Filter by search term (case-insensitive)
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(recipe => recipe.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
 
     // Filter by "can make only"
     if (canMakeOnly) {
@@ -113,32 +115,37 @@ const Recipes: React.FC = () => {
             const difficultyOrder = { EASY: 1, MEDIUM: 2, HARD: 3 };
             comparison = difficultyOrder[a.difficulty] - difficultyOrder[b.difficulty];
             break;
+
           case 'time':
             const totalTimeA = a.prepTime + a.cookTime + (a.downTime || 0);
             const totalTimeB = b.prepTime + b.cookTime + (b.downTime || 0);
             comparison = totalTimeA - totalTimeB;
             break;
+
           case 'match-percent':
-            // Use the same checkIngredients function that returns matchPercent
             const { matchPercent: matchPercentA } = checkIngredients(a.ingredients, userIngredientsId);
             const { matchPercent: matchPercentB } = checkIngredients(b.ingredients, userIngredientsId);
-            // Higher percentage first (descending by default)
             comparison = matchPercentB - matchPercentA;
             break;
+
           case 'rating':
             comparison = b.rating - a.rating;
             break;
+
           case 'postdate':
             comparison = new Date(b.postDate).getTime() - new Date(a.postDate).getTime();
             break;
+
           default:
             comparison = 0;
         }
+
         return sortOrder === 'asc' ? comparison : -comparison;
       });
     }
+
     return filtered;
-  }, [recipes, userIngredientsId, canMakeOnly, filters, sortBy, sortOrder]);
+  }, [recipes, userIngredientsId, canMakeOnly, filters, sortBy, sortOrder, searchTerm]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -184,7 +191,7 @@ const Recipes: React.FC = () => {
   return (
       <Container className="mb-12 min-h-screen mt-5">
         <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
-          <RecipesSearch />
+          <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <RecipesFilterButton onApply={setFilters} />
           <RecipesSortButton onSort={handleSort}/>
         </div>
