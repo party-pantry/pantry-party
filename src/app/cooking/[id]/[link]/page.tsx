@@ -77,7 +77,7 @@ const CookingPage: React.FC = () => {
 
         <Row className="gap-4 mt-5">
           <Col md={4} lg={3}>
-            <div className="sticky-top top-5">
+            <div className="sticky-top top-8">
               <div className="text-center mb-3">
                 <CookingTimer 
                   cookTime={recipe.cookTime} 
@@ -90,7 +90,7 @@ const CookingPage: React.FC = () => {
           </Col>
 
           <Col>
-            <div className="sticky-top top-5">
+            <div className="top-5">
               <CookingGuide 
                 recipe={recipe}
                 currentStep={currentStep}
@@ -100,7 +100,7 @@ const CookingPage: React.FC = () => {
           </Col>
         </Row>
 
-        <div className="mt-auto pt-2">
+        <div className="mt-auto">
           <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
         </div>
     </Container>

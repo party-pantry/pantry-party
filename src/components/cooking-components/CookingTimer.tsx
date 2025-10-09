@@ -87,7 +87,7 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
     : 0;
 
   return (
-      <div className='flex flex-col items-center p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md'>
+      <div className='flex flex-col items-center p-6 bg-white rounded-2xl shadow-md'>
         <div className='relative mb-6'>
           <div className='relative w-48 h-48'>
             <CircularProgressbar 

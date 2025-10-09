@@ -21,8 +21,20 @@ const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions,
   const lastStepRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (lastStepRef.current) {
-      lastStepRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    if (lastStepRef.current && containerRef.current) {
+      const container = containerRef.current;
+      const element = lastStepRef.current;
+
+      const containerHeight = container.clientHeight;
+      const elementTop = element.offsetTop;
+      const elementHeight = element.clientHeight;
+
+      const scrollPosition = elementTop + elementHeight - containerHeight + 20;
+
+      container.scrollTo({
+        top: Math.max(0, scrollPosition),
+        behavior: 'smooth',
+      })
     }
   }, [currentStep]);
 
@@ -47,7 +59,8 @@ const CookingInstructions: React.FC<CookingInstructionsProps> = ({ instructions,
       >
         <div
           className="flex-grow-1 p-3 overflow-y-auto"
-          style={{ minHeight: 0 }}
+          ref={containerRef}
+          style={{ minHeight: 0, scrollBehavior: 'smooth' }}
         >
             <AnimatePresence>
               {visibleSteps.map((instruction, index) => (
