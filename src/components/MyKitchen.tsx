@@ -5,7 +5,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
-import { Container, Button, Row, Card, Placeholder } from 'react-bootstrap';
+import { Container, Button, Row, Card, Placeholder, Col } from 'react-bootstrap';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import IngredientTable from '@/components/kitchen-components/IngredientTable';
@@ -57,20 +57,20 @@ type House = {
 // Loading Skeleton Component
 const KitchenSkeleton: React.FC = () => (
   <Container className="mb-12 min-h-screen mt-5">
-    <div style={{ marginTop: '24px' }}>
+    <div className="mt-4">
       {/* House Tab Skeleton */}
       <div className="mb-4">
         <Placeholder as="div" animation="glow">
-          <Placeholder xs={3} className="rounded" style={{ height: '40px' }} />
+          <Placeholder xs={3} className="rounded py-3" />
         </Placeholder>
       </div>
 
       {/* Filter and Add Button Skeleton */}
-      <Row className="justify-content-end mb-3 pr-4">
-        <div className="d-flex gap-2 justify-content-end">
-          <Placeholder.Button variant="outline-dark" xs={2} />
-          <Placeholder.Button variant="success" xs={2} />
-        </div>
+      <Row className="justify-content-end mb-3">
+        <Col xs="auto" className="d-flex gap-2">
+          <Placeholder.Button variant="outline-dark" className="px-4" />
+          <Placeholder.Button variant="success" className="px-4" />
+        </Col>
       </Row>
 
       {/* Storage Containers Skeleton */}
@@ -80,72 +80,71 @@ const KitchenSkeleton: React.FC = () => (
             <Placeholder as="h5" animation="glow">
               <Placeholder xs={4} />
             </Placeholder>
-            <Placeholder.Button variant="outline-secondary" xs={2} size="sm" />
+            <Placeholder.Button variant="outline-secondary" size="sm" xs={2} />
           </Card.Header>
           <Card.Body>
             {/* Table Header Skeleton */}
-            <div className="d-flex mb-3 pb-2 border-bottom">
-              <div style={{ width: '40%' }}>
+            <Row className="mb-3 pb-2 border-bottom">
+              <Col xs={5}>
                 <Placeholder as="div" animation="glow">
                   <Placeholder xs={6} size="sm" />
                 </Placeholder>
-              </div>
-              <div style={{ width: '20%' }}>
+              </Col>
+              <Col xs={2}>
                 <Placeholder as="div" animation="glow">
                   <Placeholder xs={8} size="sm" />
                 </Placeholder>
-              </div>
-              <div style={{ width: '20%' }}>
+              </Col>
+              <Col xs={3}>
                 <Placeholder as="div" animation="glow">
                   <Placeholder xs={8} size="sm" />
                 </Placeholder>
-              </div>
-              <div style={{ width: '20%' }}>
+              </Col>
+              <Col xs={2}>
                 <Placeholder as="div" animation="glow">
                   <Placeholder xs={6} size="sm" />
                 </Placeholder>
-              </div>
-            </div>
+              </Col>
+            </Row>
 
             {/* Table Rows Skeleton */}
             {[1, 2, 3, 4].map((rowIndex) => (
-              <div key={rowIndex} className="d-flex align-items-center py-3 border-bottom">
-                <div style={{ width: '40%' }} className="d-flex align-items-center gap-2">
+              <Row key={rowIndex} className="align-items-center py-3 border-bottom">
+                <Col xs={5} className="d-flex align-items-center gap-2">
                   <Placeholder
                     as="div"
                     animation="glow"
-                    style={{ width: '40px', height: '40px' }}
                     className="rounded"
                   >
-                    <Placeholder xs={12} style={{ height: '40px' }} />
+                    <Placeholder className="d-block" style={{ width: '40px', height: '40px' }} />
                   </Placeholder>
-                  <Placeholder as="div" animation="glow" style={{ flex: 1 }}>
+                  <Placeholder as="div" animation="glow" className="flex-grow-1">
                     <Placeholder xs={8} />
                   </Placeholder>
-                </div>
-                <div style={{ width: '20%' }}>
+                </Col>
+                <Col xs={2}>
                   <Placeholder as="div" animation="glow">
                     <Placeholder xs={6} />
                   </Placeholder>
-                </div>
-                <div style={{ width: '20%' }}>
+                </Col>
+                <Col xs={3}>
                   <Placeholder as="div" animation="glow">
                     <Placeholder xs={8} size="sm" />
                   </Placeholder>
-                </div>
-                <div style={{ width: '20%' }}>
+                </Col>
+                <Col xs={2}>
                   <Placeholder as="div" animation="glow">
-                    <Placeholder xs={5} className="rounded-pill" />
+                    <Placeholder xs={8} className="rounded-pill" />
                   </Placeholder>
-                </div>
-              </div>
+                </Col>
+              </Row>
             ))}
           </Card.Body>
         </Card>
       ))}
 
       {/* Add Storage Button Skeleton */}
-      <Placeholder.Button variant="success" xs={2} className="mt-1" />
+      <Placeholder.Button variant="success" className="mt-1 px-4" />
     </div>
   </Container>
 );
@@ -176,7 +175,6 @@ const MyKitchen = () => {
       const res = await fetch(`/api/kitchen?userId=${userId}`);
       const data = await res.json();
 
-      // Ensure we always store an array
       const houseArray = Array.isArray(data)
         ? data
         : Array.isArray(data?.houses)
@@ -196,7 +194,6 @@ const MyKitchen = () => {
     fetchHouses();
   }, [fetchHouses]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEditItem = (id: number) => {
     const allItems: Item[] = houses.flatMap((house) =>
       house.storages.flatMap((storage) =>
@@ -274,7 +271,6 @@ const MyKitchen = () => {
     );
   };
 
-  // Show skeleton while loading
   if (loading) {
     return <KitchenSkeleton />;
   }

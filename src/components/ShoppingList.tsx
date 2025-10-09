@@ -400,8 +400,8 @@ const ShoppingList: React.FC = () => {
                           <Form.Label>Category</Form.Label>
                           <Form.Select
                             value={newItem.category}
-                            onChange={(e) =>
-                              setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
+                            // eslint-disable-next-line max-len
+                            onChange={(e) => setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
                             }
                           >
                             <option value="Produce">Produce</option>
@@ -415,8 +415,8 @@ const ShoppingList: React.FC = () => {
                           <Form.Label>Priority</Form.Label>
                           <Form.Select
                             value={newItem.priority}
-                            onChange={(e) =>
-                              setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
+                            // eslint-disable-next-line max-len
+                            onChange={(e) => setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
                             }
                           >
                             <option value="High">High</option>
