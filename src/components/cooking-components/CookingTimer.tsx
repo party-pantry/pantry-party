@@ -1,13 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 import { Button } from 'react-bootstrap';
 
 interface CookingTimerProps {
   prepTime: number;
   cookTime: number;
   downTime?: number;
+  onTimerFinish?: () => void;
 }
 
-const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTime }) => {
+const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTime, onTimerFinish }) => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [isActive, setIsActive] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
@@ -54,7 +57,7 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
           if (prevTime <= 1) {
             setIsActive(false);
             setIsPaused(false);
-            // TODO: Add notification or sound when timer ends
+            if (onTimerFinish) onTimerFinish();
             return 0;
           }
           return prevTime - 1;
@@ -78,44 +81,48 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
-  /* Progress Bar Logic
   const totalTimeInSeconds = totalTime * 60;
   const progressPercentage = totalTimeInSeconds > 0
     ? ((totalTimeInSeconds - timeLeft) / totalTimeInSeconds) * 100
     : 0;
-  */
 
   return (
-      <div className='text-center'>
-        <div className='mb-3'>
-          <h2 className='display-4'>{formatTime(timeLeft)}</h2>
-          {/* Not using progress bar for now
-          <div className='progress' style={{ height: '10px', width: '300px', margin: '0 auto' }}>
-            <div
-              className='progress-bar'
-              style={{
-                width: `${progressPercentage}%`,
-                backgroundColor: timeLeft < 60 ? 'red' : 'green',
-              }}
+      <div className='flex flex-col items-center p-6 bg-white dark:bg-gray-900 rounded-2xl shadow-md'>
+        <div className='relative mb-6'>
+          <div className='relative w-48 h-48'>
+            <CircularProgressbar 
+              value={progressPercentage}
+              text={formatTime(timeLeft)}
+              styles={buildStyles({
+                textSize: '16px',
+                pathColor: timeLeft < 60 ? 'red' : 'green',
+                textColor: 'black',
+                trailColor: '#D3D3D3',
+                backgroundColor: 'white',
+                pathTransitionDuration: 1,
+              })}
             />
           </div>
-          */}
         </div>
 
-      <div className='d-flex justify-content-center gap-2'>
+      <div className='d-flex justify-content-between gap-4 w-75'>
         {!isActive ? (
-          <Button variant='success' onClick={handleStart}>
+          <Button className='w-50' variant='success' onClick={handleStart}>
             {isPaused ? 'Resume' : 'Start'}
           </Button>
         ) : (
-          <Button variant='warning' onClick={handlePause}>
+          <Button className='w-50' variant='warning' onClick={handlePause}>
             Pause
           </Button>
         )}
-        <Button variant='danger' onClick={handleReset}>
+        <Button className='w-50' variant='danger' onClick={handleReset}>
           Reset
         </Button>
       </div>
+
+      <p className="mt-4 text-sm text-gray-500">
+        Total time: {totalTime} minutes
+      </p>
     </div>
   );
 };

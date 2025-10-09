@@ -9,12 +9,14 @@ import { Container, Col, Row } from 'react-bootstrap';
 import Loading from '@/components/home-components/Loading';
 import CookingTimer from '@/components/cooking-components/CookingTimer';
 import CookingGuide from '@/components/cooking-components/CookingGuide';
+import CustomAlert from '@/components/CustomAlert';
 
 const CookingPage: React.FC = () => {
   const params = useParams();
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState<boolean>(false);
+  const [showAlert, setShowAlert] = useState<boolean>(false);
   const [recipe, setRecipe] = useState<any>(null);
 
   useEffect(() => {
@@ -63,31 +65,43 @@ const CookingPage: React.FC = () => {
   }
 
   return (
+    <>
     <Container className='min-h-screen py-10'>
         <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
           <p className='text-muted'>Follow the step-by-step guide below</p>
         </div>
 
-        <Row>
-          <Col>
-            <div className="sticky-top top-[20px]">
-              <div className="text-center mb-4">
-                <h3 className="text-center mb-4">Cooking Timer</h3>
-                <CookingTimer cookTime={recipe.cookTime} prepTime={recipe.prepTime} downTime={recipe.downTime} />
+        <Row className="gap-4 mt-5">
+          <Col md={4} lg={3}>
+            <div className="sticky-top top-5">
+              <div className="text-center mb-3">
+                <CookingTimer 
+                  cookTime={recipe.cookTime} 
+                  prepTime={recipe.prepTime} 
+                  downTime={recipe.downTime} 
+                  onTimerFinish={() => {setShowAlert(true)}}
+                />
               </div>
             </div>
           </Col>
+
           <Col>
-            <div className="sticky-top top-[20px]">
-              <div className="text-center mb-4">
-                <h3 className="text-center mb-4">Cooking Guide</h3>
-                <CookingGuide recipe={recipe} />
-              </div>
+            <div className="sticky-top top-5">
+              <CookingGuide recipe={recipe} />
             </div>
           </Col>
         </Row>
     </Container>
+
+    <CustomAlert
+      show={showAlert}
+      title="Success"
+      message="Time's up! Your dish should be ready :)"
+      position="bottom-end"
+      onClose={() => setShowAlert(false)}
+    />
+    </>
   );
 };
 
