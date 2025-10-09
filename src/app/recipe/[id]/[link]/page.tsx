@@ -10,7 +10,7 @@ import { Check, X } from 'lucide-react';
 import StarRating from '@/components/recipes-components/StarRating';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
 import CookingAlertModal from '@/components/cooking-components/CookingAlertModal';
-import Loading from '@/components/home-components/Loading';
+import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
 import { calculateTotalTime, getDifficulty, checkIngredients } from '@/utils/recipeUtils';
 
 const RecipePage: React.FC = () => {
@@ -79,11 +79,7 @@ const RecipePage: React.FC = () => {
   }, [params.id, params.link, router]);
 
   if (loading) {
-    return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
-            <Loading />
-        </div>
-    );
+    return <RecipeSkeleton />;
   }
 
   if (notFound) {
