@@ -307,6 +307,9 @@ const MyKitchen = () => {
                           status: appliedFilters.status,
                         })
                       }
+                      onSearchChange={(value) =>
+                        setFilters((prev) => ({ ...prev, search: value }))
+                      }
                     />
 
                     <Button
