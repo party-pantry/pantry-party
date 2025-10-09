@@ -4,9 +4,8 @@
 'use client';
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card, Placeholder } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
-import Loading from './home-components/Loading';
 import RecipeCard from './recipes-components/RecipeCard';
 import RecipesSearch from './recipes-components/RecipesSearch';
 import RecipesFilterButton from './recipes-components/RecipesFilterButton';
@@ -20,6 +19,84 @@ interface RecipeWithIngredients extends Recipe {
     ingredient: { id: number, name: string };
   }[];
 }
+
+// Loading Skeleton Component
+const RecipesSkeleton: React.FC = () => (
+  <Container className="mb-12 min-h-screen mt-5">
+    {/* Filter and Search Bar Skeleton */}
+    <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
+      <Placeholder as="div" animation="glow" style={{ width: '250px' }}>
+        <Placeholder xs={12} style={{ height: '38px', borderRadius: '4px' }} />
+      </Placeholder>
+      <Placeholder.Button variant="outline-dark" xs={2} />
+      <Placeholder.Button variant="outline-dark" xs={2} />
+    </div>
+
+    {/* Toggle and Add Button Skeleton */}
+    <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
+      <Placeholder.Button variant="outline-secondary" xs={3} />
+      <Placeholder.Button variant="success" xs={3} />
+    </div>
+
+    {/* Recipe Cards Skeleton */}
+    <Row className="g-4 justify-content-center">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Col key={i} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+          <Card className="recipe-card h-100" style={{ width: '100%' }}>
+            <Card.Body>
+              {/* Badge and Heart Skeleton */}
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={4} className="rounded-pill" style={{ height: '24px' }} />
+                </Placeholder>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder
+                    style={{
+                      width: '20px',
+                      height: '20px',
+                      borderRadius: '50%',
+                    }}
+                  />
+                </Placeholder>
+              </div>
+
+              {/* Title Skeleton */}
+              <div className="mb-2">
+                <Placeholder as="h5" animation="glow">
+                  <Placeholder xs={9} />
+                </Placeholder>
+              </div>
+
+              {/* Description Skeleton */}
+              <Placeholder as="p" animation="glow" className="mb-3">
+                <Placeholder xs={12} size="sm" />
+                <Placeholder xs={10} size="sm" />
+                <Placeholder xs={8} size="sm" />
+              </Placeholder>
+
+              {/* Stats Section Skeleton */}
+              <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
+                {[1, 2, 3].map((stat) => (
+                  <div key={stat} className="flex-fill">
+                    <Placeholder as="div" animation="glow">
+                      <Placeholder xs={8} className="fw-bold fs-5 mb-1" />
+                      <Placeholder xs={10} size="sm" />
+                    </Placeholder>
+                  </div>
+                ))}
+              </div>
+
+              {/* Button Skeleton */}
+              <div className="d-flex justify-content-center">
+                <Placeholder.Button variant="success" xs={9} style={{ height: '42px' }} />
+              </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  </Container>
+);
 
 const Recipes: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -180,8 +257,9 @@ const Recipes: React.FC = () => {
     fetchUserIngredients();
   }, []);
 
+  // Show skeleton while loading
   if (loading) {
-    return <div className="min-h-screen d-flex justify-content-center align-items-center"><Loading /></div>;
+    return <RecipesSkeleton />;
   }
 
   if (notFound) {

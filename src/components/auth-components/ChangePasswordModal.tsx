@@ -11,7 +11,7 @@ import swal from 'sweetalert';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import changePassword from '@/lib/dbActions';
-import LoadingSpinner from '../LoadingSpinner';
+// import LoadingSpinner from '../LoadingSpinner';
 
 interface Props {
   show: boolean;
@@ -61,9 +61,9 @@ const ChangePasswordModal: React.FC<Props> = ({ show, onHide }) => {
     onHide();
   };
 
-  if (status === 'loading') {
-    return <LoadingSpinner />;
-  }
+//   if (status === 'loading') {
+//     return <LoadingSpinner />;
+//   }
 
   return (
     <Modal show={show} onHide={onHide} centered>

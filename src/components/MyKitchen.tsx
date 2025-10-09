@@ -5,7 +5,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
-import { Container, Button, Row } from 'react-bootstrap';
+import { Container, Button, Row, Card, Placeholder } from 'react-bootstrap';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import IngredientTable from '@/components/kitchen-components/IngredientTable';
@@ -54,6 +54,102 @@ type House = {
   storages: Storage[];
 };
 
+// Loading Skeleton Component
+const KitchenSkeleton: React.FC = () => (
+  <Container className="mb-12 min-h-screen mt-5">
+    <div style={{ marginTop: '24px' }}>
+      {/* House Tab Skeleton */}
+      <div className="mb-4">
+        <Placeholder as="div" animation="glow">
+          <Placeholder xs={3} className="rounded" style={{ height: '40px' }} />
+        </Placeholder>
+      </div>
+
+      {/* Filter and Add Button Skeleton */}
+      <Row className="justify-content-end mb-3 pr-4">
+        <div className="d-flex gap-2 justify-content-end">
+          <Placeholder.Button variant="outline-dark" xs={2} />
+          <Placeholder.Button variant="success" xs={2} />
+        </div>
+      </Row>
+
+      {/* Storage Containers Skeleton */}
+      {[1, 2].map((storageIndex) => (
+        <Card key={storageIndex} className="mb-4 shadow-sm">
+          <Card.Header className="d-flex justify-content-between align-items-center">
+            <Placeholder as="h5" animation="glow">
+              <Placeholder xs={4} />
+            </Placeholder>
+            <Placeholder.Button variant="outline-secondary" xs={2} size="sm" />
+          </Card.Header>
+          <Card.Body>
+            {/* Table Header Skeleton */}
+            <div className="d-flex mb-3 pb-2 border-bottom">
+              <div style={{ width: '40%' }}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={6} size="sm" />
+                </Placeholder>
+              </div>
+              <div style={{ width: '20%' }}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={8} size="sm" />
+                </Placeholder>
+              </div>
+              <div style={{ width: '20%' }}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={8} size="sm" />
+                </Placeholder>
+              </div>
+              <div style={{ width: '20%' }}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={6} size="sm" />
+                </Placeholder>
+              </div>
+            </div>
+
+            {/* Table Rows Skeleton */}
+            {[1, 2, 3, 4].map((rowIndex) => (
+              <div key={rowIndex} className="d-flex align-items-center py-3 border-bottom">
+                <div style={{ width: '40%' }} className="d-flex align-items-center gap-2">
+                  <Placeholder
+                    as="div"
+                    animation="glow"
+                    style={{ width: '40px', height: '40px' }}
+                    className="rounded"
+                  >
+                    <Placeholder xs={12} style={{ height: '40px' }} />
+                  </Placeholder>
+                  <Placeholder as="div" animation="glow" style={{ flex: 1 }}>
+                    <Placeholder xs={8} />
+                  </Placeholder>
+                </div>
+                <div style={{ width: '20%' }}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={6} />
+                  </Placeholder>
+                </div>
+                <div style={{ width: '20%' }}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={8} size="sm" />
+                  </Placeholder>
+                </div>
+                <div style={{ width: '20%' }}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={5} className="rounded-pill" />
+                  </Placeholder>
+                </div>
+              </div>
+            ))}
+          </Card.Body>
+        </Card>
+      ))}
+
+      {/* Add Storage Button Skeleton */}
+      <Placeholder.Button variant="success" xs={2} className="mt-1" />
+    </div>
+  </Container>
+);
+
 const MyKitchen = () => {
   const [houses, setHouses] = useState<House[]>([]);
   const [activeHouseId, setActiveHouseId] = useState<number>(0);
@@ -61,33 +157,39 @@ const MyKitchen = () => {
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const userId = (useSession().data?.user as { id?: number })?.id;
 
   const [filters, setFilters] = useState<{ search: string; quantity?: number; status: string[] }>({
     search: '',
-    quantity: undefined, // Set a default max value
+    quantity: undefined,
     status: [],
   });
 
-  const [sortDirections, setSortDirections] = useState<
-  Record<number, 'asc' | 'desc'>
-  >({});
+  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
 
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
-    const res = await fetch(`/api/kitchen?userId=${userId}`);
-    const data = await res.json();
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/kitchen?userId=${userId}`);
+      const data = await res.json();
 
-    // Ensure we always store an array
-    const houseArray = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.houses)
-        ? data.houses
-        : [];
+      // Ensure we always store an array
+      const houseArray = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.houses)
+          ? data.houses
+          : [];
 
-    setHouses(houseArray);
-    if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
+      setHouses(houseArray);
+      if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
+    } catch (error) {
+      console.error('Error fetching houses:', error);
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
 
   useEffect(() => {
@@ -160,7 +262,7 @@ const MyKitchen = () => {
         const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
         const quantityMatch = filters.quantity !== undefined
           ? item.rawQuantity <= filters.quantity
-          : true; // Only filter if quantity is explicitly set
+          : true;
         return searchMatch && statusMatch && quantityMatch;
       });
 
@@ -171,6 +273,11 @@ const MyKitchen = () => {
         : b.name.localeCompare(a.name)),
     );
   };
+
+  // Show skeleton while loading
+  if (loading) {
+    return <KitchenSkeleton />;
+  }
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
@@ -200,7 +307,7 @@ const MyKitchen = () => {
                       onApply={(appliedFilters) =>
                         setFilters({
                           search: appliedFilters.search,
-                          quantity: appliedFilters.quantity, // Add this line
+                          quantity: appliedFilters.quantity,
                           status: appliedFilters.status,
                         })
                       }
