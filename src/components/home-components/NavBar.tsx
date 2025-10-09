@@ -69,7 +69,7 @@ const NavBar: React.FC = () => {
                     href="/my-kitchen"
                     className="nav-link-icon"
                   >
-                    <Refrigerator />
+                    <Refrigerator style={{ color: 'white' }} />
                     <span className="nav-link-text">My Kitchen</span>
                   </Nav.Link>
                   <Nav.Link
@@ -77,11 +77,11 @@ const NavBar: React.FC = () => {
                     href="/shopping-list"
                     className="nav-link-icon"
                   >
-                    <ListCheck />
+                    <ListCheck style={{ color: 'white' }} />
                     <span className="nav-link-text">Shopping List</span>
                   </Nav.Link>
                   <Nav.Link as={Link} href="/recipes" className="nav-link-icon">
-                    <ChefHat />
+                    <ChefHat style={{ color: 'white' }} />
                     <span className="nav-link-text">Recipes</span>
                   </Nav.Link>
                 </>
