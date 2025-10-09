@@ -5,10 +5,10 @@
 import slugify from 'slugify';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Container } from 'react-bootstrap';
+import { Container, Col, Row } from 'react-bootstrap';
 import Loading from '@/components/home-components/Loading';
 import CookingTimer from '@/components/cooking-components/CookingTimer';
-import { calculateTotalTime, checkIngredients } from '@/utils/recipeUtils';
+import CookingGuide from '@/components/cooking-components/CookingGuide';
 
 const CookingPage: React.FC = () => {
   const params = useParams();
@@ -17,7 +17,6 @@ const CookingPage: React.FC = () => {
   const [notFound, setNotFound] = useState<boolean>(false);
   const [recipe, setRecipe] = useState<any>(null);
 
-  // fetch recipe data
   useEffect(() => {
     const fetchRecipe = async () => {
       try {
@@ -49,7 +48,7 @@ const CookingPage: React.FC = () => {
 
   if (loading) {
     return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
+        <div className='min-h-screen d-flex justify-content-center align-items-center'>
             <Loading />
         </div>
     );
@@ -57,17 +56,37 @@ const CookingPage: React.FC = () => {
 
   if (notFound) {
     return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
+        <div className='min-h-screen d-flex justify-content-center align-items-center'>
             <p>Recipe not found.</p>
         </div>
     );
   }
 
   return (
-    <Container className="min-h-screen py-10">
-        <div className="d-flex flex-column align-items-center">
-            <CookingTimer cookTime={recipe.cookTime} prepTime={recipe.prepTime} downTime={recipe.downTime} />
+    <Container className='min-h-screen py-10'>
+        <div className='mb-4 text-center'>
+          <h1 className='display-5'>{recipe.name}</h1>
+          <p className='text-muted'>Follow the step-by-step guide below</p>
         </div>
+
+        <Row>
+          <Col>
+            <div className="sticky-top top-[20px]">
+              <div className="text-center mb-4">
+                <h3 className="text-center mb-4">Cooking Timer</h3>
+                <CookingTimer cookTime={recipe.cookTime} prepTime={recipe.prepTime} downTime={recipe.downTime} />
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <div className="sticky-top top-[20px]">
+              <div className="text-center mb-4">
+                <h3 className="text-center mb-4">Cooking Guide</h3>
+                <CookingGuide recipe={recipe} />
+              </div>
+            </div>
+          </Col>
+        </Row>
     </Container>
   );
 };

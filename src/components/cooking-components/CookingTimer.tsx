@@ -78,37 +78,41 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
   };
 
+  /* Progress Bar Logic
   const totalTimeInSeconds = totalTime * 60;
   const progressPercentage = totalTimeInSeconds > 0
     ? ((totalTimeInSeconds - timeLeft) / totalTimeInSeconds) * 100
     : 0;
+  */
 
   return (
-        <div className="text-center">
-      <div className="mb-3">
-        <h2 className="display-4">{formatTime(timeLeft)}</h2>
-        <div className="progress" style={{ height: '10px' }}>
-          <div
-            className="progress-bar"
-            style={{
-              width: `${progressPercentage}%`,
-              backgroundColor: timeLeft < 60 ? '#dc3545' : '#28a745',
-            }}
-          />
+      <div className='text-center'>
+        <div className='mb-3'>
+          <h2 className='display-4'>{formatTime(timeLeft)}</h2>
+          {/* Not using progress bar for now
+          <div className='progress' style={{ height: '10px', width: '300px', margin: '0 auto' }}>
+            <div
+              className='progress-bar'
+              style={{
+                width: `${progressPercentage}%`,
+                backgroundColor: timeLeft < 60 ? 'red' : 'green',
+              }}
+            />
+          </div>
+          */}
         </div>
-      </div>
 
-      <div className="d-flex justify-content-center gap-2">
+      <div className='d-flex justify-content-center gap-2'>
         {!isActive ? (
-          <Button variant="success" onClick={handleStart}>
+          <Button variant='success' onClick={handleStart}>
             {isPaused ? 'Resume' : 'Start'}
           </Button>
         ) : (
-          <Button variant="warning" onClick={handlePause}>
+          <Button variant='warning' onClick={handlePause}>
             Pause
           </Button>
         )}
-        <Button variant="danger" onClick={handleReset}>
+        <Button variant='danger' onClick={handleReset}>
           Reset
         </Button>
       </div>
