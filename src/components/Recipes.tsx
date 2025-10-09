@@ -282,7 +282,7 @@ const Recipes: React.FC = () => {
         </div>
         <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-          <Button 
+          <Button
             variant="success"
             onClick={() => setShowAddRecipeModal(true)}
           >
@@ -299,9 +299,9 @@ const Recipes: React.FC = () => {
         </Row>
 
       {/** Modals: AddRecipes Modal */}
-      <AddRecipesModal 
+      <AddRecipesModal
             show={showAddRecipeModal}
-            onHide={() => setShowAddRecipeModal(false)} 
+            onHide={() => setShowAddRecipeModal(false)}
             onSubmit={handleAddRecipe}
       />
       </Container>
