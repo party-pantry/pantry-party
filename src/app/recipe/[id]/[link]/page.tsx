@@ -10,7 +10,8 @@ import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
 import { Check, X } from 'lucide-react';
 import StarRating from '@/components/recipes-components/StarRating';
 import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
-import Loading from '@/components/home-components/Loading';
+// import Loading from '@/components/home-components/Loading';
+import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
 import {
   calculateTotalTime,
   getDifficulty,
@@ -58,12 +59,16 @@ const RecipePage: React.FC = () => {
       .then(data => setUserIngredients(new Set(data.ingredientIds)));
   }, [params.id, params.link, router]);
 
+  // if (loading) {
+  //   return (
+  //       <div className="min-h-screen d-flex justify-content-center align-items-center">
+  //           <Loading />
+  //       </div>
+  //   );
+  // }
+
   if (loading) {
-    return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
-            <Loading />
-        </div>
-    );
+    return <RecipeSkeleton />;
   }
 
   if (notFound) {
@@ -169,7 +174,7 @@ const RecipePage: React.FC = () => {
                           </Col>
                         </Row>
 
-                        <Button className="mt-1 mb-2" style={{ width: 250, height: 50 }} variant="outline-success">Add Missing Ingredients to Cart</Button>
+                        <Button className="mt-1 mb-2" style={{ fontSize: '0.9rem', width: 300, height: 50 }} variant="outline-success">Add Missing Ingredients to Shopping List</Button>
 
                         <NutritionAccordion nutrition={recipe.nutrition} />
                     </Col>
@@ -188,7 +193,7 @@ const RecipePage: React.FC = () => {
                                     </div>
                               ))}
                         </div>
-                        <Button className="mt-3" style={{ width: 250, height: 50 }} variant="success">Start Cooking</Button>
+                        <Button className="mt-3" style={{ fontSize: '1rem', width: 250, height: 50 }} variant="success">Start Cooking</Button>
                     </Col>
                 </Row>
             </div>
