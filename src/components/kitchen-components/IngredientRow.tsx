@@ -6,12 +6,12 @@ import React from 'react';
 interface Props {
   id: number;
   name: string;
-  image: string;
+  // image: string;
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
   onDelete: (id: number) => void;
-  onEdit: (id: number) => void;
+  onEdit: (ingredientId: number, stockId: number) => void;
 }
 
 const statusColors: Record<Props['status'], string> = {

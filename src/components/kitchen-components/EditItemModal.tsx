@@ -1,119 +1,174 @@
-/* eslint-disable react/prop-types */
-
 'use client';
 
+import { LocalStatus, LocalUnit } from '@/lib/Units';
+import { useState } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
-import { useState, useEffect } from 'react';
-
-interface Item {
-  id: number;
-  name: string;
-  image: string;
-  quantity: string;
-  updated: string;
-  status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-
-}
 
 interface Props {
   show: boolean;
   onHide: () => void;
-  itemToEdit: Item | null;
-  onUpdateItem: (item: Item) => void;
+  item: {
+    name: string;
+    quantity: number;
+    unit: LocalUnit;
+    status: LocalStatus;
+  };
+  onUpdateItem: (item: { name: string; quantity: number; unit: LocalUnit; status: LocalStatus }) => void;
 }
 
-const EditItemModal: React.FC<Props> = ({ show, onHide, itemToEdit, onUpdateItem }) => {
-  const [formData, setFormData] = useState<Item | null>(null);
+const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) => {
+  const [formData, setFormData] = useState({
+    name: item.name,
+    quantity: item.quantity,
+    unit: item.unit,
+    status: item.status,
+  });
+  const [errors, setErrors] = useState<string[]>([]);
 
-  useEffect(() => {
-    if (itemToEdit) {
-      setFormData(itemToEdit);
+  function handleClose() {
+    setErrors([]);
+    onHide();
+  }
+
+  function handleSave() {
+    setErrors([]);
+
+    const newErrors: string[] = [];
+
+    const nameValue = String(formData.name ?? '').trim();
+    if (!nameValue) newErrors.push('Name is required');
+
+    const quantityValue = Number(formData.quantity);
+    if (Number.isNaN(quantityValue) || quantityValue <= 0) newErrors.push('Quantity must be greater than zero');
+
+    const statusValue = String(formData.status ?? '').trim();
+    if (!statusValue) newErrors.push('Status must be selected');
+
+    // Normalize the typed unit
+    const unitValue = String(formData.unit ?? '').trim();
+    const allowedUnits = Object.values(LocalUnit).map((u) => String(u));
+    if (!allowedUnits.includes(unitValue)) newErrors.push('Please choose a valid unit from the list');
+
+    if (newErrors.length > 0) {
+      setErrors(newErrors);
+      return;
     }
-  }, [itemToEdit]);
 
-  if (!formData) return null;
+    // All good — clear errors and close
+    onUpdateItem({
+      name: nameValue,
+      quantity: quantityValue,
+      unit: unitValue as LocalUnit,
+      status: statusValue as LocalStatus,
+    });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (formData.name && formData.quantity) {
-      onUpdateItem({
-        ...formData,
-        updated: new Date().toLocaleDateString('en-US', {
-          month: 'short',
-          day: 'numeric',
-          year: 'numeric',
-        }),
-      });
-    }
-  };
-
-  const handleChange = (field: keyof Item, value: string) => {
-    // if previous state exists, copy existing fields and overwrite changed field, else null
-    setFormData((prev) => (prev ? { ...prev, [field]: value } : null));
-  };
+    handleClose();
+  }
 
   return (
     <Modal
       show={show}
-      onHide={onHide}
+      onHide={handleClose}
       backdrop="static"
-      keyboard={false}
+      keyboard={true}
       centered
-      contentClassName="custom-modal"
     >
-      <Modal.Header
-        style={{ borderBottom: 'none', paddingBottom: '0px' }}
-        closeButton
-      />
-      <Modal.Body className="text-center">
-        <h4>Edit Item</h4>
-        <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="itemName">
-            <Form.Control
-              className="text-center"
-              type="text"
-              placeholder="Item Name"
-              value={formData.name}
-              onChange={(e) => handleChange('name', e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <Row className="mb-3">
-            <Col>
-              <Form.Group controlId="itemQuantity">
+      <Modal.Header closeButton>
+        <Modal.Title>Edit Item</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Row>
+            <Col md={7}>
+              <Form.Group controlId="formItemName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+               type="text"
+               value={formData.name}
+               onChange={(e) => {
+                 setFormData({ ...formData, name: e.target.value });
+                 setErrors([]);
+               }}
+              />
+              </Form.Group>
+            </Col>
+            <Col md={3}>
+              <Form.Group controlId="formItemQuantity">
+                <Form.Label>Quantity</Form.Label>
                 <Form.Control
-                  className="text-center"
                   type="number"
-                  placeholder="Quantity"
                   value={formData.quantity}
-                  onChange={(e) => handleChange('quantity', e.target.value)}
-                  min="0"
-                  required
+                  onChange={(e) => {
+                    setFormData({ ...formData, quantity: Number(e.target.value) });
+                    setErrors([]);
+                  }}
                 />
               </Form.Group>
             </Col>
+            <Col md={2}>
+              <Form.Group controlId="formItemUnit">
+                <Form.Label>Unit</Form.Label>
+                {/* editable dropdown using datalist: user can type or pick from suggestions */}
+                <Form.Control
+                  type="text"
+                  list="unit-list"
+                  value={formData.unit}
+                  onChange={(e) => {
+                    setFormData({ ...formData, unit: e.target.value as LocalUnit });
+                    setErrors([]);
+                  }}
+                />
+                <datalist id="unit-list">
+                  {Object.values(LocalUnit).map((unit) => (
+                    <option key={unit} value={unit} />
+                  ))}
+                </datalist>
+              </Form.Group>
+            </Col>
+          </Row>
+          <Row>
             <Col>
-              <Form.Group controlId="itemStatus">
+              <Form.Group controlId="formItemStatus">
+                <Form.Label>Status</Form.Label>
                 <Form.Select
-                  className="text-center"
                   value={formData.status}
-                  onChange={(e) => handleChange('status', e.target.value)}
+                  onChange={(e) => {
+                    setFormData({ ...formData, status: e.target.value as LocalStatus });
+                    setErrors([]);
+                  }}
                 >
-                  <option value="Good">Good</option>
-                  <option value="Low Stock">Low Stock</option>
-                  <option value="Out of Stock">Out of Stock</option>
-                  <option value="Expired">Expired</option>
+                  <option value="">Select Status</option>
+                  {Object.values(LocalStatus).map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
                 </Form.Select>
               </Form.Group>
             </Col>
           </Row>
-
-          <Button variant="success" type="submit">
-            Save Changes
-          </Button>
+          {/* display all validation errors below the last row */}
+          {errors.length > 0 && (
+            <Row className="mt-3">
+              <Col>
+                <ul className="mb-0 text-danger">
+                  {errors.map((err, i) => (
+                    <li key={i}>{err}</li>
+                  ))}
+                </ul>
+              </Col>
+            </Row>
+          )}
         </Form>
       </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Close
+        </Button>
+        <Button variant="primary" onClick={handleSave}>
+          Save Changes
+        </Button>
+      </Modal.Footer>
     </Modal>
   );
 };

@@ -21,7 +21,7 @@ import { LocalUnit } from '@/lib/Units';
 type Item = {
   id: number;
   name: string;
-  image: string;
+  // image: string;
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
@@ -155,7 +155,6 @@ const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
   const [loading, setLoading] = useState(true);
 
   const userId = (useSession().data?.user as { id?: number })?.id;
@@ -193,34 +192,6 @@ const MyKitchen = () => {
   useEffect(() => {
     fetchHouses();
   }, [fetchHouses]);
-
-  const handleEditItem = (id: number) => {
-    const allItems: Item[] = houses.flatMap((house) =>
-      house.storages.flatMap((storage) =>
-        storage.stocks.map((stock) => ({
-          id: stock.id,
-          name: stock.ingredient.name,
-          image: stock.ingredient.image || '',
-          quantity: `${stock.quantity} ${stock.unit}`,
-          updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
-          status:
-            stock.status === 'GOOD'
-              ? 'Good'
-              : stock.status === 'LOW_STOCK'
-                ? 'Low Stock'
-                : stock.status === 'OUT_OF_STOCK'
-                  ? 'Out of Stock'
-                  : 'Expired',
-        })),
-      ),
-    );
-
-    const foundItem = allItems.find((item) => item.id === id);
-    if (foundItem) {
-      setItemToEdit(foundItem);
-      setShowEditModal(true);
-    }
-  };
 
   const handleSort = (storageId: number) => {
     setSortDirections((prev) => ({
@@ -384,8 +355,11 @@ const MyKitchen = () => {
       <EditItemModal
         show={showEditModal}
         onHide={() => setShowEditModal(false)}
-        itemToEdit={itemToEdit}
-        onUpdateItem={fetchHouses}
+        onUpdateItem={async () => {
+          await fetchHouses();
+          setShowEditModal(false);
+        }}
+        item={handleEditItem}
       />
     </Container>
   );

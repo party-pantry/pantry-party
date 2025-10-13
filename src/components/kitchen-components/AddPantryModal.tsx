@@ -51,7 +51,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
       show={show}
       onHide={onHide}
       backdrop="static"
-      keyboard={false}
+      keyboard={true}
       centered
       contentClassName="custom-modal"
     >
