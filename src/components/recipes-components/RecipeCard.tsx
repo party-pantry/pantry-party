@@ -20,10 +20,11 @@ interface RecipeCardProps {
       ingredient: { id: number, name: string };
     }[];
   };
-  userIngredientsId?: Set<number>
+  userIngredientsId?: Set<number>;
+  searchTerm?: string;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm }) => {
   const router = useRouter();
   const link = slugify(recipe.name, { lower: true, strict: true });
 
@@ -44,10 +45,25 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
 
   const rating = Math.min(Math.max(recipe.rating ?? 0, 0), 5);
 
+  // Highlight searched words in recipe name and description
+  const highlightText = (text: string, term: string = '') => {
+    // Nothing to highlight in search (not found/empty search)
+    if (!term.trim()) return text;
+
+    // Create a regex expression to find the term, case insensitive
+    const regex = new RegExp(`(${term})`, 'gi');
+    const parts = text.split(regex);
+
+    return parts.map((part, index) => (part.toLowerCase() === term.toLowerCase() ? (
+        <span key={index} className="highlight">{part}</span>
+    ) : (
+      part
+    )));
+  };
+
   return (
     <Card className="recipe-card h-100">
       <CardBody>
-
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
           <Heart
@@ -62,10 +78,24 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId }) =>
         </div>
 
         <div className="d-flex align-items-center mb-2">
-          <CardTitle className="fs-4 mb-0">{recipe.name}</CardTitle>
+          <CardTitle className="fs-4 mb-0">
+            {highlightText(recipe.name, searchTerm)}
+          </CardTitle>
         </div>
 
-        <CardText className="recipe-card-description text-muted">{recipe.description}</CardText>
+        <CardText className="recipe-card-description text-muted">
+          {highlightText(recipe.description || '', searchTerm)}
+        </CardText>
+
+       {/* <CardText className="text-muted small">
+        Ingredients:{' '}
+        {recipe.ingredients.map((ing, i) => (
+          <span key={ing.ingredient.id}>
+            {highlightText(ing.ingredient.name, searchTerm)}
+            {i < recipe.ingredients.length - 1 ? ', ' : ''}
+          </span>
+        ))}
+      </CardText> */}
 
         <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
           {[

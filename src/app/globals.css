@@ -375,3 +375,9 @@ h5 {
     background-position: -200% 0;
   }
 }
+
+.highlight {
+  background-color: #fcebb2;
+  border-radius: 10px;
+  padding: 0 5px;
+}
