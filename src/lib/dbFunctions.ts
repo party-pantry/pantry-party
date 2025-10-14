@@ -199,6 +199,18 @@ export async function updateStock(data: {
   return updatedStock;
 }
 
+/* Delete stock item */
+export async function deleteStock(ingredientId: number, storageId: number) {
+  await prisma.stock.delete({
+    where: {
+      ingredientId_storageId: {
+        ingredientId,
+        storageId,
+      },
+    },
+  });
+}
+
 /* Create a new house */
 export async function addHouse(data: { name: string; address?: string; userId: number }) {
   await prisma.house.create({

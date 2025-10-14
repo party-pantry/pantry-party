@@ -41,7 +41,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     }
   }, [item, show]);
 
-  function handleClose() {
+  const handleClose = () => {
     setErrors([]);
     // Reset form data after closing
     setFormData({
@@ -51,9 +51,9 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
       status: '' as LocalStatus,
     });
     onHide();
-  }
+  };
 
-  async function handleSave() {
+  const handleSave = async () => {
     if (!item) return;
 
     setErrors([]);
@@ -111,7 +111,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <Modal

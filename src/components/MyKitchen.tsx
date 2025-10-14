@@ -8,6 +8,7 @@
 import { Container, Button, Row, Card, Placeholder, Col } from 'react-bootstrap';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import { LocalStatus, LocalUnit } from '@/lib/Units';
 import IngredientTable from '@/components/kitchen-components/IngredientTable';
 import StorageContainer from '@/components/kitchen-components/StorageContainer';
 import HomeTabSelection from '@/components/kitchen-components/HomeTabSelection';
@@ -16,12 +17,15 @@ import AddPantryModal from '@/components/kitchen-components/AddPantryModal';
 import KitchenFilterButton from '@/components/kitchen-components/KitchenFilterButton';
 import EditItemModal from '@/components/kitchen-components/EditItemModal';
 import KitchenSortButton from '@/components/kitchen-components/KitchenSortButton';
-import { LocalStatus, LocalUnit } from '@/lib/Units';
+import DeleteItemModal from './kitchen-components/DeleteItemModal';
 
-type Item = {
+type BaseItem = {
   id: number;
   ingredientId: number;
   storageId: number;
+};
+
+type Item = BaseItem & {
   name: string;
   // image: string;
   quantity: string;
@@ -30,20 +34,14 @@ type Item = {
   rawQuantity?: number;
 };
 
-type ShortItem = {
-  id: number,
-  ingredientId: number,
-  storageId: number,
-  name: string,
-  quantity: number,
-  unit: LocalUnit,
-  status: LocalStatus,
+type EditItem = BaseItem & {
+  name: string;
+  quantity: number;
+  unit: LocalUnit;
+  status: LocalStatus;
 };
 
-type Stock = {
-  id: number;
-  ingredientId: number;
-  storageId: number;
+type Stock = BaseItem & {
   quantity: number;
   unit: string;
   status: 'GOOD' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'EXPIRED';
@@ -169,7 +167,9 @@ const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [itemToEdit, setItemToEdit] = useState<ShortItem | null>(null);
+  const [showDeleteItemModal, setShowDeleteItemModal] = useState(false);
+  const [itemToEdit, setItemToEdit] = useState<EditItem | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<BaseItem | undefined>(undefined);
   const [loading, setLoading] = useState(true);
 
   const userId = (useSession().data?.user as { id?: number })?.id;
@@ -284,6 +284,27 @@ const MyKitchen = () => {
     }
   };
 
+  const handleDeleteItem = (ingredientId: number, storageId: number) => {
+    for (const house of houses) {
+      for (const storage of house.storages) {
+        const items = getDisplayedStocks(storage);
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        const item = items.find(item =>
+          item.storageId === storageId && item.ingredientId === ingredientId,
+        );
+        if (item) {
+          setItemToDelete({
+            id: item.id,
+            ingredientId: item.ingredientId,
+            storageId: item.storageId,
+          });
+          setShowDeleteItemModal(true);
+          return;
+        }
+      }
+    }
+  };
+
   if (loading) {
     return <KitchenSkeleton />;
   }
@@ -352,7 +373,10 @@ const MyKitchen = () => {
                     >
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
-                        onDelete={() => {}}
+                        onDelete={(ingredientId, storageId) => {
+                          handleDeleteItem(ingredientId, storageId);
+                          setShowDeleteItemModal(true);
+                        }}
                         onEdit={(ingredientId, storageId) => {
                           handleEditItem(ingredientId, storageId);
                           setShowEditModal(true);
@@ -405,6 +429,15 @@ const MyKitchen = () => {
           setShowEditModal(false);
         }}
         item={itemToEdit}
+      />
+      <DeleteItemModal
+        show={showDeleteItemModal}
+        onClose={() => setShowDeleteItemModal(false)}
+        onDelete={async () => {
+          await fetchHouses();
+          setShowDeleteItemModal(false);
+        }}
+        item={itemToDelete}
       />
     </Container>
   );

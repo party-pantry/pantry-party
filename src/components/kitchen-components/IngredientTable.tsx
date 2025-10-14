@@ -16,7 +16,7 @@ type Item = {
 
 interface Props {
   items: Item[];
-  onDelete: (id: number) => void;
+  onDelete: (ingredientId: number, storageId: number) => void;
   onEdit: (ingredientId: number, storageId: number) => void;
 }
 

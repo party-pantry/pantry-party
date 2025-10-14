@@ -12,7 +12,7 @@ interface Props {
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-  onDelete: (id: number) => void;
+  onDelete: (ingredientId: number, storageId: number) => void;
   onEdit: (ingredientId: number, storageId: number) => void;
 }
 
@@ -62,7 +62,7 @@ const IngredientRow: React.FC<Props> = ({
         </button>
         <button
           className="text-gray-600 hover:text-red-600"
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(ingredientId, storageId)}
         >
           🗑️
         </button>

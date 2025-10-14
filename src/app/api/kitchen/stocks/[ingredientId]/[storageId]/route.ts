@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 import { NextResponse } from 'next/server';
-import { updateStock } from '@/lib/dbFunctions';
+import { deleteStock, updateStock } from '@/lib/dbFunctions';
 import { Unit, Status } from '@prisma/client';
 import { LocalUnit, LocalStatus } from '@/lib/Units';
 
@@ -36,6 +36,20 @@ export async function PATCH(req: Request, { params }: { params: { ingredientId: 
     return NextResponse.json(JSON.parse(JSON.stringify(updatedStock)));
   } catch (error) {
     console.error('Error updating stock:', error);
+    return NextResponse.error();
+  }
+}
+
+export async function DELETE(req: Request, { params }: { params: { ingredientId: number, storageId: number } }) {
+  try {
+    const ingredientId = Number(params.ingredientId);
+    const storageId = Number(params.storageId);
+
+    await deleteStock(ingredientId, storageId);
+
+    return NextResponse.json({ message: 'Stock deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting stock:', error);
     return NextResponse.error();
   }
 }
