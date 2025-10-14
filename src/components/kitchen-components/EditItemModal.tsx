@@ -1,38 +1,65 @@
 'use client';
 
 import { LocalStatus, LocalUnit } from '@/lib/Units';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
 
 interface Props {
   show: boolean;
   onHide: () => void;
-  item: {
+  onUpdateItem: (item: { name: string; quantity: number; unit: LocalUnit; status: LocalStatus }) => void;
+  item?: {
+    id: number;
+    ingredientId: number;
+    storageId: number;
     name: string;
     quantity: number;
     unit: LocalUnit;
     status: LocalStatus;
-  };
-  onUpdateItem: (item: { name: string; quantity: number; unit: LocalUnit; status: LocalStatus }) => void;
+  } | null;
 }
 
 const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) => {
   const [formData, setFormData] = useState({
-    name: item.name,
-    quantity: item.quantity,
-    unit: item.unit,
-    status: item.status,
+    name: '',
+    quantity: 0,
+    unit: '' as LocalUnit,
+    status: '' as LocalStatus,
   });
   const [errors, setErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  // Populate form with item
+  useEffect(() => {
+    if (item && show) {
+      setFormData({
+        name: item.name,
+        quantity: item.quantity,
+        unit: item.unit,
+        status: item.status,
+      });
+    }
+  }, [item, show]);
 
   function handleClose() {
     setErrors([]);
+    // Reset form data after closing
+    setFormData({
+      name: '',
+      quantity: 0,
+      unit: '' as LocalUnit,
+      status: '' as LocalStatus,
+    });
     onHide();
   }
 
-  function handleSave() {
-    setErrors([]);
+  async function handleSave() {
+    if (!item) return;
 
+    setErrors([]);
+    setLoading(true);
+
+    // Error handling with missing form fields
     const newErrors: string[] = [];
 
     const nameValue = String(formData.name ?? '').trim();
@@ -51,18 +78,39 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
 
     if (newErrors.length > 0) {
       setErrors(newErrors);
+      setLoading(false);
       return;
     }
 
-    // All good — clear errors and close
-    onUpdateItem({
-      name: nameValue,
-      quantity: quantityValue,
-      unit: unitValue as LocalUnit,
-      status: statusValue as LocalStatus,
-    });
+    try {
+      const response = await fetch(`/api/kitchen/stocks/${item.ingredientId}/${item.storageId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          newName: nameValue,
+          quantity: quantityValue,
+          unit: unitValue,
+          status: statusValue,
+        }),
+      });
 
-    handleClose();
+      if (!response.ok) {
+        throw new Error('Failed to update item');
+      }
+
+      onUpdateItem({
+        name: nameValue,
+        quantity: quantityValue,
+        unit: unitValue as LocalUnit,
+        status: statusValue as LocalStatus,
+      });
+
+      handleClose();
+    } catch (error) {
+      console.error('Error updating item:', error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -85,6 +133,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
               <Form.Control
                type="text"
                value={formData.name}
+               placeholder={item?.name || 'Enter item name'}
                onChange={(e) => {
                  setFormData({ ...formData, name: e.target.value });
                  setErrors([]);
@@ -98,6 +147,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 <Form.Control
                   type="number"
                   value={formData.quantity}
+                  placeholder={String(item?.quantity ?? '')}
                   onChange={(e) => {
                     setFormData({ ...formData, quantity: Number(e.target.value) });
                     setErrors([]);
@@ -113,6 +163,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                   type="text"
                   list="unit-list"
                   value={formData.unit}
+                  placeholder={item?.unit || ''}
                   onChange={(e) => {
                     setFormData({ ...formData, unit: e.target.value as LocalUnit });
                     setErrors([]);
@@ -162,10 +213,10 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={handleClose}>
+        <Button variant="secondary" onClick={handleClose} disabled={loading}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSave}>
+        <Button variant="primary" onClick={handleSave} disabled={loading}>
           Save Changes
         </Button>
       </Modal.Footer>

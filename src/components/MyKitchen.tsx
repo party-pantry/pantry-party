@@ -16,10 +16,12 @@ import AddPantryModal from '@/components/kitchen-components/AddPantryModal';
 import KitchenFilterButton from '@/components/kitchen-components/KitchenFilterButton';
 import EditItemModal from '@/components/kitchen-components/EditItemModal';
 import KitchenSortButton from '@/components/kitchen-components/KitchenSortButton';
-import { LocalUnit } from '@/lib/Units';
+import { LocalStatus, LocalUnit } from '@/lib/Units';
 
 type Item = {
   id: number;
+  ingredientId: number;
+  storageId: number;
   name: string;
   // image: string;
   quantity: string;
@@ -28,8 +30,20 @@ type Item = {
   rawQuantity?: number;
 };
 
+type ShortItem = {
+  id: number,
+  ingredientId: number,
+  storageId: number,
+  name: string,
+  quantity: number,
+  unit: LocalUnit,
+  status: LocalStatus,
+};
+
 type Stock = {
   id: number;
+  ingredientId: number;
+  storageId: number;
   quantity: number;
   unit: string;
   status: 'GOOD' | 'LOW_STOCK' | 'OUT_OF_STOCK' | 'EXPIRED';
@@ -155,6 +169,7 @@ const MyKitchen = () => {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [itemToEdit, setItemToEdit] = useState<ShortItem | null>(null);
   const [loading, setLoading] = useState(true);
 
   const userId = (useSession().data?.user as { id?: number })?.id;
@@ -204,6 +219,8 @@ const MyKitchen = () => {
     const allItems: Item[] = storage.stocks
       .map((stock) => ({
         id: stock.id,
+        ingredientId: stock.ingredient.id,
+        storageId: stock.storageId,
         name: stock.ingredient.name,
         image: stock.ingredient.image || '',
         quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit
@@ -240,6 +257,31 @@ const MyKitchen = () => {
         ? a.name.localeCompare(b.name)
         : b.name.localeCompare(a.name)),
     );
+  };
+
+  const handleEditItem = (ingredientId: number, storageId: number) => {
+    for (const house of houses) {
+      for (const storage of house.storages) {
+        const items = getDisplayedStocks(storage);
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        const item = items.find(item =>
+          item.storageId === storageId && item.ingredientId === ingredientId,
+        );
+        if (item) {
+          setItemToEdit({
+            id: item.id,
+            ingredientId: item.ingredientId,
+            storageId: item.storageId,
+            name: item.name,
+            quantity: item.rawQuantity ?? 0,
+            unit: (item.quantity.split(' ')[1] as LocalUnit) ?? '' as LocalUnit,
+            status: item.status as LocalStatus,
+          });
+          setShowEditModal(true);
+          return;
+        }
+      }
+    }
   };
 
   if (loading) {
@@ -311,7 +353,10 @@ const MyKitchen = () => {
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={() => {}}
-                        onEdit={(id) => handleEditItem(id)}
+                        onEdit={(ingredientId, storageId) => {
+                          handleEditItem(ingredientId, storageId);
+                          setShowEditModal(true);
+                        }}
                       />
                     </StorageContainer>
                   ))}
@@ -359,7 +404,7 @@ const MyKitchen = () => {
           await fetchHouses();
           setShowEditModal(false);
         }}
-        item={handleEditItem}
+        item={itemToEdit}
       />
     </Container>
   );

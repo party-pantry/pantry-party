@@ -6,6 +6,8 @@ import IngredientRow from './IngredientRow';
 type Item = {
   id: number;
   name: string;
+  ingredientId: number;
+  storageId: number;
   // image: string;
   quantity: string;
   updated: string;
@@ -15,7 +17,7 @@ type Item = {
 interface Props {
   items: Item[];
   onDelete: (id: number) => void;
-  onEdit: (ingredientId: number, stockId: number) => void;
+  onEdit: (ingredientId: number, storageId: number) => void;
 }
 
 // Mockup UI of what list of ingredients table could look like
