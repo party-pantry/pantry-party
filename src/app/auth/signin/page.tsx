@@ -9,7 +9,7 @@ const NotFoundPage = () => (
       style={{
         display: 'flex',
         flexDirection: 'column',
-        minHeight: '80vh',
+        minHeight: '100vh',
         margin: 0,
       }}
     >
