@@ -16,13 +16,20 @@ interface Props {
 
 const DeleteItemModal: React.FC<Props> = ({ show, onClose, onDelete, item }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [dontShow, setDontShow] = useState(false);
+  const autoDeleteRunRef = React.useRef(false);
 
   // Handle deletion with modal
   const handleDelete = async () => {
     if (!item) return;
 
     if (dontShowAgain) {
-      localStorage.setItem('dontShowDeleteModal', 'true');
+      try {
+        localStorage.setItem('dontShowDeleteModal', 'true');
+        setDontShow(true);
+      } catch (e) {
+        // ignore localStorage errors
+      }
     }
 
     try {
@@ -37,27 +44,48 @@ const DeleteItemModal: React.FC<Props> = ({ show, onClose, onDelete, item }) => 
     }
   };
 
-  const dontShow = localStorage.getItem('dontShowDeleteModal') === 'true';
-
+  // Read the user's preference from localStorage once on mount.
   useEffect(() => {
-    if (show && dontShow) {
-      (async () => {
-        if (!item) return;
-        try {
-          await fetch(`/api/kitchen/stocks/${item.ingredientId}/${item.storageId}`, {
-            method: 'DELETE',
-          });
-          onDelete();
-        } catch (error) {
-          console.error('Error auto-deleting item:', error);
-        } finally {
-          onClose();
-        }
-      })();
+    try {
+      const val = localStorage.getItem('dontShowDeleteModal');
+      setDontShow(val === 'true');
+    } catch (e) {
+      // localStorage may be unavailable in some environments; default to false
+      setDontShow(false);
     }
+  }, []);
+
+  // Auto-delete when the parent requests the modal (show === true) and the
+  // user previously opted out of the modal. Use a ref to ensure the auto-delete
+  // only runs once per show event and doesn't double-run on re-renders.
+  useEffect(() => {
+    if (!show || !dontShow) return;
+    if (autoDeleteRunRef.current) return;
+    autoDeleteRunRef.current = true;
+
+    (async () => {
+      if (!item) return;
+      try {
+        await fetch(`/api/kitchen/stocks/${item.ingredientId}/${item.storageId}`, {
+          method: 'DELETE',
+        });
+        onDelete();
+      } catch (error) {
+        console.error('Error auto-deleting item:', error);
+      } finally {
+        onClose();
+      }
+    })();
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [show, item]);
+  }, [show, item, dontShow]);
+
+  // Reset the auto-delete tracking when the modal is closed so future opens
+  useEffect(() => {
+    if (!show) {
+      autoDeleteRunRef.current = false;
+    }
+  }, [show]);
 
   if (!show || dontShow) {
     return null;
