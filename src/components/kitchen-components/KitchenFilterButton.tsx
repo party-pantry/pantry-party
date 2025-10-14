@@ -6,9 +6,10 @@ const statusOptions = ['Good', 'Low Stock', 'Out of Stock', 'Expired'];
 
 interface KitchenFilterButtonProps {
   onApply?: (filters: { search: string; quantity: number; status: string[] }) => void;
+  onSearchChange?: (search: string) => void;
 }
 
-const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) => {
+const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply, onSearchChange }) => {
   const [quantity, setQuantity] = useState(1000);
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string[]>([]);
@@ -55,7 +56,11 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) =>
           <Form.Control
             placeholder="Search..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              const { value } = e.target;
+              setSearch(value);
+              if (onSearchChange) onSearchChange(value);
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 handleApply();

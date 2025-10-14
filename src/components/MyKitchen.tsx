@@ -5,7 +5,7 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
-import { Container, Button, Row } from 'react-bootstrap';
+import { Container, Button, Row, Card, Placeholder, Col } from 'react-bootstrap';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import IngredientTable from '@/components/kitchen-components/IngredientTable';
@@ -54,6 +54,101 @@ type House = {
   storages: Storage[];
 };
 
+// Loading Skeleton Component
+const KitchenSkeleton: React.FC = () => (
+  <Container className="mb-12 min-h-screen mt-5">
+    <div className="mt-4">
+      {/* House Tab Skeleton */}
+      <div className="mb-4">
+        <Placeholder as="div" animation="glow">
+          <Placeholder xs={3} className="rounded py-3" />
+        </Placeholder>
+      </div>
+
+      {/* Filter and Add Button Skeleton */}
+      <Row className="justify-content-end mb-3">
+        <Col xs="auto" className="d-flex gap-2">
+          <Placeholder.Button variant="outline-dark" className="px-4" />
+          <Placeholder.Button variant="success" className="px-4" />
+        </Col>
+      </Row>
+
+      {/* Storage Containers Skeleton */}
+      {[1, 2].map((storageIndex) => (
+        <Card key={storageIndex} className="mb-4 shadow-sm">
+          <Card.Header className="d-flex justify-content-between align-items-center">
+            <Placeholder as="h5" animation="glow">
+              <Placeholder xs={4} />
+            </Placeholder>
+            <Placeholder.Button variant="outline-secondary" size="sm" xs={2} />
+          </Card.Header>
+          <Card.Body>
+            {/* Table Header Skeleton */}
+            <Row className="mb-3 pb-2 border-bottom">
+              <Col xs={5}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={6} size="sm" />
+                </Placeholder>
+              </Col>
+              <Col xs={2}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={8} size="sm" />
+                </Placeholder>
+              </Col>
+              <Col xs={3}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={8} size="sm" />
+                </Placeholder>
+              </Col>
+              <Col xs={2}>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder xs={6} size="sm" />
+                </Placeholder>
+              </Col>
+            </Row>
+
+            {/* Table Rows Skeleton */}
+            {[1, 2, 3, 4].map((rowIndex) => (
+              <Row key={rowIndex} className="align-items-center py-3 border-bottom">
+                <Col xs={5} className="d-flex align-items-center gap-2">
+                  <Placeholder
+                    as="div"
+                    animation="glow"
+                    className="rounded"
+                  >
+                    <Placeholder className="d-block" style={{ width: '40px', height: '40px' }} />
+                  </Placeholder>
+                  <Placeholder as="div" animation="glow" className="flex-grow-1">
+                    <Placeholder xs={8} />
+                  </Placeholder>
+                </Col>
+                <Col xs={2}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={6} />
+                  </Placeholder>
+                </Col>
+                <Col xs={3}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={8} size="sm" />
+                  </Placeholder>
+                </Col>
+                <Col xs={2}>
+                  <Placeholder as="div" animation="glow">
+                    <Placeholder xs={8} className="rounded-pill" />
+                  </Placeholder>
+                </Col>
+              </Row>
+            ))}
+          </Card.Body>
+        </Card>
+      ))}
+
+      {/* Add Storage Button Skeleton */}
+      <Placeholder.Button variant="success" className="mt-1 px-4" />
+    </div>
+  </Container>
+);
+
 const MyKitchen = () => {
   const [houses, setHouses] = useState<House[]>([]);
   const [activeHouseId, setActiveHouseId] = useState<number>(0);
@@ -61,40 +156,44 @@ const MyKitchen = () => {
   const [showPantryModal, setShowPantryModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [itemToEdit, setItemToEdit] = useState<Item | null>(null);
+  const [loading, setLoading] = useState(true);
 
   const userId = (useSession().data?.user as { id?: number })?.id;
 
   const [filters, setFilters] = useState<{ search: string; quantity?: number; status: string[] }>({
     search: '',
-    quantity: undefined, // Set a default max value
+    quantity: undefined,
     status: [],
   });
 
-  const [sortDirections, setSortDirections] = useState<
-  Record<number, 'asc' | 'desc'>
-  >({});
+  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
 
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
-    const res = await fetch(`/api/kitchen?userId=${userId}`);
-    const data = await res.json();
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/kitchen?userId=${userId}`);
+      const data = await res.json();
 
-    // Ensure we always store an array
-    const houseArray = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.houses)
-        ? data.houses
-        : [];
+      const houseArray = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.houses)
+          ? data.houses
+          : [];
 
-    setHouses(houseArray);
-    if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
+      setHouses(houseArray);
+      if (houseArray.length > 0) setActiveHouseId(houseArray[0].id);
+    } catch (error) {
+      console.error('Error fetching houses:', error);
+    } finally {
+      setLoading(false);
+    }
   }, [userId]);
 
   useEffect(() => {
     fetchHouses();
   }, [fetchHouses]);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleEditItem = (id: number) => {
     const allItems: Item[] = houses.flatMap((house) =>
       house.storages.flatMap((storage) =>
@@ -160,7 +259,7 @@ const MyKitchen = () => {
         const statusMatch = filters.status.length > 0 ? filters.status.includes(item.status) : true;
         const quantityMatch = filters.quantity !== undefined
           ? item.rawQuantity <= filters.quantity
-          : true; // Only filter if quantity is explicitly set
+          : true;
         return searchMatch && statusMatch && quantityMatch;
       });
 
@@ -171,6 +270,10 @@ const MyKitchen = () => {
         : b.name.localeCompare(a.name)),
     );
   };
+
+  if (loading) {
+    return <KitchenSkeleton />;
+  }
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
@@ -200,9 +303,12 @@ const MyKitchen = () => {
                       onApply={(appliedFilters) =>
                         setFilters({
                           search: appliedFilters.search,
-                          quantity: appliedFilters.quantity, // Add this line
+                          quantity: appliedFilters.quantity,
                           status: appliedFilters.status,
                         })
+                      }
+                      onSearchChange={(value) =>
+                        setFilters((prev) => ({ ...prev, search: value }))
                       }
                     />
 
@@ -234,7 +340,7 @@ const MyKitchen = () => {
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={() => {}}
-                        onEdit={() => {}}
+                        onEdit={(id) => handleEditItem(id)}
                       />
                     </StorageContainer>
                   ))}

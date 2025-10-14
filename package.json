@@ -37,12 +37,15 @@
     "react": "^19.1.1",
     "react-bootstrap": "^2.10.10",
     "react-bootstrap-icons": "^1.11.6",
+    "react-circular-progressbar": "^2.2.0",
     "react-dom": "^19.1.1",
     "react-hook-form": "^7.62.0",
     "react-icons": "^5.5.0",
+    "react-pro-sidebar": "^1.1.0",
     "slugify": "^1.6.6",
     "sweetalert": "^2.1.2",
     "ts-node": "10.9.2",
+    "use-debounce": "^10.0.6",
     "yup": "^1.7.0"
   },
   "devDependencies": {
@@ -66,5 +69,10 @@
     "ts-node": "^10.9.2",
     "tsx": "^4.20.5",
     "typescript": "5.5"
+  },
+  "eslintConfig": {
+    "ignorePatterns": [
+      "generated/**"
+    ]
   }
 }
