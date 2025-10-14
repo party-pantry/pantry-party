@@ -16,6 +16,6 @@ const RecipesSearch: React.FC<RecipesSearchProps> = ({ searchTerm, setSearchTerm
                     onChange={(e) => setSearchTerm(e.target.value)}
                 />
         </div>
-  );
+);
 
 export default RecipesSearch;

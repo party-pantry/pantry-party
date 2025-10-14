@@ -128,10 +128,27 @@ const Recipes: React.FC = () => {
   const filteredAndSortedRecipes = useMemo(() => {
     let filtered = recipes;
 
+
     // Filter by search term (case-insensitive)
     if (searchTerm.trim()) {
-      filtered = filtered.filter(recipe => recipe.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      const lowerSearch = searchTerm.toLowerCase();
+
+      filtered = filtered.filter(recipe => {
+        // Search for any matches by recipe name
+        const nameMatch = recipe.name.toLowerCase().includes(lowerSearch);
+        // Search for any matches by any ingredient in the recipe
+        const ingredientMatch = recipe.ingredients?.some(
+          ing => ing.ingredient?.name?.toLowerCase().includes(lowerSearch)
+        );
+        // Search for any matches by recipe description
+        const descriptionMatch = recipe.description?.toLowerCase().includes(lowerSearch);
+
+        return nameMatch || ingredientMatch || descriptionMatch;
+      });
+      // Check if the recipe searches accordingly to the filter
+      // console.log('Filtered recipes:', filtered.map(r => r.name));
     }
+
 
     // Filter by "can make only"
     if (canMakeOnly) {
@@ -281,7 +298,11 @@ const Recipes: React.FC = () => {
         <Row className="g-4 justify-content-center">
           {filteredAndSortedRecipes.map(recipe => (
             <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
-              <RecipeCard recipe={recipe} userIngredientsId={userIngredientsId} />
+              <RecipeCard 
+                recipe={recipe} 
+                userIngredientsId={userIngredientsId} 
+                searchTerm={searchTerm}
+              />
             </Col>
           ))}
         </Row>
