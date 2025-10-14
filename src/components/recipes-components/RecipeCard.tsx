@@ -45,7 +45,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
 
   const rating = Math.min(Math.max(recipe.rating ?? 0, 0), 5);
 
-
   // Highlight searched words in recipe name and description
   const highlightText = (text: string, term: string = '') => {
     // Nothing to highlight in search (not found/empty search)
@@ -55,22 +54,16 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
     const regex = new RegExp(`(${term})`, 'gi');
     const parts = text.split(regex);
 
-    return parts.map((part, index) =>
-      part.toLowerCase() === term.toLowerCase() ? (
-        <span key={index} className="highlight">
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
+    return parts.map((part, index) => (part.toLowerCase() === term.toLowerCase() ? (
+        <span key={index} className="highlight">{part}</span>
+    ) : (
+      part
+    )));
   };
-
 
   return (
     <Card className="recipe-card h-100">
       <CardBody>
-
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
           <Heart

@@ -7,18 +7,20 @@ import Link from 'next/link';
 const Footer: React.FC = () => (
   <footer id="footer" className="custom-footer bg-primary py-3">
     <Container>
-      <Row className="">
-        <Col className="text-end ">
-          <h5>Quick Links<strong> |</strong></h5>
+      <Row className="align-items-center">
+        <Col className="text-end d-flex justify-content-end">
+          <h5>Quick Links</h5>
+          <div className="w-0.5 bg-white h-8 mx-3"></div>
         </Col>
-          <Col className="text-start">
-            <ul className="list-unstyled">
+          <Col className="text-start align-items-center">
+            <ul className="list-unstyled mb-0">
               <li><Link href="/#home" className="text-white text-decoration-none">Home</Link></li>
               <li><Link href="/#features" className="text-white text-decoration-none">Features</Link></li>
             </ul>
           </Col>
       </Row>
-      <Row className="mt-2">
+      {/* <div className="border-t border-white/30 mt-4"></div> */}
+      <Row className="mt-4">
         <Col>
           <p style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}>
             Managed by Pantry Party Organization
