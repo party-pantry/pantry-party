@@ -63,6 +63,7 @@ type Storage = {
 type House = {
   id: number;
   name: string;
+  address?: string;
   storages: Storage[];
 };
 
@@ -327,7 +328,7 @@ const MyKitchen = () => {
                 <HomeTabSelection
                   key={house.id}
                   id={house.id.toString()}
-                  houseArray={houses.map((h) => ({ id: h.id, name: h.name }))}
+                  houseArray={houses.map((h) => ({ houseId: h.id, name: h.name, address: h.address }))}
                   activeHouseId={activeHouseId}
                   selectActiveHouseId={setActiveHouseId}
                   onHouseAdded={fetchHouses}

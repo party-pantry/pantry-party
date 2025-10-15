@@ -11,8 +11,6 @@ export async function PATCH(req: Request, { params }: { params: { ingredientId: 
     const ingredientId = Number(params.ingredientId);
     const storageId = Number(params.storageId);
 
-    console.log('PATCH params:', params);
-    console.log('PATCH body:', { newName, quantity, unit, status });
     if (!newName || quantity === undefined || !unit || !status) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }

@@ -40,7 +40,7 @@ export async function createUser(credentials: {
 }
 
 /* Create new stock and able to create new ingredient */
-export async function addItem(data: {
+export async function addStock(data: {
   name: string;
   quantity: number;
   status: Status;
@@ -104,7 +104,7 @@ export async function addItem(data: {
   });
 }
 
-/* Update stock item */
+/* Edit stock item */
 export async function updateStock(data: {
   storageId: number;
   ingredientId: number;
@@ -220,6 +220,19 @@ export async function addHouse(data: { name: string; address?: string; userId: n
       userId: Number(data.userId),
     },
   });
+}
+
+/* Edit house by id */
+export async function updateHouse(houseId: number, data: { name: string, address?: string }) {
+  const updatedHouse = await prisma.house.update({
+    where: { id: houseId },
+    data: {
+      name: data.name,
+      address: data.address,
+    },
+  });
+
+  return updatedHouse;
 }
 
 /* Delete house by id */

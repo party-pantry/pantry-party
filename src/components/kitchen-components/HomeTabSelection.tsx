@@ -3,11 +3,12 @@
 //    have multiple storage spaces (i.e. fridge, freezer, pantry, spice rack, etc.)
 // */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
 import AddHouseModal from '@/components/AddHouseModal';
+import EditHouseModal from './EditHouseModal';
 
 interface HomeTabSelectionProps {
   // Might be good to have an id prop to keep track of containers
@@ -15,8 +16,9 @@ interface HomeTabSelectionProps {
   id?: string;
   children: React.ReactNode;
   houseArray: {
-    id: number;
+    houseId: number;
     name: string;
+    address?: string;
   }[];
   activeHouseId: number;
   selectActiveHouseId: (id: number) => void;
@@ -32,7 +34,8 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   onHouseAdded,
 }) => {
   // State to control the visibility of the AddHouseModal
-  const [showHouseModal, setShowHouseModal] = React.useState(false);
+  const [showHouseModal, setShowHouseModal] = useState(false);
+  const [showEditHouseModal, setShowEditHouseModal] = useState(false);
 
   const handleDeleteHouse = async (houseId: number) => {
     try {
@@ -66,8 +69,13 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
             style={{ flex: 1 }}
           >
             {houseArray.map(house => (
-              <Nav.Item key={house.id}>
-                <Nav.Link eventKey={house.id.toString()}>{house.name}</Nav.Link>
+              <Nav.Item key={house.houseId}>
+                <Nav.Link
+                  eventKey={house.houseId.toString()}
+                  onClick={() => setShowEditHouseModal(true)}
+                >
+                  {house.name}
+                </Nav.Link>
               </Nav.Item>
             ))}
             </Nav>
@@ -103,6 +111,22 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
           if (onHouseAdded) {
             await onHouseAdded();
           }
+        }}
+      />
+      <EditHouseModal
+        show={showEditHouseModal}
+        onClose={() => setShowEditHouseModal(false)}
+        onSave={async () => {
+          setShowEditHouseModal(false);
+          if (onHouseAdded) {
+            await onHouseAdded();
+          }
+        }}
+        // eslint-disable-next-line max-len
+        house={houseArray.find(house => house.houseId === activeHouseId) as {
+          houseId: number;
+          name: string;
+          address?: string;
         }}
       />
     </>

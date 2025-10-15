@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 
 interface Props {
@@ -17,7 +17,7 @@ interface Props {
 const DeleteItemModal: React.FC<Props> = ({ show, onClose, onDelete, item }) => {
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [dontShow, setDontShow] = useState(false);
-  const autoDeleteRunRef = React.useRef(false);
+  const autoDeleteRunRef = useRef(false);
 
   // Handle deletion with modal
   const handleDelete = async () => {
