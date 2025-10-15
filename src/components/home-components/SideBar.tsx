@@ -5,6 +5,7 @@ import { Sidebar, Menu, MenuItem, SubMenu, sidebarClasses } from 'react-pro-side
 import { Image, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { 
     House,
     Refrigerator,
@@ -17,6 +18,7 @@ import {
 } from 'lucide-react';
 
 const SideBar: React.FC = () => {
+    const { data: session } = useSession();
     const [collapsed, setCollapsed] = useState(false);
     const [toggled, setToggled] = useState(false);
     const [isBreakpoint, setIsBreakpoint] = useState(false);
@@ -93,19 +95,22 @@ const SideBar: React.FC = () => {
                         }}
                     >
                         <MenuItem component={<Link href="/" />} active={pathname === '/'} icon={<House />}>Home</MenuItem>
-                        <SubMenu label="My Kitchen" icon={<Refrigerator />} >
-                            <MenuItem component={<Link href="/my-kitchen" />} active={pathname === '/my-kitchen'}>Inventory</MenuItem>
-                            <MenuItem component={<Link href="/my-kitchen/barcode-scanner" />} active={pathname === '/my-kitchen/barcode-scanner'}>Barcode Scanner</MenuItem>
-                        </SubMenu>
-                        <SubMenu label="Shopping List" icon={<ListCheck />}>
-                            <MenuItem component={<Link href="/shopping-list" />} active={pathname === '/shopping-list'}>Dashboard</MenuItem>
-                            <MenuItem component={<Link href="/shopping-list/market-locator" />} active={pathname === '/shopping-list/market-locator'}>Market Locator</MenuItem>
-                        </SubMenu>
-                        <SubMenu label="Recipes" icon={<ChefHat />}>
-                            <MenuItem component={<Link href="/recipes" />} active={pathname === '/recipes'}>All Recipes</MenuItem>
-                            <MenuItem component={<Link href="/recipes/favorited" />} active={pathname === '/recipes/favorited'}>Favorited Recipes</MenuItem>
-                        </SubMenu>
-                        <div style={{ flexGrow: 1}}/>
+                        {session && (
+                            <>
+                                <SubMenu label="My Kitchen" icon={<Refrigerator />} >
+                                    <MenuItem component={<Link href="/my-kitchen" />} active={pathname === '/my-kitchen'}>Inventory</MenuItem>
+                                    <MenuItem component={<Link href="/my-kitchen/barcode-scanner" />} active={pathname === '/my-kitchen/barcode-scanner'}>Barcode Scanner</MenuItem>
+                                </SubMenu>
+                                <SubMenu label="Shopping List" icon={<ListCheck />}>
+                                    <MenuItem component={<Link href="/shopping-list" />} active={pathname === '/shopping-list'}>Dashboard</MenuItem>
+                                    <MenuItem component={<Link href="/shopping-list/market-locator" />} active={pathname === '/shopping-list/market-locator'}>Market Locator</MenuItem>
+                                </SubMenu>
+                                <SubMenu label="Recipes" icon={<ChefHat />}>
+                                    <MenuItem component={<Link href="/recipes" />} active={pathname === '/recipes'}>All Recipes</MenuItem>
+                                    <MenuItem component={<Link href="/recipes/favorited" />} active={pathname === '/recipes/favorited'}>Favorited Recipes</MenuItem>
+                                </SubMenu>
+                            </>
+                        )}
                         <MenuItem component={<Link href="/settings" />} active={pathname === '/settings'} icon={<Settings />}>Settings</MenuItem>
                     </Menu>
                 </div>
