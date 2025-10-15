@@ -1,15 +1,16 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Sidebar, Menu, MenuItem, SubMenu,sidebarClasses } from 'react-pro-sidebar';
+import { Sidebar, Menu, MenuItem, SubMenu, sidebarClasses } from 'react-pro-sidebar';
 import { Image, Button } from 'react-bootstrap';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-
+    House,
     Refrigerator,
     ListCheck,
     ChefHat,
+    Settings,
     ArrowRightToLine,
     ArrowLeftToLine,
     Github,
@@ -17,25 +18,15 @@ import {
 
 const SideBar: React.FC = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const [toggled, setToggled] = useState(false);
     const pathname = usePathname();
-
-    // TODO: Implement offcanvas for small screens
-    const checkScreen = (breakpoint = 768) => {
-        const [isSmall, setIsSmall] = useState(false);
-
-        useEffect(() => {
-            const check = () => setIsSmall(window.innerWidth < breakpoint);
-            check();
-            window.addEventListener('resize', check);
-            return () => window.removeEventListener('resize', check);
-        }, [breakpoint]);
-        return isSmall;
-    }
 
     return (
         <>
         <Sidebar 
             collapsed={collapsed}
+            toggled={toggled}
+            onBackdropClick={() => setToggled(false)}
             width="200px"
             collapsedWidth="85px"
             breakPoint="md"
@@ -93,7 +84,7 @@ const SideBar: React.FC = () => {
                 },
             }}
             >
-            
+            <MenuItem component={<Link href="/" />} active={pathname === '/'} icon={<House />}>Home</MenuItem>
             <SubMenu label="My Kitchen" icon={<Refrigerator />} >
                 <MenuItem component={<Link href="/my-kitchen" />} active={pathname === '/my-kitchen'}>Inventory</MenuItem>
                 <MenuItem component={<Link href="/my-kitchen/barcode-scanner" />}active={pathname === '/my-kitchen/barcode-scanner'}>Barcode Scanner</MenuItem>
@@ -106,10 +97,11 @@ const SideBar: React.FC = () => {
                 <MenuItem component={<Link href="/recipes" />} active={pathname === '/recipes'}>All Recipes</MenuItem>
                 <MenuItem component={<Link href="/recipes/favorited" />} active={pathname === '/recipes/favorited'}>Favorited Recipes</MenuItem>
             </SubMenu>
+            <div style={{ flexGrow: 1}}/>
+            <MenuItem component={<Link href="/settings" />} active={pathname === '/settings'} icon={<Settings />}>Settings</MenuItem>
             </Menu>
         </div>
-
-            <div className="p-3 flex flex-col items-center justify-center text-center">
+            <div className="p-3 d-flex flex-column align-items-center justify-content-center">
             {collapsed? (
                 <Link href="https://party-pantry.github.io/" target="_blank" rel="noopener noreferrer">
                 <Github className="text-white" />
@@ -130,7 +122,7 @@ const SideBar: React.FC = () => {
         </Sidebar>
 
         <Button 
-            className="position-fixed top-0 p-2 bg-success-custom border-0 rounded "
+            className="position-fixed top-0 p-2 bg-success-custom border-0 rounded d-none d-md-block"
             style = {{ 
             left: collapsed ? `60px` : `175px`,
             boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
@@ -140,6 +132,18 @@ const SideBar: React.FC = () => {
             onClick={() => setCollapsed(!collapsed)}
         >
             {!collapsed ? <ArrowLeftToLine color="white" size={20} /> : <ArrowRightToLine color="white" size={20} />}
+        </Button>
+
+        <Button
+            className="position-fixed top-0 start-0 p-2 bg-success-custom border-0 rounded d-md-none"
+            style = {{
+                margin: '1rem',
+                boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
+                zIndex: 10,
+            }}
+            onClick={() => { setToggled(!toggled); setCollapsed(false); }}
+        >
+            <ArrowRightToLine color="white" size={20} />
         </Button>
         </>
     )

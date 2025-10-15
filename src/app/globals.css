@@ -29,10 +29,6 @@ body {
 }
 
 /* Navbar */
-.navbar {
-  background-color: #3A5B4F !important;
-}
-
 .nav-link-icon {
   display: flex;
   align-items: center;
