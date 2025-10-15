@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
 // import NavBar from '../components/home-components/NavBar';
-// import TopBar from '../components/home-components/TopBar';
+import TopBar from '../components/home-components/TopBar';
 import SideBar from '../components/home-components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
@@ -48,7 +48,7 @@ export default function RootLayout({
           <div className="flex min-h-screen">
             <SideBar />
             <main className="flex-1">
-              {/* <TopBar /> */}
+              <TopBar />
               {children}
             </main>
           </div>
