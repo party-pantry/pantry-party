@@ -3,11 +3,11 @@
 import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
+import { User, UserPlus, Bell, ChevronDown, ChevronUp } from 'lucide-react';
 import ChangePasswordModal from '../auth-components/ChangePasswordModal';
 import SignInModal from '../auth-components/SignInModal';
 import SignUpParentModal from '../auth-components/SignUpParentModal';
 import SignOutModal from '../auth-components/SignOutModal';
-import { User, UserPlus, Bell, ChevronDown, ChevronUp} from 'lucide-react';
 
 const TopBar: React.FC = () => {
   const { data: session } = useSession();
@@ -82,7 +82,7 @@ const TopBar: React.FC = () => {
           </Nav>
         </Container>
       </Navbar>
-      
+
       <ChangePasswordModal show={showChangePassword} onHide={() => setShowChangePassword(false)} />
       <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
       <SignUpParentModal showSignUp={showSignUp} setShowSignUp={setShowSignUp} />

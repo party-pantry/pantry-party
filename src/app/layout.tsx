@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
-// import NavBar from '../components/home-components/NavBar';
 import TopBar from '../components/home-components/TopBar';
 import SideBar from '../components/home-components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -52,7 +51,6 @@ export default function RootLayout({
               {children}
             </main>
           </div>
-        {/* <Footer /> */}
         </body>
       </html>
     </SessionProviderWrapper>
