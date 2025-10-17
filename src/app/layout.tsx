@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
-import NavBar from '../components/home-components/NavBar';
-import Footer from '../components/home-components/Footer';
+import TopBar from '../components/home-components/TopBar';
+import SideBar from '../components/home-components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
@@ -44,10 +44,13 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
         >
-          {/* <NavBar /> */}
-          <NavBar />
-          {children}
-          <Footer />
+          <div className="flex min-h-screen">
+            <SideBar />
+            <main className="flex-1">
+              <TopBar />
+              {children}
+            </main>
+          </div>
         </body>
       </html>
     </SessionProviderWrapper>

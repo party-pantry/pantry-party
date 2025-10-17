@@ -81,7 +81,7 @@ const CookingPage: React.FC = () => {
 
         <Row className="gap-4 mt-5">
           <Col md={4} lg={3}>
-            <div className="sticky-top top-5">
+            <div className="sticky-top top-5" style={{ zIndex: '1' }}>
               <div className="text-center mb-3">
                 <CookingTimer
                   cookTime={recipe.cookTime}

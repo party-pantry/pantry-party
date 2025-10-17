@@ -29,10 +29,6 @@ body {
 }
 
 /* Navbar */
-.navbar {
-  background-color: #3A5B4F !important;
-}
-
 .nav-link-icon {
   display: flex;
   align-items: center;
@@ -88,6 +84,58 @@ body {
   transform: scaleY(1);
   opacity: 1;
   pointer-events: auto;
+}
+.notification-button {
+  background-color: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 50%;
+  padding: 0.5rem;
+  transition: all 0.25s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notification-button:hover {
+  background-color: #f5f5f5;
+  border-color: #d0d0d0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.notification-button:active {
+  background-color: #e8e8e8 !important;
+  border-color: #c0c0c0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.account-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #e0e0e0;
+  background-color: white;
+  color: black;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s ease;
+}
+
+.account-button:hover {
+  background-color: #f5f5f5;
+  color: black;
+  border-color: #d0d0d0;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.account-button:focus,
+.account-button:active,
+.account-button.active,
+.account-button.open,
+.account-button.show {
+  background-color: #e8e8e8 !important;
+  color: black !important;
+  border-color: #c0c0c0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* Footer */
