@@ -365,12 +365,14 @@ const MyKitchen = () => {
                       key={storage.id}
                       id={storage.id.toString()}
                       title={storage.name}
+                      onUpdate={fetchHouses}
                       feature={
                         <KitchenSortButton
                           label="Sort"
                           onSort={() => handleSort(storage.id)}
                         />
                       }
+                      storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
                     >
                       <IngredientTable
                         items={getDisplayedStocks(storage)}

@@ -5,7 +5,9 @@
 // */
 
 import React from 'react';
-import { Card, Col, Row } from 'react-bootstrap';
+import { Button, Card, Col, Row } from 'react-bootstrap';
+import { BsPencilSquare } from 'react-icons/bs';
+import EditPantryModal, { StorageInfo } from './EditPantryModal';
 
 // TODO: Add type prop for StorageContainer
 
@@ -13,18 +15,23 @@ interface StorageContainerProps {
   // Might be good to have an id prop to keep track of containers
   // eslint-disable-next-line react/require-default-props
   id?: string;
-  title: string;
+  title: React.ReactNode;
   children: React.ReactNode;
   feature: React.ReactNode;
+  onUpdate: () => void;
+  storageInfo: StorageInfo;
 }
 
-const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children, feature }) => (
-  <Card
-    id={id}
-    border=""
-    className="shadow-lg  mb-5"
-    style={{ borderRadius: '2rem', overflow: 'hidden' }}
-  >
+const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children, feature, onUpdate, storageInfo }) => {
+  const [showEditModal, setShowEditModal] = React.useState(false);
+
+  return (
+    <Card
+      id={id}
+      border=""
+      className="shadow-lg  mb-5"
+      style={{ borderRadius: '2rem', overflow: 'hidden' }}
+    >
     {/* Note: rounded-4 = larger border radius
             Other options: rounded-pill
             or style={{ borderRadius: "2rem" }} */
@@ -36,8 +43,20 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
       }}
     >
       <Row>
-        <Col>
-          <h2 className="ml-4 mb-0 mt-2">{title}</h2>
+        <Col className="d-flex align-items-center">
+          <h2 className="ml-4 mb-0 mt-2 d-flex align-items-center">
+            {title}
+            <Button
+              variant="link"
+              className="text-white ms-2 p-0"
+              onClick={() => {
+                setShowEditModal(true);
+              }}
+              aria-label="Edit storage"
+            >
+              <BsPencilSquare size={18} />
+            </Button>
+          </h2>
         </Col>
         <Col className="d-flex justify-content-end align-items-center mt-2 mr-2">
           {feature}
@@ -53,7 +72,20 @@ const StorageContainer: React.FC<StorageContainerProps> = ({ id, title, children
     >
       {children}
     </Card.Body>
+    <EditPantryModal
+      show={showEditModal}
+      onClose={() => setShowEditModal(false)}
+      onSave={async () => {
+        setShowEditModal(false);
+        if (onUpdate) {
+          await onUpdate();
+        }
+      }}
+      pantry={storageInfo}
+    />
+
   </Card>
-);
+  );
+};
 
 export default StorageContainer;

@@ -33,7 +33,6 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   selectActiveHouseId,
   onHouseAdded,
 }) => {
-  // State to control the visibility of the AddHouseModal
   const [showHouseModal, setShowHouseModal] = useState(false);
   const [showEditHouseModal, setShowEditHouseModal] = useState(false);
 

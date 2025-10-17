@@ -253,6 +253,19 @@ export async function addStorage(data: { name: string; type: Category; houseId: 
   });
 }
 
+/* Edit storage by id */
+export async function updateStorage(houseId: number, storageId: number, data: { name: string; category: string }) {
+  const updatedStorage = await prisma.storage.update({
+    where: { id: storageId },
+    data: {
+      name: data.name,
+      type: data.category as Category,
+    },
+  });
+
+  return updatedStorage;
+}
+
 /* Add item to shopping list (manual or from suggestion) */
 export async function addShoppingListItem(data: {
   userId: number;
