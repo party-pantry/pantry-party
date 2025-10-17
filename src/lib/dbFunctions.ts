@@ -40,7 +40,7 @@ export async function createUser(credentials: {
 }
 
 /* Create new stock and able to create new ingredient */
-export async function addItem(data: {
+export async function addStock(data: {
   name: string;
   quantity: number;
   status: Status;
@@ -104,6 +104,113 @@ export async function addItem(data: {
   });
 }
 
+/* Edit stock item */
+export async function updateStock(data: {
+  storageId: number;
+  ingredientId: number;
+  newName: string;
+  quantity: number;
+  unit: Unit;
+  status: Status;
+}) {
+  const sterilizedItemName = data.newName.trim().toLowerCase();
+
+  // Get the current stock to check current ingredient
+  const currentStock = await prisma.stock.findUnique({
+    where: {
+      ingredientId_storageId: {
+        ingredientId: data.ingredientId,
+        storageId: data.storageId,
+      },
+    },
+    include: { ingredient: true },
+  });
+
+  if (!currentStock) {
+    throw new Error(`Stock not found for storage ${data.storageId} and ingredient ${data.ingredientId}`);
+  }
+
+  // Check if name is changing
+  if (currentStock.ingredient.name !== sterilizedItemName) {
+    // Try to find existing ingredient with the new name
+    let targetIngredient = await prisma.ingredient.findFirst({
+      where: { name: sterilizedItemName },
+    });
+
+    // If ingredient doesn't exist, create it
+    if (!targetIngredient) {
+      try {
+        targetIngredient = await prisma.ingredient.create({
+          data: { name: sterilizedItemName },
+        });
+      } catch (error: any) {
+        // Handle race condition - ingredient might have been created by another request
+        if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
+          targetIngredient = await prisma.ingredient.findFirst({
+            where: { name: sterilizedItemName },
+          });
+          if (!targetIngredient) {
+            throw error;
+          }
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    // Delete the old stock entry
+    await prisma.stock.delete({
+      where: {
+        ingredientId_storageId: {
+          ingredientId: data.ingredientId,
+          storageId: data.storageId,
+        },
+      },
+    });
+
+    // Create new stock entry with new ingredient
+    const newStock = await prisma.stock.create({
+      data: {
+        ingredientId: targetIngredient.id,
+        storageId: data.storageId,
+        quantity: Number(data.quantity),
+        unit: data.unit as Unit,
+        status: data.status,
+      },
+    });
+
+    return newStock;
+  }
+  // Name hasn't changed, just update other fields
+  const updatedStock = await prisma.stock.update({
+    where: {
+      ingredientId_storageId: {
+        ingredientId: data.ingredientId,
+        storageId: data.storageId,
+      },
+    },
+    data: {
+      quantity: Number(data.quantity),
+      unit: data.unit as Unit,
+      status: data.status,
+    },
+  });
+
+  return updatedStock;
+}
+
+/* Delete stock item */
+export async function deleteStock(ingredientId: number, storageId: number) {
+  await prisma.stock.delete({
+    where: {
+      ingredientId_storageId: {
+        ingredientId,
+        storageId,
+      },
+    },
+  });
+}
+
 /* Create a new house */
 export async function addHouse(data: { name: string; address?: string; userId: number }) {
   await prisma.house.create({
@@ -113,6 +220,19 @@ export async function addHouse(data: { name: string; address?: string; userId: n
       userId: Number(data.userId),
     },
   });
+}
+
+/* Edit house by id */
+export async function updateHouse(houseId: number, data: { name: string, address?: string }) {
+  const updatedHouse = await prisma.house.update({
+    where: { id: houseId },
+    data: {
+      name: data.name,
+      address: data.address,
+    },
+  });
+
+  return updatedHouse;
 }
 
 /* Delete house by id */
@@ -131,6 +251,19 @@ export async function addStorage(data: { name: string; type: Category; houseId: 
       houseId: data.houseId,
     },
   });
+}
+
+/* Edit storage by id */
+export async function updateStorage(houseId: number, storageId: number, data: { name: string; category: string }) {
+  const updatedStorage = await prisma.storage.update({
+    where: { id: storageId },
+    data: {
+      name: data.name,
+      type: data.category as Category,
+    },
+  });
+
+  return updatedStorage;
 }
 
 /* Add item to shopping list (manual or from suggestion) */
@@ -158,7 +291,7 @@ export async function addShoppingListItem(data: {
       sourceStorageId: data.sourceStorageId,
     },
     include: {
-      ingredient: true,
+      Ingredient: true,
     },
   });
 
@@ -170,7 +303,7 @@ export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
     where: { userId },
     include: {
-      ingredient: true,
+      Ingredient: true,
     },
     orderBy: {
       addedDate: 'desc',

@@ -5,13 +5,15 @@ import React from 'react';
 
 interface Props {
   id: number;
+  ingredientId: number;
+  storageId: number;
   name: string;
-  image: string;
+  // image: string;
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
-  onDelete: (id: number) => void;
-  onEdit: (id: number) => void;
+  onDelete: (ingredientId: number, storageId: number) => void;
+  onEdit: (ingredientId: number, storageId: number) => void;
 }
 
 const statusColors: Record<Props['status'], string> = {
@@ -24,6 +26,8 @@ const statusColors: Record<Props['status'], string> = {
 const IngredientRow: React.FC<Props> = ({
   id,
   name,
+  ingredientId,
+  storageId,
   // image,
   quantity,
   updated,
@@ -52,13 +56,13 @@ const IngredientRow: React.FC<Props> = ({
       <div className="flex gap-2">
         <button
           className="text-gray-600 hover:text-blue-600"
-          onClick={() => onEdit(id)}
+          onClick={() => onEdit(ingredientId, storageId)}
         >
           ✏️
         </button>
         <button
           className="text-gray-600 hover:text-red-600"
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(ingredientId, storageId)}
         >
           🗑️
         </button>
