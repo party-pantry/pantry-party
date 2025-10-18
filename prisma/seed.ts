@@ -227,6 +227,7 @@ async function main() {
         name: recipe.name,
         description: recipe.description,
         difficulty: getDifficulty(recipe.difficulty),
+        isStarred: recipe.isStarred,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
         downTime: recipe.downTime,
