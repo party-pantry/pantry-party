@@ -6,11 +6,11 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Placeholder } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
-import { Star } from 'lucide-react';
 import RecipeCard from './recipes-components/RecipeCard';
 import RecipesSearch from './recipes-components/RecipesSearch';
 import RecipesFilterButton from './recipes-components/RecipesFilterButton';
 import ToggleReceipesCanMake from './recipes-components/ToggleRecepiesCanMake';
+import ToggleFavorites from './recipes-components/ToggleFavorites';
 import RecipesSortButton from './recipes-components/RecipesSortButton';
 import AddRecipesModal from './recipes-components/AddRecipesModal';
 import { checkIngredients } from '../utils/recipeUtils';
@@ -125,11 +125,6 @@ const Recipes: React.FC = () => {
   const handleSort = (sort: string, order: 'asc' | 'desc') => {
     setSortBy(sort);
     setSortOrder(order);
-  };
-
-  // Handler to toggle the favorites filter
-  const handleToggleShowFavorites = () => {
-    setShowFavoritesOnly(prev => !prev);
   };
 
   const handleToggleFavorite = (recipeId: number, newIsStarredStatus: boolean) => {
@@ -311,13 +306,14 @@ const Recipes: React.FC = () => {
           <RecipesSortButton onSort={handleSort}/>
         </div>
         <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
-          <Star
+          {/* <Star
             size={24}
             className="mr-3"
             fill={showFavoritesOnly ? 'orange' : 'none'}
             stroke={showFavoritesOnly ? 'black' : 'currentColor'}
             onClick={handleToggleShowFavorites}
-          />
+          /> */}
+          <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
           <AddRecipesModal />
         </div>
