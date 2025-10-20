@@ -3,7 +3,7 @@ import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import Recipes from '@/components/Recipes';
 
-const FavoriteRecipesPage = async () => {
+const RecipesPage = async () => {
   // Protect the page, only logged in users can access it.
   const session = await getServerSession(authOptions);
   loggedInProtectedPage(
@@ -19,4 +19,4 @@ const FavoriteRecipesPage = async () => {
   );
 };
 
-export default FavoriteRecipesPage;
+export default RecipesPage;

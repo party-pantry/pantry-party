@@ -6,6 +6,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Placeholder } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
+import { Star } from 'lucide-react';
 import RecipeCard from './recipes-components/RecipeCard';
 import RecipesSearch from './recipes-components/RecipesSearch';
 import RecipesFilterButton from './recipes-components/RecipesFilterButton';
@@ -105,6 +106,7 @@ const Recipes: React.FC = () => {
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [filters, setFilters] = useState<{
     difficulty: string[];
     totalTime: string[];
@@ -125,8 +127,27 @@ const Recipes: React.FC = () => {
     setSortOrder(order);
   };
 
+  // Handler to toggle the favorites filter
+  const handleToggleShowFavorites = () => {
+    setShowFavoritesOnly(prev => !prev);
+  };
+
+  const handleToggleFavorite = (recipeId: number, newIsStarredStatus: boolean) => {
+    setRecipes(currentRecipes => currentRecipes.map(recipe => {
+      if (recipe.id === recipeId) {
+        return { ...recipe, isStarred: newIsStarredStatus };
+      }
+      return recipe;
+    }));
+  };
+
   const filteredAndSortedRecipes = useMemo(() => {
     let filtered = recipes;
+
+    // Filter by favorited
+    if (showFavoritesOnly) {
+      filtered = filtered.filter(recipe => recipe.isStarred);
+    }
 
     // Filter by search term (case-insensitive)
     if (searchTerm.trim()) {
@@ -237,7 +258,7 @@ const Recipes: React.FC = () => {
     }
 
     return filtered;
-  }, [recipes, userIngredientsId, canMakeOnly, filters, sortBy, sortOrder, searchTerm]);
+  }, [recipes, userIngredientsId, canMakeOnly, filters, sortBy, sortOrder, searchTerm, showFavoritesOnly]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -284,11 +305,19 @@ const Recipes: React.FC = () => {
   return (
       <Container className="mb-12 min-h-screen mt-5">
         <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
+
           <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
           <RecipesFilterButton onApply={setFilters} />
           <RecipesSortButton onSort={handleSort}/>
         </div>
         <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
+          <Star
+            size={24}
+            className="mr-3"
+            fill={showFavoritesOnly ? 'orange' : 'none'}
+            stroke={showFavoritesOnly ? 'black' : 'currentColor'}
+            onClick={handleToggleShowFavorites}
+          />
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
           <AddRecipesModal />
         </div>
@@ -300,6 +329,7 @@ const Recipes: React.FC = () => {
                 recipe={recipe}
                 userIngredientsId={userIngredientsId}
                 searchTerm={searchTerm}
+                onToggleFavorite={handleToggleFavorite}
               />
             </Col>
           ))}

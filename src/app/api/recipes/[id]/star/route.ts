@@ -1,11 +1,11 @@
 /* eslint-disable import/prefer-default-export */
-
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // updates the isStarred status
 export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
-  const recipeId = parseInt(params.id, 10);
+  const { id } = await params;
+  const recipeId = parseInt(id, 10);
 
   if (Number.isNaN(recipeId)) {
     return NextResponse.json({ error: 'Invalid Recipe ID' }, { status: 400 });

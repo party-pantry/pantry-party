@@ -22,9 +22,10 @@ interface RecipeCardProps {
   };
   userIngredientsId?: Set<number>;
   searchTerm?: string;
+  onToggleFavorite: (recipeId: number, newIsStarredStatus: boolean) => void;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm, onToggleFavorite }) => {
   const router = useRouter();
   const link = slugify(recipe.name, { lower: true, strict: true });
 
@@ -42,10 +43,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
     const newIsStarred = !isStarred;
 
     setIsStarred(newIsStarred);
+    onToggleFavorite(recipe.id, newIsStarred);
 
     try {
       const response = await fetch(`/api/recipes/${recipe.id}/star`, {
-        method: 'PATCH', // partial update
+        // partial update
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -55,6 +58,8 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
       if (!response.ok) {
         setIsStarred(!newIsStarred);
         console.error('Failed to update favorite status on server.');
+      } else if (!newIsStarred) {
+        onToggleFavorite(recipe.id, newIsStarred);
       }
     } catch (error) {
       setIsStarred(!newIsStarred);
