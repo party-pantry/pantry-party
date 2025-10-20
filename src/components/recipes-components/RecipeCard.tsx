@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Recipe } from '@prisma/client';
-import { Heart } from 'lucide-react';
+import { Star } from 'lucide-react';
 import { Card, CardBody, CardTitle, CardText, Badge, Button } from 'react-bootstrap';
 import {
   calculateTotalTime,
@@ -22,9 +22,10 @@ interface RecipeCardProps {
   };
   userIngredientsId?: Set<number>;
   searchTerm?: string;
+  onToggleFavorite: (recipeId: number, newIsStarredStatus: boolean) => void;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm, onToggleFavorite }) => {
   const router = useRouter();
   const link = slugify(recipe.name, { lower: true, strict: true });
 
@@ -32,10 +33,41 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
     router.push(`/recipe/${recipe.id}/${link}`);
   };
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const [isStarred, setIsStarred] = useState(recipe.isStarred);
+  const [isToggling, setIsToggling] = useState(false);
 
-  // TODO: implement pinned recipes functionality
-  const toggleFavorite = () => setIsFavorited(!isFavorited);
+  const toggleFavorite = async () => {
+    if (isToggling) return;
+
+    setIsToggling(true);
+    const newIsStarred = !isStarred;
+
+    setIsStarred(newIsStarred);
+    onToggleFavorite(recipe.id, newIsStarred);
+
+    try {
+      const response = await fetch(`/api/recipes/${recipe.id}/star`, {
+        // partial update
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ isStarred: newIsStarred }),
+      });
+
+      if (!response.ok) {
+        setIsStarred(!newIsStarred);
+        console.error('Failed to update favorite status on server.');
+      } else if (!newIsStarred) {
+        onToggleFavorite(recipe.id, newIsStarred);
+      }
+    } catch (error) {
+      setIsStarred(!newIsStarred);
+      console.error('Error toggling favorite:', error);
+    } finally {
+      setIsToggling(false);
+    }
+  };
 
   const difficulty = getDifficulty(recipe.difficulty);
 
@@ -66,10 +98,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
       <CardBody>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
-          <Heart
+          <Star
             size={20}
-            stroke={isFavorited ? 'black' : 'currentColor'}
-            fill={isFavorited ? 'red' : 'none'}
+            stroke={isStarred ? 'black' : 'currentColor'}
+            fill={isStarred ? 'orange' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
             onClick={toggleFavorite}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}

@@ -64,6 +64,7 @@ model Recipe {
   name         String
   description  String?
   difficulty   Difficulty
+  isStarred    Boolean             @default(false)
   prepTime     Int
   cookTime     Int
   downTime     Int?

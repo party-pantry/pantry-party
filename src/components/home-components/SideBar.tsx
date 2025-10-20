@@ -140,12 +140,12 @@ const SideBar: React.FC = () => {
                                     >
                                         All Recipes
                                     </MenuItem>
-                                    <MenuItem
-                                        component={<Link href="/recipes/favorited" />}
-                                        active={pathname === '/recipes/favorited'}
+                                    {/* <MenuItem
+                                        component={<Link href="/recipes/favorites" />}
+                                        active={pathname === '/recipes/favorites'}
                                     >
-                                        Favorited Recipes
-                                    </MenuItem>
+                                        Favorites
+                                    </MenuItem> */}
                                 </SubMenu>
                             </>
                         )}
