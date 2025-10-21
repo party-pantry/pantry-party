@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 
-const LocationsPage = async () => {
+const SettingsPage = async () => {
   // Protect the page, only logged in users can access it.
   const session = await getServerSession(authOptions);
   loggedInProtectedPage(
@@ -13,9 +13,9 @@ const LocationsPage = async () => {
 
   return (
     <main>
-      TODO: Locations Page
+      TODO: Settings Page
     </main>
   );
 };
 
-export default LocationsPage;
+export default SettingsPage;
