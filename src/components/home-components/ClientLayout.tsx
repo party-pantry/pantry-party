@@ -12,7 +12,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <SideBar onCollapseChange={setCollapsed} />
       <main
         className={`flex-1 transition-all duration-300 ${
-          collapsed ? 'ml-[85px]' : 'ml-[200px]'
+          collapsed ? 'md:ml-[85px]' : 'md:ml-[200px]'
         }`}
       >
         <TopBar />
