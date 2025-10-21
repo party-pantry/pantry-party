@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import SignUpModal from './SignUpModal';
-import AddHouseModal from '../AddHouseModal';
+import AddHouseModal from '../kitchen-components/AddHouseModal';
 
 const SignUpParentModal = ({ showSignUp, setShowSignUp }:
 { showSignUp: boolean; setShowSignUp: (show: boolean) => void }) => {

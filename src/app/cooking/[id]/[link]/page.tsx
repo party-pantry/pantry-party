@@ -8,7 +8,7 @@ import Loading from '@/components/home-components/Loading';
 import CookingTimer from '@/components/cooking-components/CookingTimer';
 import CookingGuide from '@/components/cooking-components/CookingGuide';
 import CookingProgressBar from '@/components/cooking-components/CookingProgressBar';
-import CustomAlert from '@/components/CustomAlert';
+import CustomAlert from '@/components/cooking-components/CustomAlert';
 
 const CookingPage: React.FC = () => {
   const params = useParams();
