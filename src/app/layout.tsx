@@ -38,16 +38,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProviderWrapper>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
-        >
-          <SessionProviderWrapper>
-            <ClientLayout>{children}</ClientLayout>
-          </SessionProviderWrapper>
-        </body>
-      </html>
-    </SessionProviderWrapper>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
+      >
+        <SessionProviderWrapper>
+          <ClientLayout>{children}</ClientLayout>
+        </SessionProviderWrapper>
+      </body>
+    </html>
   );
 }
