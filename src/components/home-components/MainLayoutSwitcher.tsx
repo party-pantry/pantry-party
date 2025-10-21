@@ -1,8 +1,8 @@
-  /**
+/**
  * This component switches between ClientLayout and PublicLayout based on the user's authentication status.
  * User Logged in --> Sidebar layout (ClientLayout)
  * User Logged out --> Public layout (PublicLayout)
- */
+*/
 
 'use client';
 
