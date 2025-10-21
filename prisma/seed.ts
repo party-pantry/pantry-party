@@ -157,6 +157,8 @@ async function main() {
       create: {
         name: house.name,
         address: house.address,
+        latitude: house.latitude,
+        longitude: house.longitude,
         userId: ownerUser.id,
       },
     });
