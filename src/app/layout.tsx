@@ -1,10 +1,9 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
-import TopBar from '../components/home-components/TopBar';
-import SideBar from '../components/home-components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
 import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
+import ClientLayout from '../components/home-components/ClientLayout';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -44,13 +43,9 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
         >
-          <div className="flex min-h-screen">
-            <SideBar />
-            <main className="flex-1">
-              <TopBar />
-              {children}
-            </main>
-          </div>
+          <SessionProviderWrapper>
+            <ClientLayout>{children}</ClientLayout>
+          </SessionProviderWrapper>
         </body>
       </html>
     </SessionProviderWrapper>

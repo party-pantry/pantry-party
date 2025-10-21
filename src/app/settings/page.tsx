@@ -1,9 +1,8 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
-import Popup from '../../components/Popup';
 
-const PopupDemoPage = async () => {
+const SettingsPage = async () => {
   // Protect the page, only logged in users can access it.
   const session = await getServerSession(authOptions);
   loggedInProtectedPage(
@@ -14,10 +13,9 @@ const PopupDemoPage = async () => {
 
   return (
     <main>
-      <h1 className="text-2xl font-bold text-center mt-6">Popup Demo Page</h1>
-      <Popup />
+      TODO: Settings Page
     </main>
   );
 };
 
-export default PopupDemoPage;
+export default SettingsPage;

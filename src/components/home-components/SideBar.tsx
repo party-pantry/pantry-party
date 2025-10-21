@@ -11,19 +11,25 @@ import {
   Refrigerator,
   ListCheck,
   ChefHat,
+  MapPinned,
   Settings,
   ArrowRightToLine,
   ArrowLeftToLine,
   Github,
 } from 'lucide-react';
 
-const SideBar: React.FC = () => {
+interface SideBarProps {
+  onCollapseChange?: (collapsed: boolean) => void;
+}
+
+const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
   const [toggled, setToggled] = useState(false);
   const [isBreakpoint, setIsBreakpoint] = useState(false);
   const pathname = usePathname();
 
+  // Handle responsive breakpoint (switch between collapse and toggle)
   useEffect(() => {
     const handleResize = () => setIsBreakpoint(window.innerWidth <= 768);
     handleResize();
@@ -31,8 +37,14 @@ const SideBar: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  const handleCollapseChange = (change: boolean) => {
+    setCollapsed(change);
+    onCollapseChange?.(change);
+  };
+
   return (
         <>
+        <div className="fixed top-0 left-0 h-screen z-[1000] flex flex-col">
             <Sidebar
                 collapsed={collapsed}
                 toggled={toggled}
@@ -47,7 +59,6 @@ const SideBar: React.FC = () => {
                     height: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
-                    position: 'sticky',
                     border: 0,
                     top: 0,
                     boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
@@ -119,34 +130,27 @@ const SideBar: React.FC = () => {
                                         Barcode Scanner
                                     </MenuItem>
                                 </SubMenu>
-                                <SubMenu label="Shopping List" icon={<ListCheck />}>
-                                    <MenuItem
-                                        component={<Link href="/shopping-list" />}
-                                        active={pathname === '/shopping-list'}
-                                    >
-                                        Dashboard
-                                    </MenuItem>
-                                    <MenuItem
-                                        component={<Link href="/shopping-list/market-locator" />}
-                                        active={pathname === '/shopping-list/market-locator'}
-                                    >
-                                        Market Locator
-                                    </MenuItem>
-                                </SubMenu>
-                                <SubMenu label="Recipes" icon={<ChefHat />}>
-                                    <MenuItem
-                                        component={<Link href="/recipes" />}
-                                        active={pathname === '/recipes'}
-                                    >
-                                        All Recipes
-                                    </MenuItem>
-                                    {/* <MenuItem
-                                        component={<Link href="/recipes/favorites" />}
-                                        active={pathname === '/recipes/favorites'}
-                                    >
-                                        Favorites
-                                    </MenuItem> */}
-                                </SubMenu>
+                                <MenuItem
+                                    component={<Link href="/shopping-list" />}
+                                    active={pathname === '/shopping-list'}
+                                    icon={<ListCheck />}
+                                >
+                                    Shopping List
+                                </MenuItem>
+                                <MenuItem
+                                    component={<Link href="/recipes" />}
+                                    active={pathname === '/recipes'}
+                                    icon={<ChefHat />}
+                                >
+                                    Recipes
+                                </MenuItem>
+                                <MenuItem
+                                    component={<Link href="/locations" />}
+                                    active={pathname === '/locations'}
+                                    icon={<MapPinned />}
+                                >
+                                    Locations
+                                </MenuItem>
                             </>
                         )}
                         <MenuItem
@@ -202,7 +206,7 @@ const SideBar: React.FC = () => {
                       zIndex: 10,
                       boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
                     }}
-                    onClick={() => setCollapsed(!collapsed)}
+                    onClick={() => handleCollapseChange(!collapsed)}
                 >
                     {!collapsed ? (
                         <ArrowLeftToLine color="white" size={20} />
@@ -211,6 +215,7 @@ const SideBar: React.FC = () => {
                     )}
                 </Button>
             )}
+            </div>
         </>
   );
 };
