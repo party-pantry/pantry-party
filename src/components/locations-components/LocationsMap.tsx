@@ -1,51 +1,58 @@
 'use client';
 
 import React, { useEffect, useRef } from 'react';
-import 'ol/ol.css';
-import { Map, View, Feature } from 'ol';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
-import { OSM, Vector as VectorSource } from 'ol/source';
-import Point from 'ol/geom/Point';
-import { Style, Circle, Fill } from 'ol/style';
-import { fromLonLat } from 'ol/proj';
+import L, { LatLngExpression, Icon as LeafletIcon, popup } from 'leaflet';
 import { geocodeAddress } from '@/services/openRouteService';
+import 'leaflet/dist/leaflet.css';
+import { MapPin } from 'lucide-react';
+import { createMapPinIcon } from '@/utils/locationsUtils';
+
+const defaultView: LatLngExpression = [20.7, -157.5];
 
 const LocationsMap: React.FC = () => {
-    const mapRef = useRef<HTMLDivElement | null>(null);
-    const [map, setMap] = React.useState<Map | null>(null);
-
-    const vectorLayerRef = useRef(
-        new VectorLayer({
-            source: new VectorSource(),
-            style: new Style({
-                image: new Circle({ radius: 7, fill: new Fill({ color: 'red' }) }),
-            }),
-        })
-    );
+    const mapRef = useRef<L.Map | null>(null);
 
     useEffect(() => {
-        if (!mapRef.current) return;
+        if (mapRef.current) return;
 
-        const map = new Map({
-            target: mapRef.current,
-            layers: [
-                new TileLayer({
-                    source: new OSM(),
-                }),
-                vectorLayerRef.current,
-            ],
-            view: new View({
-                center: fromLonLat([0, 0]),
-                zoom: 2,
-            }),
+        const map = L.map('map', {
+            center: defaultView,
+            zoom: 7.5,
         });
-        setMap(map);
-        return () => map.setTarget(undefined);
+
+        mapRef.current = map;
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        map.locate({ setView: true, maxZoom: 15 });
+        
+        map.on('locationfound', (e: L.LocationEvent) => {
+            if (!mapRef.current) return;
+            
+            L.marker([e.latlng.lat, e.latlng.lng], {
+                icon: createMapPinIcon({
+                    pinColor: 'red',
+                    circleColor: 'white',
+                    size: 35,
+                    strokeColor: 'black',
+                    strokeWidth: 2,
+                })
+            })
+                .addTo(map)
+                .bindPopup('You are here')
+                .openPopup();
+        });
+        map.on('locationerror', () => {
+            alert('Could not get your location');
+        });
     }, []);
+
 
     return (
         <div>
-            <div ref={mapRef} className="w-full h-[500px]" />
+            <div id="map" className="w-full h-[500px]" />
         </div>
     )
 }
