@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
-import AddHouseModal from '@/components/AddHouseModal';
+import AddHouseModal from '@/components/kitchen-components/AddHouseModal';
 import EditHouseModal from './EditHouseModal';
 
 interface HomeTabSelectionProps {
