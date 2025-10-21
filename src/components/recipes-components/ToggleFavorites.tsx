@@ -20,7 +20,7 @@ const ToggleFavorites: React.FC<ToggleFavoritesProps> = ({ onToggleFavorites }) 
         {/* Favorited recipes toggle */}
         <Form.Check
             type="switch"
-            label="Show Starred"
+            label="Show Hearted Recipes"
             className="mt-3"
             checked={favoritesOnly}
             onChange={handleToggle}

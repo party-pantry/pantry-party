@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Recipe } from '@prisma/client';
-import { Star } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { Card, CardBody, CardTitle, CardText, Badge, Button } from 'react-bootstrap';
 import {
   calculateTotalTime,
@@ -98,10 +98,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
       <CardBody>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
-          <Star
+          <Heart
             size={20}
             stroke={isStarred ? 'black' : 'currentColor'}
-            fill={isStarred ? 'orange' : 'none'}
+            fill={isStarred ? 'red' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
             onClick={toggleFavorite}
             onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
