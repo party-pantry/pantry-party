@@ -12,7 +12,9 @@
     {
       "id": 1,
       "name": "Main House",
-      "address": "123 Test St",
+      "address": "2500 Campus Road, Honolulu, HI 96822",
+      "latitude": 21.296939,
+      "longitude": -157.817112,
       "storages": [1, 2, 3, 4]
     }
   ],
