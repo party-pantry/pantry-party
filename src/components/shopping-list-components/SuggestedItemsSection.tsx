@@ -30,7 +30,7 @@ const SuggestedItemsSection: React.FC<SuggestedItemsSectionProps> = ({
 
   return (
     <Card className="shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-      <Card.Header 
+      <Card.Header
         className="fs-5 fw-bold text-white"
         style={{ backgroundColor: '#3A5B4F', borderRadius: '1rem 1rem 0 0' }}
       >

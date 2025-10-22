@@ -33,7 +33,6 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
           Remove
         </Button>
       </div>
-      
       <div className="mb-3">
         <h5 className="fw-bold mb-2 text-decoration-line-through text-muted">{item.name}</h5>
         <p className="text-muted mb-0 fw-medium text-decoration-line-through">{item.quantity}</p>
@@ -45,7 +44,8 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
           { label: 'Status', value: 'Purchased' },
         ].map((stat) => (
           <div key={stat.label} className="flex-fill">
-            <div className={`fw-bold fs-5 ${stat.label === 'Price' && item.price ? 'text-success' : 'text-muted'} text-decoration-line-through`}>
+            <div className={`fw-bold fs-5 ${stat.label === 'Price' && item.price
+              ? 'text-success' : 'text-muted'} text-decoration-line-through`}>
               {stat.value}
             </div>
             <div className="text-muted small">{stat.label}</div>

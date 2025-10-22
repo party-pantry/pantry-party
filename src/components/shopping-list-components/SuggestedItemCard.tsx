@@ -39,11 +39,11 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
             <Badge bg={statusBadgeVariant} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
               {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
             </Badge>
-            <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
+            <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}
+            className="px-3 py-2" style={{ borderRadius: '1rem' }}>
               {item.suggestedPriority}
             </Badge>
           </div>
-          
           <div className="mb-3">
             <h6 className="fw-bold text-dark mb-2">{item.name}</h6>
             <p className="text-muted small mb-0">
@@ -52,9 +52,9 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
           </div>
 
           <div className="d-flex justify-content-center">
-            <Button 
-              variant="success" 
-              size="sm" 
+            <Button
+              variant="success"
+              size="sm"
               onClick={() => setShowModal(true)}
               className="px-4 py-2 fw-semibold"
               style={{ backgroundColor: '#3A5B4F', borderColor: '#3A5B4F', borderRadius: '0.5rem' }}
@@ -83,8 +83,8 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
             </Col>
             <Col md={6}>
               <Form.Label className="fw-bold text-dark">Category</Form.Label>
-              <Form.Select 
-                value={category} 
+              <Form.Select
+                value={category}
                 onChange={(e) => setCategory(e.target.value)}
                 className="border-2"
               >
@@ -101,8 +101,8 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
           <Button variant="outline-secondary" onClick={() => setShowModal(false)} className="px-4">
             Cancel
           </Button>
-          <Button 
-            variant="success" 
+          <Button
+            variant="success"
             onClick={handleAdd}
             className="px-4 fw-semibold"
             style={{ backgroundColor: '#3A5B4F', borderColor: '#3A5B4F' }}

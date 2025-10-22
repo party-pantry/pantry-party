@@ -37,7 +37,6 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           className="custom-checkbox"
         />
       </div>
-      
       <div className="mb-3">
         <h5 className="fw-bold mb-2 text-dark">{item.name}</h5>
         <p className="text-muted mb-0 fw-medium">{item.quantity}</p>
