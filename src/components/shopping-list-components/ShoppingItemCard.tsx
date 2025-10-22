@@ -18,34 +18,49 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
   onTogglePurchased,
   onRemove,
 }) => (
-  <Card className="border">
-    <Card.Body className="p-3">
-      <div className="d-flex align-items-center justify-content-between">
-        <div className="d-flex align-items-center">
-          <Form.Check
-            type="checkbox"
-            checked={item.purchased}
-            onChange={() => onTogglePurchased(item.id)}
-            className="me-3"
-          />
-          <div>
-            <div className="fw-bold text-dark">{item.name}</div>
-            <small className="text-dark">{item.quantity}</small>
-          </div>
-        </div>
-        <div className="d-flex align-items-center gap-2">
+  <Card className="h-100 shadow-sm border-0 hover-shadow" style={{ transition: 'all 0.2s' }}>
+    <Card.Body>
+      <div className="d-flex justify-content-between align-items-start mb-2">
+        <div className="d-flex gap-2">
           <Badge bg="" className={getCategoryVariant(item.category)}>{item.category}</Badge>
           <Badge bg={getPriorityVariant(item.priority)}>{item.priority}</Badge>
+        </div>
+        <Form.Check
+          type="checkbox"
+          checked={item.purchased}
+          onChange={() => onTogglePurchased(item.id)}
+          style={{ transform: 'scale(1.2)' }}
+        />
+      </div>
+      <h6 className="fw-bold mb-1">{item.name}</h6>
+      <p className="text-muted small mb-2">{item.quantity}</p>
+      {item.price && (
+        <div className="d-flex justify-content-between align-items-center">
+          <span className="fw-bold text-success">${item.price.toFixed(2)}</span>
           <Button
             variant="outline-danger"
             size="sm"
             onClick={() => onRemove(item.id)}
-            style={{ width: '32px', height: '32px' }}
+            className="rounded-circle"
+            style={{ width: '32px', height: '32px', padding: 0 }}
           >
             ×
           </Button>
         </div>
-      </div>
+      )}
+      {!item.price && (
+        <div className="text-end">
+          <Button
+            variant="outline-danger"
+            size="sm"
+            onClick={() => onRemove(item.id)}
+            className="rounded-circle"
+            style={{ width: '32px', height: '32px', padding: 0 }}
+          >
+            ×
+          </Button>
+        </div>
+      )}
     </Card.Body>
   </Card>
 );
