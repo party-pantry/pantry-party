@@ -20,9 +20,14 @@ interface Props {
 }
 
 const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    name: string;
+    quantity: number | null;
+    unit: LocalUnit;
+    status: LocalStatus;
+  }>({
     name: '',
-    quantity: 0,
+    quantity: null,
     unit: '' as LocalUnit,
     status: '' as LocalStatus,
   });
@@ -66,7 +71,9 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     if (!nameValue) newErrors.push('Name is required');
 
     const quantityValue = Number(formData.quantity);
-    if (Number.isNaN(quantityValue) || quantityValue <= 0) newErrors.push('Quantity must be greater than zero');
+    if (formData.quantity === null || formData.quantity <= 0) {
+      newErrors.push('Quantity must be greater than zero');
+    }
 
     const statusValue = String(formData.status ?? '').trim();
     if (!statusValue) newErrors.push('Status must be selected');
@@ -146,10 +153,12 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 <Form.Label>Quantity</Form.Label>
                 <Form.Control
                   type="number"
-                  value={formData.quantity}
+                  value={formData.quantity ?? ''}
                   placeholder={String(item?.quantity ?? '')}
                   onChange={(e) => {
-                    setFormData({ ...formData, quantity: Number(e.target.value) });
+                    const { value } = e.target;
+                    setFormData({ ...formData,
+                      quantity: value === '' ? null : Number(value) });
                     setErrors([]);
                   }}
                 />

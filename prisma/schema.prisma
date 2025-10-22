@@ -18,12 +18,14 @@ model User {
 }
 
 model House {
-  id       Int       @id @default(autoincrement())
-  userId   Int
-  name     String
-  address  String?
-  user     User      @relation(fields: [userId], references: [id])
-  storages Storage[]
+  id        Int       @id @default(autoincrement())
+  userId    Int
+  name      String
+  address   String?
+  latitude  Float?
+  longitude Float?
+  user      User      @relation(fields: [userId], references: [id])
+  storages  Storage[]
 }
 
 model Storage {
@@ -38,7 +40,8 @@ model Storage {
 model Ingredient {
   id                Int                @id @default(autoincrement())
   name              String
-  price             Int?
+  price             Float?
+  foodCategory      FoodCategory
   recipes           RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
   stocks            Stock[]
@@ -167,4 +170,12 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+enum FoodCategory {
+  DAIRY
+  PRODUCE
+  MEAT
+  FROZEN
+  OTHER
 }
