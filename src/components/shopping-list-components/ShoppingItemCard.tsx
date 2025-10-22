@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, Badge, Button, Form } from 'react-bootstrap';
+import { Card, CardBody, Badge, Button, Row, Form } from 'react-bootstrap';
 
 import {
   ShoppingItem,
@@ -37,12 +37,21 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           className="custom-checkbox"
         />
       </div>
-      <div className="mb-3">
-        <h5 className="fw-bold mb-2 text-dark">{item.name}</h5>
-        <p className="text-muted mb-0 fw-medium">{item.quantity}</p>
+      {/* Option 1: To justify quantity at the end of the row*/}
+      {/* <div className="d-flex align-items-center justify-content-between mb-3">
+        <h4 className="fw-bold text-dark mb-0 me-2">{item.name}</h4>
+        <p className="text-muted fw-medium mb-0">({item.quantity})</p>
+      </div> */}
+
+      {/* Option 2: To place quantity next to the item name */}
+      <div className="d-flex align-items-center mb-4 pb-4 pt-1">
+        <h3 className="fw-bold text-dark mb-0 me-3 ps-1">{item.name}</h3>
+        <p className="text-muted fw-medium mb-0">({item.quantity})</p>
       </div>
 
-      <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
+
+
+      <div className="d-flex flex-wrap justify-content-around text-center py-4 border-top border-bottom mt-4 mb-4">
         {[
           { label: 'Price', value: item.price ? `$${item.price.toFixed(2)}` : 'No Price' },
           { label: 'Status', value: item.purchased ? 'Purchased' : 'Pending' },
@@ -56,7 +65,7 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
         ))}
       </div>
 
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center pt-2">
         <Button
           variant="outline-danger"
           size="sm"
