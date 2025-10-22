@@ -481,8 +481,6 @@ const ShoppingList: React.FC = () => {
         </>
       )}
 
-      
-
       {/* Suggestions Section */}
       <SuggestedItemsSection suggestions={suggestions} onAdd={handleAddSuggestion} />
     </Container>

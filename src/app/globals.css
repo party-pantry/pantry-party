@@ -459,3 +459,13 @@ h5 {
   box-shadow: 0 0 10px rgba(40, 167, 69, 0.6);
 }
 
+.recipe-card-title {
+  height: 70px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.recipe-card-description {
+  height: 80px; 
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

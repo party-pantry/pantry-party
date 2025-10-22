@@ -69,6 +69,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
     }
   };
 
+  const getMatchPercentColor = (percent: number) => {
+    if (percent === 100) return '#19872bff';
+    if (percent >= 80) return '#c97601ff';
+    return '#d21f1fff';
+  };
+
   const difficulty = getDifficulty(recipe.difficulty);
 
   const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
@@ -109,13 +115,13 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
           />
         </div>
 
-        <div className="d-flex align-items-center mb-2">
+        <div className="d-flex mb-2 align-items-center recipe-card-title pt-2">
           <CardTitle className="fs-4 mb-0">
             {highlightText(recipe.name, searchTerm)}
           </CardTitle>
         </div>
 
-        <CardText className="recipe-card-description text-muted">
+        <CardText className="recipe-card-description text-muted mb-4 recipe-card-description">
           {highlightText(recipe.description || '', searchTerm)}
         </CardText>
 
@@ -131,12 +137,20 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
 
         <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
           {[
-            { label: 'Total Time', value: `${totalTime} mins` },
-            { label: 'Ingredients Match', value: `${matchPercent.toFixed(0)}%` },
+            { label: 'Time', value: `${totalTime} mins` },
+            {
+              label: 'Ingredients Match',
+              value: `${matchPercent.toFixed(0)}%`,
+              color: getMatchPercentColor(matchPercent),
+            },
             { label: 'Rating', value: `${rating.toFixed(1)}` },
           ].map((item) => (
             <div key={item.label} className="flex-fill">
-              <div className="fw-bold fs-5">{item.value}</div>
+              <div className="fw-bold fs-5"
+                style={{ color: item.color || 'inherit' }}
+              >
+                {item.value}
+              </div>
               <div className="text-muted small">{item.label}</div>
             </div>
           ))}

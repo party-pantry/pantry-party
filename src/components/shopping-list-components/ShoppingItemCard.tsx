@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardBody, Badge, Button, Row, Form } from 'react-bootstrap';
+import { Card, CardBody, Badge, Button, Form } from 'react-bootstrap';
 
 import {
   ShoppingItem,
@@ -37,7 +37,7 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
           className="custom-checkbox"
         />
       </div>
-      {/* Option 1: To justify quantity at the end of the row*/}
+      {/* Option 1: To justify quantity at the end of the row */}
       {/* <div className="d-flex align-items-center justify-content-between mb-3">
         <h4 className="fw-bold text-dark mb-0 me-2">{item.name}</h4>
         <p className="text-muted fw-medium mb-0">({item.quantity})</p>
@@ -48,8 +48,6 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
         <h3 className="fw-bold text-dark mb-0 me-3 ps-1">{item.name}</h3>
         <p className="text-muted fw-medium mb-0">({item.quantity})</p>
       </div>
-
-
 
       <div className="d-flex flex-wrap justify-content-around text-center py-4 border-top border-bottom mt-4 mb-4">
         {[
