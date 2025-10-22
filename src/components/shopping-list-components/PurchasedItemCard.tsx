@@ -13,30 +13,30 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
   onTogglePurchased,
   onRemove,
 }) => (
-  <Card className="border">
-    <Card.Body className="p-2">
-      <div className="d-flex align-items-center justify-content-between">
-        <div className="d-flex align-items-center">
-          <Form.Check
-            type="checkbox"
-            checked={item.purchased}
-            onChange={() => onTogglePurchased(item.id)}
-            className="me-2"
-          />
-          <div className="text-decoration-line-through opacity-75">
-            <div className="fw-bold text-dark">{item.name}</div>
-            <small className="text-dark">{item.quantity}</small>
-          </div>
-        </div>
+  <Card className="h-100 shadow-sm border-0 bg-light" style={{ opacity: 0.7 }}>
+    <Card.Body>
+      <div className="d-flex justify-content-between align-items-start mb-2">
+        <Form.Check
+          type="checkbox"
+          checked={item.purchased}
+          onChange={() => onTogglePurchased(item.id)}
+          style={{ transform: 'scale(1.2)' }}
+        />
         <Button
           variant="outline-danger"
           size="sm"
           onClick={() => onRemove(item.id)}
-          style={{ width: '28px', height: '28px' }}
+          className="rounded-circle"
+          style={{ width: '28px', height: '28px', padding: 0 }}
         >
           ×
         </Button>
       </div>
+      <h6 className="fw-bold mb-1 text-decoration-line-through">{item.name}</h6>
+      <p className="text-muted small mb-2 text-decoration-line-through">{item.quantity}</p>
+      {item.price && (
+        <span className="fw-bold text-success small">${item.price.toFixed(2)}</span>
+      )}
     </Card.Body>
   </Card>
 );

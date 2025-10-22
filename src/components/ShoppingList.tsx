@@ -26,119 +26,74 @@ const ShoppingListSkeleton: React.FC = () => (
   <Container className="mb-12 min-h-screen mt-5">
     {/* Stats Cards Skeleton */}
     <Row className="mb-4">
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
+      {[1, 2, 3, 4].map((i) => (
+        <Col key={i} md={3}>
+          <Card className="text-center shadow-sm border-0">
+            <Card.Body>
+              <Placeholder as="h3" animation="glow">
+                <Placeholder xs={6} className="fs-2 mb-1" />
+              </Placeholder>
+              <Placeholder as={Card.Text} animation="glow">
+                <Placeholder xs={8} size="sm" />
+              </Placeholder>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
     </Row>
 
-    {/* Main Content Skeleton */}
-    <Row className="mb-4">
-      <Col lg={8}>
-        <Card className="shadow-sm">
-          <Card.Header>
-            <Row>
-              <Col md={8}>
-                <Placeholder as="h4" animation="glow">
-                  <Placeholder xs={7} />
+    {/* Control Bar Skeleton */}
+    <div className="d-flex justify-content-between align-items-center mb-4">
+      <Placeholder as="h4" animation="glow">
+        <Placeholder xs={3} />
+      </Placeholder>
+      <div className="d-flex gap-2">
+        <Placeholder.Button variant="outline-secondary" size="sm" xs={2} />
+        <Placeholder.Button variant="success" xs={2} />
+      </div>
+    </div>
+
+    {/* Shopping Items Grid Skeleton */}
+    <Row className="g-3 mb-4">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Col key={i} md={4} sm={6} xs={12}>
+          <Card className="h-100 shadow-sm border-0">
+            <Card.Body>
+              <div className="d-flex justify-content-between mb-2">
+                <div className="d-flex gap-2">
+                  <Placeholder as="span" animation="glow">
+                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
+                  </Placeholder>
+                  <Placeholder as="span" animation="glow">
+                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
+                  </Placeholder>
+                </div>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder style={{ width: '20px', height: '20px', borderRadius: '4px' }} />
                 </Placeholder>
-              </Col>
-              <Col md={4} className="text-end">
-                <Placeholder.Button variant="success" xs={4} />
-              </Col>
-            </Row>
-          </Card.Header>
-          <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            <div className="d-grid gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i} className="border">
-                  <Card.Body>
-                    <Placeholder as="div" animation="glow">
-                      <Placeholder xs={8} className="mb-2" />
-                      <Placeholder xs={5} size="sm" className="mb-2" />
-                      <Placeholder xs={6} size="sm" />
-                    </Placeholder>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col lg={4}>
-        <Row>
-          {/* Recently Purchased Skeleton */}
-          <Card className="shadow-sm mb-2">
-            <Card.Header>
-              <Placeholder as="h4" animation="glow">
-                <Placeholder xs={9} />
+              </div>
+              <Placeholder as="h6" animation="glow">
+                <Placeholder xs={8} className="mb-1" />
               </Placeholder>
-            </Card.Header>
-            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-              <div className="d-grid gap-2">
-                {[1, 2].map((i) => (
-                  <Card key={i} className="border">
-                    <Card.Body>
-                      <Placeholder as="div" animation="glow">
-                        <Placeholder xs={7} size="sm" className="mb-1" />
-                        <Placeholder xs={5} size="sm" />
-                      </Placeholder>
-                    </Card.Body>
-                  </Card>
-                ))}
+              <Placeholder as="p" animation="glow" className="mb-2">
+                <Placeholder xs={5} size="sm" />
+              </Placeholder>
+              <div className="d-flex justify-content-between">
+                <Placeholder as="span" animation="glow">
+                  <Placeholder xs={4} />
+                </Placeholder>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                </Placeholder>
               </div>
             </Card.Body>
           </Card>
-
-          {/* Total Cost Skeleton */}
-          <Card className="text-center shadow-sm">
-            <Card.Body>
-              <Placeholder as="h3" animation="glow">
-                <Placeholder xs={6} className="fs-2" />
-              </Placeholder>
-              <Placeholder as={Card.Text} animation="glow">
-                <Placeholder xs={7} />
-              </Placeholder>
-            </Card.Body>
-          </Card>
-        </Row>
-      </Col>
+        </Col>
+      ))}
     </Row>
 
-    {/* Suggestions Skeleton */}
-    <Card className="shadow-sm">
+    {/* Suggestions Section Skeleton */}
+    <Card className="shadow-sm border-0">
       <Card.Header>
         <Placeholder as="h4" animation="glow">
           <Placeholder xs={6} />
@@ -148,7 +103,7 @@ const ShoppingListSkeleton: React.FC = () => (
         <Row className="g-3">
           {[1, 2, 3].map((i) => (
             <Col md={4} key={i}>
-              <Card className="border">
+              <Card className="border-0 shadow-sm">
                 <Card.Body>
                   <Placeholder as="div" animation="glow">
                     <Placeholder xs={9} className="mb-2" />
@@ -414,9 +369,10 @@ const ShoppingList: React.FC = () => {
                   <Form.Label className="small fw-bold">Category</Form.Label>
                   <Form.Select
                     value={newItem.category}
-                    onChange={(e) =>
-                      setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
-                    }
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      category: e.target.value as ShoppingItem['category'],
+                    })}
                   >
                     <option value="Produce">Produce</option>
                     <option value="Meat">Meat</option>
@@ -429,9 +385,10 @@ const ShoppingList: React.FC = () => {
                   <Form.Label className="small fw-bold">Priority</Form.Label>
                   <Form.Select
                     value={newItem.priority}
-                    onChange={(e) =>
-                      setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
-                    }
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      priority: e.target.value as ShoppingItem['priority'],
+                    })}
                   >
                     <option value="High">High</option>
                     <option value="Medium">Medium</option>
