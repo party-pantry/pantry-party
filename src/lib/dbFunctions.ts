@@ -71,6 +71,7 @@ export async function addStock(data: {
       ingredient = await prisma.ingredient.create({
         data: {
           name: sterilizedItemName,
+          foodCategory: 'OTHER',
         },
       });
     } catch (error: any) {
@@ -141,7 +142,7 @@ export async function updateStock(data: {
     if (!targetIngredient) {
       try {
         targetIngredient = await prisma.ingredient.create({
-          data: { name: sterilizedItemName },
+          data: { name: sterilizedItemName, foodCategory: 'OTHER' },
         });
       } catch (error: any) {
         // Handle race condition - ingredient might have been created by another request
@@ -274,6 +275,7 @@ export async function addShoppingListItem(data: {
   quantity: string;
   category: string;
   priority: string;
+  price: number;
   source: string;
   sourceStockIngredientId?: number;
   sourceStorageId?: number;
@@ -286,6 +288,7 @@ export async function addShoppingListItem(data: {
       quantity: data.quantity,
       category: data.category,
       priority: data.priority,
+      price: data.price,
       source: data.source,
       sourceStockIngredientId: data.sourceStockIngredientId,
       sourceStorageId: data.sourceStorageId,
@@ -321,6 +324,7 @@ export async function updateShoppingListItem(
     quantity?: string;
     category?: string;
     priority?: string;
+    price?: number;
   },
 ) {
   const item = await prisma.shoppingListItem.update({
@@ -429,6 +433,8 @@ export async function getSuggestedItems(userId: number) {
         houseName: firstStock.storage.house.name,
         suggestedPriority: isOutOfStock ? 'High' : 'Medium',
         currentQuantity: firstStock.quantity,
+        price: firstStock.ingredient.price ?? 0,
+        category: firstStock.ingredient.foodCategory ?? 'Other',
       };
     });
 

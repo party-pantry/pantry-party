@@ -9,10 +9,12 @@ interface SuggestedItem {
   status: string;
   storageId: number;
   storageName: string;
+  price: number;
   storageType: string;
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 interface SuggestedItemsSectionProps {

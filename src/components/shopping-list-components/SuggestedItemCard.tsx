@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
 import { Card, CardBody, Badge, Button, Form, Modal, Row, Col } from 'react-bootstrap';
+import { LocalFoodCategory } from '@/lib/Units';
 
 interface SuggestedItem {
   ingredientId: number;
   name: string;
   unit: string;
   status: string;
+  price: number;
   storageId: number;
   storageName: string;
   storageType: string;
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 interface SuggestedItemCardProps {
@@ -21,7 +24,7 @@ interface SuggestedItemCardProps {
 
 const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) => {
   const [showModal, setShowModal] = useState(false);
-  const [category, setCategory] = useState('Dairy');
+  const [category, setCategory] = useState(item.category ?? 'OTHER');
   const [quantity, setQuantity] = useState('1');
 
   const handleAdd = () => {
@@ -31,27 +34,39 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
 
   const statusBadgeVariant = item.status === 'OUT_OF_STOCK' ? 'danger' : 'warning';
 
+  // const statusColorMap: Record<string, string> = {
+  //   GOOD: 'bg-green-100 text-green-700',
+  //   LOW_STOCK: 'bg-yellow-100 text-yellow-700',
+  //   OUT_OF_STOCK: 'bg-red-100 text-red-700',
+  //   EXPIRED: 'bg-red-100 text-red-700',
+  // };
+
   return (
     <>
       <Card className="h-100">
         <CardBody>
           <div className="d-flex justify-content-between align-items-start mb-3">
-            <Badge bg={statusBadgeVariant} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
-              {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
-            </Badge>
-            <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}
+            {/* <Badge bg={item.suggestedPriority === 'High' ? 'danger' : 'warning'}
             className="px-3 py-2" style={{ borderRadius: '1rem' }}>
               {item.suggestedPriority}
-            </Badge>
+            </Badge> */}
           </div>
-          <div className="mb-3">
-            <h6 className="fw-bold text-dark mb-2">{item.name}</h6>
+          <div className="mb-5 align-items-stretch">
+            <Row>
+              <Col sm={8} className="d-flex align-items-end">
+                <h6 className="fw-bold text-dark mb-1">{item.name}</h6>
+              </Col>
+              <Col sm={4} className="text-end">
+                <Badge bg={statusBadgeVariant} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
+                {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
+                            </Badge>
+              </Col>
+            </Row>
             <p className="text-muted small mb-0">
               From: {item.storageName} ({item.houseName})
             </p>
           </div>
-
-          <div className="d-flex justify-content-center">
+          <div className="d-flex justify-content-center pt-3">
             <Button
               variant="success"
               size="sm"
@@ -84,15 +99,19 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
             <Col md={6}>
               <Form.Label className="fw-bold text-dark">Category</Form.Label>
               <Form.Select
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
                 className="border-2"
-              >
-                <option value="Produce">Produce</option>
-                <option value="Meat">Meat</option>
-                <option value="Dairy">Dairy</option>
-                <option value="Frozen">Frozen</option>
-                <option value="Other">Other</option>
+                value={category}
+                onChange={(e) => setCategory(e.target.value as LocalFoodCategory)}>
+                {/* {FOOD_CATEGORY_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))} */}
+                {Object.entries(LocalFoodCategory).map(([key, label]) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ))}
               </Form.Select>
             </Col>
           </Row>
