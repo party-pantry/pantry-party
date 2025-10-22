@@ -306,41 +306,22 @@ const Recipes: React.FC = () => {
 
   return (
       <Container className="mb-12 min-h-screen mt-5">
-        <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
-
-          <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-          <RecipesFilterButton onApply={setFilters} />
-          <RecipesSortButton onSort={handleSort}/>
-        </div>
-        <div className="d-flex justify-content-end flex-wrap gap-2 mb-2 align-items-center">
-          {/* <Star
-            size={24}
-            className="mr-3"
-            fill={showFavoritesOnly ? 'orange' : 'none'}
-            stroke={showFavoritesOnly ? 'black' : 'currentColor'}
-            onClick={handleToggleShowFavorites}
-          /> */}
-          <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
-          <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-          <button className="btn btn-success" onClick={handleShowModal}>
-           Add Recipe
-          </button>
-          <AddRecipesModal
-  show={showAddRecipeModal}
-  onHide={handleHideModal}
-  onSubmit={(recipe) => {
-    console.log('Recipe submitted:', recipe); // Debugging
-    if (recipe) {
-      // Handle the recipe submission (e.g., update state or send to API)
-      console.log('Handling recipe submission...');
-    } else {
-      console.error('No recipe data received!');
-    }
-    handleHideModal(); // Close the modal
-  }}
-/>
-        </div>
-
+        <Row className="mb-4">
+          <Col xs={12}>
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div className="d-flex align-items-center flex-wrap gap-4">
+                <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                <RecipesFilterButton onApply={setFilters} />
+                <RecipesSortButton onSort={handleSort}/>
+              </div>
+              <div className="d-flex align-items-center flex-wrap gap-2">
+                <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
+                <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
+                <AddRecipesModal />
+              </div>
+            </div>
+          </Col>
+        </Row>
         <Row className="g-4 justify-content-center">
           {filteredAndSortedRecipes.map(recipe => (
             <Col key={recipe.id} md={4} sm={6} xs={12} className="justify-content-center">
