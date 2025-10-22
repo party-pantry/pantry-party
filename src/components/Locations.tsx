@@ -6,8 +6,7 @@ import LocationsFilter from './locations-components/LocationsFilter';
 
 const LocationsMap = dynamic(() => import('@/components/locations-components/LocationsMap'), { ssr: false });
 
-const Locations = () => {
-    return (
+const Locations = () => (
         <Container className="mb-12 min-h-screen mt-5">
             <Row>
                 <Col md={8} className="mb-4 mb-md-0">
@@ -18,7 +17,6 @@ const Locations = () => {
                 </Col>
             </Row>
         </Container>
-    )
-}
+);
 
 export default Locations;

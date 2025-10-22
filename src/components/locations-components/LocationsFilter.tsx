@@ -1,44 +1,46 @@
+/* eslint-disable radix */
+
 'use client';
 
 import React, { useState } from 'react';
-import { Card, Form, Button, Dropdown, ButtonGroup } from 'react-bootstrap';
+import { Card, Form, Button } from 'react-bootstrap';
 import LocationsSearch from './LocationsSearch';
 import SavedLocationsAccordion from './SavedLocationsAccordion';
 
 const FilterPanel = () => {
-    const [locationType, setLocationType] = useState('all');
-    const [sortBy, setSortBy] = useState('closest');
-    const [radius, setRadius] = useState(5);
-    const [savedLocation, setSavedLocation] = useState<string | null>(null);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
+  const [locationType, setLocationType] = useState('all');
+  const [sortBy, setSortBy] = useState('closest');
+  const [radius, setRadius] = useState(5);
+  const [savedLocation, setSavedLocation] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
 
-    // TODO: Replace with actual saved locations from user data
-    const savedLocations: { id: string; name: string; type: "home" | "store"; address: string; }[] = [
-        { id: '1', name: 'Test1', type: 'home', address: '123 Main St' },
-        { id: '2', name: 'Test2', type: 'store', address: '456 Market Ave' },
-        { id: '3', name: 'Test3', type: 'home', address: '789 Office Rd' },
-    ];
+  // TODO: Replace with actual saved locations from user data
+  const savedLocations: { id: string; name: string; type: 'home' | 'store'; address: string; }[] = [
+    { id: '1', name: 'Test1', type: 'home', address: '123 Main St' },
+    { id: '2', name: 'Test2', type: 'store', address: '456 Market Ave' },
+    { id: '3', name: 'Test3', type: 'home', address: '789 Office Rd' },
+  ];
 
-    // TODO: Implement actual filter logic
-    const handleApply = () => {
-        console.log({
-            locationType,
-            savedLocation,
-            sortBy,
-            radius,
-            searchTerm,
-        });
-    };
+  // TODO: Implement actual filter logic
+  const handleApply = () => {
+    console.log({
+      locationType,
+      savedLocation,
+      sortBy,
+      radius,
+      searchTerm,
+    });
+  };
 
-    const handleReset = () => {
-        setLocationType('all');
-        setSavedLocation(null);
-        setSortBy('closest');
-        setRadius(5);
-    };
+  const handleReset = () => {
+    setLocationType('all');
+    setSavedLocation(null);
+    setSortBy('closest');
+    setRadius(5);
+  };
 
-    return (
+  return (
         <Card className="p-3 shadow-sm rounded-4 bg-white border-0">
             <Card.Body>
                 <Form.Group className="mb-3">
@@ -100,12 +102,12 @@ const FilterPanel = () => {
                     />
                     <div className="text-muted small mb-3">{radius} miles</div>
 
-                    <SavedLocationsAccordion 
+                    <SavedLocationsAccordion
                         locations={savedLocations}
                         selectedLocations={selectedLocations}
                         setSelectedLocations={setSelectedLocations}
                     />
-                    
+
                     <div className="mt-3 d-flex justify-content-between align-items-center">
                         <Button
                             variant="danger"
@@ -125,7 +127,7 @@ const FilterPanel = () => {
                 </Form.Group>
             </Card.Body>
         </Card>
-    );
+  );
 };
 
 export default FilterPanel;

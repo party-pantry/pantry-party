@@ -6,34 +6,34 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { Form } from 'react-bootstrap';
 
 type Location = {
-    id: string;
-    name: string;
-    type: 'home' | 'store';
-    address: string;
+  id: string;
+  name: string;
+  type: 'home' | 'store';
+  address: string;
 };
 
 interface SavedLocationsAccordionProps {
-    locations: Location[];
-    selectedLocations: string[];
-    setSelectedLocations: (ids: string[]) => void;
+  locations: Location[];
+  selectedLocations: string[];
+  setSelectedLocations: (ids: string[]) => void;
 }
 
 const SavedLocationsAccordion: React.FC<SavedLocationsAccordionProps> = ({
-    locations,
-    selectedLocations,
-    setSelectedLocations,
+  locations,
+  selectedLocations,
+  setSelectedLocations,
 }) => {
-    const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
-    const handleToggle = (id: string) => {
-        if (selectedLocations.includes(id)) {
-            setSelectedLocations(selectedLocations.filter((locId) => locId !== id));
-        } else {
-            setSelectedLocations([...selectedLocations, id]);
-        }
-    };
+  const handleToggle = (id: string) => {
+    if (selectedLocations.includes(id)) {
+      setSelectedLocations(selectedLocations.filter((locId) => locId !== id));
+    } else {
+      setSelectedLocations([...selectedLocations, id]);
+    }
+  };
 
-    return (
+  return (
         <div className="w-full">
             <div
                 className="flex items-center cursor-pointer gap-2 font-semibold text-base py-2"
@@ -73,7 +73,7 @@ const SavedLocationsAccordion: React.FC<SavedLocationsAccordionProps> = ({
                 )}
             </AnimatePresence>
         </div>
-    );
+  );
 };
 
 export default SavedLocationsAccordion;
