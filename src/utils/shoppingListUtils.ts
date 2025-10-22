@@ -1,5 +1,5 @@
 // Utility functions for shopping list functionality
-import { LocalFoodCategory } from "@/lib/Units";
+import { LocalFoodCategory } from '@/lib/Units';
 
 export type ShoppingItem = {
   id: number;

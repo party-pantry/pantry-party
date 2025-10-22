@@ -5,10 +5,10 @@ import { useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
 import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 // import { parse } from 'path';
+import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './shopping-list-components/ShoppingItemCard';
 import PurchasedItemCard from './shopping-list-components/PurchasedItemCard';
 import SuggestedItemsSection from './shopping-list-components/SuggestedItemsSection';
-import { LocalFoodCategory } from '@/lib/Units';
 
 interface SuggestedItem {
   ingredientId: number;
