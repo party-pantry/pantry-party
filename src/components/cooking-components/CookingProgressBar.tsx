@@ -14,7 +14,7 @@ const CookingProgressBar: React.FC<CookingProgressBarProps> = ({ currentStep, to
 
   return (
         <div className="mb-4">
-            <div className="progress" style={{ height: '12px' }}>
+            <div className="progress" style={{ height: '15px' }}>
                 <div
                     className="progress-bar bg-success"
                     style={{

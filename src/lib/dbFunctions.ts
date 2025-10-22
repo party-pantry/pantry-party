@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category } from '@prisma/client';
+import { Unit, Status, Category, Difficulty } from '@prisma/client';
 import { prisma } from './prisma';
 
 /* Create a new user with unique email and username */
@@ -71,6 +71,7 @@ export async function addStock(data: {
       ingredient = await prisma.ingredient.create({
         data: {
           name: sterilizedItemName,
+          foodCategory: 'OTHER',
         },
       });
     } catch (error: any) {
@@ -141,7 +142,7 @@ export async function updateStock(data: {
     if (!targetIngredient) {
       try {
         targetIngredient = await prisma.ingredient.create({
-          data: { name: sterilizedItemName },
+          data: { name: sterilizedItemName, foodCategory: 'OTHER' },
         });
       } catch (error: any) {
         // Handle race condition - ingredient might have been created by another request
@@ -274,6 +275,7 @@ export async function addShoppingListItem(data: {
   quantity: string;
   category: string;
   priority: string;
+  price: number;
   source: string;
   sourceStockIngredientId?: number;
   sourceStorageId?: number;
@@ -286,16 +288,64 @@ export async function addShoppingListItem(data: {
       quantity: data.quantity,
       category: data.category,
       priority: data.priority,
+      price: data.price,
       source: data.source,
       sourceStockIngredientId: data.sourceStockIngredientId,
       sourceStorageId: data.sourceStorageId,
     },
     include: {
-      Ingredient: true,
+      ingredient: true,
     },
   });
 
   return item;
+}
+
+export async function addRecipeInstruction(data: {
+  recipeId: number;
+  step: number;
+  content: string;
+}) {
+  const instruction = await prisma.recipeInstruction.create({
+    data: {
+      recipeId: data.recipeId,
+      step: data.step,
+      content: data.content,
+    },
+  });
+
+  return instruction;
+}
+
+/* Add a new recipe */
+export async function addRecipe(data: {
+  userId: number;
+  name: string;
+  description: string;
+  difficulty: Difficulty;
+  prepTime?: number;
+  cookTime?: number;
+  downTime?: number;
+  servings?: number;
+  rating?: number;
+}) {
+  const recipe = await prisma.recipe.create({
+    data: {
+      userId: data.userId,
+      name: data.name,
+      description: data.description,
+      difficulty: data.difficulty,
+      isStarred: false, // Always false
+      prepTime: data.prepTime ?? 0,
+      cookTime: data.cookTime ?? 0,
+      downTime: data.downTime ?? 0,
+      servings: data.servings ?? 1,
+      postDate: new Date(),
+      rating: data.rating ?? 0,
+    },
+  });
+
+  return recipe;
 }
 
 /* Get all shopping list items for a user */
@@ -303,7 +353,7 @@ export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
     where: { userId },
     include: {
-      Ingredient: true,
+      ingredient: true,
     },
     orderBy: {
       addedDate: 'desc',
@@ -321,6 +371,7 @@ export async function updateShoppingListItem(
     quantity?: string;
     category?: string;
     priority?: string;
+    price?: number;
   },
 ) {
   const item = await prisma.shoppingListItem.update({
@@ -429,8 +480,27 @@ export async function getSuggestedItems(userId: number) {
         houseName: firstStock.storage.house.name,
         suggestedPriority: isOutOfStock ? 'High' : 'Medium',
         currentQuantity: firstStock.quantity,
+        price: firstStock.ingredient.price ?? 0,
+        category: firstStock.ingredient.foodCategory ?? 'Other',
       };
     });
 
   return suggestions;
+}
+
+export async function deleteStorage(houseId: number, storageId: number) {
+  // Ensure the storage belongs to the house
+  const storage = await prisma.storage.findFirst({
+    where: { id: storageId, houseId },
+    select: { id: true },
+  });
+  if (!storage) throw new Error('NOT_FOUND');
+
+  // Remove items (Stock) first, then the Storage
+  await prisma.$transaction([
+    prisma.stock.deleteMany({ where: { storageId } }),
+    prisma.storage.delete({ where: { id: storageId } }),
+  ]);
+
+  return { ok: true };
 }

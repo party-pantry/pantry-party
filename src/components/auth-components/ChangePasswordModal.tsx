@@ -10,7 +10,7 @@ import * as Yup from 'yup';
 import swal from 'sweetalert';
 import { Modal, Form, Button, InputGroup } from 'react-bootstrap';
 import { Lock, Eye, EyeOff } from 'lucide-react';
-import changePassword from '@/lib/dbActions';
+import { changePassword } from '@/lib/dbActions';
 // import LoadingSpinner from '../LoadingSpinner';
 
 interface Props {

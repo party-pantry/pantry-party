@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
 import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
+// import { parse } from 'path';
+import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './shopping-list-components/ShoppingItemCard';
 import PurchasedItemCard from './shopping-list-components/PurchasedItemCard';
 import SuggestedItemsSection from './shopping-list-components/SuggestedItemsSection';
@@ -12,6 +14,7 @@ interface SuggestedItem {
   ingredientId: number;
   name: string;
   unit: string;
+  price: number;
   status: string;
   storageId: number;
   storageName: string;
@@ -19,6 +22,7 @@ interface SuggestedItem {
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 // Loading Skeleton Component
@@ -26,119 +30,74 @@ const ShoppingListSkeleton: React.FC = () => (
   <Container className="mb-12 min-h-screen mt-5">
     {/* Stats Cards Skeleton */}
     <Row className="mb-4">
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col md={4}>
-        <Card className="text-center shadow-sm">
-          <Card.Body>
-            <Placeholder as="h3" animation="glow">
-              <Placeholder xs={6} className="fs-2" />
-            </Placeholder>
-            <Placeholder as={Card.Text} animation="glow">
-              <Placeholder xs={8} />
-            </Placeholder>
-          </Card.Body>
-        </Card>
-      </Col>
+      {[1, 2, 3, 4].map((i) => (
+        <Col key={i} md={3}>
+          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+            <Card.Body>
+              <Placeholder as="h3" animation="glow">
+                <Placeholder xs={6} className="fs-2 mb-1" />
+              </Placeholder>
+              <Placeholder as={Card.Text} animation="glow">
+                <Placeholder xs={8} size="sm" />
+              </Placeholder>
+            </Card.Body>
+          </Card>
+        </Col>
+      ))}
     </Row>
 
-    {/* Main Content Skeleton */}
-    <Row className="mb-4">
-      <Col lg={8}>
-        <Card className="shadow-sm">
-          <Card.Header>
-            <Row>
-              <Col md={8}>
-                <Placeholder as="h4" animation="glow">
-                  <Placeholder xs={7} />
+    {/* Control Bar Skeleton */}
+    <div className="d-flex justify-content-between align-items-center mb-4">
+      <Placeholder as="h4" animation="glow">
+        <Placeholder xs={3} />
+      </Placeholder>
+      <div className="d-flex gap-2">
+        <Placeholder.Button variant="outline-secondary" size="sm" xs={2} />
+        <Placeholder.Button variant="success" xs={2} />
+      </div>
+    </div>
+
+    {/* Shopping Items Grid Skeleton */}
+    <Row className="g-3 mb-4">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <Col key={i} md={4} sm={6} xs={12}>
+          <Card className="shopping-item-card h-100 shadow-sm border-0">
+            <Card.Body>
+              <div className="d-flex justify-content-between mb-2">
+                <div className="d-flex gap-2">
+                  <Placeholder as="span" animation="glow">
+                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
+                  </Placeholder>
+                  <Placeholder as="span" animation="glow">
+                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
+                  </Placeholder>
+                </div>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder style={{ width: '20px', height: '20px', borderRadius: '4px' }} />
                 </Placeholder>
-              </Col>
-              <Col md={4} className="text-end">
-                <Placeholder.Button variant="success" xs={4} />
-              </Col>
-            </Row>
-          </Card.Header>
-          <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-            <div className="d-grid gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <Card key={i} className="border">
-                  <Card.Body>
-                    <Placeholder as="div" animation="glow">
-                      <Placeholder xs={8} className="mb-2" />
-                      <Placeholder xs={5} size="sm" className="mb-2" />
-                      <Placeholder xs={6} size="sm" />
-                    </Placeholder>
-                  </Card.Body>
-                </Card>
-              ))}
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-      <Col lg={4}>
-        <Row>
-          {/* Recently Purchased Skeleton */}
-          <Card className="shadow-sm mb-2">
-            <Card.Header>
-              <Placeholder as="h4" animation="glow">
-                <Placeholder xs={9} />
+              </div>
+              <Placeholder as="h6" animation="glow">
+                <Placeholder xs={8} className="mb-1" />
               </Placeholder>
-            </Card.Header>
-            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-              <div className="d-grid gap-2">
-                {[1, 2].map((i) => (
-                  <Card key={i} className="border">
-                    <Card.Body>
-                      <Placeholder as="div" animation="glow">
-                        <Placeholder xs={7} size="sm" className="mb-1" />
-                        <Placeholder xs={5} size="sm" />
-                      </Placeholder>
-                    </Card.Body>
-                  </Card>
-                ))}
+              <Placeholder as="p" animation="glow" className="mb-2">
+                <Placeholder xs={5} size="sm" />
+              </Placeholder>
+              <div className="d-flex justify-content-between">
+                <Placeholder as="span" animation="glow">
+                  <Placeholder xs={4} />
+                </Placeholder>
+                <Placeholder as="div" animation="glow">
+                  <Placeholder style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
+                </Placeholder>
               </div>
             </Card.Body>
           </Card>
-
-          {/* Total Cost Skeleton */}
-          <Card className="text-center shadow-sm">
-            <Card.Body>
-              <Placeholder as="h3" animation="glow">
-                <Placeholder xs={6} className="fs-2" />
-              </Placeholder>
-              <Placeholder as={Card.Text} animation="glow">
-                <Placeholder xs={7} />
-              </Placeholder>
-            </Card.Body>
-          </Card>
-        </Row>
-      </Col>
+        </Col>
+      ))}
     </Row>
 
-    {/* Suggestions Skeleton */}
-    <Card className="shadow-sm">
+    {/* Suggestions Section Skeleton */}
+    <Card className="shadow-sm border-0" style={{ borderRadius: '1rem' }}>
       <Card.Header>
         <Placeholder as="h4" animation="glow">
           <Placeholder xs={6} />
@@ -148,7 +107,7 @@ const ShoppingListSkeleton: React.FC = () => (
         <Row className="g-3">
           {[1, 2, 3].map((i) => (
             <Col md={4} key={i}>
-              <Card className="border">
+              <Card className="border-0 shadow-sm" style={{ borderRadius: '1rem' }}>
                 <Card.Body>
                   <Placeholder as="div" animation="glow">
                     <Placeholder xs={9} className="mb-2" />
@@ -169,6 +128,7 @@ const ShoppingListSkeleton: React.FC = () => (
 const ShoppingList: React.FC = () => {
   const { data: session } = useSession();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPurchased, setShowPurchased] = useState(false);
   const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
   const [suggestions, setSuggestions] = useState<SuggestedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -232,10 +192,9 @@ const ShoppingList: React.FC = () => {
           source: 'MANUAL',
         }),
       });
-
       if (response.ok) {
         await fetchShoppingList();
-        setNewItem({ name: '', quantity: '', price: '', category: 'Other', priority: 'Medium' });
+        setNewItem({ name: '', quantity: '', price: '', category: LocalFoodCategory.OTHER, priority: 'Medium' });
         setShowAddForm(false);
       }
     } catch (error) {
@@ -249,6 +208,7 @@ const ShoppingList: React.FC = () => {
     quantity: string,
   ): Promise<void> => {
     try {
+      const enumCategory = LocalFoodCategory[category.toUpperCase() as keyof typeof LocalFoodCategory];
       const response = await fetch('/api/shopping-list', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -256,7 +216,8 @@ const ShoppingList: React.FC = () => {
           ingredientId: item.ingredientId,
           name: item.name,
           quantity,
-          category,
+          category: enumCategory,
+          price: item.price,
           priority: item.suggestedPriority,
           source: 'SUGGESTED',
           sourceStockIngredientId: item.ingredientId,
@@ -309,187 +270,218 @@ const ShoppingList: React.FC = () => {
   const unpurchasedItems = shoppingItems.filter((item) => !item.purchased);
   const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
-  const totalCost = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+  // const totalCost = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+  const totalCost = unpurchasedItems.reduce((sum, item) => {
+    const price = parseFloat(String(item.price)) || 0;
+    const quantity = parseFloat(String(item.quantity)) || 1;
+    return sum + price * quantity;
+  }, 0);
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
+      {/* Header Section */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h2 className="mb-0 fw-bold">Shopping List</h2>
+        <div className="d-flex gap-2">
+          <Button
+            variant={showPurchased ? 'primary' : 'secondary'}
+            onClick={() => setShowPurchased(!showPurchased)}
+            size="sm"
+            className="px-3"
+          >
+            {showPurchased ? 'Hide' : 'Show'} Purchased ({purchasedItems.length})
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="px-4"
+            style={{ backgroundColor: '#3A5B4F', borderColor: '#3A5B4F' }}
+          >
+            <strong>{showAddForm ? 'Cancel' : 'Add Item +'}</strong>
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Section */}
       <Row className="mb-4">
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
-            <Card.Body>
-              <h3 className="text-primary fs-2">{unpurchasedItems.length}</h3>
-              <Card.Text className="text-dark">Items to Buy</Card.Text>
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+            <Card.Body className="py-4">
+              <h3 className="text-primary fs-2 mb-1 fw-bold">{unpurchasedItems.length}</h3>
+              <Card.Text className="text-muted small mb-0 fw-medium">Items to Buy</Card.Text>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
-            <Card.Body>
-              <h3 className="text-success fs-2">{purchasedItems.length}</h3>
-              <Card.Text className="text-dark">Items Purchased</Card.Text>
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+            <Card.Body className="py-4">
+              <h3 className="text-success fs-2 mb-1 fw-bold">{purchasedItems.length}</h3>
+              <Card.Text className="text-muted small mb-0 fw-medium">Items Purchased</Card.Text>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
-            <Card.Body>
-              <h3 className="text-danger fs-2">
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+            <Card.Body className="py-4">
+              <h3 className="text-danger fs-2 mb-1 fw-bold">
                 {unpurchasedItems.filter((item) => item.priority === 'High').length}
               </h3>
-              <Card.Text className="text-dark">High Priority Items</Card.Text>
+              <Card.Text className="text-muted small mb-0 fw-medium">High Priority</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+            <Card.Body className="py-4">
+              <h3 className="fs-2 mb-1 fw-bold text-dark">${totalCost.toFixed(2)}</h3>
+              <Card.Text className="text-muted small mb-0 fw-medium">Total Cost</Card.Text>
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      <Row className="mb-4">
-        <Col lg={8}>
-          <Card className="shadow-sm">
-            <Card.Header>
-              <Row>
-                <Col md={8}>
-                  <h4 className="mt-1">Items to Buy ({unpurchasedItems.length})</h4>
+      {/* Add Item Form */}
+      {showAddForm && (
+        <Card className="mb-4 shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+          <Card.Header
+            className="fs-5 fw-bold text-white"
+            style={{ backgroundColor: '#3A5B4F', borderRadius: '1rem 1rem 0 0' }}
+          >
+            Add New Item
+          </Card.Header>
+          <Card.Body className="p-4">
+            <Form onSubmit={handleAddItem}>
+              <Row className="g-3 align-items-end">
+                <Col md={3}>
+                  <Form.Label className="fw-bold text-dark">Item Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter item name"
+                    value={newItem.name}
+                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                    required
+                    className="border-2"
+                  />
                 </Col>
-                <Col md={4} className="text-end">
-                  <Button
-                    variant={showAddForm ? 'outline-secondary' : 'success'}
-                    onClick={() => setShowAddForm(!showAddForm)}
+                <Col md={2}>
+                  <Form.Label className="fw-bold text-dark">Quantity</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g., 2 lbs"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                    required
+                    className="border-2"
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="fw-bold text-dark">Price ($)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={newItem.price}
+                    onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                    required
+                    className="border-2"
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="fw-bold text-dark">Category</Form.Label>
+                  <Form.Select
+                    value={newItem.category}
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      category: e.target.value as ShoppingItem['category'],
+                    })}
+                    className="border-2"
                   >
-                    <strong>{showAddForm ? 'Cancel' : '+'}</strong>
+                    <option value="Produce">Produce</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Frozen">Frozen</option>
+                    <option value="Other">Other</option>
+                  </Form.Select>
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="fw-bold text-dark">Priority</Form.Label>
+                  <Form.Select
+                    value={newItem.priority}
+                    onChange={(e) => setNewItem({
+                      ...newItem,
+                      priority: e.target.value as ShoppingItem['priority'],
+                    })}
+                    className="border-2"
+                  >
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </Form.Select>
+                </Col>
+                <Col md={1}>
+                  <Button
+                    type="submit"
+                    variant="success"
+                    className="w-100 fw-bold"
+                    style={{ backgroundColor: '#3A5B4F', borderColor: '#3A5B4F' }}
+                  >
+                    Add
                   </Button>
                 </Col>
               </Row>
-              {showAddForm && (
-                <Card className="mt-1 mb-4 shadow-sm">
-                  <Card.Body>
-                    <Form onSubmit={handleAddItem}>
-                      <Row className="g-3 align-items-end">
-                        <Col md={4}>
-                          <Form.Label>Item Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter item name"
-                            value={newItem.name}
-                            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Quantity</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="e.g., 2 lbs"
-                            value={newItem.quantity}
-                            onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Price ($)</Form.Label>
-                          <Form.Control
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="0.00"
-                            value={newItem.price}
-                            onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Category</Form.Label>
-                          <Form.Select
-                            value={newItem.category}
-                            // eslint-disable-next-line max-len
-                            onChange={(e) => setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
-                            }
-                          >
-                            <option value="Produce">Produce</option>
-                            <option value="Meat">Meat</option>
-                            <option value="Dairy">Dairy</option>
-                            <option value="Frozen">Frozen</option>
-                            <option value="Other">Other</option>
-                          </Form.Select>
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Priority</Form.Label>
-                          <Form.Select
-                            value={newItem.priority}
-                            // eslint-disable-next-line max-len
-                            onChange={(e) => setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
-                            }
-                          >
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                          </Form.Select>
-                        </Col>
-                      </Row>
-                      <Row className="g-3 mt-2 align-items-end">
-                        <Col md={10} />
-                        <Col md={2}>
-                          <Button type="submit" variant="primary" className="w-100">
-                            Add
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Card.Body>
-                </Card>
-              )}
-            </Card.Header>
-            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-              {unpurchasedItems.length === 0 ? (
-                <p className="text-muted text-center py-4">No items in your shopping list!</p>
-              ) : (
-                <div className="d-grid gap-3">
-                  {sortItemsByPriority(unpurchasedItems).map((item) => (
-                    <ShoppingItemCard
-                      key={item.id}
-                      item={item}
-                      onTogglePurchased={togglePurchased}
-                      onRemove={removeItem}
-                    />
-                  ))}
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={4}>
-          <Row>
-            <Card className="shadow-sm mb-2">
-              <Card.Header>
-                <h4 className="mt-1">Recently Purchased ({purchasedItems.length})</h4>
-              </Card.Header>
-              <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                {purchasedItems.length === 0 ? (
-                  <p className="text-muted text-center py-4">No purchased items yet!</p>
-                ) : (
-                  <div className="d-grid gap-2">
-                    {purchasedItems.map((item) => (
-                      <PurchasedItemCard
-                        key={item.id}
-                        item={item}
-                        onTogglePurchased={togglePurchased}
-                        onRemove={removeItem}
-                      />
-                    ))}
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
+            </Form>
+          </Card.Body>
+        </Card>
+      )}
 
-            <Card className="text-center shadow-sm">
-              <Card.Body>
-                <h3 className="fs-2">${totalCost.toFixed(2)}</h3>
-                <Card.Text className="text-dark">Total Cost</Card.Text>
-              </Card.Body>
-            </Card>
+      {/* Purchased Items Section */}
+      {showPurchased && purchasedItems.length > 0 && (
+        <>
+          <h4 className="mt-5 mb-3 fw-bold">Recently Purchased</h4>
+          <Row className="g-4 mb-4">
+            {purchasedItems.map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center">
+                <PurchasedItemCard
+                  item={item}
+                  onTogglePurchased={togglePurchased}
+                  onRemove={removeItem}
+                />
+              </Col>
+            ))}
           </Row>
-        </Col>
-      </Row>
+        </>
+      )}
 
+      {/* Shopping Items Grid */}
+      {unpurchasedItems.length === 0 ? (
+        <Card className="shadow-sm text-center py-5 border-0 mb-5" style={{ borderRadius: '1rem' }}>
+          <Card.Body className="py-5">
+            <div className="mb-3">
+              <i className="fas fa-shopping-cart text-muted" style={{ fontSize: '3rem' }}></i>
+            </div>
+            <h5 className="text-muted mb-2 fw-bold">No items in your shopping list!</h5>
+            <p className="text-muted small mb-0">Click &quot;Add Item +&quot; to get started.</p>
+          </Card.Body>
+        </Card>
+      ) : (
+        <>
+          <h4 className="mt-5 mb-3 fw-bold">Your List</h4>
+          <Row className="g-4 mb-4">
+            {sortItemsByPriority(unpurchasedItems).map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center ">
+                <ShoppingItemCard
+                  item={item}
+                  onTogglePurchased={togglePurchased}
+                  onRemove={removeItem}
+                />
+              </Col>
+            ))}
+          </Row>
+        </>
+      )}
+
+      {/* Suggestions Section */}
       <SuggestedItemsSection suggestions={suggestions} onAdd={handleAddSuggestion} />
     </Container>
   );
