@@ -46,7 +46,7 @@ const LocationsMap: React.FC = () => {
         .openPopup();
     });
     map.on('locationerror', () => {
-        // eslint-disable-next-line no-alert
+      // eslint-disable-next-line no-alert
       alert('Could not get your location');
     });
   }, []);
