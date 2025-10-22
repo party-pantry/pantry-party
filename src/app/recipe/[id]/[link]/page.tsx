@@ -186,7 +186,7 @@ const RecipePage: React.FC = () => {
               </Col>
             </Row>
 
-            <Button className="mt-1 mb-2" style={{ fontSize: '0.9rem', width: 300, height: 50 }} variant="outline-success">Add Missing Ingredients to Shopping List</Button>
+            <Button className="mt-1 mb-2" style={{ fontSize: '0.9rem', width: 300, height: 50 }} variant="secondary">Add Missing Ingredients to Shopping List</Button>
 
             <NutritionAccordion nutrition={recipe.nutrition} />
           </Col>

@@ -12,9 +12,12 @@ model User {
   email             String             @unique
   username          String             @unique
   password          String
+  image             String
+  bio               String
   houses            House[]
   recipes           Recipe[]
   shoppingListItems ShoppingListItem[]
+  reviews           Review[]
 }
 
 model House {
@@ -24,23 +27,24 @@ model House {
   address   String?
   latitude  Float?
   longitude Float?
-  user      User      @relation(fields: [userId], references: [id])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   storages  Storage[]
 }
 
 model Storage {
   id      Int      @id @default(autoincrement())
   houseId Int
-  name    String?
+  name    String
   type    Category
   stocks  Stock[]
-  house   House    @relation(fields: [houseId], references: [id])
+  house   House    @relation(fields: [houseId], references: [id], onDelete: Cascade)
 }
 
 model Ingredient {
   id                Int                @id @default(autoincrement())
   name              String
-  price             Int?
+  price             Float?             @default(0)
+  foodCategory      FoodCategory
   recipes           RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
   stocks            Stock[]
@@ -49,13 +53,12 @@ model Ingredient {
 model Stock {
   ingredientId Int
   storageId    Int
-  custom_name  String?
   quantity     Float
   unit         Unit
   last_updated DateTime   @default(now()) @updatedAt
   status       Status     @default(GOOD)
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
-  storage      Storage    @relation(fields: [storageId], references: [id])
+  storage      Storage    @relation(fields: [storageId], references: [id], onDelete: Cascade)
 
   @@id([ingredientId, storageId])
 }
@@ -77,6 +80,7 @@ model Recipe {
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]
   nutrition    RecipeNutrition[]
+  reviews      Review[]
 }
 
 model RecipeIngredient {
@@ -125,6 +129,20 @@ model ShoppingListItem {
   user                    User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model Review {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  userId    Int
+  rating    Float
+  comment   String?
+  createdAt DateTime @default(now())
+
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, userId])
+}
+
 enum Unit {
   OUNCE
   POUND
@@ -169,4 +187,12 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+enum FoodCategory {
+  DAIRY
+  PRODUCE
+  MEAT
+  FROZEN
+  OTHER
 }

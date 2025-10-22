@@ -106,6 +106,7 @@ const Recipes: React.FC = () => {
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAddRecipeModal, setShowAddRecipeModal] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [filters, setFilters] = useState<{
     difficulty: string[];
@@ -126,7 +127,13 @@ const Recipes: React.FC = () => {
     setSortBy(sort);
     setSortOrder(order);
   };
+  const handleShowModal = () => {
+    setShowAddRecipeModal(true); // Open the modal
+  };
 
+  const handleHideModal = () => {
+    setShowAddRecipeModal(false); // Close the modal
+  };
   const handleToggleFavorite = (recipeId: number, newIsStarredStatus: boolean) => {
     setRecipes(currentRecipes => currentRecipes.map(recipe => {
       if (recipe.id === recipeId) {
@@ -317,7 +324,7 @@ const Recipes: React.FC = () => {
         </Row>
         <Row className="g-4 justify-content-center">
           {filteredAndSortedRecipes.map(recipe => (
-            <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+            <Col key={recipe.id} md={4} sm={6} xs={12} className="justify-content-center">
               <RecipeCard
                 recipe={recipe}
                 userIngredientsId={userIngredientsId}
