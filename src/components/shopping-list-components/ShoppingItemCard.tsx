@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Badge, Button, Form } from 'react-bootstrap';
+import { Card, CardBody, Badge, Button, Form } from 'react-bootstrap';
 
 import {
   ShoppingItem,
@@ -18,50 +18,57 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
   onTogglePurchased,
   onRemove,
 }) => (
-  <Card className="h-100 shadow-sm border-0 hover-shadow" style={{ transition: 'all 0.2s' }}>
-    <Card.Body>
-      <div className="d-flex justify-content-between align-items-start mb-2">
+  <Card className="shopping-item-card h-100">
+    <CardBody>
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <div className="d-flex gap-2">
-          <Badge bg="" className={getCategoryVariant(item.category)}>{item.category}</Badge>
-          <Badge bg={getPriorityVariant(item.priority)}>{item.priority}</Badge>
+          <Badge bg="" className={`${getCategoryVariant(item.category)} px-3 py-2`} style={{ borderRadius: '1rem' }}>
+            {item.category}
+          </Badge>
+          <Badge bg={getPriorityVariant(item.priority)} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
+            {item.priority}
+          </Badge>
         </div>
         <Form.Check
           type="checkbox"
           checked={item.purchased}
           onChange={() => onTogglePurchased(item.id)}
-          style={{ transform: 'scale(1.2)' }}
+          style={{ transform: 'scale(1.3)' }}
+          className="custom-checkbox"
         />
       </div>
-      <h6 className="fw-bold mb-1">{item.name}</h6>
-      <p className="text-muted small mb-2">{item.quantity}</p>
-      {item.price && (
-        <div className="d-flex justify-content-between align-items-center">
-          <span className="fw-bold text-success">${item.price.toFixed(2)}</span>
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => onRemove(item.id)}
-            className="rounded-circle"
-            style={{ width: '32px', height: '32px', padding: 0 }}
-          >
-            ×
-          </Button>
-        </div>
-      )}
-      {!item.price && (
-        <div className="text-end">
-          <Button
-            variant="outline-danger"
-            size="sm"
-            onClick={() => onRemove(item.id)}
-            className="rounded-circle"
-            style={{ width: '32px', height: '32px', padding: 0 }}
-          >
-            ×
-          </Button>
-        </div>
-      )}
-    </Card.Body>
+      
+      <div className="mb-3">
+        <h5 className="fw-bold mb-2 text-dark">{item.name}</h5>
+        <p className="text-muted mb-0 fw-medium">{item.quantity}</p>
+      </div>
+
+      <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
+        {[
+          { label: 'Price', value: item.price ? `$${item.price.toFixed(2)}` : 'No Price' },
+          { label: 'Status', value: item.purchased ? 'Purchased' : 'Pending' },
+        ].map((stat) => (
+          <div key={stat.label} className="flex-fill">
+            <div className={`fw-bold fs-5 ${stat.label === 'Price' && item.price ? 'text-success' : 'text-muted'}`}>
+              {stat.value}
+            </div>
+            <div className="text-muted small">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="d-flex justify-content-center">
+        <Button
+          variant="outline-danger"
+          size="sm"
+          onClick={() => onRemove(item.id)}
+          className="px-4 py-2 fw-semibold"
+          style={{ borderRadius: '0.5rem' }}
+        >
+          Remove Item
+        </Button>
+      </div>
+    </CardBody>
   </Card>
 );
 
