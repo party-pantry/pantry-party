@@ -4,10 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
 import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
+// import { parse } from 'path';
 import ShoppingItemCard from './shopping-list-components/ShoppingItemCard';
 import PurchasedItemCard from './shopping-list-components/PurchasedItemCard';
 import SuggestedItemsSection from './shopping-list-components/SuggestedItemsSection';
-import { parse } from 'path';
+import { LocalFoodCategory } from '@/lib/Units';
 
 interface SuggestedItem {
   ingredientId: number;
@@ -21,6 +22,7 @@ interface SuggestedItem {
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 // Loading Skeleton Component
@@ -236,7 +238,7 @@ const ShoppingList: React.FC = () => {
       });
       if (response.ok) {
         await fetchShoppingList();
-        setNewItem({ name: '', quantity: '', price: '', category: 'Other', priority: 'Medium' });
+        setNewItem({ name: '', quantity: '', price: '', category: LocalFoodCategory.OTHER, priority: 'Medium' });
         setShowAddForm(false);
       }
     } catch (error) {
@@ -250,7 +252,7 @@ const ShoppingList: React.FC = () => {
     quantity: string,
   ): Promise<void> => {
     try {
-      // const price = item.ingredient?.price ?? 0;
+      const enumCategory = LocalFoodCategory[category.toUpperCase() as keyof typeof LocalFoodCategory];
       const response = await fetch('/api/shopping-list', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -258,7 +260,7 @@ const ShoppingList: React.FC = () => {
           ingredientId: item.ingredientId,
           name: item.name,
           quantity,
-          category,
+          category: enumCategory,
           price: item.price,
           priority: item.suggestedPriority,
           source: 'SUGGESTED',

@@ -1,10 +1,11 @@
 // Utility functions for shopping list functionality
+import { LocalFoodCategory } from "@/lib/Units";
 
 export type ShoppingItem = {
   id: number;
   name: string;
   quantity: string;
-  category: 'Produce' | 'Meat' | 'Dairy' | 'Frozen' | 'Other';
+  category: LocalFoodCategory;
   priority: 'High' | 'Medium' | 'Low';
   purchased: boolean;
   price?: number;
@@ -25,15 +26,15 @@ export const getPriorityVariant = (
 
 // Bootstrap variant mapping for categories
 export const getCategoryVariant = (
-  category: ShoppingItem['category'],
+  category: LocalFoodCategory,
 ): string => {
-  const categoryMap = {
-    Produce: 'category-produce',
-    Meat: 'category-meat',
-    Dairy: 'category-dairy',
-    Frozen: 'category-frozen',
-    Other: 'category-other',
-  } as const;
+  const categoryMap: Record<LocalFoodCategory, string> = {
+    [LocalFoodCategory.PRODUCE]: 'category-produce',
+    [LocalFoodCategory.MEAT]: 'category-meat',
+    [LocalFoodCategory.DAIRY]: 'category-dairy',
+    [LocalFoodCategory.FROZEN]: 'category-frozen',
+    [LocalFoodCategory.OTHER]: 'category-other',
+  };
   return categoryMap[category];
 };
 

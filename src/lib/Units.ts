@@ -37,3 +37,11 @@ export enum LocalCategory {
   SPICE_RACK = 'Spice Rack',
   OTHER = 'Other',
 }
+
+export enum LocalFoodCategory {
+  DAIRY = 'Dairy',
+  PRODUCE = 'Produce',
+  FROZEN = 'Frozen',
+  MEAT = 'Meat',
+  OTHER = 'Other',
+}

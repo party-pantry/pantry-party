@@ -41,7 +41,9 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const { ingredientId, name, quantity, category, priority, price, source, sourceStockIngredientId, sourceStorageId } = body;
+    const { ingredientId, name, quantity, category, priority, price,
+      source, sourceStockIngredientId, sourceStorageId,
+    } = body;
 
     if (!name || !quantity || !category || !priority || !price || !source) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });

@@ -71,6 +71,7 @@ export async function addStock(data: {
       ingredient = await prisma.ingredient.create({
         data: {
           name: sterilizedItemName,
+          foodCategory: 'OTHER',
         },
       });
     } catch (error: any) {
@@ -141,7 +142,7 @@ export async function updateStock(data: {
     if (!targetIngredient) {
       try {
         targetIngredient = await prisma.ingredient.create({
-          data: { name: sterilizedItemName },
+          data: { name: sterilizedItemName, foodCategory: 'OTHER' },
         });
       } catch (error: any) {
         // Handle race condition - ingredient might have been created by another request
@@ -433,6 +434,7 @@ export async function getSuggestedItems(userId: number) {
         suggestedPriority: isOutOfStock ? 'High' : 'Medium',
         currentQuantity: firstStock.quantity,
         price: firstStock.ingredient.price ?? 0,
+        category: firstStock.ingredient.foodCategory ?? 'Other',
       };
     });
 

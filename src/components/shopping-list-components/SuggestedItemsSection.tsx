@@ -14,6 +14,7 @@ interface SuggestedItem {
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 interface SuggestedItemsSectionProps {

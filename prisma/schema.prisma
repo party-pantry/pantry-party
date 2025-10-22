@@ -41,6 +41,7 @@ model Ingredient {
   id                Int                @id @default(autoincrement())
   name              String
   price             Float?
+  foodCategory      FoodCategory
   recipes           RecipeIngredient[]
   shoppingListItems ShoppingListItem[]
   stocks            Stock[]
@@ -169,4 +170,12 @@ enum Difficulty {
   EASY
   MEDIUM
   HARD
+}
+
+enum FoodCategory {
+  DAIRY
+  PRODUCE
+  MEAT
+  FROZEN
+  OTHER
 }

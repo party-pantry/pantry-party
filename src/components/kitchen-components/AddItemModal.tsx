@@ -188,7 +188,7 @@ const AddItemModal: React.FC<Props> = ({
                 onChange={(e) => handleChange('status', e.target.value)}
               >
                 {Object.entries(LocalStatus).map(([key, value]) => (
-                  <option key={key} value={key}>
+                  <option key={key} value={key} className={`${statusColorMap[formData.status]}`}>
                     {value}
                   </option>
                 ))}
