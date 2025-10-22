@@ -317,7 +317,23 @@ const Recipes: React.FC = () => {
               <div className="d-flex align-items-center flex-wrap gap-2">
                 <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
                 <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-                <AddRecipesModal />
+                <button className="btn btn-success" onClick={handleShowModal}>
+                  Add Recipe +
+                </button>
+                <AddRecipesModal
+                  show={showAddRecipeModal}
+                  onHide={handleHideModal}
+                  onSubmit={(recipe) => {
+                    console.log('Recipe submitted:', recipe); // Debugging
+                    if (recipe) {
+                      // Handle the recipe submission (e.g., update state or send to API)
+                      console.log('Handling recipe submission...');
+                    } else {
+                      console.error('No recipe data received!');
+                    }
+                    handleHideModal(); // Close the modal
+                  }}
+                />
               </div>
             </div>
           </Col>
