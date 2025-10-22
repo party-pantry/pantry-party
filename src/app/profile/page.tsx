@@ -6,6 +6,7 @@ import UpdateUsernameForm from './profile-components/UpdateUsernameForm';
 import UpdatePasswordForm from './profile-components/UpdatePasswordForm';
 import UpdateEmailForm from './profile-components/UpdateEmailForm';
 import ProfilePictureUploader from './profile-components/ProfilePictureUploader';
+import ProfileRecipes from './profile-components/ProfileRecipes';
 
 const ProfilePage = async () => {
   // Protect the page, only logged in users can access it.
@@ -32,6 +33,10 @@ const ProfilePage = async () => {
       <Row>
         {/* Update password form */}
         <UpdatePasswordForm />
+      </Row>
+      <Row>
+        {/* displays all of the user's recipes */}
+        <ProfileRecipes />
       </Row>
     </Container>
   );
