@@ -53,10 +53,10 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
           </div>
           <div className="mb-5 align-items-stretch">
             <Row>
-              <Col sm={8} className="d-flex align-items-end">
+              <Col sm={6} className="d-flex align-items-end">
                 <h6 className="fw-bold text-dark mb-1">{item.name}</h6>
               </Col>
-              <Col sm={4} className="text-end">
+              <Col sm={6} className="text-end">
                 <Badge bg={statusBadgeVariant} className="px-3 py-2" style={{ borderRadius: '1rem' }}>
                 {item.status === 'OUT_OF_STOCK' ? 'Out of Stock' : 'Low Stock'}
                             </Badge>

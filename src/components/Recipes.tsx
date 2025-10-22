@@ -343,7 +343,7 @@ const Recipes: React.FC = () => {
 
         <Row className="g-4 justify-content-center">
           {filteredAndSortedRecipes.map(recipe => (
-            <Col key={recipe.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
+            <Col key={recipe.id} md={4} sm={6} xs={12} className="justify-content-center">
               <RecipeCard
                 recipe={recipe}
                 userIngredientsId={userIngredientsId}

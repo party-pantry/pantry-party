@@ -284,7 +284,7 @@ const ShoppingList: React.FC = () => {
         <h2 className="mb-0 fw-bold">Shopping List</h2>
         <div className="d-flex gap-2">
           <Button
-            variant={showPurchased ? 'primary' : 'outline-dark'}
+            variant={showPurchased ? 'primary' : 'secondary'}
             onClick={() => setShowPurchased(!showPurchased)}
             size="sm"
             className="px-3"
@@ -435,9 +435,27 @@ const ShoppingList: React.FC = () => {
         </Card>
       )}
 
+      {/* Purchased Items Section */}
+      {showPurchased && purchasedItems.length > 0 && (
+        <>
+          <h4 className="mt-5 mb-3 fw-bold">Recently Purchased</h4>
+          <Row className="g-4 mb-4">
+            {purchasedItems.map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center">
+                <PurchasedItemCard
+                  item={item}
+                  onTogglePurchased={togglePurchased}
+                  onRemove={removeItem}
+                />
+              </Col>
+            ))}
+          </Row>
+        </>
+      )}
+
       {/* Shopping Items Grid */}
       {unpurchasedItems.length === 0 ? (
-        <Card className="shadow-sm text-center py-5 border-0" style={{ borderRadius: '1rem' }}>
+        <Card className="shadow-sm text-center py-5 border-0 mb-5" style={{ borderRadius: '1rem' }}>
           <Card.Body className="py-5">
             <div className="mb-3">
               <i className="fas fa-shopping-cart text-muted" style={{ fontSize: '3rem' }}></i>
@@ -447,27 +465,12 @@ const ShoppingList: React.FC = () => {
           </Card.Body>
         </Card>
       ) : (
-        <Row className="g-4 mb-4">
-          {sortItemsByPriority(unpurchasedItems).map((item) => (
-            <Col key={item.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
-              <ShoppingItemCard
-                item={item}
-                onTogglePurchased={togglePurchased}
-                onRemove={removeItem}
-              />
-            </Col>
-          ))}
-        </Row>
-      )}
-
-      {/* Purchased Items Section */}
-      {showPurchased && purchasedItems.length > 0 && (
         <>
-          <h4 className="mt-5 mb-3 fw-bold">Recently Purchased</h4>
+          <h4 className="mt-5 mb-3 fw-bold">Your List</h4>
           <Row className="g-4 mb-4">
-            {purchasedItems.map((item) => (
-              <Col key={item.id} md={4} sm={6} xs={12} className="d-flex justify-content-center">
-                <PurchasedItemCard
+            {sortItemsByPriority(unpurchasedItems).map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center ">
+                <ShoppingItemCard
                   item={item}
                   onTogglePurchased={togglePurchased}
                   onRemove={removeItem}

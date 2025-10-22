@@ -13,7 +13,7 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
   onTogglePurchased,
   onRemove,
 }) => (
-  <Card className="purchased-item-card h-100" style={{ opacity: 0.8, backgroundColor: '#f8f9fa' }}>
+  <Card className="purchased-item-card h-100" style={{ opacity: 0.6, backgroundColor: '#f8f9fa' }}>
     <CardBody>
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Form.Check
@@ -33,11 +33,10 @@ const PurchasedItemCard: React.FC<PurchasedItemCardProps> = ({
           Remove
         </Button>
       </div>
-      <div className="mb-3">
-        <h5 className="fw-bold mb-2 text-decoration-line-through text-muted">{item.name}</h5>
-        <p className="text-muted mb-0 fw-medium text-decoration-line-through">{item.quantity}</p>
+      <div className="d-flex align-items-center mb-4 pb-4 pt-1">
+        <h5 className="fw-bold text-decoration-line-through text-muted text-dark mb-0 me-3">{item.name}</h5>
+        <p className="text-muted mb-0 fw-medium text-decoration-line-through">({item.quantity})</p>
       </div>
-
       <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
         {[
           { label: 'Price', value: item.price ? `$${item.price.toFixed(2)}` : 'No Price' },
