@@ -106,6 +106,7 @@ const Recipes: React.FC = () => {
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
   const [canMakeOnly, setCanMakeOnly] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [showAddRecipeModal, setShowAddRecipeModal] = useState(false);
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
   const [filters, setFilters] = useState<{
     difficulty: string[];
@@ -126,7 +127,13 @@ const Recipes: React.FC = () => {
     setSortBy(sort);
     setSortOrder(order);
   };
+  const handleShowModal = () => {
+    setShowAddRecipeModal(true); // Open the modal
+  };
 
+  const handleHideModal = () => {
+    setShowAddRecipeModal(false); // Close the modal
+  };
   const handleToggleFavorite = (recipeId: number, newIsStarredStatus: boolean) => {
     setRecipes(currentRecipes => currentRecipes.map(recipe => {
       if (recipe.id === recipeId) {
@@ -315,7 +322,23 @@ const Recipes: React.FC = () => {
           /> */}
           <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
           <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-          <AddRecipesModal />
+          <button className="btn btn-success" onClick={handleShowModal}>
+           Add Recipe
+          </button>
+          <AddRecipesModal
+  show={showAddRecipeModal}
+  onHide={handleHideModal}
+  onSubmit={(recipe) => {
+    console.log('Recipe submitted:', recipe); // Debugging
+    if (recipe) {
+      // Handle the recipe submission (e.g., update state or send to API)
+      console.log('Handling recipe submission...');
+    } else {
+      console.error('No recipe data received!');
+    }
+    handleHideModal(); // Close the modal
+  }}
+/>
         </div>
 
         <Row className="g-4 justify-content-center">

@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category } from '@prisma/client';
+import { Unit, Status, Category, Difficulty } from '@prisma/client';
 import { prisma } from './prisma';
 
 /* Create a new user with unique email and username */
@@ -296,6 +296,53 @@ export async function addShoppingListItem(data: {
   });
 
   return item;
+}
+
+export async function addRecipeInstruction(data: {
+  recipeId: number;
+  step: number;
+  content: string;
+}) {
+  const instruction = await prisma.recipeInstruction.create({
+    data: {
+      recipeId: data.recipeId,
+      step: data.step,
+      content: data.content,
+    },
+  });
+
+  return instruction;
+}
+
+/* Add a new recipe */
+export async function addRecipe(data: {
+  userId: number;
+  name: string;
+  description: string;
+  difficulty: Difficulty;
+  prepTime?: number;
+  cookTime?: number;
+  downTime?: number;
+  servings?: number;
+  rating?: number;
+}) {
+  const recipe = await prisma.recipe.create({
+    data: {
+      userId: data.userId,
+      name: data.name,
+      description: data.description,
+      difficulty: data.difficulty,
+      isStarred: false, // Always false
+      prepTime: data.prepTime ?? 0,
+      cookTime: data.cookTime ?? 0,
+      downTime: data.downTime ?? 0,
+      servings: data.servings ?? 1,
+      postDate: new Date(),
+      rating: data.rating ?? 0,
+    },
+  });
+
+  return recipe;
 }
 
 /* Get all shopping list items for a user */
