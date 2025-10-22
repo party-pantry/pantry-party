@@ -9,10 +9,12 @@ interface SuggestedItem {
   status: string;
   storageId: number;
   storageName: string;
+  price: number;
   storageType: string;
   houseName: string;
   suggestedPriority: string;
   currentQuantity: number;
+  category: string;
 }
 
 interface SuggestedItemsSectionProps {
@@ -29,25 +31,28 @@ const SuggestedItemsSection: React.FC<SuggestedItemsSectionProps> = ({
   }
 
   return (
-    <Row className="mb-4">
-      <Col>
-        <Card className="shadow-sm">
-          <Card.Header className="bg-warning bg-opacity-10">
-            <h5 className="mb-0">
-              Suggested Items ({suggestions.length})
-            </h5>
-            <small className="text-muted">Low stock items from your inventory</small>
-          </Card.Header>
-          <Card.Body style={{ maxHeight: '400px', overflowY: 'auto' }}>
-            <div className="d-grid gap-3">
-              {suggestions.map((item) => (
-                <SuggestedItemCard key={item.ingredientId} item={item} onAdd={onAdd} />
-              ))}
-            </div>
-          </Card.Body>
-        </Card>
-      </Col>
-    </Row>
+    <Card className="shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+      <Card.Header
+        className="fs-5 fw-bold text-white"
+        style={{ backgroundColor: '#3A5B4F', borderRadius: '1rem 1rem 0 0' }}
+      >
+        <div className="d-flex justify-content-between align-items-center">
+          <div>
+            <h5 className="mb-0">Suggested Items ({suggestions.length})</h5>
+            <small className="text-white-50">Low stock items from your inventory</small>
+          </div>
+        </div>
+      </Card.Header>
+      <Card.Body className="p-4" style={{ maxHeight: '400px', overflowY: 'auto' }}>
+        <Row className="g-3">
+          {suggestions.map((item) => (
+            <Col key={item.ingredientId} md={6} lg={4}>
+              <SuggestedItemCard item={item} onAdd={onAdd} />
+            </Col>
+          ))}
+        </Row>
+      </Card.Body>
+    </Card>
   );
 };
 
