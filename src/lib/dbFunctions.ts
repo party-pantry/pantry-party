@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category } from '@prisma/client';
+import { Unit, Status, Category, Difficulty } from '@prisma/client';
 import { prisma } from './prisma';
 
 /* Create a new user with unique email and username */
@@ -301,6 +301,53 @@ export async function addShoppingListItem(data: {
   return item;
 }
 
+export async function addRecipeInstruction(data: {
+  recipeId: number;
+  step: number;
+  content: string;
+}) {
+  const instruction = await prisma.recipeInstruction.create({
+    data: {
+      recipeId: data.recipeId,
+      step: data.step,
+      content: data.content,
+    },
+  });
+
+  return instruction;
+}
+
+/* Add a new recipe */
+export async function addRecipe(data: {
+  userId: number;
+  name: string;
+  description: string;
+  difficulty: Difficulty;
+  prepTime?: number;
+  cookTime?: number;
+  downTime?: number;
+  servings?: number;
+  rating?: number;
+}) {
+  const recipe = await prisma.recipe.create({
+    data: {
+      userId: data.userId,
+      name: data.name,
+      description: data.description,
+      difficulty: data.difficulty,
+      isStarred: false, // Always false
+      prepTime: data.prepTime ?? 0,
+      cookTime: data.cookTime ?? 0,
+      downTime: data.downTime ?? 0,
+      servings: data.servings ?? 1,
+      postDate: new Date(),
+      rating: data.rating ?? 0,
+    },
+  });
+
+  return recipe;
+}
+
 /* Get all shopping list items for a user */
 export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
@@ -439,4 +486,21 @@ export async function getSuggestedItems(userId: number) {
     });
 
   return suggestions;
+}
+
+export async function deleteStorage(houseId: number, storageId: number) {
+  // Ensure the storage belongs to the house
+  const storage = await prisma.storage.findFirst({
+    where: { id: storageId, houseId },
+    select: { id: true },
+  });
+  if (!storage) throw new Error('NOT_FOUND');
+
+  // Remove items (Stock) first, then the Storage
+  await prisma.$transaction([
+    prisma.stock.deleteMany({ where: { storageId } }),
+    prisma.storage.delete({ where: { id: storageId } }),
+  ]);
+
+  return { ok: true };
 }
