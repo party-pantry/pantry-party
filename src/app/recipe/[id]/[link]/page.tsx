@@ -12,6 +12,7 @@ import NutritionAccordion from '@/components/recipes-components/NutritionAccordi
 import CookingAlertModal from '@/components/cooking-components/CookingAlertModal';
 import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
 import { calculateTotalTime, getDifficulty, checkIngredients } from '@/utils/recipeUtils';
+import ReviewSection from '@/components/recipes-components/ReviewSection';
 
 const RecipePage: React.FC = () => {
   const params = useParams();

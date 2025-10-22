@@ -78,6 +78,21 @@ model Recipe {
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]
   nutrition    RecipeNutrition[]
+  reviews      Review[] 
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  recipeId  Int
+  userId    Int
+  rating    Float    // 0..5 (use halves if you want)
+  comment   String?
+  createdAt DateTime @default(now())
+
+  recipe    Recipe   @relation(fields: [recipeId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, userId])
 }
 
 model RecipeIngredient {
