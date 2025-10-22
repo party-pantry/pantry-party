@@ -37,7 +37,7 @@ const NavBar: React.FC = () => {
       return currentUser.name;
     }
 
-    if (currentUser.email) {
+    if (currentUser.username) {
       return currentUser.email.split('@')[0];
     }
 

@@ -78,8 +78,10 @@ const CookingPage: React.FC = () => {
         <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
         </div>
-
-        <Row className="gap-4 mt-5">
+        <div className="mt-4 pt-5">
+          <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
+        </div>
+        <Row className="gap-4 mt-2">
           <Col md={4} lg={3}>
             <div className="sticky-top top-5" style={{ zIndex: '1' }}>
               <div className="text-center mb-3">
@@ -104,9 +106,6 @@ const CookingPage: React.FC = () => {
           </Col>
         </Row>
 
-        <div className="mt-auto">
-          <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
-        </div>
     </Container>
 
     <CustomAlert
