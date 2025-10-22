@@ -440,3 +440,20 @@ export async function getSuggestedItems(userId: number) {
 
   return suggestions;
 }
+
+export async function deleteStorage(houseId: number, storageId: number) {
+  // Ensure the storage belongs to the house
+  const storage = await prisma.storage.findFirst({
+    where: { id: storageId, houseId },
+    select: { id: true },
+  });
+  if (!storage) throw new Error('NOT_FOUND');
+
+  // Remove items (Stock) first, then the Storage
+  await prisma.$transaction([
+    prisma.stock.deleteMany({ where: { storageId } }),
+    prisma.storage.delete({ where: { id: storageId } }),
+  ]);
+
+  return { ok: true };
+}
