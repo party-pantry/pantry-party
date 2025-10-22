@@ -6,6 +6,7 @@ interface SuggestedItem {
   name: string;
   unit: string;
   status: string;
+  price: number;
   storageId: number;
   storageName: string;
   storageType: string;

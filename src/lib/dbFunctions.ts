@@ -274,6 +274,7 @@ export async function addShoppingListItem(data: {
   quantity: string;
   category: string;
   priority: string;
+  price: number;
   source: string;
   sourceStockIngredientId?: number;
   sourceStorageId?: number;
@@ -286,6 +287,7 @@ export async function addShoppingListItem(data: {
       quantity: data.quantity,
       category: data.category,
       priority: data.priority,
+      price: data.price,
       source: data.source,
       sourceStockIngredientId: data.sourceStockIngredientId,
       sourceStorageId: data.sourceStorageId,
@@ -321,6 +323,7 @@ export async function updateShoppingListItem(
     quantity?: string;
     category?: string;
     priority?: string;
+    price?: number;
   },
 ) {
   const item = await prisma.shoppingListItem.update({
@@ -429,6 +432,7 @@ export async function getSuggestedItems(userId: number) {
         houseName: firstStock.storage.house.name,
         suggestedPriority: isOutOfStock ? 'High' : 'Medium',
         currentQuantity: firstStock.quantity,
+        price: firstStock.ingredient.price ?? 0,
       };
     });
 

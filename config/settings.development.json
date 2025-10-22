@@ -45,9 +45,9 @@
     }
   ],
   "defaultIngredients": [
-  { "id": 1, "name": "milk", "price": 8 },
-  { "id": 2, "name": "eggs", "price": 10 },
-  { "id": 3, "name": "rice", "price": 10 },
+  { "id": 1, "name": "milk", "price": 8.50 },
+  { "id": 2, "name": "eggs", "price": 10.25 },
+  { "id": 3, "name": "rice", "price": 10.73 },
   { "id": 4, "name": "chicken breast", "price": 15 },
   { "id": 5, "name": "salt", "price": 2 },
   { "id": 6, "name": "bread", "price": 6 },
@@ -55,7 +55,7 @@
   { "id": 8, "name": "yougurt", "price": 4 },
   { "id": 9, "name": "basil", "price": 2 },
   { "id": 10, "name": "olive oil", "price": 4 },
-  { "id": 11, "name": "ice cream", "price": 7 },
+  { "id": 11, "name": "ice cream", "price": 7.99 },
   { "id": 12, "name": "swiss cheese", "price": 5 },
   { "id": 13, "name": "lettuce", "price": 4 },
   { "id": 14, "name": "tomato", "price": 6 },

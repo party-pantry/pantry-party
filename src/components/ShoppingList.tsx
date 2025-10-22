@@ -7,11 +7,13 @@ import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 import ShoppingItemCard from './shopping-list-components/ShoppingItemCard';
 import PurchasedItemCard from './shopping-list-components/PurchasedItemCard';
 import SuggestedItemsSection from './shopping-list-components/SuggestedItemsSection';
+import { parse } from 'path';
 
 interface SuggestedItem {
   ingredientId: number;
   name: string;
   unit: string;
+  price: number;
   status: string;
   storageId: number;
   storageName: string;
@@ -232,7 +234,6 @@ const ShoppingList: React.FC = () => {
           source: 'MANUAL',
         }),
       });
-
       if (response.ok) {
         await fetchShoppingList();
         setNewItem({ name: '', quantity: '', price: '', category: 'Other', priority: 'Medium' });
@@ -249,6 +250,7 @@ const ShoppingList: React.FC = () => {
     quantity: string,
   ): Promise<void> => {
     try {
+      // const price = item.ingredient?.price ?? 0;
       const response = await fetch('/api/shopping-list', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -257,6 +259,7 @@ const ShoppingList: React.FC = () => {
           name: item.name,
           quantity,
           category,
+          price: item.price,
           priority: item.suggestedPriority,
           source: 'SUGGESTED',
           sourceStockIngredientId: item.ingredientId,
@@ -309,7 +312,12 @@ const ShoppingList: React.FC = () => {
   const unpurchasedItems = shoppingItems.filter((item) => !item.purchased);
   const purchasedItems = shoppingItems.filter((item) => item.purchased);
 
-  const totalCost = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+  // const totalCost = unpurchasedItems.reduce((sum, item) => sum + (item.price || 0), 0);
+  const totalCost = unpurchasedItems.reduce((sum, item) => {
+    const price = parseFloat(String(item.price)) || 0;
+    const quantity = parseFloat(String(item.quantity)) || 1;
+    return sum + price * quantity;
+  }, 0);
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
