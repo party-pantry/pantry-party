@@ -48,7 +48,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
         servings: parseInt(formData.servings, 10) || 0,
         rating: parseInt(formData.rating, 10) || 0,
       });
-      
+
       console.log(result.id);
       onSubmit(result); // Pass the result to the parent component
       onHide(); // Close the modal
