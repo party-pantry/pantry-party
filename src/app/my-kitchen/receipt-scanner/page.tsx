@@ -4,7 +4,7 @@ import { loggedInProtectedPage } from '@/lib/page-protection';
 import ReceiptUpload from '@/components/scanner-components/ReceiptUpload';
 import ReceiptCamera from '@/components/scanner-components/ReceiptCamera';
 
-const BarcodeScannerPage = async () => {
+const ReceiptScannerPage = async () => {
   // Protect the page, only logged in users can access it.
   const session = await getServerSession(authOptions);
   loggedInProtectedPage(
@@ -23,4 +23,4 @@ const BarcodeScannerPage = async () => {
   );
 };
 
-export default BarcodeScannerPage;
+export default ReceiptScannerPage;

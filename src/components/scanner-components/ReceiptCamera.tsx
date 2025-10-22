@@ -30,7 +30,7 @@ const ReceiptCamera = () => {
       const formData = new FormData();
       formData.append('file', blob, 'receipt.jpg');
 
-      const apiRes = await fetch('/api/barcode-scanner', {
+      const apiRes = await fetch('/api/receipt-scanner', {
         method: 'POST',
         body: formData,
       });

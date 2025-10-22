@@ -1,6 +1,6 @@
 /**
  * This component uploads a receipt image, sending the image to the Veryfi API
- * (/api/barcode-scanners/route.ts)route
+ * (/api/receipt-scanner/route.ts)route
 */
 
 'use client';
@@ -20,7 +20,7 @@ const ReceiptUpload = () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const res = await fetch('/api/barcode-scanner', {
+    const res = await fetch('/api/receipt-scanner', {
       method: 'POST',
       body: formData,
     });

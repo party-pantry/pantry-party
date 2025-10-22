@@ -113,10 +113,10 @@ const SideBar: React.FC = () => {
                                         Inventory
                                     </MenuItem>
                                     <MenuItem
-                                        component={<Link href="/my-kitchen/barcode-scanner" />}
-                                        active={pathname === '/my-kitchen/barcode-scanner'}
+                                        component={<Link href="/my-kitchen/receipt-scanner" />}
+                                        active={pathname === '/my-kitchen/receipt-scanner'}
                                     >
-                                        Barcode Scanner
+                                        Receipt Scan
                                     </MenuItem>
                                 </SubMenu>
                                 <SubMenu label="Shopping List" icon={<ListCheck />}>

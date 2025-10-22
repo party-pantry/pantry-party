@@ -1,7 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 /**
  * What this file does:
-  * 1. It handles the POST request to upload a barcode image to Veryfi API for processing.
+  * 1. It handles the POST request to upload a receipt image to Veryfi API for processing.
   * 2. Extracts the file from the request, converts it to base64 (specific format required)
     and sends it to Veryfi's document processing endpoint (Verify API).
     3. Returns the response from Veryfi back to the client.
