@@ -169,6 +169,7 @@ const ShoppingListSkeleton: React.FC = () => (
 const ShoppingList: React.FC = () => {
   const { data: session } = useSession();
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPurchased, setShowPurchased] = useState(false);
   const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
   const [suggestions, setSuggestions] = useState<SuggestedItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -313,183 +314,182 @@ const ShoppingList: React.FC = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
+      {/* Stats Section */}
       <Row className="mb-4">
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0">
             <Card.Body>
-              <h3 className="text-primary fs-2">{unpurchasedItems.length}</h3>
-              <Card.Text className="text-dark">Items to Buy</Card.Text>
+              <h3 className="text-primary fs-2 mb-1">{unpurchasedItems.length}</h3>
+              <Card.Text className="text-muted small mb-0">Items to Buy</Card.Text>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0">
             <Card.Body>
-              <h3 className="text-success fs-2">{purchasedItems.length}</h3>
-              <Card.Text className="text-dark">Items Purchased</Card.Text>
+              <h3 className="text-success fs-2 mb-1">{purchasedItems.length}</h3>
+              <Card.Text className="text-muted small mb-0">Items Purchased</Card.Text>
             </Card.Body>
           </Card>
         </Col>
-        <Col md={4}>
-          <Card className="text-center shadow-sm">
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0">
             <Card.Body>
-              <h3 className="text-danger fs-2">
+              <h3 className="text-danger fs-2 mb-1">
                 {unpurchasedItems.filter((item) => item.priority === 'High').length}
               </h3>
-              <Card.Text className="text-dark">High Priority Items</Card.Text>
+              <Card.Text className="text-muted small mb-0">High Priority</Card.Text>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col md={3}>
+          <Card className="text-center shadow-sm border-0">
+            <Card.Body>
+              <h3 className="fs-2 mb-1">${totalCost.toFixed(2)}</h3>
+              <Card.Text className="text-muted small mb-0">Total Cost</Card.Text>
             </Card.Body>
           </Card>
         </Col>
       </Row>
 
-      <Row className="mb-4">
-        <Col lg={8}>
-          <Card className="shadow-sm">
-            <Card.Header>
-              <Row>
-                <Col md={8}>
-                  <h4 className="mt-1">Items to Buy ({unpurchasedItems.length})</h4>
+      {/* Control Bar */}
+      <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h4 className="mb-0">Shopping List</h4>
+        <div className="d-flex gap-2">
+          <Button
+            variant={showPurchased ? 'primary' : 'outline-secondary'}
+            onClick={() => setShowPurchased(!showPurchased)}
+            size="sm"
+          >
+            {showPurchased ? 'Hide' : 'Show'} Purchased ({purchasedItems.length})
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => setShowAddForm(!showAddForm)}
+          >
+            <strong>{showAddForm ? 'Cancel' : 'Add Item +'}</strong>
+          </Button>
+        </div>
+      </div>
+
+      {/* Add Item Form */}
+      {showAddForm && (
+        <Card className="mb-4 shadow-sm">
+          <Card.Body>
+            <Form onSubmit={handleAddItem}>
+              <Row className="g-3 align-items-end">
+                <Col md={3}>
+                  <Form.Label className="small fw-bold">Item Name</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter item name"
+                    value={newItem.name}
+                    onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
+                    required
+                  />
                 </Col>
-                <Col md={4} className="text-end">
-                  <Button
-                    variant={showAddForm ? 'outline-secondary' : 'success'}
-                    onClick={() => setShowAddForm(!showAddForm)}
+                <Col md={2}>
+                  <Form.Label className="small fw-bold">Quantity</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="e.g., 2 lbs"
+                    value={newItem.quantity}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
+                    required
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="small fw-bold">Price ($)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    value={newItem.price}
+                    onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
+                    required
+                  />
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="small fw-bold">Category</Form.Label>
+                  <Form.Select
+                    value={newItem.category}
+                    onChange={(e) =>
+                      setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
+                    }
                   >
-                    <strong>{showAddForm ? 'Cancel' : '+'}</strong>
+                    <option value="Produce">Produce</option>
+                    <option value="Meat">Meat</option>
+                    <option value="Dairy">Dairy</option>
+                    <option value="Frozen">Frozen</option>
+                    <option value="Other">Other</option>
+                  </Form.Select>
+                </Col>
+                <Col md={2}>
+                  <Form.Label className="small fw-bold">Priority</Form.Label>
+                  <Form.Select
+                    value={newItem.priority}
+                    onChange={(e) =>
+                      setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
+                    }
+                  >
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </Form.Select>
+                </Col>
+                <Col md={1}>
+                  <Button type="submit" variant="primary" className="w-100">
+                    Add
                   </Button>
                 </Col>
               </Row>
-              {showAddForm && (
-                <Card className="mt-1 mb-4 shadow-sm">
-                  <Card.Body>
-                    <Form onSubmit={handleAddItem}>
-                      <Row className="g-3 align-items-end">
-                        <Col md={4}>
-                          <Form.Label>Item Name</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="Enter item name"
-                            value={newItem.name}
-                            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Quantity</Form.Label>
-                          <Form.Control
-                            type="text"
-                            placeholder="e.g., 2 lbs"
-                            value={newItem.quantity}
-                            onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Price ($)</Form.Label>
-                          <Form.Control
-                            type="number"
-                            min="0"
-                            step="0.01"
-                            placeholder="0.00"
-                            value={newItem.price}
-                            onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
-                            required
-                          />
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Category</Form.Label>
-                          <Form.Select
-                            value={newItem.category}
-                            // eslint-disable-next-line max-len
-                            onChange={(e) => setNewItem({ ...newItem, category: e.target.value as ShoppingItem['category'] })
-                            }
-                          >
-                            <option value="Produce">Produce</option>
-                            <option value="Meat">Meat</option>
-                            <option value="Dairy">Dairy</option>
-                            <option value="Frozen">Frozen</option>
-                            <option value="Other">Other</option>
-                          </Form.Select>
-                        </Col>
-                        <Col md={2}>
-                          <Form.Label>Priority</Form.Label>
-                          <Form.Select
-                            value={newItem.priority}
-                            // eslint-disable-next-line max-len
-                            onChange={(e) => setNewItem({ ...newItem, priority: e.target.value as ShoppingItem['priority'] })
-                            }
-                          >
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                          </Form.Select>
-                        </Col>
-                      </Row>
-                      <Row className="g-3 mt-2 align-items-end">
-                        <Col md={10} />
-                        <Col md={2}>
-                          <Button type="submit" variant="primary" className="w-100">
-                            Add
-                          </Button>
-                        </Col>
-                      </Row>
-                    </Form>
-                  </Card.Body>
-                </Card>
-              )}
-            </Card.Header>
-            <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-              {unpurchasedItems.length === 0 ? (
-                <p className="text-muted text-center py-4">No items in your shopping list!</p>
-              ) : (
-                <div className="d-grid gap-3">
-                  {sortItemsByPriority(unpurchasedItems).map((item) => (
-                    <ShoppingItemCard
-                      key={item.id}
-                      item={item}
-                      onTogglePurchased={togglePurchased}
-                      onRemove={removeItem}
-                    />
-                  ))}
-                </div>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col lg={4}>
-          <Row>
-            <Card className="shadow-sm mb-2">
-              <Card.Header>
-                <h4 className="mt-1">Recently Purchased ({purchasedItems.length})</h4>
-              </Card.Header>
-              <Card.Body style={{ maxHeight: '500px', overflowY: 'auto' }}>
-                {purchasedItems.length === 0 ? (
-                  <p className="text-muted text-center py-4">No purchased items yet!</p>
-                ) : (
-                  <div className="d-grid gap-2">
-                    {purchasedItems.map((item) => (
-                      <PurchasedItemCard
-                        key={item.id}
-                        item={item}
-                        onTogglePurchased={togglePurchased}
-                        onRemove={removeItem}
-                      />
-                    ))}
-                  </div>
-                )}
-              </Card.Body>
-            </Card>
+            </Form>
+          </Card.Body>
+        </Card>
+      )}
 
-            <Card className="text-center shadow-sm">
-              <Card.Body>
-                <h3 className="fs-2">${totalCost.toFixed(2)}</h3>
-                <Card.Text className="text-dark">Total Cost</Card.Text>
-              </Card.Body>
-            </Card>
+      {/* Shopping Items Grid */}
+      {unpurchasedItems.length === 0 ? (
+        <Card className="shadow-sm text-center py-5">
+          <Card.Body>
+            <p className="text-muted mb-0">No items in your shopping list!</p>
+            <p className="text-muted small">Click &quot;Add Item +&quot; to get started.</p>
+          </Card.Body>
+        </Card>
+      ) : (
+        <Row className="g-3 mb-4">
+          {sortItemsByPriority(unpurchasedItems).map((item) => (
+            <Col key={item.id} md={4} sm={6} xs={12}>
+              <ShoppingItemCard
+                item={item}
+                onTogglePurchased={togglePurchased}
+                onRemove={removeItem}
+              />
+            </Col>
+          ))}
+        </Row>
+      )}
+
+      {/* Purchased Items Section */}
+      {showPurchased && purchasedItems.length > 0 && (
+        <>
+          <h4 className="mt-5 mb-3">Recently Purchased</h4>
+          <Row className="g-3 mb-4">
+            {purchasedItems.map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12}>
+                <PurchasedItemCard
+                  item={item}
+                  onTogglePurchased={togglePurchased}
+                  onRemove={removeItem}
+                />
+              </Col>
+            ))}
           </Row>
-        </Col>
-      </Row>
+        </>
+      )}
 
+      {/* Suggestions Section */}
       <SuggestedItemsSection suggestions={suggestions} onAdd={handleAddSuggestion} />
     </Container>
   );
