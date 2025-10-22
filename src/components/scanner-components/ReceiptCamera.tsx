@@ -85,7 +85,7 @@ const ReceiptCamera = () => {
               disabled={loading}
               className="bg-green-600 text-white px-4 py-2 rounded"
             >
-              {loading ? 'Processing...' : 'Upload to Veryfi'}
+              {loading ? 'Processing...' : 'Scan Receipt'}
             </button>
             <button
               onClick={retake}
