@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import StarRating from '@/components/recipes-components/StarRating';
 
 type Review = {
@@ -12,50 +12,55 @@ type Review = {
   user: { id: number; username: string };
 };
 
-export default function ReviewSection({
-  recipeId,
-  currentUserId,
-}: {
-  recipeId: number;
-  /** optional; if your API pulls user from session you can omit it */
-  currentUserId?: number;
-}) {
+export default function ReviewSection({ recipeId }: { recipeId: number }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
   const [busy, setBusy] = useState(false);
 
-  const load = async () => {
-    const res = await fetch(`/api/recipes/${recipeId}/reviews`);
-    const data = await res.json();
-    setReviews(data ?? []);
+  // Load all reviews for this recipe
+  const loadReviews = async () => {
+    try {
+      const res = await fetch(`/api/recipes/${recipeId}/reviews`);
+      if (res.ok) {
+        const data = await res.json();
+        setReviews(data ?? []);
+      }
+    } catch (error) {
+      console.error('Error loading reviews:', error);
+    }
   };
 
   useEffect(() => {
-    load();
+    loadReviews();
   }, [recipeId]);
 
-  const submit = async (e: React.FormEvent) => {
+  // Submit review handler
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
     try {
-      const payload: any = { rating, comment };
-      if (typeof currentUserId === 'number') payload.userId = currentUserId;
-
       const res = await fetch(`/api/recipes/${recipeId}/reviews`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ rating, comment }),
       });
 
+      // Handle unauthorized users
+      if (res.status === 401) {
+        alert('Please sign in to leave a review.');
+        return;
+      }
+
       if (!res.ok) {
-        const d = await res.json().catch(() => ({}));
-        throw new Error(d?.error ?? 'Failed to post review');
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.error ?? 'Failed to post review');
       }
 
       setComment('');
-      await load(); // refresh review list
-      window.location.reload(); // refresh page summary (avg + count)
+      setRating(5);
+      await loadReviews();
+      window.location.reload(); // refresh recipe avg/count
     } catch (err: any) {
       alert(err.message);
     } finally {
@@ -64,57 +69,80 @@ export default function ReviewSection({
   };
 
   return (
-    <div className="mt-5">
-      <h3 className="mb-3">Reviews</h3>
+    <div className="mt-5 w-100">
+      <Card className="p-4 shadow-sm">
+        <h3 className="mb-3">Leave a Review</h3>
 
-      <Form onSubmit={submit} className="mb-4">
-        <div className="d-flex align-items-center gap-2 mb-2">
-          <strong>Rating:</strong>
-          {/* simple clickable stars for selection */}
-          <div>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <span
-                key={n}
-                style={{ cursor: 'pointer', fontSize: 22, lineHeight: 1 }}
-                onClick={() => setRating(n)}
-                aria-hidden
-                title={`${n} star${n > 1 ? 's' : ''}`}
+        <Form onSubmit={handleSubmit} className="mb-4">
+          <Row className="align-items-center mb-3">
+            <Col md="auto" className="fw-bold">Rating:</Col>
+            <Col>
+              {[1, 2, 3, 4, 5].map((n) => (
+                <span
+                  key={n}
+                  onClick={() => setRating(n)}
+                  style={{
+                    cursor: 'pointer',
+                    color: n <= rating ? 'gold' : '#ccc',
+                    fontSize: '1.9rem',
+                    marginRight: 4,
+                  }}
+                  aria-hidden
+                  title={`${n} star${n > 1 ? 's' : ''}`}
+                >
+                  ★
+                </span>
+              ))}
+              <span className="ms-2 text-muted">{rating}/5</span>
+            </Col>
+          </Row>
+
+          <Form.Control
+            as="textarea"
+            rows={4}
+            placeholder="Share your thoughts about this recipe..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            className="mb-3"
+          />
+
+          <Button
+            type="submit"
+            disabled={busy}
+            variant="primary"
+            style={{ width: '180px' }}
+          >
+            {busy ? 'Submitting…' : 'Post Review'}
+          </Button>
+        </Form>
+
+        <hr />
+
+        <h4 className="mb-3">All Reviews</h4>
+        {reviews.length === 0 ? (
+          <p className="text-muted mb-0">
+            No reviews yet — be the first to share your thoughts!
+          </p>
+        ) : (
+          <div className="d-flex flex-column gap-3">
+            {reviews.map((r) => (
+              <Card
+                key={r.id}
+                className="p-3 border-0 border-bottom bg-light-subtle"
               >
-                {n <= rating ? '★' : '☆'}
-              </span>
+                <div className="d-flex justify-content-between align-items-center mb-1">
+                  <strong>@{r.user.username}</strong>
+                  <small className="text-muted">
+                    {new Date(r.createdAt).toLocaleString()}
+                  </small>
+                </div>
+                <StarRating rating={r.rating} size={20} />
+                {r.comment && <p className="mt-2 mb-0">{r.comment}</p>}
+              </Card>
             ))}
           </div>
-          <span className="text-muted ms-2">{rating}/5</span>
-        </div>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          placeholder="Write your review…"
-          className="mb-2"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-        />
-        <Button type="submit" disabled={busy}>
-          {busy ? 'Submitting…' : 'Leave Review'}
-        </Button>
-      </Form>
-
-      {reviews.length === 0 ? (
-        <p className="text-muted">No reviews yet.</p>
-      ) : (
-        reviews.map((r) => (
-          <div key={r.id} className="border rounded p-3 mb-2">
-            <div className="d-flex justify-content-between">
-              <strong>@{r.user.username}</strong>
-              <small className="text-muted">{new Date(r.createdAt).toLocaleString()}</small>
-            </div>
-            <div className="mt-1">
-              <StarRating rating={r.rating} size={18} />
-            </div>
-            {r.comment && <p className="mb-0 mt-2">{r.comment}</p>}
-          </div>
-        ))
-      )}
+        )}
+      </Card>
     </div>
   );
 }
