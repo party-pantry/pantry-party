@@ -9,6 +9,92 @@ import { hash } from 'bcryptjs';
 import { Unit, Status, Category, Difficulty } from '@prisma/client';
 import { prisma } from './prisma';
 
+/* Allow user to fuzzy search for entry in Ingredients */
+export async function fuzzySearchIngredients(name: string): Promise<string> {
+  const term = (name ?? '').trim().toLowerCase();
+
+  if (!term) return '';
+
+  // Build a broader prefilter: search for the full term OR any token in the term
+  const tokens = term.split(/\s+/).filter(Boolean);
+
+  const whereClause = tokens.length > 1
+    ? {
+      OR: [
+        { name: { contains: term, mode: ('insensitive' as any) } },
+        ...tokens.map((t) => ({ name: { contains: t, mode: ('insensitive' as any) } })),
+      ],
+    }
+    : { name: { contains: term, mode: ('insensitive' as any) } };
+
+  let candidates = await prisma.ingredient.findMany({ where: whereClause, take: 500 });
+
+  // If no candidates found with tokens, fall back to a larger sample (best-effort) and rank that
+  if (!candidates.length) {
+    candidates = await prisma.ingredient.findMany({ take: 1000 });
+  }
+
+  try {
+    const ffMod = await import('fast-fuzzy');
+    const names = candidates.map((c) => c.name);
+    let ranked: Array<{ name: string; score?: number }> = [];
+
+    const DefaultExport = (ffMod as any).default ?? (ffMod as any);
+    if (typeof DefaultExport === 'function') {
+      try {
+        const inst = new (DefaultExport as any)(names);
+        if (typeof inst.search === 'function') {
+          const raw = inst.search(term, { limit: 20 });
+          ranked = raw.map((r: any) => {
+            if (typeof r === 'string') return { name: r };
+            if (r && typeof r === 'object' && 'item' in r) return { name: r.item, score: r.score };
+            if (Array.isArray(r)) return { name: r[0], score: r[1] };
+            return { name: String(r) };
+          });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (!ranked.length && typeof (ffMod as any).FastFuzzy === 'function') {
+      try {
+        const inst = new (ffMod as any).FastFuzzy(names);
+        const raw = inst.search ? inst.search(term, { limit: 20 }) : [];
+        ranked = raw.map((r: any) => (typeof r === 'string' ? { name: r } : { name: r.item ?? r[0], score: r.score }));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (!ranked.length && typeof (ffMod as any).rank === 'function') {
+      try {
+        const raw = (ffMod as any).rank(names, term).slice(0, 20);
+        ranked = raw.map((r: any) => ({ name: r[0], score: r[1] }));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (ranked.length) {
+      const top = ranked[0];
+      if (top && top.name) return top.name;
+    }
+  } catch (err) {
+    // fast-fuzzy unavailable — fall through to fallback
+  }
+
+  // Fallback: prefer startsWith, then contains, then return the first candidate.
+  const lower = (s: string) => s.toLowerCase();
+  const starts = candidates.filter((c) => lower(c.name).startsWith(term));
+  if (starts.length) return starts[0].name;
+
+  const contains = candidates.filter((c) => lower(c.name).includes(term));
+  if (contains.length) return contains[0].name;
+
+  return candidates[0].name;
+}
+
 /* Create a new user with unique email and username */
 // eslint-disable-next-line import/prefer-default-export
 export async function createUser(credentials: {
@@ -47,7 +133,7 @@ export async function addStock(data: {
   storageId: number;
   units: Unit;
 }) {
-  const sterilizedItemName = data.name.trim().toLowerCase();
+  const sterilizedItemName = await fuzzySearchIngredients(data.name);
 
   // Validate that the storage exists
   const storage = await prisma.storage.findUnique({
