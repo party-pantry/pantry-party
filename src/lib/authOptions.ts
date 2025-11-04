@@ -36,16 +36,12 @@ const authOptions: NextAuthOptions = {
         return {
           id: `${user.id}`,
           email: user.email,
+          username: user.username, // Ensure the username is included
         };
       },
     }),
   ],
   pages: {
-    // signIn: '/auth/signin',
-    // signOut: '/auth/signout',
-    //   error: '/auth/error',
-    //   verifyRequest: '/auth/verify-request',
-    //   newUser: '/auth/new-user'
   },
   callbacks: {
     session: ({ session, token }) => {
@@ -71,7 +67,5 @@ const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
 };
 
-// const handler = NextAuth(authOptions);
-// export { handler as GET, handler as POST };
 
 export default authOptions;
