@@ -9,15 +9,15 @@ import { Container, Button, Row, Card, Placeholder, Col } from 'react-bootstrap'
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { LocalStatus, LocalUnit } from '@/lib/Units';
-import IngredientTable from '@/components/kitchen-components/IngredientTable';
-import StorageContainer from '@/components/kitchen-components/StorageContainer';
-import HomeTabSelection from '@/components/kitchen-components/HomeTabSelection';
-import AddItemModal from '@/components/kitchen-components/AddItemModal';
-import AddPantryModal from '@/components/kitchen-components/AddPantryModal';
-import KitchenFilterButton from '@/components/kitchen-components/KitchenFilterButton';
-import EditItemModal from '@/components/kitchen-components/EditItemModal';
-import KitchenSortButton from '@/components/kitchen-components/KitchenSortButton';
-import DeleteItemModal from './kitchen-components/DeleteItemModal';
+import IngredientTable from './IngredientTable';
+import StorageContainer from './StorageContainer';
+import HomeTabSelection from './HomeTabSelection';
+import AddItemModal from './AddItemModal';
+import AddPantryModal from './AddPantryModal';
+import KitchenFilterButton from './KitchenFilterButton';
+import EditItemModal from './EditItemModal';
+import KitchenSortButton from './KitchenSortButton';
+import DeleteItemModal from './DeleteItemModal';
 
 type BaseItem = {
   id: number;
