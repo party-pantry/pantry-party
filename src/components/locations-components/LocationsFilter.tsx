@@ -7,7 +7,7 @@ import { Card, Form, Button } from 'react-bootstrap';
 import LocationsSearch from './LocationsSearch';
 import SavedLocationsAccordion from './SavedLocationsAccordion';
 
-const FilterPanel = () => {
+const LocationsFilter = () => {
   const [locationType, setLocationType] = useState('all');
   const [sortBy, setSortBy] = useState('closest');
   const [radius, setRadius] = useState(5);
@@ -130,4 +130,4 @@ const FilterPanel = () => {
   );
 };
 
-export default FilterPanel;
+export default LocationsFilter;
