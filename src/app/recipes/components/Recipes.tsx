@@ -6,14 +6,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Container, Row, Col, Card, Placeholder } from 'react-bootstrap';
 import { Recipe } from '@prisma/client';
-import RecipeCard from './recipes-components/RecipeCard';
-import RecipesSearch from './recipes-components/RecipesSearch';
-import RecipesFilterButton from './recipes-components/RecipesFilterButton';
-import ToggleReceipesCanMake from './recipes-components/ToggleRecepiesCanMake';
-import ToggleFavorites from './recipes-components/ToggleFavorites';
-import RecipesSortButton from './recipes-components/RecipesSortButton';
-import AddRecipesModal from './recipes-components/AddRecipesModal';
-import { checkIngredients } from '../utils/recipeUtils';
+import RecipeCard from './RecipeCard';
+import RecipesSearch from './RecipesSearch';
+import RecipesFilterButton from './RecipesFilterButton';
+import ToggleReceipesCanMake from './ToggleRecepiesCanMake';
+import ToggleFavorites from './ToggleFavorites';
+import RecipesSortButton from './RecipesSortButton';
+import AddRecipeModal from './AddRecipesModal';
+import { checkIngredients } from '../../../utils/recipeUtils';
 
 interface RecipeWithIngredients extends Recipe {
   ingredients: {
@@ -320,7 +320,7 @@ const Recipes: React.FC = () => {
                 <button className="btn btn-success" onClick={handleShowModal}>
                   Add Recipe +
                 </button>
-                <AddRecipesModal
+                <AddRecipeModal
                   show={showAddRecipeModal}
                   onHide={handleHideModal}
                   onSubmit={(recipe) => {
