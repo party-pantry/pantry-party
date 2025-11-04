@@ -180,22 +180,6 @@ const MyKitchen = () => {
     status: [],
   });
 
-  // Sorting: expand sort state to include the field being sorted
-  // const [sortSettings] = useState<
-  // Record<number, { field: 'name' | 'quantity' | 'updated' | 'status'; direction: 'asc' | 'desc' | null }>>({});
-
-  // const handleSort = (storageId: number, field: 'name' | 'quantity' | 'updated' | 'status') => {
-  //   setSortSettings((prev) => {
-  //     const current = prev[storageId];
-  //     // If sorting the same field again, toggle direction
-  //     const newDirection = current && current.field === field && current.direction === 'asc' ? 'desc' : 'asc';
-  //     return {
-  //       ...prev,
-  //       [storageId]: { field, direction: newDirection },
-  //     };
-  //   });
-  // };
-
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
@@ -258,14 +242,7 @@ const MyKitchen = () => {
         return searchMatch && statusMatch && quantityMatch;
       });
 
-    // const direction = sortDirections[storage.id] || 'asc';
-    // return allItems.sort((a, b) =>
-    //   (direction === 'asc'
-    //     ? a.name.localeCompare(b.name)
-    //     : b.name.localeCompare(a.name)),
-    // );
-    // 
-    return allItems
+    return allItems;
   };
 
   const handleEditItem = (ingredientId: number, storageId: number) => {
