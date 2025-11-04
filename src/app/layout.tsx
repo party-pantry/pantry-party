@@ -2,8 +2,8 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
+import ClientLayout from '@/components/ClientLayout';
 import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
-import ClientLayout from '../components/home-components/ClientLayout';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',

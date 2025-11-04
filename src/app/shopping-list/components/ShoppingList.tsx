@@ -6,9 +6,9 @@ import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-boot
 import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 // import { parse } from 'path';
 import { LocalFoodCategory } from '@/lib/Units';
-import ShoppingItemCard from './shopping-list-components/ShoppingItemCard';
-import PurchasedItemCard from './shopping-list-components/PurchasedItemCard';
-import SuggestedItemsSection from './shopping-list-components/SuggestedItemsSection';
+import ShoppingItemCard from './ShoppingItemCard';
+import PurchasedItemCard from './PurchasedItemCard';
+import SuggestedItemsSection from './SuggestedItemsSection';
 
 interface SuggestedItem {
   ingredientId: number;

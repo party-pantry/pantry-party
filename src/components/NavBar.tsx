@@ -15,10 +15,10 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import ChangePasswordModal from '../auth-components/ChangePasswordModal';
-import SignInModal from '../auth-components/SignInModal';
-import SignUpParentModal from '../auth-components/SignUpParentModal';
-import SignOutModal from '../auth-components/SignOutModal';
+import ChangePasswordModal from './auth-components/ChangePasswordModal';
+import SignInModal from './auth-components/SignInModal';
+import SignUpParentModal from './auth-components/SignUpParentModal';
+import SignOutModal from './auth-components/SignOutModal';
 
 const NavBar: React.FC = () => {
   const { data: session } = useSession();
