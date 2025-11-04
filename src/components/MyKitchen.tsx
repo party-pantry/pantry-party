@@ -16,7 +16,6 @@ import AddItemModal from '@/components/kitchen-components/AddItemModal';
 import AddPantryModal from '@/components/kitchen-components/AddPantryModal';
 import KitchenFilterButton from '@/components/kitchen-components/KitchenFilterButton';
 import EditItemModal from '@/components/kitchen-components/EditItemModal';
-import KitchenSortButton from '@/components/kitchen-components/KitchenSortButton';
 import DeleteItemModal from './kitchen-components/DeleteItemModal';
 
 type BaseItem = {
@@ -181,7 +180,21 @@ const MyKitchen = () => {
     status: [],
   });
 
-  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
+  // Sorting: expand sort state to include the field being sorted
+  // const [sortSettings] = useState<
+  // Record<number, { field: 'name' | 'quantity' | 'updated' | 'status'; direction: 'asc' | 'desc' | null }>>({});
+
+  // const handleSort = (storageId: number, field: 'name' | 'quantity' | 'updated' | 'status') => {
+  //   setSortSettings((prev) => {
+  //     const current = prev[storageId];
+  //     // If sorting the same field again, toggle direction
+  //     const newDirection = current && current.field === field && current.direction === 'asc' ? 'desc' : 'asc';
+  //     return {
+  //       ...prev,
+  //       [storageId]: { field, direction: newDirection },
+  //     };
+  //   });
+  // };
 
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
@@ -209,13 +222,6 @@ const MyKitchen = () => {
     fetchHouses();
   }, [fetchHouses]);
 
-  const handleSort = (storageId: number) => {
-    setSortDirections((prev) => ({
-      ...prev,
-      [storageId]: prev[storageId] === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
   const getDisplayedStocks = (storage: Storage): Item[] => {
     const allItems: Item[] = storage.stocks
       .map((stock) => ({
@@ -226,7 +232,7 @@ const MyKitchen = () => {
         image: stock.ingredient.image || '',
         quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit
         }`,
-        updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+        updated: new Date(stock.last_updated).toLocaleDateString('en-US', { timeZone: 'UTC' }),
         status:
           stock.status === 'GOOD'
             ? 'Good'
@@ -252,12 +258,14 @@ const MyKitchen = () => {
         return searchMatch && statusMatch && quantityMatch;
       });
 
-    const direction = sortDirections[storage.id] || 'asc';
-    return allItems.sort((a, b) =>
-      (direction === 'asc'
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name)),
-    );
+    // const direction = sortDirections[storage.id] || 'asc';
+    // return allItems.sort((a, b) =>
+    //   (direction === 'asc'
+    //     ? a.name.localeCompare(b.name)
+    //     : b.name.localeCompare(a.name)),
+    // );
+    // 
+    return allItems
   };
 
   const handleEditItem = (ingredientId: number, storageId: number) => {
@@ -366,12 +374,7 @@ const MyKitchen = () => {
                       id={storage.id.toString()}
                       title={storage.name}
                       onUpdate={fetchHouses}
-                      feature={
-                        <KitchenSortButton
-                          label="Sort"
-                          onSort={() => handleSort(storage.id)}
-                        />
-                      }
+                      feature={null}
                       storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
                     >
                       <IngredientTable

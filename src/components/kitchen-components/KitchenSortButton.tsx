@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { ArrowUpAZ, ArrowDownAZ, ChartColumnIncreasing, ChartColumnDecreasing } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
+// import { ChartColumnIncreasing, ChartColumnDecreasing } from 'lucide-react';
 import { Button } from 'react-bootstrap';
 
-type SortDirection = 'asc' | 'desc';
+type SortDirection = 'asc' | 'desc' | null;
 
 interface KitchenSortButtonProps {
   onSort: (direction: SortDirection) => void;
@@ -11,32 +12,53 @@ interface KitchenSortButtonProps {
 
 // eslint-disable-next-line react/prop-types
 const KitchenSortButton: React.FC<KitchenSortButtonProps> = ({ onSort, label }) => {
-  const [direction, setDirection] = useState<SortDirection>('asc');
+  const [direction, setDirection] = useState<SortDirection>(null);
 
   const toggleSort = () => {
-    const newDirection = direction === 'asc' ? 'desc' : 'asc';
+    let newDirection: SortDirection;
+    if (direction === null) newDirection = 'desc';
+    else if (direction === 'desc') newDirection = 'asc';
+    else newDirection = null;
     setDirection(newDirection);
     onSort(newDirection);
   };
 
+  const activeColor = '#007bff'; // Bootstrap blue
+  const inactiveColor = '#323437ff'; // muted gray
+
   return (
     // eslint-disable-next-line react/button-has-type
     <Button
-      style={{ width: '125px', backgroundColor: '#3A5B4F', borderColor: '#3A5B4F', color: 'white' }}
+      variant="light"
+      style={{ boxShadow: 'none', backgroundColor: '#F3F4F6' }}
       onClick={toggleSort}
-      className="d-flex align-items-center justify-content-center w-auto"
+      className="d-flex align-items-center justify-content-center w-auto p-0 ms-1"
     >
-      {direction === 'asc' ? (
+      <div className="d-flex flex-column align-items-center" style={{ lineHeight: '1' }}>
+        {/* Up Arrow */}
+        <ChevronUp
+          size={16}
+          stroke={direction === 'asc' ? activeColor : inactiveColor}
+          fill={direction === 'asc' ? activeColor : 'none'}
+        />
+        {/* Down Arrow */}
+        <ChevronDown
+          size={16}
+          stroke={direction === 'desc' ? activeColor : inactiveColor}
+          fill={direction === 'desc' ? activeColor : 'none'}
+        />
+      </div>
+      {/* {direction === 'asc' ? (
         <ChartColumnIncreasing size={15} />
       ) : (
         <ChartColumnDecreasing size={15} />
-      )}
+      )} */}
       {label && <span className="ml-1 me-2">{label}</span>}
-      {direction === 'asc' ? (
-        <ArrowUpAZ size={28} />
+      {/* {direction === 'asc' ? (
+        <MoveUp size={18} />
       ) : (
-        <ArrowDownAZ size={28} />
-      )}
+        <MoveDown size={18} />
+      )} */}
 
     </Button>
   );
