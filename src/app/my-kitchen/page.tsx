@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
-import MyKitchen from '@/components/MyKitchen';
+import MyKitchen from '@/app/my-kitchen/components/MyKitchen';
 
 const MyKitchenPage = async () => {
   // Protect the page, only logged in users can access it.

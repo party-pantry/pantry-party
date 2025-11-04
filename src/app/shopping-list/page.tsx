@@ -1,7 +1,7 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
-import ShoppingList from '@/components/ShoppingList';
+import ShoppingList from '@/app/shopping-list/components/ShoppingList';
 
 const ShoppingListPage = async () => {
   // Protect the page, only logged in users can access it.

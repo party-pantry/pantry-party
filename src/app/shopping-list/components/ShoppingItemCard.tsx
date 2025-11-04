@@ -5,7 +5,7 @@ import {
   ShoppingItem,
   getCategoryVariant,
   getPriorityVariant,
-} from '../../utils/shoppingListUtils';
+} from '../../../utils/shoppingListUtils';
 
 interface ShoppingItemCardProps {
   item: ShoppingItem;

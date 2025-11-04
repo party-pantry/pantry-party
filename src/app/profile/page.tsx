@@ -2,11 +2,11 @@ import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import { Container, Row } from 'react-bootstrap';
-import UpdateUsernameForm from './profile-components/UpdateUsernameForm';
-import UpdatePasswordForm from './profile-components/UpdatePasswordForm';
-import UpdateEmailForm from './profile-components/UpdateEmailForm';
-import ProfilePictureUploader from './profile-components/ProfilePictureUploader';
-import ProfileRecipes from './profile-components/ProfileRecipes';
+import UpdateUsernameForm from './components/UpdateUsernameForm';
+import UpdatePasswordForm from './components/UpdatePasswordForm';
+import UpdateEmailForm from './components/UpdateEmailForm';
+import ProfilePictureUploader from './components/ProfilePictureUploader';
+import ProfileRecipes from './components/ProfileRecipes';
 
 const ProfilePage = async () => {
   // Protect the page, only logged in users can access it.
