@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Container, Button } from 'react-bootstrap';
 import Image from 'next/image';
-import FeaturesSection from '../components/home-components/FeaturesSection';
+import FeaturesSection from '@/components/FeaturesSection';
 import SignInModal from '../components/auth-components/SignInModal';
 import SignUpModal from '../components/auth-components/SignUpModal';
 

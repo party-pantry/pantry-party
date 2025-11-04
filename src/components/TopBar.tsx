@@ -4,10 +4,10 @@ import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { User, UserPlus, Bell, ChevronDown, ChevronUp } from 'lucide-react';
-import ChangePasswordModal from '../auth-components/ChangePasswordModal';
-import SignInModal from '../auth-components/SignInModal';
-import SignUpParentModal from '../auth-components/SignUpParentModal';
-import SignOutModal from '../auth-components/SignOutModal';
+import ChangePasswordModal from './auth-components/ChangePasswordModal';
+import SignInModal from './auth-components/SignInModal';
+import SignUpParentModal from './auth-components/SignUpParentModal';
+import SignOutModal from './auth-components/SignOutModal';
 
 const TopBar: React.FC = () => {
   const { data: session } = useSession();
