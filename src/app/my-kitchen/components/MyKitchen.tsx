@@ -16,7 +16,6 @@ import AddItemModal from './AddItemModal';
 import AddPantryModal from './AddPantryModal';
 import KitchenFilterButton from './KitchenFilterButton';
 import EditItemModal from './EditItemModal';
-import KitchenSortButton from './KitchenSortButton';
 import DeleteItemModal from './DeleteItemModal';
 
 type BaseItem = {
@@ -181,8 +180,6 @@ const MyKitchen = () => {
     status: [],
   });
 
-  const [sortDirections, setSortDirections] = useState<Record<number, 'asc' | 'desc'>>({});
-
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
@@ -209,13 +206,6 @@ const MyKitchen = () => {
     fetchHouses();
   }, [fetchHouses]);
 
-  const handleSort = (storageId: number) => {
-    setSortDirections((prev) => ({
-      ...prev,
-      [storageId]: prev[storageId] === 'asc' ? 'desc' : 'asc',
-    }));
-  };
-
   const getDisplayedStocks = (storage: Storage): Item[] => {
     const allItems: Item[] = storage.stocks
       .map((stock) => ({
@@ -226,7 +216,7 @@ const MyKitchen = () => {
         image: stock.ingredient.image || '',
         quantity: `${stock.quantity} ${LocalUnit[stock.unit as keyof typeof LocalUnit] || stock.unit
         }`,
-        updated: new Date(stock.last_updated).toLocaleDateString('en-US'),
+        updated: new Date(stock.last_updated).toLocaleDateString('en-US', { timeZone: 'UTC' }),
         status:
           stock.status === 'GOOD'
             ? 'Good'
@@ -252,12 +242,7 @@ const MyKitchen = () => {
         return searchMatch && statusMatch && quantityMatch;
       });
 
-    const direction = sortDirections[storage.id] || 'asc';
-    return allItems.sort((a, b) =>
-      (direction === 'asc'
-        ? a.name.localeCompare(b.name)
-        : b.name.localeCompare(a.name)),
-    );
+    return allItems;
   };
 
   const handleEditItem = (ingredientId: number, storageId: number) => {
@@ -366,12 +351,7 @@ const MyKitchen = () => {
                       id={storage.id.toString()}
                       title={storage.name}
                       onUpdate={fetchHouses}
-                      feature={
-                        <KitchenSortButton
-                          label="Sort"
-                          onSort={() => handleSort(storage.id)}
-                        />
-                      }
+                      feature={null}
                       storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
                     >
                       <IngredientTable
