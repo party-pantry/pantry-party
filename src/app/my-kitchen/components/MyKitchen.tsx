@@ -16,7 +16,6 @@ import AddItemModal from './AddItemModal';
 import AddPantryModal from './AddPantryModal';
 import KitchenFilterButton from './KitchenFilterButton';
 import EditItemModal from './EditItemModal';
-import KitchenSortButton from './KitchenSortButton';
 import DeleteItemModal from './DeleteItemModal';
 
 type BaseItem = {
