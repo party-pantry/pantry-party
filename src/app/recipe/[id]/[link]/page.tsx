@@ -99,6 +99,37 @@ const RecipePage: React.FC = () => {
     userIngredients,
   );
 
+  const handleAddMissingToShoppingList = async () => {
+    if (missingIngredients.length === 0) return;
+
+    try {
+    // Get the full ingredient objects from the recipe
+      const missingIngredientDetails = recipe.ingredients.filter(
+        (ri: any) => !userIngredients.has(ri.ingredient.id),
+      );
+
+      const response = await fetch('/api/shopping-list/add-missing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ingredients: missingIngredientDetails.map((ri: any) => ({
+            id: ri.ingredient.id,
+            name: ri.ingredient.name,
+            quantity: ri.quantity,
+            unit: ri.unit,
+          })),
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add missing ingredients.');
+
+      console.log('Missing ingredients added to shopping list');
+    } catch (error) {
+      console.error(error);
+      console.error('Error adding missing ingredients to your shopping list.');
+    }
+  };
+
   return (
         <>
         <Container className="min-h-screen py-10">
@@ -186,7 +217,17 @@ const RecipePage: React.FC = () => {
               </Col>
             </Row>
 
-            <Button className="mt-1 mb-2" style={{ fontSize: '0.9rem', width: 300, height: 50 }} variant="secondary">Add Missing Ingredients to Shopping List</Button>
+<Button
+  className="mt-1 mb-2"
+  style={{ fontSize: '0.9rem', width: 300, height: 50 }}
+  variant="secondary"
+  onClick={handleAddMissingToShoppingList}
+  disabled={missingIngredients.length === 0}
+>
+  {missingIngredients.length === 0
+    ? 'All Ingredients Available'
+    : 'Add Missing Ingredients to Shopping List'}
+</Button>
 
             <NutritionAccordion nutrition={recipe.nutrition} />
           </Col>
