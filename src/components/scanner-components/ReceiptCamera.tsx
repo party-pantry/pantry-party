@@ -63,7 +63,8 @@ const ReceiptCamera = () => {
             videoConstraints={{
               facingMode: { ideal: 'environment' }, // Use rear camera on mobile
             }}
-            className="rounded-lg shadow-md w-full max-w-md"
+            className="rounded-lg shadow-md w-[1000px] max-w-lg h-[500px] object-cover"
+            // rounded-lg shadow-md w-full max-w-2xl h-[500px]
           />
           <button
             onClick={capture}

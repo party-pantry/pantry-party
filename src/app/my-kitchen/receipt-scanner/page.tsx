@@ -3,6 +3,7 @@ import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
 import ReceiptUpload from '@/components/scanner-components/ReceiptUpload';
 import ReceiptCamera from '@/components/scanner-components/ReceiptCamera';
+import { Row, Col } from 'react-bootstrap';
 
 const ReceiptScannerPage = async () => {
   // Protect the page, only logged in users can access it.
@@ -16,8 +17,15 @@ const ReceiptScannerPage = async () => {
   return (
     <main className="flex flex-col items-center min-h-screen p-6">
       <h1 className="text-2xl font-bold mb-4">Scan Your Receipt:</h1>
-      <ReceiptCamera />
-      <ReceiptUpload />
+      <Row>
+
+        <Col md={6} className="mb-4">
+          <ReceiptCamera />
+        </Col>
+        <Col md={6} className="mb-4">
+          <ReceiptUpload />
+        </Col>
+      </Row>
 
     </main>
   );
