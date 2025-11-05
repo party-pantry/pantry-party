@@ -19,6 +19,12 @@ jobs:
           node-version: lts/*
       - name: Install dependencies
         run: npm ci
+      - name: Apply Prisma Migrations
+        if: github.event_name == 'push'
+        run: npx prisma migrate deploy
+      - name: Verify Prisma migrations
+        if: github.event_name == 'push'
+        run: npx prisma migrate status
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run ESLint

@@ -6,10 +6,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
 import { Check, X } from 'lucide-react';
-import StarRating from '@/components/recipes-components/StarRating';
-import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
-import CookingAlertModal from '@/components/cooking-components/CookingAlertModal';
-import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
+import StarRating from '@/app/recipe/components/StarRating';
+import NutritionAccordion from '@/app/recipe/components/NutritionAccordion';
+import CookingAlertModal from '@/app/cooking/components/CookingAlertModal';
+import RecipeSkeleton from '@/app/recipe/components/RecipeSkeleton';
 import { calculateTotalTime, getDifficulty, checkIngredients } from '@/utils/recipeUtils';
 import ReviewSection from '@/components/recipes-components/ReviewSection';
 

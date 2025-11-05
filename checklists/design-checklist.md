@@ -37,3 +37,15 @@ Does the code conform to the Agile Maxim of "Do not Repeat Yourself"? The same c
 ### DE-08: Ensure reusable code is exported or made available in the appropriate place.
 
 Are there reusable services, functions and components that are not made available for reuse? Are they in a `utilities` directory?
+
+### DE-09: Code is designed to meet its purpose and function appropriately. 
+
+There should be no default test data
+
+- Ensure code only relates to the page or component that it describes.
+- Are there any extra functions that can be better served as helper functions? 
+  - Can we store them elsewhere such as a ```.ts``` file in the ```/utils``` directory for better code reusability?
+- Are there any other extraneous entities that will be stored best elsewhere?
+  - (i.e. default test value, key-indexed values, etc.)? 
+- Is there anything not unrelated to what the page or component is doing? 
+  - Well-documented comments might help clarify some code sections
