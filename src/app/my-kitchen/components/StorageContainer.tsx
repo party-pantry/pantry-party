@@ -76,7 +76,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
       id={id}
       border=""
       className="shadow-lg  mb-5"
-      style={{ borderRadius: '2rem', overflow: 'hidden' }}
+      style={{ borderRadius: '0rem', overflow: 'hidden' }}
     >
     {/* Note: rounded-4 = larger border radius
             Other options: rounded-pill
