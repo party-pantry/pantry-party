@@ -34,12 +34,22 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
 
   const statusBadgeVariant = item.status === 'OUT_OF_STOCK' ? 'danger' : 'warning';
 
-  // const statusColorMap: Record<string, string> = {
-  //   GOOD: 'bg-green-100 text-green-700',
-  //   LOW_STOCK: 'bg-yellow-100 text-yellow-700',
-  //   OUT_OF_STOCK: 'bg-red-100 text-red-700',
-  //   EXPIRED: 'bg-red-100 text-red-700',
-  // };
+  const getFoodColorClass = (cat: string) => {
+    const colorMap: Record<string, string> = {
+      Dairy: 'category-dairy',
+      Produce: 'category-produce',
+      Frozen: 'category-frozen',
+      Meat: 'category-meat',
+      Other: 'category-other',
+    };
+
+    // Find matching enum value ignoring case
+    const match = Object.values(LocalFoodCategory).find(
+      (val) => val.toLowerCase() === cat.toLowerCase(),
+    );
+
+    return match ? colorMap[match] : colorMap.Other;
+  };
 
   return (
     <>
@@ -93,26 +103,32 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
                 placeholder="e.g., 2 lbs"
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
-                className="border-2"
+                className="border-1"
               />
             </Col>
             <Col md={6}>
               <Form.Label className="fw-bold text-dark">Category</Form.Label>
-              <Form.Select
-                className="border-2"
-                value={category}
-                onChange={(e) => setCategory(e.target.value as LocalFoodCategory)}>
-                {/* {FOOD_CATEGORY_OPTIONS.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))} */}
-                {Object.entries(LocalFoodCategory).map(([key, label]) => (
-                  <option key={key} value={key}>
-                    {label}
-                  </option>
-                ))}
-              </Form.Select>
+              <div
+                className={
+                  `transition-colors duration-400 rounded-md overflow-hidden 
+                  border-gray-300 ${getFoodColorClass(category)}`
+                }>
+                <Form.Select
+                  className="text-center bg-transparent border-1 focus:ring-0 focus:outline-none shadow-none"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value as LocalFoodCategory)}>
+                  {/* {FOOD_CATEGORY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))} */}
+                  {Object.entries(LocalFoodCategory).map(([key, label]) => (
+                    <option key={key} value={key}>
+                      {label}
+                    </option>
+                  ))}
+                </Form.Select>
+              </div>
             </Col>
           </Row>
         </Modal.Body>

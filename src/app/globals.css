@@ -325,7 +325,7 @@ h5 {
 }
 
 /* Shopping List Food Category classes color scheme */
-.badge.category-produce {
+.category-produce {
   background-color: #9cde9e; 
   color: #0C5020;
 }
