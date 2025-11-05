@@ -213,6 +213,15 @@ body {
     box-shadow: 0 4px 6px -1px #45a56b, 0 2px 4px -1px #45a56b;
 }
 
+.custom-switch .form-check-input:checked {
+  background-color: #4caf50; /* Change the background color */
+  border-color: #4caf50; /* Change the border color */
+}
+
+.custom-switch .form-check-input:checked:focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25); /* Add focus effect */
+}
+
 /* Landing page */
 .landing-hero {
   display: flex;
