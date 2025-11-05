@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono, Lato, Nunito_Sans } from 'next/font/google';
-import TopBar from '../components/home-components/TopBar';
-import SideBar from '../components/home-components/SideBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './globals.css';
+import ClientLayout from '@/components/ClientLayout';
 import SessionProviderWrapper from '../components/auth-components/SessionProviderWrapper';
 
 const geistSans = Geist({
@@ -39,20 +38,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <SessionProviderWrapper>
-      <html lang="en">
-        <body
-          className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
-        >
-          <div className="flex min-h-screen">
-            <SideBar />
-            <main className="flex-1">
-              <TopBar />
-              {children}
-            </main>
-          </div>
-        </body>
-      </html>
-    </SessionProviderWrapper>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
+      >
+        <SessionProviderWrapper>
+          <ClientLayout>{children}</ClientLayout>
+        </SessionProviderWrapper>
+      </body>
+    </html>
   );
 }

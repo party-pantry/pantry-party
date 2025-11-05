@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 // get all recipes with their ingredients
 export const GET = async (req: Request) => {

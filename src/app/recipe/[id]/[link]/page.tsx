@@ -7,11 +7,12 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
 import { Check, X } from 'lucide-react';
-import StarRating from '@/components/recipes-components/StarRating';
-import NutritionAccordion from '@/components/recipes-components/NutritionAccordion';
-import CookingAlertModal from '@/components/cooking-components/CookingAlertModal';
-import RecipeSkeleton from '@/components/recipes-components/RecipeSkeleton';
+import StarRating from '@/app/recipe/components/StarRating';
+import NutritionAccordion from '@/app/recipe/components/NutritionAccordion';
+import CookingAlertModal from '@/app/cooking/components/CookingAlertModal';
+import RecipeSkeleton from '@/app/recipe/components/RecipeSkeleton';
 import { calculateTotalTime, getDifficulty, checkIngredients } from '@/utils/recipeUtils';
+import ReviewSection from '@/app/recipes/components/ReviewSection';
 
 const RecipePage: React.FC = () => {
   const params = useParams();
@@ -37,12 +38,8 @@ const RecipePage: React.FC = () => {
 
   const handleStartCooking = () => {
     const { missingIngredients } = checkIngredients(recipe.ingredients, userIngredients);
-
-    if (missingIngredients.length > 0) {
-      setShowCookingAlert(true);
-    } else {
-      navigateToCooking();
-    }
+    if (missingIngredients.length > 0) setShowCookingAlert(true);
+    else navigateToCooking();
   };
 
   useEffect(() => {
@@ -55,7 +52,7 @@ const RecipePage: React.FC = () => {
           return;
         }
         const data = await res.json();
-        if (!data || !data.recipe) {
+        if (!data?.recipe) {
           setNotFound(true);
         } else {
           setRecipe(data.recipe);
@@ -71,52 +68,95 @@ const RecipePage: React.FC = () => {
         setLoading(false);
       }
     };
-    fetchRecipe();
 
+    // --- safer fetch for user ingredients ---
     fetch('/api/user-ingredients')
-      .then(res => res.json())
-      .then(data => setUserIngredients(new Set(data.ingredientIds)));
+      .then(async (res) => {
+        if (!res.ok) return { ingredientIds: [] };
+        const text = await res.text();
+        if (!text) return { ingredientIds: [] };
+        try {
+          return JSON.parse(text);
+        } catch {
+          return { ingredientIds: [] };
+        }
+      })
+      .then((data) => setUserIngredients(new Set(data.ingredientIds)))
+      .catch(() => setUserIngredients(new Set()));
+
+    fetchRecipe();
   }, [params.id, params.link, router]);
 
-  if (loading) {
-    return <RecipeSkeleton />;
-  }
+  if (loading) return <RecipeSkeleton />;
 
   if (notFound) {
     return (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
-            <p>Recipe not found.</p>
-        </div>
+      <div className="min-h-screen d-flex justify-content-center align-items-center">
+        <p>Recipe not found.</p>
+      </div>
     );
   }
 
   const difficulty = getDifficulty(recipe.difficulty);
-
   const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
-
   const { haveIngredients, missingIngredients, matchPercent } = checkIngredients(
     recipe.ingredients,
     userIngredients,
   );
 
+  const handleAddMissingToShoppingList = async () => {
+    if (missingIngredients.length === 0) return;
+
+    try {
+    // Get the full ingredient objects from the recipe
+      const missingIngredientDetails = recipe.ingredients.filter(
+        (ri: any) => !userIngredients.has(ri.ingredient.id),
+      );
+
+      const response = await fetch('/api/shopping-list/add-missing', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ingredients: missingIngredientDetails.map((ri: any) => ({
+            id: ri.ingredient.id,
+            name: ri.ingredient.name,
+            quantity: ri.quantity,
+            unit: ri.unit,
+          })),
+        }),
+      });
+
+      if (!response.ok) throw new Error('Failed to add missing ingredients.');
+
+      console.log('Missing ingredients added to shopping list');
+    } catch (error) {
+      console.error(error);
+      console.error('Error adding missing ingredients to your shopping list.');
+    }
+  };
+
   return (
-        <>
-        <Container className="min-h-screen py-10">
-      <div className="flex flex-col items-start gap-1">
+    <>
+      <Container className="min-h-screen py-10">
+        <div className="flex flex-col items-start gap-1">
+          <div className="flex items-center gap-4">
+            <h1 className="text-5xl font-bold m-0">{recipe.name}</h1>
+            <Badge className="fs-6 py-1 px-3" bg={difficulty.variant}>{difficulty.label}</Badge>
+            <span className="text-muted">Ingredients Match: {matchPercent.toFixed(0)}%</span>
+          </div>
 
-        <div className="flex items-center gap-4">
-          <h1 className="text-5xl font-bold m-0">{recipe.name}</h1>
-          <Badge className="fs-6 py-1 px-3" bg={difficulty.variant}>{difficulty.label}</Badge>
-          <span className="text-muted">Ingredients Match: {matchPercent.toFixed(0)}%</span>
-        </div>
+          <div className="d-flex align-items-center gap-2 mt-1 mb-1">
+            <StarRating rating={recipe.rating} size={20} />
+            <span className="text-muted">{recipe.rating.toFixed(1)}</span>
+            <small className="text-muted">({recipe.reviewCount ?? 0})</small>
+          </div>
 
-        <div className="d-flex align-items-center gap-2 mt-1 mb-1">
-          <StarRating rating={recipe.rating} size={20} />
-          <span className="text-muted">{recipe.rating.toFixed(1)}</span>
-        </div>
-        <span className="text-sm">By {recipe.user.username} | Posted on {new Date(recipe.postDate).toLocaleDateString()}</span>
+          <span className="text-sm">
+            By {recipe.user.username} | Posted on{' '}
+            {new Date(recipe.postDate).toLocaleDateString()}
+          </span>
 
-        <hr className="my-4 w-100" />
+          <hr className="my-4 w-100" />
 
         <Row className="gap-5 w-100">
           <Col>
@@ -186,7 +226,17 @@ const RecipePage: React.FC = () => {
               </Col>
             </Row>
 
-            <Button className="mt-1 mb-2" style={{ fontSize: '0.9rem', width: 300, height: 50 }} variant="outline-success">Add Missing Ingredients to Shopping List</Button>
+<Button
+  className="mt-1 mb-2"
+  style={{ fontSize: '0.9rem', width: 300, height: 50 }}
+  variant="secondary"
+  onClick={handleAddMissingToShoppingList}
+  disabled={missingIngredients.length === 0}
+>
+  {missingIngredients.length === 0
+    ? 'All Ingredients Available'
+    : 'Add Missing Ingredients to Shopping List'}
+</Button>
 
             <NutritionAccordion nutrition={recipe.nutrition} />
           </Col>
@@ -204,19 +254,103 @@ const RecipePage: React.FC = () => {
                     <p className="flex-1">{instruction.content}</p>
                   </div>
                 ))}
-            </div>
-            <Button className="mt-3" style={{ fontSize: '1rem', width: 250, height: 50 }} onClick={handleStartCooking} variant="success">Start Cooking</Button>
-          </Col>
-        </Row>
-      </div>
-    </Container>
+              </div>
 
-    <CookingAlertModal
+              <h3 className="text-2xl font-semibold pt-4">Ingredients</h3>
+              <Row className="w-100">
+                <Col md={6} sm={12}>
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <h6 className="fw-semi-bold m-0">Available:</h6>
+                  </div>
+                  {haveIngredients.length > 0 ? (
+                    <ul className="list-disc ps-4">
+                      {recipe.ingredients
+                        .filter((ri: any) => userIngredients.has(ri.ingredient.id))
+                        .map((ri: any) => (
+                          <li key={ri.ingredient.id} className="mb-1 list-item">
+                            <span className="d-inline-flex align-items-center gap-1">
+                              {ri.quantity} {ri.unit.toLowerCase()} {ri.ingredient.name}
+                              <Check size={16} className="text-success" />
+                            </span>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted small fst-italic ps-0 m-0">N/A</p>
+                  )}
+                </Col>
+
+                <Col md={6} sm={12}>
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <h6 className="fw-semi-bold m-0">Missing:</h6>
+                  </div>
+                  {missingIngredients.length > 0 ? (
+                    <ul className="list-disc ps-4">
+                      {recipe.ingredients
+                        .filter((ri: any) => !userIngredients.has(ri.ingredient.id))
+                        .map((ri: any) => (
+                          <li key={ri.ingredient.id} className="mb-1 list-item">
+                            <span className="d-inline-flex align-items-center gap-1">
+                              {ri.quantity} {ri.unit.toLowerCase()} {ri.ingredient.name}
+                              <X size={16} className="text-danger" />
+                            </span>
+                          </li>
+                        ))}
+                    </ul>
+                  ) : (
+                    <p className="text-muted small fst-italic ps-0 m-0">N/A</p>
+                  )}
+                </Col>
+              </Row>
+
+              <Button
+                className="mt-1 mb-2"
+                style={{ fontSize: '0.9rem', width: 300, height: 50 }}
+                variant="secondary"
+              >
+                Add Missing Ingredients to Shopping List
+              </Button>
+
+              <NutritionAccordion nutrition={recipe.nutrition} />
+            </Col>
+
+            <Col>
+              <h3 className="text-2xl font-semibold pt-4">Instructions</h3>
+              <div className="flex flex-col gap-4 pt-2">
+                {recipe.instructions
+                  .sort((a: any, b: any) => a.step - b.step)
+                  .map((instruction: any) => (
+                    <div key={instruction.id} className="flex items-start gap-4">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-success-custom text-white flex items-center justify-center font-bold">
+                        {instruction.step}
+                      </div>
+                      <p className="flex-1">{instruction.content}</p>
+                    </div>
+                  ))}
+              </div>
+              <Button
+                className="mt-3"
+                style={{ fontSize: '1rem', width: 250, height: 50 }}
+                onClick={handleStartCooking}
+                variant="success"
+              >
+                Start Cooking
+              </Button>
+            </Col>
+          </Row>
+
+          {/* ⭐ Review Section added here */}
+          <ReviewSection recipeId={Number(params.id)} />
+        </div>
+      </Container>
+
+      <CookingAlertModal
         show={showCookingAlert}
         onHide={handleCloseAlert}
         onConfirm={handleConfirmCooking}
         missingIngredientsCount={missingIngredients.length}
-        totalIngredientsCount={recipe.ingredients.length} />
+        totalIngredientsCount={recipe.ingredients.length}
+      />
     </>
   );
 };

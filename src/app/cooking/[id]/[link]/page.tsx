@@ -4,11 +4,11 @@ import slugify from 'slugify';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Col, Row } from 'react-bootstrap';
-import Loading from '@/components/home-components/Loading';
-import CookingTimer from '@/components/cooking-components/CookingTimer';
-import CookingGuide from '@/components/cooking-components/CookingGuide';
-import CookingProgressBar from '@/components/cooking-components/CookingProgressBar';
-import CustomAlert from '@/components/CustomAlert';
+import CookingTimer from '@/app/cooking/components/CookingTimer';
+import CookingGuide from '@/app/cooking/components/CookingGuide';
+import CookingProgressBar from '@/app/cooking/components/CookingProgressBar';
+import CustomAlert from '@/app/cooking/components/CustomAlert';
+import Loading from '../../../../../archive/components/Loading';
 
 const CookingPage: React.FC = () => {
   const params = useParams();
@@ -78,8 +78,10 @@ const CookingPage: React.FC = () => {
         <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
         </div>
-
-        <Row className="gap-4 mt-5">
+        <div className="mt-4 pt-5">
+          <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
+        </div>
+        <Row className="gap-4 mt-2">
           <Col md={4} lg={3}>
             <div className="sticky-top top-5" style={{ zIndex: '1' }}>
               <div className="text-center mb-3">
@@ -104,9 +106,6 @@ const CookingPage: React.FC = () => {
           </Col>
         </Row>
 
-        <div className="mt-auto">
-          <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
-        </div>
     </Container>
 
     <CustomAlert

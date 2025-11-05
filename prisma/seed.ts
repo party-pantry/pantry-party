@@ -5,7 +5,7 @@
 2. npx prisma db seed (runs this seed file)
 */
 
-import { PrismaClient, Category, Unit, Status, Difficulty } from '@prisma/client';
+import { PrismaClient, Category, Unit, Status, Difficulty, FoodCategory } from '@prisma/client';
 import { hash } from 'bcrypt';
 // import slugify from 'slugify';
 import config from '../config/settings.development.json' assert { type: 'json' };
@@ -26,6 +26,23 @@ const getCategory = (category: string): Category => {
       return Category.OTHER;
     default:
       return Category.OTHER;
+  }
+};
+
+const getFood = (foodCategory: string): FoodCategory => {
+  switch (foodCategory) {
+    case 'FROZEN':
+      return FoodCategory.FROZEN;
+    case 'MEAT':
+      return FoodCategory.MEAT;
+    case 'PRODUCE':
+      return FoodCategory.PRODUCE;
+    case 'DAIRY':
+      return FoodCategory.DAIRY;
+    case 'OTHER':
+      return FoodCategory.OTHER;
+    default:
+      return FoodCategory.OTHER;
   }
 };
 
@@ -135,6 +152,8 @@ async function main() {
         email: user.email,
         username: user.username,
         password,
+        // bio: user.bio,
+        // image`: user.image,
       },
     });
   }
@@ -157,6 +176,8 @@ async function main() {
       create: {
         name: house.name,
         address: house.address,
+        latitude: house.latitude,
+        longitude: house.longitude,
         userId: ownerUser.id,
       },
     });
@@ -180,7 +201,7 @@ async function main() {
 
   // Seed Ingredients
   for (const ingredient of config.defaultIngredients) {
-    console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id})`);
+    console.log(`Seeding Ingredient: ${ingredient.name} (ID: ${ingredient.id}) (cat: ${ingredient.foodCategory})`);
 
     await prisma.ingredient.upsert({
       where: { id: ingredient.id },
@@ -188,6 +209,7 @@ async function main() {
       create: {
         name: ingredient.name,
         price: ingredient.price,
+        foodCategory: getFood(ingredient.foodCategory),
       },
     });
   }
@@ -227,6 +249,7 @@ async function main() {
         name: recipe.name,
         description: recipe.description,
         difficulty: getDifficulty(recipe.difficulty),
+        isStarred: recipe.isStarred,
         prepTime: recipe.prepTime,
         cookTime: recipe.cookTime,
         downTime: recipe.downTime,
