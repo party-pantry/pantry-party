@@ -2,9 +2,10 @@ import { NextResponse } from 'next/server';
 import { deleteHouse, updateHouse } from '@/lib/dbFunctions';
 
 // eslint-disable-next-line import/prefer-default-export
-export async function DELETE(req: Request, { params }: { params: { houseId: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ houseId: string }> }) {
   try {
-    const houseId = Number(params.houseId);
+    const { houseId: houseIdStr } = await params;
+    const houseId = Number(houseIdStr);
 
     if (!houseId) {
       return NextResponse.json({ error: 'Missing houseId' }, { status: 400 });
@@ -18,9 +19,10 @@ export async function DELETE(req: Request, { params }: { params: { houseId: stri
   }
 }
 
-export async function PATCH(req: Request, { params }: { params: { houseId: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ houseId: string }> }) {
   try {
-    const houseId = Number(params.houseId);
+    const { houseId: houseIdStr } = await params;
+    const houseId = Number(houseIdStr);
     const { name, address } = await req.json();
 
     if (!houseId) {
