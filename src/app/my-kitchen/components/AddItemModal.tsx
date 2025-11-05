@@ -5,7 +5,7 @@
 /* eslint-disable react/prop-types */
 
 import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Unit, Status } from '@prisma/client';
 import { LocalUnit, LocalStatus } from '@/lib/Units';
 
@@ -43,6 +43,12 @@ const AddItemModal: React.FC<Props> = ({
     storageId: storages && storages.length > 0 ? storages[0].id : 1,
     units: Unit.OUNCE,
   });
+
+  useEffect(() => {
+    if (storages && storages.length > 0) {
+      setFormData((prev) => ({ ...prev, storageId: storages[0].id }));
+    }
+  }, [storages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
