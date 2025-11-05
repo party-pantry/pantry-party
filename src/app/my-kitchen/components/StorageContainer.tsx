@@ -75,22 +75,18 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
     <Card
       id={id}
       border=""
-      className="shadow-lg  mb-5"
-      style={{ borderRadius: '0rem', overflow: 'hidden' }}
+      className="shadow-sm mb-4"
+      style={{ borderRadius: '1rem', overflow: 'hidden' }}
     >
-    {/* Note: rounded-4 = larger border radius
-            Other options: rounded-pill
-            or style={{ borderRadius: "2rem" }} */
-        }
     <Card.Header
-      className="fs-4 fw-bold text-white ml pb-0 "
+      className="fs-5 fw-bold text-white"
       style={{
         backgroundColor: '#3A5B4F',
       }}
     >
-      <Row>
+      <Row className="align-items-center">
         <Col className="d-flex align-items-center">
-          <h2 className="ml-4 mb-0 mt-2 d-flex align-items-center">
+          <h5 className="mb-0 d-flex align-items-center">
             {title}
 
             <Button
@@ -101,51 +97,45 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
               }}
               aria-label="Edit storage"
             >
-              <BsPencilSquare size={18} />
+              <BsPencilSquare size={16} />
             </Button>
             {collapsed && itemsCount !== undefined && (
-              <span className="text-white ms-3"
+              <span className="text-white ms-3 small"
                 style={{
-                  fontSize: '1.0rem',
                   opacity: collapsed ? 0.8 : 0,
                   transition: 'opacity 0.9s ease',
                 }}>
                 ({itemsCount} items)
               </span>
             )}
-          </h2>
+          </h5>
         </Col>
-        <Col className="d-flex justify-content-end align-items-center mt-2 mr-2">
+        <Col xs="auto" className="d-flex align-items-center">
           {feature}
-          {/* Collapse button */}
           <div
               className="d-flex align-items-center ms-2"
               style={{ cursor: 'pointer', userSelect: 'none' }}
               onClick={toggleCollapse}
           >
-              {/* Text next to arrow */}
-              <span className="text-white me-2" style={{ fontSize: '1.0rem' }}>
+              <span className="text-white me-2 small">
                 {collapsed ? 'Expand' : 'Collapse'}
               </span>
-              {/* Rotating arrow */}
               <BsChevronDown
-                size={20}
+                size={18}
                 className={`transition-transform duration-300 ${
                   collapsed ? 'rotate-0' : 'rotate-180'
                 } text-white`}
               />
-
             </div>
         </Col>
       </Row>
 
     </Card.Header>
     <Card.Body
-      className="d-flex flex-col"
+      className="p-0"
       style={{
-        backgroundColor: '#3A5B4F',
+        backgroundColor: 'white',
         overflow: 'hidden',
-        padding: '1rem 1.5rem 1.5rem 2rem',
       }}
     >
 
@@ -160,18 +150,17 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
           transitionProperty: 'max-height, opacity, padding',
         }}
       >
-        {/* {children} */}
         {React.cloneElement(children as any, { items: displayedItems })}
         {totalPages > 1 && (
-        <div className="d-flex justify-content-center mt-3">
+        <div className="d-flex justify-content-center mt-3 mb-2">
           <div className="btn-group">
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNum) => (
               <button
                 key={pageNum}
                 className={`btn btn-sm ${
                   currentPage === pageNum
-                    ? 'btn-light text-dark fw-bold'
-                    : 'btn-outline-light'
+                    ? 'btn-success text-white fw-bold'
+                    : 'btn-outline-secondary'
                 }`}
                 onClick={() => setCurrentPage(pageNum)}
               >

@@ -18,7 +18,7 @@ interface SessionWithUser {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = (await getServerSession(authOptions)) as SessionWithUser | null;
 
@@ -26,7 +26,8 @@ export async function PATCH(
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const itemId = Number(params.id);
+  const resolvedParams = await params;
+  const itemId = Number(resolvedParams.id);
 
   try {
     const body = await req.json();
@@ -47,7 +48,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = (await getServerSession(authOptions)) as SessionWithUser | null;
 
@@ -55,7 +56,8 @@ export async function DELETE(
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  const itemId = Number(params.id);
+  const resolvedParams = await params;
+  const itemId = Number(resolvedParams.id);
 
   try {
     await deleteShoppingListItem(itemId);

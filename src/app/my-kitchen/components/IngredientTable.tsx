@@ -82,13 +82,14 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
   };
 
   return (
-    <table className="w-full h-full border-collapse bg-white shadow-md rounded">
-      <thead className="bg-gray-100">
-        <tr>
-          <th className="p-3 text-left">
-            <input type="checkbox" />
-          </th>
-          <th className="p-3 text-left">
+    <div className="table-responsive">
+      <table className="table table-hover mb-0">
+        <thead className="table-light">
+          <tr>
+            <th style={{ width: '5%' }}>
+              <input type="checkbox" />
+            </th>
+            <th style={{ width: '35%' }}>
             <div className="d-flex align-items-center">
               Items
               <KitchenSortButton label="" onSort={(dir) => handleSort('name', dir)} />
@@ -98,59 +99,54 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
               </div>
             </div>
           </th>
-          {/* <th className="p-3 text-left">Image</th> */}
-          <th className="p-3 text-left">
+          <th style={{ width: '15%' }}>
             <div className="d-flex align-items-center">
               Quantity
               <KitchenSortButton label="" onSort={(dir) => handleSort('quantity', dir)} />
-              <div className="ms-3">
-                {getSortDirection('quantity') === 'asc' && <MoveUp size={18} />}
-                {getSortDirection('quantity') === 'desc' && <MoveDown size={18} />}
+              <div className="ms-2">
+                {getSortDirection('quantity') === 'asc' && <MoveUp size={16} />}
+                {getSortDirection('quantity') === 'desc' && <MoveDown size={16} />}
               </div>
             </div>
           </th>
-          <th className="p-3 text-left">
-            <div className="align-items-center d-flex">
+          <th style={{ width: '20%' }}>
+            <div className="d-flex align-items-center">
               Last Updated
               <KitchenSortButton label="" onSort={(dir) => handleSort('updated', dir)} />
-              <div className="ms-3">
-                {getSortDirection('updated') === 'asc' && <MoveUp size={18} />}
-                {getSortDirection('updated') === 'desc' && <MoveDown size={18} />}
+              <div className="ms-2">
+                {getSortDirection('updated') === 'asc' && <MoveUp size={16} />}
+                {getSortDirection('updated') === 'desc' && <MoveDown size={16} />}
               </div>
             </div>
           </th>
-          <th className="p-3 text-left">
-            <div className="align-items-center d-flex">
+          <th style={{ width: '15%' }}>
+            <div className="d-flex align-items-center">
               Status
               <KitchenSortButton label="" onSort={(dir) => handleSort('status', dir)} />
-              <div className="ms-3">
-                {getSortDirection('status') === 'asc' && <MoveUp size={18} />}
-                {getSortDirection('status') === 'desc' && <MoveDown size={18} />}
+              <div className="ms-2">
+                {getSortDirection('status') === 'asc' && <MoveUp size={16} />}
+                {getSortDirection('status') === 'desc' && <MoveDown size={16} />}
               </div>
-              {/* {dir === 'asc' ? (
-              <MoveUp size={18} />
-              ) : (
-              <MoveDown size={18} />
-              )} */}
             </div>
           </th>
-          <th className="p-3 text-left">Action</th>
+          <th style={{ width: '10%' }}>Action</th>
         </tr>
       </thead>
-      <tbody>
-        {sortedItems.length === 0 ? (
-          <tr>
-            <td colSpan={7} className="p-6 text-center">
-              No items found.
-            </td>
-          </tr>
-        ) : (
-          sortedItems.map((item, idx) => (
-            <IngredientRow key={`${item.id}-${idx}`} {...item} onDelete={onDelete} onEdit={onEdit} />
-          ))
-        )}
-      </tbody>
-    </table>
+        <tbody>
+          {sortedItems.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="text-center py-5 text-muted">
+                No items found.
+              </td>
+            </tr>
+          ) : (
+            sortedItems.map((item, idx) => (
+              <IngredientRow key={`${item.id}-${idx}`} {...item} onDelete={onDelete} onEdit={onEdit} />
+            ))
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
