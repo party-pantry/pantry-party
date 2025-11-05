@@ -7,9 +7,10 @@ import { prisma } from '@/lib/prisma';
 // GET: public – list reviews
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
-  const recipeId = Number(params.id);
+  const resolvedParams = await params;
+  const recipeId = Number(resolvedParams.id);
   if (!Number.isFinite(recipeId)) {
     return NextResponse.json({ error: 'Invalid recipe id' }, { status: 400 });
   }
@@ -26,13 +27,14 @@ export async function GET(
 // POST: auth required – add/update a review, then refresh recipe avg/count
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await getServerSession(authOptions);
   const userId = Number((session?.user as any)?.id);
   if (!userId) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const recipeId = Number(params.id);
+  const resolvedParams = await params;
+  const recipeId = Number(resolvedParams.id);
   if (!Number.isFinite(recipeId)) {
     return NextResponse.json({ error: 'Invalid recipe id' }, { status: 400 });
   }

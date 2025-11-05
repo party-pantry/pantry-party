@@ -44,10 +44,11 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: { ingredientId: number, storageId: number } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ ingredientId: number, storageId: number }> }) {
   try {
-    const ingredientId = Number(params.ingredientId);
-    const storageId = Number(params.storageId);
+    const resolvedParams = await params;
+    const ingredientId = Number(resolvedParams.ingredientId);
+    const storageId = Number(resolvedParams.storageId);
 
     await deleteStock(ingredientId, storageId);
 
