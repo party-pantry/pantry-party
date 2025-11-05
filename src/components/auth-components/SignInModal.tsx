@@ -49,12 +49,12 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
       <Modal.Body className="text-center">
-        <h5 className="text-center mb-4">
+        <h5 className="text-center mb-4 sign-in-heading gradient-text text-transparent">
           <strong>Welcome Back to the Party!</strong>
         </h5>
         <Form onSubmit={handleSubmit}>
           {/* Username or Email */}
-          <InputGroup className="mt-4 mb-3 custom-input-group pl-10 pr-10">
+          <InputGroup className="mt-4 mb-3 pl-10 pr-10">
             <InputGroup.Text className="custom-input-group-text">
               <User />
             </InputGroup.Text>
@@ -90,7 +90,7 @@ const SignInModal: React.FC<Props> = ({ show, onHide }) => {
           </InputGroup>
 
           {/* Sign in button */}
-          <Button variant="success" type="submit">
+          <Button className="sign-in-button" type="submit">
             <strong>Sign in</strong>
           </Button>
           {/* error message */}
