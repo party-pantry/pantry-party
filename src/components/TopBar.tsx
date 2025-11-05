@@ -40,48 +40,7 @@ const TopBar: React.FC = () => {
       <Navbar className="sticky top-0 w-full bg-transparent z-5">
         <Container>
           <Nav className="ms-auto flex items-center gap-3">
-            {/* TODO: IMPLEMENT NOTIFICATIONS FUNCTIONALITY */}
-            <Button className="notification-button">
-              <Bell size={20} className="text-black" />
-            </Button>
-
-            <NavDropdown
-              id="login-dropdown"
-              renderMenuOnMount
-              show={dropdownOpen}
-              onToggle={(isOpen) => setDropdownOpen(isOpen)}
-              align="end"
-              title={
-                <Button className={`account-button ${dropdownOpen ? 'open' : ''}`}>
-                  {session ? <User size={20} /> : <UserPlus size={20} />}
-                  <span>{session && displayName ? displayName : ''}</span>
-                  {dropdownOpen ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
-                </Button>
-              }
-            >
-              {session ? (
-                <>
-                  <NavDropdown.Item href="/profile">
-                    Profile
-                  </NavDropdown.Item>
-                  {/* <NavDropdown.Item onClick={() => setShowChangePassword(true)}>
-                    Change Password
-                  </NavDropdown.Item> */}
-                  <NavDropdown.Item onClick={() => setShowSignOut(true)}>
-                    Sign Out
-                  </NavDropdown.Item>
-                </>
-              ) : (
-                <>
-                  <NavDropdown.Item onClick={() => setShowSignIn(true)}>
-                    Sign In
-                  </NavDropdown.Item>
-                  <NavDropdown.Item onClick={() => setShowSignUp(true)}>
-                    Sign Up
-                  </NavDropdown.Item>
-                </>
-              )}
-            </NavDropdown>
+            {/* Notification bell and profile dropdown removed */}
           </Nav>
         </Container>
       </Navbar>
