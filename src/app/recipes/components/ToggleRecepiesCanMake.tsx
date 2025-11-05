@@ -21,7 +21,7 @@ const ToggleReceipesCanMake: React.FC<ToggleReceipesCanMakeProps> = ({ onToggleC
         <Form.Check
             type="switch"
             label="Recipes I Can Make"
-            className="mt-3"
+            className="custom-switch mt-3"
             checked={canMakeOnly}
             onChange={handleToggle}
         />

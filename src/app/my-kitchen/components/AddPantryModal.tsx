@@ -3,7 +3,7 @@
 /* eslint-disable implicit-arrow-linebreak */
 /* eslint-disable react/prop-types */
 
-import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { Modal, Form, Button, Row, Col, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
 import { Category } from '@prisma/client';
 import { LocalCategory } from '@/lib/Units';
@@ -20,25 +20,66 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
     name: '',
     type: 'FRIDGE' as Category,
   });
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.type) {
-      try {
-        await fetch('/api/kitchen/storages', {
-          method: 'POST',
-          body: JSON.stringify({ ...formData, houseId }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-        onAddPantry({ ...formData });
-        setFormData({ name: '', type: 'FRIDGE' as Category });
-        onHide();
-      } catch (error) {
-        // Handle error appropriately
-        console.error(error);
+
+    setFieldErrors({});
+    setError(null);
+    setLoading(true);
+
+    const nextFieldErrors: Record<string, string> = {};
+    if (!formData.name?.trim()) nextFieldErrors.name = 'Name is required';
+    if (!formData.type) nextFieldErrors.type = 'Type is required';
+    if (Object.keys(nextFieldErrors).length > 0) {
+      setFieldErrors(nextFieldErrors);
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/kitchen/storages', {
+        method: 'POST',
+        body: JSON.stringify({ ...formData, houseId }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) {
+        let apiError: any = { error: 'Failed to create storage' };
+        try {
+          apiError = await res.json();
+        } catch (parseErr) {
+          // ignore JSON parse errors
+        }
+        if (res.status === 400) {
+          if (apiError?.error?.toString().toLowerCase().includes('missing')) {
+            setFieldErrors({ name: apiError.error });
+          } else {
+            setError(apiError.error || 'Invalid input');
+          }
+        } else if (res.status === 409) {
+          const storageName = apiError?.storageName || formData.name;
+          setFieldErrors({ name: 'Storage already exists' });
+          setError(`${storageName} already exists`);
+        } else {
+          const storageName = apiError?.storageName || formData.name;
+          setError(apiError?.error ? `${formData.name} already in ${storageName}` : 'Failed to create storage');
+        }
+
+        setLoading(false);
+        return;
       }
+
+      const created = await res.json();
+      onAddPantry({ name: created.name ?? formData.name, type: created.type ?? formData.type });
+      setFormData({ name: '', type: 'FRIDGE' as Category });
+      onHide();
+    } catch (err) {
+      setError('Network error — please try again');
     }
   };
 
@@ -50,8 +91,6 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
     <Modal
       show={show}
       onHide={onHide}
-      backdrop="static"
-      keyboard={true}
       centered
       contentClassName="custom-modal"
     >
@@ -62,26 +101,32 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
       <Modal.Body className="text-center">
         <h4>Add New Pantry</h4>
         <Form autoComplete="off" onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="storageType">
-            <Form.Select
-              className="text-center"
-              value={formData.type}
-              onChange={(e) =>
-                handleChange(
-                  'type',
-                  Object.keys(LocalCategory).includes(e.target.value)
-                    ? (e.target.value as Category)
-                    : '',
-                )
-              }
-              required
-            > {Object.entries(LocalCategory).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {value}
-                </option>
-            ))}
-            </Form.Select>
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="storageType">
+              <Form.Select
+                className='text-center no-arrow highlight-on-hover'
+                style={{ cursor: 'pointer' }}
+                value={formData.type}
+                onChange={(e) =>
+                  handleChange(
+                    'type',
+                    Object.keys(LocalCategory).includes(e.target.value)
+                      ? (e.target.value as Category)
+                      : '',
+                  )
+                }
+                required
+                isInvalid={!!fieldErrors.type}
+              >
+                {Object.entries(LocalCategory).map(([key, value]) => (
+                  <option key={key} value={key} style={{ backgroundColor: 'white' }}>
+                    {value}
+                  </option>
+                ))}
+              </Form.Select>
+              <Form.Control.Feedback type="invalid">
+                {fieldErrors.type}
+              </Form.Control.Feedback>
+            </Form.Group>
 
           <Row className="mb-3">
             <Col>
@@ -91,16 +136,21 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
                   placeholder="Storage Name"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  required
+                  isInvalid={!!fieldErrors.name}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {fieldErrors.name}
+                </Form.Control.Feedback>
 
               </Form.Group>
             </Col>
           </Row>
 
           <Button variant="success" type="submit">
-            Add Pantry
+            {loading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+            {loading ? ' Adding...' : 'Add Pantry'}
           </Button>
+          {error ? <div className="text-danger small mt-2">{error}</div> : null}
         </Form>
       </Modal.Body>
     </Modal>

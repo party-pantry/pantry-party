@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { MinusCircle, PlusCircle } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import AddHouseModal from './AddHouseModal';
 import EditHouseModal from './EditHouseModal';
 
@@ -99,19 +99,13 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
             })}
             </Nav>
             <Nav.Item className="ms-auto d-flex align-items-center">
-              <MinusCircle
-                size={32}
-                className="me-3"
-                style={{ cursor: 'pointer', color: '#ffffffff' }}
-                onClick={() => handleDeleteHouse(activeHouseId)}
-              />
               <PlusCircle
                 size={32}
                 className=" ml-auto"
                 style={{ cursor: 'pointer', color: '#ffffffff' }}
-              onClick={() => setShowHouseModal(true)}
-            />
-          </Nav.Item>
+                onClick={() => setShowHouseModal(true)}
+              />
+            </Nav.Item>
         </Card.Header>
         <Card.Body
           className="p-4 mb-0"

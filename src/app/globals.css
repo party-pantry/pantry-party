@@ -191,6 +191,7 @@ body {
 
 .gradient-text {
   background: linear-gradient(90deg, #3A5B4F, #45a56b, #3A5B4F);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -211,6 +212,15 @@ body {
     background-color: #45a56b;
     transform: translateY(-2px);
     box-shadow: 0 4px 6px -1px #45a56b, 0 2px 4px -1px #45a56b;
+}
+
+.custom-switch .form-check-input:checked {
+  background-color: #4caf50; /* Change the background color */
+  border-color: #4caf50; /* Change the border color */
+}
+
+.custom-switch .form-check-input:checked:focus {
+  box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25); /* Add focus effect */
 }
 
 /* Landing page */
@@ -309,6 +319,19 @@ body {
 #login-dropdown::after,
 #filter::after {
   display: none !important;
+}
+
+/* helper to remove the native select arrow when desired */
+.form-select.no-arrow {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+}
+
+.form-select.no-arrow::-ms-expand {
+  display: none;
 }
 
 /* Border thickness for cards */
@@ -516,4 +539,9 @@ h5 {
   height: 80px; 
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.highlight-on-hover:hover {
+  background-color: #f0f8f5;
+  transition: background-color 0.3s ease;
 }
