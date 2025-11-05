@@ -36,6 +36,11 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   const [showHouseModal, setShowHouseModal] = useState(false);
   const [showEditHouseModal, setShowEditHouseModal] = useState(false);
 
+  const [hoveredHouseId, setHoveredHouseId] = useState<number | null>(null);
+  const ActiveBg = '#DCF4F0';
+  const HoverBg = '#DCF4F0';
+  const InactiveBg = '#ffffff';
+
   const handleDeleteHouse = async (houseId: number) => {
     try {
       await fetch(`/api/kitchen/houses/${houseId}`, {
@@ -67,23 +72,31 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
             onSelect={k => selectActiveHouseId(Number(k))}
             style={{ flex: 1 }}
           >
-            {houseArray.map(house => (
-              <Nav.Item key={house.houseId}>
-                <Nav.Link
-                  eventKey={house.houseId.toString()}
-                  onClick={() => setShowEditHouseModal(true)}
-                  style={{
-                    color: activeHouseId === house.houseId ? '#2C776D' : '#ffffff',
-                    backgroundColor: activeHouseId === house.houseId ? '#ffffff' : 'transparent',
-                    border: 'none',
-                    borderRadius: '0.5rem 0.5rem 0 0',
-                    fontWeight: activeHouseId === house.houseId ? 'bold' : 'normal',
-                  }}
-                >
-                  {house.name}
-                </Nav.Link>
-              </Nav.Item>
-            ))}
+            {houseArray.map(house => {
+              const isActive = activeHouseId === house.houseId;
+              const isHoveredCurrent = hoveredHouseId === house.houseId && !isActive;
+
+              return (
+                <Nav.Item key={house.houseId}>
+                  <Nav.Link
+                    eventKey={house.houseId.toString()}
+                    onClick={() => setShowEditHouseModal(true)}
+                    onMouseEnter={() => setHoveredHouseId(house.houseId)}
+                    onMouseLeave={() => setHoveredHouseId(null)}
+                    style={{
+                      color: activeHouseId === house.houseId ? '#2C776D' : '#000000',
+                      /* eslint-disable no-nested-ternary */
+                      backgroundColor: isActive ? ActiveBg : isHoveredCurrent ? HoverBg : InactiveBg,
+                      border: 'none',
+                      borderRadius: '0.5rem 0.5rem 0 0',
+                      fontWeight: activeHouseId === house.houseId ? 'bold' : 'normal',
+                    }}
+                  >
+                    {house.name}
+                  </Nav.Link>
+                </Nav.Item>
+              );
+            })}
             </Nav>
             <Nav.Item className="ms-auto d-flex align-items-center">
               <MinusCircle

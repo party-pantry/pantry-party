@@ -333,7 +333,7 @@ const MyKitchen = () => {
   const expiredItems = allItems.filter((item) => item.status === 'Expired').length;
 
   return (
-    <Container className="mb-12 min-h-screen mt-5">
+    <Container className="py-5 rounded" style={{ width: '90%' }}>
       {Array.isArray(houses)
         && houses
           .filter((house) => house.id === activeHouseId)
