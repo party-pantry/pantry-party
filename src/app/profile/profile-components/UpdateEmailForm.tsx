@@ -50,7 +50,7 @@ const UpdateEmailForm: React.FC = () => {
             {/* Email */}
             <InputGroup className="mt-4 mb-3 custom-input-group">
                 <InputGroup.Text className="custom-input-group-text">
-                    <Mail />
+                    <Mail size={18} />
                 </InputGroup.Text>
                 <Form.Control
                     defaultValue={currentEmail}

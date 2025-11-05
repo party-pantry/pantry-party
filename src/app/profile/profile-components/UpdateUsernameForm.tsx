@@ -49,7 +49,7 @@ const UpdateUsernameForm: React.FC = () => {
             {/* Username */}
             <InputGroup className="mt-4 mb-3 custom-input-group">
                 <InputGroup.Text className="custom-input-group-text">
-                    <User />
+                    <User size={20} />
                 </InputGroup.Text>
                 <Form.Control
                     placeholder="New Username"

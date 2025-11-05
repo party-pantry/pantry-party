@@ -63,7 +63,7 @@ const UpdatePasswordForm: React.FC = () => {
             {/* Old Password */}
             <InputGroup className="mt-4 mb-3 custom-input-group">
                 <InputGroup.Text className="custom-input-group-text">
-                    <Lock />
+                    <Lock size={18} />
                 </InputGroup.Text>
                 <Form.Control
                     placeholder="Current Password"
@@ -75,7 +75,7 @@ const UpdatePasswordForm: React.FC = () => {
                     className="custom-input-group-text toggle-icon"
                     onClick={() => toggleVisibility(setOldPasswordVisible)}
                 >
-                    {oldPasswordVisible ? <EyeOff /> : <Eye />}
+                    {oldPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
                 </InputGroup.Text>
                 <div className="invalid-feedback d-block">{errors.oldpassword?.message}</div>
             </InputGroup>
@@ -83,7 +83,7 @@ const UpdatePasswordForm: React.FC = () => {
             {/* New Password */}
             <InputGroup className="mb-3 custom-input-group">
                 <InputGroup.Text className="custom-input-group-text">
-                    <Lock />
+                    <Lock size={18} />
                 </InputGroup.Text>
                 <Form.Control
                     placeholder="New Password"
@@ -95,7 +95,7 @@ const UpdatePasswordForm: React.FC = () => {
                     className="custom-input-group-text toggle-icon"
                     onClick={() => toggleVisibility(setNewPasswordVisible)}
                 >
-                    {newPasswordVisible ? <EyeOff /> : <Eye />}
+                    {newPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
                 </InputGroup.Text>
                 <div className="invalid-feedback d-block">{errors.password?.message}</div>
             </InputGroup>
@@ -103,7 +103,7 @@ const UpdatePasswordForm: React.FC = () => {
             {/* Confirm New Password */}
             <InputGroup className="mb-4 custom-input-group">
                 <InputGroup.Text className="custom-input-group-text">
-                    <Lock />
+                    <Lock size={18} />
                 </InputGroup.Text>
                 <Form.Control
                     placeholder="Confirm New Password"
@@ -115,7 +115,7 @@ const UpdatePasswordForm: React.FC = () => {
                     className="custom-input-group-text toggle-icon"
                     onClick={() => toggleVisibility(setConfirmPasswordVisible)}
                 >
-                    {confirmPasswordVisible ? <EyeOff /> : <Eye />}
+                    {confirmPasswordVisible ? <EyeOff size={20} /> : <Eye size={20} />}
                 </InputGroup.Text>
                 <div className="invalid-feedback d-block">{errors.confirmPassword?.message}</div>
             </InputGroup>
