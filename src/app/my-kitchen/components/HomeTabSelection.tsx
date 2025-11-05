@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { Card, Nav } from 'react-bootstrap';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { MinusCircle, PlusCircle } from 'lucide-react';
-import AddHouseModal from '@/components/kitchen-components/AddHouseModal';
+import AddHouseModal from './AddHouseModal';
 import EditHouseModal from './EditHouseModal';
 
 interface HomeTabSelectionProps {
@@ -72,6 +72,13 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
                 <Nav.Link
                   eventKey={house.houseId.toString()}
                   onClick={() => setShowEditHouseModal(true)}
+                  style={{
+                    color: activeHouseId === house.houseId ? '#2C776D' : '#ffffff',
+                    backgroundColor: activeHouseId === house.houseId ? '#ffffff' : 'transparent',
+                    border: 'none',
+                    borderRadius: '0.5rem 0.5rem 0 0',
+                    fontWeight: activeHouseId === house.houseId ? 'bold' : 'normal',
+                  }}
                 >
                   {house.name}
                 </Nav.Link>

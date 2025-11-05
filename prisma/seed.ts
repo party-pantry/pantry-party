@@ -152,6 +152,8 @@ async function main() {
         email: user.email,
         username: user.username,
         password,
+        // bio: user.bio,
+        // image`: user.image,
       },
     });
   }

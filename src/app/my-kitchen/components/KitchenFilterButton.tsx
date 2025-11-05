@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
 import { DropdownButton, Form, Button } from 'react-bootstrap';
-import { Search, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
 
 const statusOptions = ['Good', 'Low Stock', 'Out of Stock', 'Expired'];
 
 interface KitchenFilterButtonProps {
   onApply?: (filters: { search: string; quantity: number; status: string[] }) => void;
-  onSearchChange?: (search: string) => void;
 }
 
-const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply, onSearchChange }) => {
+const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply }) => {
   const [quantity, setQuantity] = useState(1000);
-  const [search, setSearch] = useState('');
   const [status, setStatus] = useState<string[]>([]);
 
   const handleStatusChange = (option: string) => {
@@ -24,51 +22,16 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply, onSe
   };
 
   const handleReset = () => {
-    setSearch('');
     setQuantity(25);
     setStatus([]);
     if (onApply) onApply({ search: '', quantity: 1000, status: [] });
   };
 
   const handleApply = () => {
-    if (onApply) onApply({ search, quantity, status });
+    if (onApply) onApply({ search: '', quantity, status });
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'flex-end',
-        padding: '20px',
-        marginRight: '120px',
-        paddingTop: '20px',
-        marginTop: '10px',
-        marginBottom: '-58px',
-        marginLeft: '20px',
-      }}
-    >
-      <div className="d-flex align-items-center gap-2">
-        <div className="position-relative" style={{ maxWidth: '250px' }}>
-          <Search
-            size={18}
-            className="position-absolute top-50 translate-middle-y ms-2 text-muted"
-          />
-          <Form.Control
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => {
-              const { value } = e.target;
-              setSearch(value);
-              if (onSearchChange) onSearchChange(value);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                handleApply();
-              }
-            }}
-            style={{ paddingLeft: '2rem' }}
-          />
-        </div>
         <DropdownButton
           id="kitchen-filter-dropdown"
           title={
@@ -81,13 +44,11 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply, onSe
           align="end"
           drop="down"
           flip={false}
+          style={{ height: '38px' }}
+          className="d-flex align-items-center"
         >
-          <div style={{
-            paddingLeft: '30px',
-            paddingRight: '30px',
-            paddingBottom: '15px',
-          }}>
-            <Form.Label className="d-block mt-2 mb-1">Quantity {'<='} {quantity}</Form.Label>
+          <div className="px-3 pb-3 pt-2" style={{ minWidth: '250px' }}>
+            <Form.Label className="d-block mb-1">Quantity {'<='} {quantity}</Form.Label>
             <Form.Range
               min={0}
               max={50}
@@ -107,18 +68,16 @@ const KitchenFilterButton: React.FC<KitchenFilterButtonProps> = ({ onApply, onSe
                 className="mb-1"
               />
             ))}
-            <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
-              <Button variant="danger" onClick={handleReset}>
+            <div className="mt-3 d-flex gap-2">
+              <Button variant="outline-secondary" size="sm" onClick={handleReset} className="flex-fill">
                 Reset
               </Button>
-              <Button variant="primary" onClick={handleApply}>
+              <Button variant="success" size="sm" onClick={handleApply} className="flex-fill">
                 Apply
               </Button>
             </div>
           </div>
         </DropdownButton>
-      </div>
-    </div>
   );
 };
 

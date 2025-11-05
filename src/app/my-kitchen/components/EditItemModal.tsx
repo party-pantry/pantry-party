@@ -120,6 +120,13 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     }
   };
 
+  const statusColorMap: Record<LocalStatus, string> = {
+    [LocalStatus.GOOD]: 'bg-green-100 text-green-700',
+    [LocalStatus.LOW_STOCK]: 'bg-yellow-100 text-yellow-700',
+    [LocalStatus.OUT_OF_STOCK]: 'bg-red-100 text-red-700',
+    [LocalStatus.EXPIRED]: 'bg-red-100 text-red-700',
+  };
+
   return (
     <Modal
       show={show}
@@ -127,6 +134,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
       backdrop="static"
       keyboard={true}
       centered
+      size="lg"
     >
       <Modal.Header closeButton>
         <Modal.Title>Edit Item</Modal.Title>
@@ -148,7 +156,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
               />
               </Form.Group>
             </Col>
-            <Col md={3}>
+            <Col md={2}>
               <Form.Group controlId="formItemQuantity">
                 <Form.Label>Quantity</Form.Label>
                 <Form.Control
@@ -164,46 +172,49 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 />
               </Form.Group>
             </Col>
-            <Col md={2}>
+            <Col md={3}>
               <Form.Group controlId="formItemUnit">
                 <Form.Label>Unit</Form.Label>
-                {/* editable dropdown using datalist: user can type or pick from suggestions */}
-                <Form.Control
-                  type="text"
-                  list="unit-list"
+                {/* dropdown: user can pick from suggestions */}
+                <Form.Select
                   value={formData.unit}
-                  placeholder={item?.unit || ''}
-                  onChange={(e) => {
-                    setFormData({ ...formData, unit: e.target.value as LocalUnit });
-                    setErrors([]);
-                  }}
-                />
-                <datalist id="unit-list">
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value as LocalUnit })
+                  }
+                >
                   {Object.values(LocalUnit).map((unit) => (
-                    <option key={unit} value={unit} />
+                    <option key={unit} value={unit}>
+                      {unit}
+                    </option>
                   ))}
-                </datalist>
+                </Form.Select>
               </Form.Group>
             </Col>
           </Row>
           <Row>
-            <Col>
+            <Col className="mt-3 mb-2">
               <Form.Group controlId="formItemStatus">
                 <Form.Label>Status</Form.Label>
-                <Form.Select
-                  value={formData.status}
-                  onChange={(e) => {
-                    setFormData({ ...formData, status: e.target.value as LocalStatus });
-                    setErrors([]);
-                  }}
+                <div
+                  className={
+                    `transition-colors duration-400 rounded-md overflow-hidden 
+                    border border-gray-300 ${statusColorMap[formData.status]}`
+                  }
                 >
-                  <option value="">Select Status</option>
-                  {Object.values(LocalStatus).map((status) => (
-                    <option key={status} value={status}>
-                      {status}
-                    </option>
-                  ))}
-                </Form.Select>
+                  <Form.Select
+                    className="text-center bg-transparent border-0 focus:ring-0 focus:outline-none shadow-none"
+                    value={formData.status}
+                    onChange={(e) => {
+                      setFormData({ ...formData, status: e.target.value as LocalStatus });
+                      setErrors([]);
+                    }}
+                  >
+                    {Object.values(LocalStatus).map((statusValue) => (
+                      <option key={statusValue} value={statusValue}>
+                        {statusValue}
+                      </option>
+                    ))}
+                  </Form.Select>
+                </div>
               </Form.Group>
             </Col>
           </Row>
@@ -221,7 +232,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
           )}
         </Form>
       </Modal.Body>
-      <Modal.Footer>
+      <Modal.Footer className="border-0">
         <Button variant="secondary" onClick={handleClose} disabled={loading}>
           Close
         </Button>

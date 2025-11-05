@@ -2,9 +2,9 @@
 
 import { Container, Row, Col } from 'react-bootstrap';
 import dynamic from 'next/dynamic';
-import LocationsFilter from './locations-components/LocationsFilter';
+import LocationsFilter from './LocationsFilter';
 
-const LocationsMap = dynamic(() => import('@/components/locations-components/LocationsMap'), { ssr: false });
+const LocationsMap = dynamic(() => import('@/app/locations/components/LocationsMap'), { ssr: false });
 
 const Locations = () => (
         <Container className="mb-12 min-h-screen mt-5">

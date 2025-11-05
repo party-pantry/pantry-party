@@ -62,17 +62,3 @@ export async function changeEmail(data: { id: number, newEmail: string }) {
   // After updating, redirect to the profile page
   redirect('/profile');
 }
-
-/**
- * Fetches the username of a user based on their email.
- * @param data, an object with the following properties: email.
- */
-export async function fetchUsernameByEmail(data: { email: string }) {
-  const user = await prisma.user.findUnique({
-    where: { email: data.email },
-    select: {
-      username: true,
-    },
-  });
-  return user ? user.username : '';
-}

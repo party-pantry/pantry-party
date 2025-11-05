@@ -18,27 +18,29 @@ const ProfilePage = async () => {
   );
 
   return (
-    <Container className="py-5">
-      <Row>
-        <ProfilePictureUploader />
-      </Row>
-      <Row>
-        {/* Update email form */}
-        <UpdateEmailForm />
-      </Row>
-      <Row>
-        {/* Update username form */}
-        <UpdateUsernameForm />
-      </Row>
-      <Row>
-        {/* Update password form */}
-        <UpdatePasswordForm />
-      </Row>
-      <Row>
-        {/* displays all of the user's recipes */}
-        <ProfileRecipes />
-      </Row>
-    </Container>
+    <div className="d-flex justify-content-center align-items-center">
+      <Container className="py-5 mt-5 mb-5 bg-white rounded shadow" style={{ width: '90%' }}>
+        <Row>
+          <ProfilePictureUploader />
+        </Row>
+        <Row>
+          {/* Update email form */}
+          <UpdateEmailForm />
+        </Row>
+        <Row>
+          {/* Update username form */}
+          <UpdateUsernameForm />
+        </Row>
+        <Row>
+          {/* Update password form */}
+          <UpdatePasswordForm />
+        </Row>
+        <Row>
+          {/* displays all of the user's recipes */}
+          <ProfileRecipes />
+        </Row>
+      </Container>
+    </div>
   );
 };
 
