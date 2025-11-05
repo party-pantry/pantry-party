@@ -5,9 +5,10 @@
 /* eslint-disable max-len */
 /* eslint-disable no-nested-ternary */
 
-import { Container, Button, Row, Card, Placeholder, Col } from 'react-bootstrap';
+import { Container, Button, Row, Card, Placeholder, Col, Form } from 'react-bootstrap';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
+import { Search } from 'lucide-react';
 import { LocalStatus, LocalUnit } from '@/lib/Units';
 import IngredientTable from './IngredientTable';
 import StorageContainer from './StorageContainer';
@@ -77,12 +78,40 @@ const KitchenSkeleton: React.FC = () => (
         </Placeholder>
       </div>
 
-      {/* Filter and Add Button Skeleton */}
-      <Row className="justify-content-end mb-3">
-        <Col xs="auto" className="d-flex gap-2">
-          <Placeholder.Button variant="outline-dark" className="px-4" />
-          <Placeholder.Button variant="success" className="px-4" />
+      {/* Header Controls Skeleton */}
+      <Row className="mb-4">
+        <Col xs={12}>
+          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div className="d-flex align-items-center flex-wrap gap-4">
+              <Placeholder as="div" animation="glow" style={{ width: '250px' }}>
+                <Placeholder xs={12} style={{ height: '38px', borderRadius: '4px' }} />
+              </Placeholder>
+              <Placeholder.Button variant="outline-dark" xs={2} />
+            </div>
+            <div className="d-flex gap-2">
+              <Placeholder.Button variant="success" />
+              <Placeholder.Button variant="success" />
+            </div>
+          </div>
         </Col>
+      </Row>
+
+      {/* Stats Cards Skeleton */}
+      <Row className="mb-4">
+        {[1, 2, 3, 4].map((i) => (
+          <Col key={i} md={3} sm={6} xs={12} className="mb-3">
+            <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+              <Card.Body className="py-4">
+                <Placeholder as="h3" animation="glow">
+                  <Placeholder xs={6} className="fs-2 mb-1" />
+                </Placeholder>
+                <Placeholder as="p" animation="glow">
+                  <Placeholder xs={8} size="sm" />
+                </Placeholder>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
       </Row>
 
       {/* Storage Containers Skeleton */}
@@ -305,113 +334,120 @@ const MyKitchen = () => {
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div className="mt-4">
-        {Array.isArray(houses)
-          && houses
-            .filter((house) => house.id === activeHouseId)
-            .map((house) => (
-              <HomeTabSelection
-                key={house.id}
-                id={house.id.toString()}
-                houseArray={houses.map((h) => ({ houseId: h.id, name: h.name, address: h.address }))}
-                activeHouseId={activeHouseId}
-                selectActiveHouseId={setActiveHouseId}
-                onHouseAdded={fetchHouses}
-              >
-                <Row className="mb-4">
-                  <Col md={3} sm={6} xs={12} className="mb-3">
-                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-                      <Card.Body className="py-4">
-                        <h3 className="text-primary fs-2 mb-1 fw-bold">{totalItems}</h3>
-                        <Card.Text className="text-muted small mb-0 fw-medium">Total Items</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3} sm={6} xs={12} className="mb-3">
-                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-                      <Card.Body className="py-4">
-                        <h3 className="text-success fs-2 mb-1 fw-bold">{goodItems}</h3>
-                        <Card.Text className="text-muted small mb-0 fw-medium">Good</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3} sm={6} xs={12} className="mb-3">
-                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-                      <Card.Body className="py-4">
-                        <h3 className="text-warning fs-2 mb-1 fw-bold">{lowStockItems}</h3>
-                        <Card.Text className="text-muted small mb-0 fw-medium">Low Stock</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={3} sm={6} xs={12} className="mb-3">
-                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-                      <Card.Body className="py-4">
-                        <h3 className="text-secondary fs-2 mb-1 fw-bold">{expiredItems}</h3>
-                        <Card.Text className="text-muted small mb-0 fw-medium">Expired</Card.Text>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                </Row>
+      {Array.isArray(houses)
+        && houses
+          .filter((house) => house.id === activeHouseId)
+          .map((house) => (
+            <HomeTabSelection
+              key={house.id}
+              id={house.id.toString()}
+              houseArray={houses.map((h) => ({ houseId: h.id, name: h.name, address: h.address }))}
+              activeHouseId={activeHouseId}
+              selectActiveHouseId={setActiveHouseId}
+              onHouseAdded={fetchHouses}
+            >
+              <Row className="mb-4">
+                <Col xs={12}>
+                  <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                    <div className="d-flex align-items-center flex-wrap gap-4">
+                      <div className="position-relative" style={{ maxWidth: '250px' }}>
+                        <Search size={18} className="position-absolute top-50 translate-middle-y ms-2 text-muted" />
+                        <Form.Control
+                          placeholder="Search items..."
+                          style={{ paddingLeft: '2rem' }}
+                          value={filters.search}
+                          onChange={(e) => setFilters((prev) => ({ ...prev, search: e.target.value }))}
+                        />
+                      </div>
+                      <KitchenFilterButton
+                        onApply={(appliedFilters) =>
+                          setFilters({
+                            search: filters.search,
+                            quantity: appliedFilters.quantity,
+                            status: appliedFilters.status,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="d-flex align-items-center flex-wrap gap-2">
+                      <Button
+                        variant="success"
+                        onClick={() => setShowAddModal(true)}
+                      >
+                        Add Item +
+                      </Button>
+                      <Button
+                        variant="success"
+                        onClick={() => setShowPantryModal(true)}
+                      >
+                        Add Storage +
+                      </Button>
+                    </div>
+                  </div>
+                </Col>
+              </Row>
 
-                <Row className="justify-content-end mb-3">
-                  <Col xs="auto" className="d-flex gap-2">
-                    <KitchenFilterButton
-                      onApply={(appliedFilters) =>
-                        setFilters({
-                          search: appliedFilters.search,
-                          quantity: appliedFilters.quantity,
-                          status: appliedFilters.status,
-                        })
-                      }
-                      onSearchChange={(value) =>
-                        setFilters((prev) => ({ ...prev, search: value }))
-                      }
-                    />
+              <Row className="mb-4">
+                <Col md={3} sm={6} xs={12} className="mb-3">
+                  <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                    <Card.Body className="py-4">
+                      <h3 className="text-primary fs-2 mb-1 fw-bold">{totalItems}</h3>
+                      <Card.Text className="text-muted small mb-0 fw-medium">Total Items</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md={3} sm={6} xs={12} className="mb-3">
+                  <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                    <Card.Body className="py-4">
+                      <h3 className="text-success fs-2 mb-1 fw-bold">{goodItems}</h3>
+                      <Card.Text className="text-muted small mb-0 fw-medium">Good</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md={3} sm={6} xs={12} className="mb-3">
+                  <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                    <Card.Body className="py-4">
+                      <h3 className="text-warning fs-2 mb-1 fw-bold">{lowStockItems}</h3>
+                      <Card.Text className="text-muted small mb-0 fw-medium">Low Stock</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+                <Col md={3} sm={6} xs={12} className="mb-3">
+                  <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                    <Card.Body className="py-4">
+                      <h3 className="text-secondary fs-2 mb-1 fw-bold">{expiredItems}</h3>
+                      <Card.Text className="text-muted small mb-0 fw-medium">Expired</Card.Text>
+                    </Card.Body>
+                  </Card>
+                </Col>
+              </Row>
 
-                    <Button
-                      variant="success"
-                      onClick={() => setShowAddModal(true)}
-                    >
-                      <strong>Add Item +</strong>
-                    </Button>
-                  </Col>
-                </Row>
-
-                {house.storages.map((storage) => (
-                  <StorageContainer
-                    key={storage.id}
-                    id={storage.id.toString()}
-                    title={storage.name}
-                    onUpdate={fetchHouses}
-                    feature={null}
-                    storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
-                    items={getDisplayedStocks(storage)}
-                    itemsCount={getDisplayedStocks(storage).length}
-                  >
-                    <IngredientTable
-                      items={getDisplayedStocks(storage)}
-                      onDelete={(ingredientId, storageId) => {
-                        handleDeleteItem(ingredientId, storageId);
-                        setShowDeleteItemModal(true);
-                      }}
-                      onEdit={(ingredientId, storageId) => {
-                        handleEditItem(ingredientId, storageId);
-                        setShowEditModal(true);
-                      }}
-                    />
-                  </StorageContainer>
-                ))}
-
-                <Button
-                  variant="success"
-                  className="mt-3"
-                  onClick={() => setShowPantryModal(true)}
+              {house.storages.map((storage) => (
+                <StorageContainer
+                  key={storage.id}
+                  id={storage.id.toString()}
+                  title={storage.name}
+                  onUpdate={fetchHouses}
+                  feature={null}
+                  storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
+                  items={getDisplayedStocks(storage)}
+                  itemsCount={getDisplayedStocks(storage).length}
                 >
-                  <strong>Add Storage +</strong>
-                </Button>
-              </HomeTabSelection>
-            ))}
-      </div>
+                  <IngredientTable
+                    items={getDisplayedStocks(storage)}
+                    onDelete={(ingredientId, storageId) => {
+                      handleDeleteItem(ingredientId, storageId);
+                      setShowDeleteItemModal(true);
+                    }}
+                    onEdit={(ingredientId, storageId) => {
+                      handleEditItem(ingredientId, storageId);
+                      setShowEditModal(true);
+                    }}
+                  />
+                </StorageContainer>
+              ))}
+            </HomeTabSelection>
+          ))}
 
       <AddItemModal
         show={showAddModal}

@@ -150,18 +150,17 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
           transitionProperty: 'max-height, opacity, padding',
         }}
       >
-        {/* {children} */}
         {React.cloneElement(children as any, { items: displayedItems })}
         {totalPages > 1 && (
-        <div className="d-flex justify-content-center mt-3">
+        <div className="d-flex justify-content-center mt-3 mb-2">
           <div className="btn-group">
             {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNum) => (
               <button
                 key={pageNum}
                 className={`btn btn-sm ${
                   currentPage === pageNum
-                    ? 'btn-light text-dark fw-bold'
-                    : 'btn-outline-light'
+                    ? 'btn-success text-white fw-bold'
+                    : 'btn-outline-secondary'
                 }`}
                 onClick={() => setCurrentPage(pageNum)}
               >
