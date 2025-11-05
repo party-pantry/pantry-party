@@ -53,6 +53,7 @@ model Ingredient {
 model Stock {
   ingredientId Int
   storageId    Int
+  displayName  String?
   quantity     Float
   unit         Unit
   last_updated DateTime   @default(now()) @updatedAt

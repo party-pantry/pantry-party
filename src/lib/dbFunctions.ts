@@ -7,15 +7,35 @@
 
 import { hash } from 'bcryptjs';
 import { Unit, Status, Category, Difficulty } from '@prisma/client';
+import pluralize from 'pluralize';
 import { prisma } from './prisma';
+import { isNormalizedCloseMatch } from './fuzzyHelpers';
 
 /* Allow user to fuzzy search for entry in Ingredients */
 export async function fuzzySearchIngredients(name: string): Promise<string> {
   const term = (name ?? '').trim().toLowerCase();
+  const singularTerm = pluralize.singular(term);
+  const pluralTerm = pluralize.plural(term);
 
-  if (!term) return '';
+  if (!term) {
+    return '';
+  }
 
-  // Build a broader prefilter: search for the full term OR any token in the term
+  try {
+    const exactMatch = await prisma.ingredient.findFirst({
+      where: {
+        OR: [
+          { name: { equals: term, mode: ('insensitive' as any) } },
+          { name: { equals: singularTerm, mode: ('insensitive' as any) } },
+          { name: { equals: pluralTerm, mode: ('insensitive' as any) } },
+        ],
+      },
+    });
+    if (exactMatch) return exactMatch.name;
+  } catch (err) {
+    // ignore lookup failure
+  }
+
   const tokens = term.split(/\s+/).filter(Boolean);
 
   const whereClause = tokens.length > 1
@@ -29,9 +49,22 @@ export async function fuzzySearchIngredients(name: string): Promise<string> {
 
   let candidates = await prisma.ingredient.findMany({ where: whereClause, take: 500 });
 
-  // If no candidates found with tokens, fall back to a larger sample (best-effort) and rank that
   if (!candidates.length) {
     candidates = await prisma.ingredient.findMany({ take: 1000 });
+  }
+
+  try {
+    for (const c of candidates) {
+      if (isNormalizedCloseMatch(c.name, term)) {
+        return c.name;
+      }
+      // Also accept when singular forms match (case-insensitive)
+      if (pluralize.singular(c.name.toLowerCase()) === singularTerm) {
+        return c.name;
+      }
+    }
+  } catch (e) {
+    // ignore helper errors and continue to fuzzy ranking
   }
 
   try {
@@ -78,21 +111,27 @@ export async function fuzzySearchIngredients(name: string): Promise<string> {
 
     if (ranked.length) {
       const top = ranked[0];
-      if (top && top.name) return top.name;
+      if (top && top.name && isNormalizedCloseMatch(top.name, term)) {
+        return top.name;
+      }
     }
   } catch (err) {
     // fast-fuzzy unavailable — fall through to fallback
   }
 
-  // Fallback: prefer startsWith, then contains, then return the first candidate.
   const lower = (s: string) => s.toLowerCase();
   const starts = candidates.filter((c) => lower(c.name).startsWith(term));
-  if (starts.length) return starts[0].name;
+  if (starts.length) {
+    if (pluralize.singular(starts[0].name.toLowerCase()) === singularTerm) return starts[0].name;
+  }
 
   const contains = candidates.filter((c) => lower(c.name).includes(term));
-  if (contains.length) return contains[0].name;
+  if (contains.length) {
+    if (pluralize.singular(contains[0].name.toLowerCase()) === singularTerm) return contains[0].name;
+  }
 
-  return candidates[0].name;
+  const singularReturn = pluralize.singular(name.trim());
+  return singularReturn;
 }
 
 /* Create a new user with unique email and username */
@@ -200,7 +239,7 @@ export async function updateStock(data: {
   unit: Unit;
   status: Status;
 }) {
-  const sterilizedItemName = data.newName.trim().toLowerCase();
+  const sterilizedItemName = pluralize.singular(data.newName.trim().toLowerCase());
 
   // Get the current stock to check current ingredient
   const currentStock = await prisma.stock.findUnique({
