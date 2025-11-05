@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // updates the isStarred status
-export const PATCH = async (req: Request, { params }: { params: { id: string } }) => {
+export const PATCH = async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
   const { id } = await params;
   const recipeId = parseInt(id, 10);
 
