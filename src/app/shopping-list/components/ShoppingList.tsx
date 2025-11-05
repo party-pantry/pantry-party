@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { getProviders, useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
-import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
+import { getPriorityVariant, ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 // import { parse } from 'path';
 import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './ShoppingItemCard';
@@ -24,6 +24,34 @@ interface SuggestedItem {
   currentQuantity: number;
   category: string;
 }
+
+const getFoodColorClass = (cat: string) => {
+    const colorMap: Record<string, string> = {
+      Dairy: 'category-dairy',
+      Produce: 'category-produce',
+      Frozen: 'category-frozen',
+      Meat: 'category-meat',
+      Other: 'category-other',
+    };
+
+    // Find matching enum value ignoring case
+    const match = Object.values(LocalFoodCategory).find(
+      (val) => val.toLowerCase() === cat.toLowerCase()
+    );
+
+    return match ? colorMap[match] : colorMap['Other'];
+  };
+
+  const getPriority = (priority: string) => {
+    const colorMap: Record<string, string> = {
+      High: 'bg-red-300 text-white',
+      Medium: 'bg-warning text-white',
+      Low: 'bg-gray-300 text-white',
+    };
+
+    // Direct lookup, fallback to Low
+    return colorMap[priority] ?? colorMap['Medium'];
+  };
 
 // Loading Skeleton Component
 const ShoppingListSkeleton: React.FC = () => (
@@ -360,7 +388,7 @@ const ShoppingList: React.FC = () => {
                     value={newItem.name}
                     onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
                     required
-                    className="border-2"
+                    className="border-1"
                   />
                 </Col>
                 <Col md={2}>
@@ -371,7 +399,7 @@ const ShoppingList: React.FC = () => {
                     value={newItem.quantity}
                     onChange={(e) => setNewItem({ ...newItem, quantity: e.target.value })}
                     required
-                    className="border-2"
+                    className="border-1"
                   />
                 </Col>
                 <Col md={2}>
@@ -384,40 +412,46 @@ const ShoppingList: React.FC = () => {
                     value={newItem.price}
                     onChange={(e) => setNewItem({ ...newItem, price: e.target.value })}
                     required
-                    className="border-2"
+                    className="border-1"
                   />
                 </Col>
                 <Col md={2}>
                   <Form.Label className="fw-bold text-dark">Category</Form.Label>
-                  <Form.Select
-                    value={newItem.category}
-                    onChange={(e) => setNewItem({
-                      ...newItem,
-                      category: e.target.value as ShoppingItem['category'],
-                    })}
-                    className="border-2"
-                  >
-                    <option value="Produce">Produce</option>
-                    <option value="Meat">Meat</option>
-                    <option value="Dairy">Dairy</option>
-                    <option value="Frozen">Frozen</option>
-                    <option value="Other">Other</option>
-                  </Form.Select>
+                  <div
+                    className={`transition-colors duration-400 rounded-md overflow-hidden border-1 border-gray-300 ${getFoodColorClass(newItem.category)}`}>
+                    <Form.Select
+                      className="bg-transparent focus:ring-0 focus:outline-none shadow-none"
+                      value={newItem.category}
+                      onChange={(e) => setNewItem({
+                        ...newItem,
+                        category: e.target.value as ShoppingItem['category'],
+                      })}
+                    >
+                      <option value="Produce">Produce</option>
+                      <option value="Meat">Meat</option>
+                      <option value="Dairy">Dairy</option>
+                      <option value="Frozen">Frozen</option>
+                      <option value="Other">Other</option>
+                    </Form.Select>
+                  </div>
                 </Col>
                 <Col md={2}>
                   <Form.Label className="fw-bold text-dark">Priority</Form.Label>
-                  <Form.Select
-                    value={newItem.priority}
-                    onChange={(e) => setNewItem({
-                      ...newItem,
-                      priority: e.target.value as ShoppingItem['priority'],
-                    })}
-                    className="border-2"
-                  >
-                    <option value="High">High</option>
-                    <option value="Medium">Medium</option>
-                    <option value="Low">Low</option>
-                  </Form.Select>
+                  <div 
+                    className={`transition-colors duration-400 rounded-md overflow-hidden border-1 border-gray-300 ${getPriority(newItem.priority)}`}>
+                    <Form.Select
+                      className="bg-transparent focus:ring-0 focus:outline-none shadow-none"
+                      value={newItem.priority}
+                      onChange={(e) => setNewItem({
+                        ...newItem,
+                        priority: e.target.value as ShoppingItem['priority'],
+                      })}
+                    >
+                      <option value="High">High</option>
+                      <option value="Medium">Medium</option>
+                      <option value="Low">Low</option>
+                    </Form.Select>
+                  </div>
                 </Col>
                 <Col md={1}>
                   <Button
