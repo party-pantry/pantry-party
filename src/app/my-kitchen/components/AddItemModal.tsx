@@ -52,6 +52,25 @@ const AddItemModal: React.FC<Props> = ({
     }
   }, [storages]);
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      // image: '',
+      quantity: 0,
+      status: Status.GOOD,
+      storageId: storages && storages.length > 0 ? storages[0].id : 1,
+      units: Unit.OUNCE,
+    });
+    setFieldErrors({});
+    setError(null);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onHide();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -64,16 +83,20 @@ const AddItemModal: React.FC<Props> = ({
     const errors: Record<string, string> = {};
     if (!formData.name || String(formData.name).trim() === '') {
       errors.name = 'Please enter an item name.';
+      setLoading(false);
     }
     // treat 0 or empty as invalid quantity
     if (formData.quantity === null || formData.quantity === undefined || Number(formData.quantity) <= 0) {
       errors.quantity = 'Quantity must be greater than 0.';
+      setLoading(false);
     }
     if (!formData.storageId) {
       errors.storageId = 'Please select a storage location.';
+      setLoading(false);
     }
     if (!formData.units) {
       errors.units = 'Please select a unit.';
+      setLoading(false);
     }
 
     if (Object.keys(errors).length > 0) {
@@ -150,7 +173,7 @@ const AddItemModal: React.FC<Props> = ({
       });
       setError(null);
       setFieldErrors({});
-      onHide();
+      handleClose();
     } catch (err) {
       // network errors or unexpected exceptions
       const message = (err as Error)?.message || 'Network error. Please try again.';
@@ -176,7 +199,7 @@ const AddItemModal: React.FC<Props> = ({
   return (
     <Modal
       show={show}
-      onHide={onHide}
+      onHide={handleClose}
       // backdrop="static"
       // keyboard={false}
       centered
