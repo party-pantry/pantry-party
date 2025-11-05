@@ -24,6 +24,18 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const resetForm = () => {
+    setFormData({ name: '', type: 'FRIDGE' as Category });
+    setFieldErrors({});
+    setError(null);
+    setLoading(false);
+  };
+
+  const handleClose = () => {
+    resetForm();
+    onHide();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -32,10 +44,17 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
     setLoading(true);
 
     const nextFieldErrors: Record<string, string> = {};
-    if (!formData.name?.trim()) nextFieldErrors.name = 'Name is required';
-    if (!formData.type) nextFieldErrors.type = 'Type is required';
+    if (!formData.name?.trim()) {
+      nextFieldErrors.name = 'Name is required';
+      setLoading(false);
+    }
+    if (!formData.type) {
+      nextFieldErrors.type = 'Type is required';
+      setLoading(false);
+    }
     if (Object.keys(nextFieldErrors).length > 0) {
       setFieldErrors(nextFieldErrors);
+      setLoading(false);
       return;
     }
 
@@ -77,7 +96,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
       const created = await res.json();
       onAddPantry({ name: created.name ?? formData.name, type: created.type ?? formData.type });
       setFormData({ name: '', type: 'FRIDGE' as Category });
-      onHide();
+      handleClose();
     } catch (err) {
       setError('Network error — please try again');
     }
@@ -90,7 +109,7 @@ const AddPantryModal: React.FC<Props> = ({ show, onHide, onAddPantry, houseId })
   return (
     <Modal
       show={show}
-      onHide={onHide}
+      onHide={handleClose}
       centered
       contentClassName="custom-modal"
     >
