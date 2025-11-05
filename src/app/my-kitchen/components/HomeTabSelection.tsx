@@ -72,6 +72,13 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
                 <Nav.Link
                   eventKey={house.houseId.toString()}
                   onClick={() => setShowEditHouseModal(true)}
+                  style={{
+                    color: activeHouseId === house.houseId ? '#2C776D' : '#ffffff',
+                    backgroundColor: activeHouseId === house.houseId ? '#ffffff' : 'transparent',
+                    border: 'none',
+                    borderRadius: '0.5rem 0.5rem 0 0',
+                    fontWeight: activeHouseId === house.houseId ? 'bold' : 'normal',
+                  }}
                 >
                   {house.name}
                 </Nav.Link>
