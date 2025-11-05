@@ -295,6 +295,10 @@ const MyKitchen = () => {
     return <KitchenSkeleton />;
   }
 
+  // const paginatedItems = itemsCount
+  // ? getDisplayedStocks(storage).slice(0, currentPage * PAGE_SIZE)
+  // : [];
+
   return (
     <Container className="mb-12 min-h-screen mt-5">
       <div
@@ -353,7 +357,11 @@ const MyKitchen = () => {
                       onUpdate={fetchHouses}
                       feature={null}
                       storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
-                    >
+                      // itemsCount={getDisplayedStocks(storage).length}
+                      items={getDisplayedStocks(storage)}
+                      itemsCount={getDisplayedStocks(storage).length}
+                   >
+
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={(ingredientId, storageId) => {
