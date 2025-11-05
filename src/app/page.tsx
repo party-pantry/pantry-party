@@ -55,7 +55,7 @@ export default function Home() {
               width={1100}
               height={600}
               priority
-              style={{ maxWidth: '100%', height: 'auto' }}
+              style={{ maxWidth: '100%', height: 'auto', boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)' }}
             />
           </div>
         </div>
@@ -70,7 +70,9 @@ export default function Home() {
           className="mb-5"
           id="features"
         >
-          <h1>Features</h1>
+          <h1 style={{ marginBottom: '24px' }}>
+              <strong>Features</strong>
+            </h1>
           <FeaturesSection />
         </div>
 
