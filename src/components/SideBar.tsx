@@ -124,10 +124,10 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                                         Inventory
                                     </MenuItem>
                                     <MenuItem
-                                        component={<Link href="/my-kitchen/barcode-scanner" />}
-                                        active={pathname === '/my-kitchen/barcode-scanner'}
+                                        component={<Link href="/my-kitchen/receipt-scanner" />}
+                                        active={pathname === '/my-kitchen/receipt-scanner'}
                                     >
-                                        Barcode Scanner
+                                        Receipt Scan
                                     </MenuItem>
                                 </SubMenu>
                                 <MenuItem

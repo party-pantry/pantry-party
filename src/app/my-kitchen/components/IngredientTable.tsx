@@ -129,7 +129,9 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
               </div>
             </div>
           </th>
-          <th style={{ width: '10%' }}>Action</th>
+            <th style={{ width: '10%' }} className="text-center align-middle">
+              <div className="d-flex align-items-center">Action</div>
+            </th>
         </tr>
       </thead>
         <tbody>
