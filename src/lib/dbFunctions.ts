@@ -7,7 +7,132 @@
 
 import { hash } from 'bcryptjs';
 import { Unit, Status, Category, Difficulty } from '@prisma/client';
+import pluralize from 'pluralize';
 import { prisma } from './prisma';
+import { isNormalizedCloseMatch } from './fuzzyHelpers';
+
+/* Allow user to fuzzy search for entry in Ingredients */
+export async function fuzzySearchIngredients(name: string): Promise<string> {
+  const term = (name ?? '').trim().toLowerCase();
+  const singularTerm = pluralize.singular(term);
+  const pluralTerm = pluralize.plural(term);
+
+  if (!term) {
+    return '';
+  }
+
+  try {
+    const exactMatch = await prisma.ingredient.findFirst({
+      where: {
+        OR: [
+          { name: { equals: term, mode: ('insensitive' as any) } },
+          { name: { equals: singularTerm, mode: ('insensitive' as any) } },
+          { name: { equals: pluralTerm, mode: ('insensitive' as any) } },
+        ],
+      },
+    });
+    if (exactMatch) return exactMatch.name;
+  } catch (err) {
+    // ignore lookup failure
+  }
+
+  const tokens = term.split(/\s+/).filter(Boolean);
+
+  const whereClause = tokens.length > 1
+    ? {
+      OR: [
+        { name: { contains: term, mode: ('insensitive' as any) } },
+        ...tokens.map((t) => ({ name: { contains: t, mode: ('insensitive' as any) } })),
+      ],
+    }
+    : { name: { contains: term, mode: ('insensitive' as any) } };
+
+  let candidates = await prisma.ingredient.findMany({ where: whereClause, take: 500 });
+
+  if (!candidates.length) {
+    candidates = await prisma.ingredient.findMany({ take: 1000 });
+  }
+
+  try {
+    for (const c of candidates) {
+      if (isNormalizedCloseMatch(c.name, term)) {
+        return c.name;
+      }
+      // Also accept when singular forms match (case-insensitive)
+      if (pluralize.singular(c.name.toLowerCase()) === singularTerm) {
+        return c.name;
+      }
+    }
+  } catch (e) {
+    // ignore helper errors and continue to fuzzy ranking
+  }
+
+  try {
+    const ffMod = await import('fast-fuzzy');
+    const names = candidates.map((c) => c.name);
+    let ranked: Array<{ name: string; score?: number }> = [];
+
+    const DefaultExport = (ffMod as any).default ?? (ffMod as any);
+    if (typeof DefaultExport === 'function') {
+      try {
+        const inst = new (DefaultExport as any)(names);
+        if (typeof inst.search === 'function') {
+          const raw = inst.search(term, { limit: 20 });
+          ranked = raw.map((r: any) => {
+            if (typeof r === 'string') return { name: r };
+            if (r && typeof r === 'object' && 'item' in r) return { name: r.item, score: r.score };
+            if (Array.isArray(r)) return { name: r[0], score: r[1] };
+            return { name: String(r) };
+          });
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (!ranked.length && typeof (ffMod as any).FastFuzzy === 'function') {
+      try {
+        const inst = new (ffMod as any).FastFuzzy(names);
+        const raw = inst.search ? inst.search(term, { limit: 20 }) : [];
+        ranked = raw.map((r: any) => (typeof r === 'string' ? { name: r } : { name: r.item ?? r[0], score: r.score }));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (!ranked.length && typeof (ffMod as any).rank === 'function') {
+      try {
+        const raw = (ffMod as any).rank(names, term).slice(0, 20);
+        ranked = raw.map((r: any) => ({ name: r[0], score: r[1] }));
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    if (ranked.length) {
+      const top = ranked[0];
+      if (top && top.name && isNormalizedCloseMatch(top.name, term)) {
+        return top.name;
+      }
+    }
+  } catch (err) {
+    // fast-fuzzy unavailable — fall through to fallback
+  }
+
+  const lower = (s: string) => s.toLowerCase();
+  const starts = candidates.filter((c) => lower(c.name).startsWith(term));
+  if (starts.length) {
+    if (pluralize.singular(starts[0].name.toLowerCase()) === singularTerm) return starts[0].name;
+  }
+
+  const contains = candidates.filter((c) => lower(c.name).includes(term));
+  if (contains.length) {
+    if (pluralize.singular(contains[0].name.toLowerCase()) === singularTerm) return contains[0].name;
+  }
+
+  const singularReturn = pluralize.singular(name.trim());
+  return singularReturn;
+}
 
 /* Create a new user with unique email and username */
 // eslint-disable-next-line import/prefer-default-export
@@ -39,72 +164,6 @@ export async function createUser(credentials: {
   });
 }
 
-/* Create new stock and able to create new ingredient */
-export async function addStock(data: {
-  name: string;
-  quantity: number;
-  status: Status;
-  storageId: number;
-  units: Unit;
-}) {
-  const sterilizedItemName = data.name.trim().toLowerCase();
-
-  // Validate that the storage exists
-  const storage = await prisma.storage.findUnique({
-    where: { id: data.storageId },
-  });
-
-  if (!storage) {
-    throw new Error(`Storage with ID ${data.storageId} does not exist`);
-  }
-
-  // First try to find existing ingredient
-  let ingredient = await prisma.ingredient.findFirst({
-    where: {
-      name: sterilizedItemName,
-    },
-  });
-
-  // If not found, try to create it (handle race condition)
-  if (!ingredient) {
-    try {
-      ingredient = await prisma.ingredient.create({
-        data: {
-          name: sterilizedItemName,
-          foodCategory: 'OTHER',
-        },
-      });
-    } catch (error: any) {
-      // If creation fails due to unique constraint, try finding it again
-      if (error.code === 'P2002' && error.meta?.target?.includes('name')) {
-        ingredient = await prisma.ingredient.findFirst({
-          where: {
-            name: sterilizedItemName,
-          },
-        });
-        if (!ingredient) {
-          throw error; // Re-throw if still not found
-        }
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  const ingredientId = ingredient.id;
-
-  // Create new stock
-  await prisma.stock.create({
-    data: {
-      ingredientId,
-      storageId: data.storageId,
-      quantity: Number(data.quantity),
-      unit: data.units,
-      status: data.status,
-    },
-  });
-}
-
 /* Edit stock item */
 export async function updateStock(data: {
   storageId: number;
@@ -114,7 +173,7 @@ export async function updateStock(data: {
   unit: Unit;
   status: Status;
 }) {
-  const sterilizedItemName = data.newName.trim().toLowerCase();
+  const sterilizedItemName = pluralize.singular(data.newName.trim().toLowerCase());
 
   // Get the current stock to check current ingredient
   const currentStock = await prisma.stock.findUnique({

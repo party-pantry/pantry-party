@@ -165,6 +165,54 @@ body {
   gap: 1rem;
 }
 
+.sign-in-heading {
+  font-size: 1.4em;
+  font-weight: 800;
+  color: rgb(26, 26, 26);
+}
+
+.sign-in-button {
+  background-color: #3A5B4F;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1em;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px #5a5e5c, 0 2px 4px -1px #5a5e5c;
+  transition: background-color 0.3s ease;
+}
+
+.sign-in-button:hover {
+    background-color: #45a56b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px #45a56b, 0 2px 4px -1px #45a56b;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, #3A5B4F, #45a56b, #3A5B4F);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.front-button {
+  background-color: #3A5B4F;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1.20em;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px #5a5e5c, 0 2px 4px -1px #5a5e5c;
+  transition: background-color 0.3s ease;
+}
+
+.front-button:hover {
+    background-color: #45a56b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px #45a56b, 0 2px 4px -1px #45a56b;
+}
+
 /* Landing page */
 .landing-hero {
   display: flex;

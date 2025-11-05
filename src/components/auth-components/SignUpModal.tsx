@@ -74,7 +74,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide, onSignUpSuccess }) => {
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header style={{ borderBottom: 'none', paddingBottom: '0px' }} closeButton />
       <Modal.Body className="text-center">
-        <h5 className="text-center mb-4">
+        <h5 className="text-center sign-in-heading mb-4 gradient-text">
           <strong>Join the Party!</strong>
         </h5>
         <Form onSubmit={handleSubmit(onSubmit)} className="sign-up-form">
@@ -145,7 +145,7 @@ const SignUpModal: React.FC<Props> = ({ show, onHide, onSignUpSuccess }) => {
           </InputGroup>
 
           {/* Sign Up Button */}
-          <Button variant="success" type="submit">
+          <Button className="sign-in-button" type="submit">
             <strong>Create My Account</strong>
           </Button>
         </Form>

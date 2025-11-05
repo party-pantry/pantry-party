@@ -12,12 +12,12 @@ model User {
   email             String             @unique
   username          String             @unique
   password          String
-  image             String?
   bio               String?
+  image             String?
   houses            House[]
   recipes           Recipe[]
-  shoppingListItems ShoppingListItem[]
   reviews           Review[]
+  shoppingListItems ShoppingListItem[]
 }
 
 model House {
@@ -53,6 +53,7 @@ model Ingredient {
 model Stock {
   ingredientId Int
   storageId    Int
+  displayName  String?
   quantity     Float
   unit         Unit
   last_updated DateTime   @default(now()) @updatedAt
@@ -75,7 +76,8 @@ model Recipe {
   downTime     Int?
   servings     Int
   postDate     DateTime            @default(now()) @updatedAt
-  rating       Int
+  rating       Float               @default(0)
+  reviewCount  Int                 @default(0)
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]
@@ -136,7 +138,6 @@ model Review {
   rating    Float
   comment   String?
   createdAt DateTime @default(now())
-
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

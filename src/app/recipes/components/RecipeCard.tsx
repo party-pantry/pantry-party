@@ -17,7 +17,7 @@ import {
 interface RecipeCardProps {
   recipe: Recipe & {
     ingredients: {
-      ingredient: { id: number, name: string };
+      ingredient: { id: number; name: string };
     }[];
   };
   userIngredientsId?: Set<number>;
@@ -25,7 +25,12 @@ interface RecipeCardProps {
   onToggleFavorite: (recipeId: number, newIsStarredStatus: boolean) => void;
 }
 
-const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, searchTerm, onToggleFavorite }) => {
+const RecipeCard: React.FC<RecipeCardProps> = ({
+  recipe,
+  userIngredientsId,
+  searchTerm,
+  onToggleFavorite,
+}) => {
   const router = useRouter();
   const link = slugify(recipe.name, { lower: true, strict: true });
 
@@ -47,7 +52,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
 
     try {
       const response = await fetch(`/api/recipes/${recipe.id}/star`, {
-        // partial update
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -77,23 +81,34 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
 
   const difficulty = getDifficulty(recipe.difficulty);
 
-  const totalTime = calculateTotalTime(recipe.prepTime, recipe.cookTime, recipe.downTime || 0);
+  const totalTime = calculateTotalTime(
+    recipe.prepTime,
+    recipe.cookTime,
+    recipe.downTime || 0,
+  );
 
-  const { matchPercent } = checkIngredients(recipe.ingredients, userIngredientsId);
+  const { matchPercent } = checkIngredients(
+    recipe.ingredients,
+    userIngredientsId,
+  );
 
-  const rating = Math.min(Math.max(recipe.rating ?? 0, 0), 5);
+  // Safely clamp rating to [0, 5] and default to 0 if missing/NaN
+  const rawRating = typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
+    ? recipe.rating
+    : 0;
+  const rating = Math.min(Math.max(rawRating, 0), 5);
 
   // Highlight searched words in recipe name and description
   const highlightText = (text: string, term: string = '') => {
-    // Nothing to highlight in search (not found/empty search)
     if (!term.trim()) return text;
 
-    // Create a regex expression to find the term, case insensitive
     const regex = new RegExp(`(${term})`, 'gi');
     const parts = text.split(regex);
 
     return parts.map((part, index) => (part.toLowerCase() === term.toLowerCase() ? (
-        <span key={index} className="highlight">{part}</span>
+        <span key={index} className="highlight">
+          {part}
+        </span>
     ) : (
       part
     )));
@@ -110,8 +125,10 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
             fill={isStarred ? 'red' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
             onClick={toggleFavorite}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')
+            }
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')
+            }
           />
         </div>
 
@@ -125,16 +142,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
           {highlightText(recipe.description || '', searchTerm)}
         </CardText>
 
-       {/* <CardText className="text-muted small">
-        Ingredients:{' '}
-        {recipe.ingredients.map((ing, i) => (
-          <span key={ing.ingredient.id}>
-            {highlightText(ing.ingredient.name, searchTerm)}
-            {i < recipe.ingredients.length - 1 ? ', ' : ''}
-          </span>
-        ))}
-      </CardText> */}
-
         <div className="d-flex flex-wrap justify-content-around text-center py-3 border-top border-bottom mb-3">
           {[
             { label: 'Time', value: `${totalTime} mins` },
@@ -143,10 +150,18 @@ const RecipeCard: React.FC<RecipeCardProps> = ({ recipe, userIngredientsId, sear
               value: `${matchPercent.toFixed(0)}%`,
               color: getMatchPercentColor(matchPercent),
             },
-            { label: 'Rating', value: `${rating.toFixed(1)}` },
+            {
+              // 👇 dynamic label that shows how many reviews exist
+              label:
+                recipe.reviewCount && recipe.reviewCount > 0
+                  ? `Rating (${recipe.reviewCount})`
+                  : 'Rating',
+              value: `${rating.toFixed(1)}`,
+            },
           ].map((item) => (
             <div key={item.label} className="flex-fill">
-              <div className="fw-bold fs-5"
+              <div
+                className="fw-bold fs-5"
                 style={{ color: item.color || 'inherit' }}
               >
                 {item.value}
