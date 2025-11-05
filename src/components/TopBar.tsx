@@ -1,9 +1,8 @@
 'use client';
 
-import { Container, Navbar, Nav, NavDropdown, Button } from 'react-bootstrap';
+import { Container, Navbar, Nav } from 'react-bootstrap';
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { User, UserPlus, Bell, ChevronDown, ChevronUp } from 'lucide-react';
 import ChangePasswordModal from './auth-components/ChangePasswordModal';
 import SignInModal from './auth-components/SignInModal';
 import SignUpParentModal from './auth-components/SignUpParentModal';
@@ -16,7 +15,6 @@ const TopBar: React.FC = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Get display name - prioritize name, then email username, then fallback
   const getDisplayName = () => {
@@ -33,7 +31,7 @@ const TopBar: React.FC = () => {
     return 'User';
   };
 
-  const displayName = getDisplayName();
+  getDisplayName();
 
   return (
     <>

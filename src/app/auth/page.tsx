@@ -87,8 +87,18 @@ export default function AuthPage() {
   };
 
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh', paddingTop: '2rem', paddingBottom: '2rem' }}>
-      <Card style={{ maxWidth: '500px', width: '100%', border: 'none', boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)' }}>
+    <Container
+      className="d-flex justify-content-center align-items-center"
+      style={{ minHeight: '100vh', paddingTop: '2rem', paddingBottom: '2rem' }}
+    >
+      <Card
+        style={{
+          maxWidth: '500px',
+          width: '100%',
+          border: 'none',
+          boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+        }}
+      >
         <Card.Body className="p-5">
           {/* Back to Home Link */}
           <div className="mb-4">
@@ -227,7 +237,10 @@ export default function AuthPage() {
                     type={passwordConfirmVisible ? 'text' : 'password'}
                     {...register('confirmPassword')}
                   />
-                  <InputGroup.Text className="custom-input-group-text toggle-icon" onClick={togglePasswordConfirmVisibility}>
+                  <InputGroup.Text
+                    className="custom-input-group-text toggle-icon"
+                    onClick={togglePasswordConfirmVisibility}
+                  >
                     {passwordConfirmVisible ? <EyeOff /> : <Eye />}
                   </InputGroup.Text>
                   <div className="invalid-feedback">{errors.confirmPassword?.message}</div>
