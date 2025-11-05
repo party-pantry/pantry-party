@@ -1,9 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardBody, Badge, Button, Form, Modal, Row, Col } from 'react-bootstrap';
-import { getCategoryVariant } from '../../../utils/shoppingListUtils';
 import { LocalFoodCategory } from '@/lib/Units';
-
-
 
 interface SuggestedItem {
   ingredientId: number;
@@ -48,10 +45,10 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
 
     // Find matching enum value ignoring case
     const match = Object.values(LocalFoodCategory).find(
-      (val) => val.toLowerCase() === cat.toLowerCase()
+      (val) => val.toLowerCase() === cat.toLowerCase(),
     );
 
-    return match ? colorMap[match] : colorMap['Other'];
+    return match ? colorMap[match] : colorMap.Other;
   };
 
   return (
@@ -111,8 +108,11 @@ const SuggestedItemCard: React.FC<SuggestedItemCardProps> = ({ item, onAdd }) =>
             </Col>
             <Col md={6}>
               <Form.Label className="fw-bold text-dark">Category</Form.Label>
-              <div 
-                className={`transition-colors duration-400 rounded-md overflow-hidden  border-gray-300 ${getFoodColorClass(category)}`}>
+              <div
+                className={
+                  `transition-colors duration-400 rounded-md overflow-hidden 
+                  border-gray-300 ${getFoodColorClass(category)}`
+                }>
                 <Form.Select
                   className="text-center bg-transparent border-1 focus:ring-0 focus:outline-none shadow-none"
                   value={category}

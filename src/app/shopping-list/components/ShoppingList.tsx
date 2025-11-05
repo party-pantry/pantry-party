@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { getProviders, useSession } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
-import { getPriorityVariant, ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
+import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 // import { parse } from 'path';
 import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './ShoppingItemCard';
@@ -26,32 +26,32 @@ interface SuggestedItem {
 }
 
 const getFoodColorClass = (cat: string) => {
-    const colorMap: Record<string, string> = {
-      Dairy: 'category-dairy',
-      Produce: 'category-produce',
-      Frozen: 'category-frozen',
-      Meat: 'category-meat',
-      Other: 'category-other',
-    };
-
-    // Find matching enum value ignoring case
-    const match = Object.values(LocalFoodCategory).find(
-      (val) => val.toLowerCase() === cat.toLowerCase()
-    );
-
-    return match ? colorMap[match] : colorMap['Other'];
+  const colorMap: Record<string, string> = {
+    Dairy: 'category-dairy',
+    Produce: 'category-produce',
+    Frozen: 'category-frozen',
+    Meat: 'category-meat',
+    Other: 'category-other',
   };
 
-  const getPriority = (priority: string) => {
-    const colorMap: Record<string, string> = {
-      High: 'bg-red-400 text-white',
-      Medium: 'bg-warning text-white',
-      Low: 'bg-gray-300 text-white',
-    };
+  // Find matching enum value ignoring case
+  const match = Object.values(LocalFoodCategory).find(
+    (val) => val.toLowerCase() === cat.toLowerCase(),
+  );
 
-    // Direct lookup, fallback to Low
-    return colorMap[priority] ?? colorMap['Medium'];
+  return match ? colorMap[match] : colorMap.Other;
+};
+
+const getPriority = (priority: string) => {
+  const colorMap: Record<string, string> = {
+    High: 'bg-red-400 text-white',
+    Medium: 'bg-warning text-white',
+    Low: 'bg-gray-300 text-white',
   };
+
+  // Direct lookup, fallback to Low
+  return colorMap[priority] ?? colorMap.Medium;
+};
 
 // Loading Skeleton Component
 const ShoppingListSkeleton: React.FC = () => (
@@ -418,7 +418,10 @@ const ShoppingList: React.FC = () => {
                 <Col md={2}>
                   <Form.Label className="fw-bold text-dark">Category</Form.Label>
                   <div
-                    className={`transition-colors duration-400 rounded-md overflow-hidden border-1 border-gray-300 ${getFoodColorClass(newItem.category)}`}>
+                    className={
+                      `transition-colors duration-400 
+                      rounded-md overflow-hidden border-1 border-gray-300 ${getFoodColorClass(newItem.category)}`
+                    }>
                     <Form.Select
                       className="bg-transparent focus:ring-0 focus:outline-none shadow-none"
                       value={newItem.category}
@@ -437,8 +440,11 @@ const ShoppingList: React.FC = () => {
                 </Col>
                 <Col md={2}>
                   <Form.Label className="fw-bold text-dark">Priority</Form.Label>
-                  <div 
-                    className={`transition-colors duration-400 rounded-md overflow-hidden border-1 border-gray-300 ${getPriority(newItem.priority)}`}>
+                  <div
+                    className={
+                      `transition-colors duration-400 rounded-md overflow-hidden 
+                      border-1 border-gray-300 ${getPriority(newItem.priority)}`
+                      }>
                     <Form.Select
                       className="bg-transparent focus:ring-0 focus:outline-none shadow-none"
                       value={newItem.priority}

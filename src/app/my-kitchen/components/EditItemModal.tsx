@@ -134,7 +134,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
       backdrop="static"
       keyboard={true}
       centered
-      size="lg" 
+      size="lg"
     >
       <Modal.Header closeButton>
         <Modal.Title>Edit Item</Modal.Title>
@@ -178,8 +178,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 {/* dropdown: user can pick from suggestions */}
                 <Form.Select
                   value={formData.unit}
-                  onChange={(e) =>
-                    setFormData({ ...formData, unit: e.target.value as LocalUnit })
+                  onChange={(e) => setFormData({ ...formData, unit: e.target.value as LocalUnit })
                   }
                 >
                   {Object.values(LocalUnit).map((unit) => (
@@ -195,22 +194,12 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
             <Col className="mt-3 mb-2">
               <Form.Group controlId="formItemStatus">
                 <Form.Label>Status</Form.Label>
-                <div 
-                  className={`transition-colors duration-400 rounded-md overflow-hidden border border-gray-300 ${statusColorMap[formData.status]}`}
+                <div
+                  className={
+                    `transition-colors duration-400 rounded-md overflow-hidden 
+                    border border-gray-300 ${statusColorMap[formData.status]}`
+                  }
                 >
-                  {/* <Form.Select
-                    value={formData.status}
-                    onChange={(e) => {
-                      setFormData({ ...formData, status: e.target.value as LocalStatus });
-                      setErrors([]);
-                    }}
-                  >
-                    {Object.entries(LocalStatus).map(([key, value]) => (
-                      <option key={key} value={value} className={`${statusColorMap[formData.status]}`}>
-                        {value}
-                      </option>
-                    ))}
-                  </Form.Select> */}
                   <Form.Select
                     className="text-center bg-transparent border-0 focus:ring-0 focus:outline-none shadow-none"
                     value={formData.status}
