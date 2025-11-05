@@ -81,6 +81,7 @@ model Recipe {
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]
   nutrition    RecipeNutrition[]
+  reviews      Review[]
 }
 
 model RecipeIngredient {
