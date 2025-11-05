@@ -7,7 +7,7 @@ import { prisma } from '@/lib/prisma';
 // GET: public – list reviews
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const recipeId = Number(params.id);
   if (!Number.isFinite(recipeId)) {
@@ -26,7 +26,7 @@ export async function GET(
 // POST: auth required – add/update a review, then refresh recipe avg/count
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { id: string } },
 ) {
   const session = await getServerSession(authOptions);
   const userId = Number((session?.user as any)?.id);
@@ -65,11 +65,16 @@ export async function POST(
     _count: true,
   });
 
+  const {
+    _avg: { rating: avgRating },
+    _count: reviewCount,
+  } = agg;
+
   await prisma.recipe.update({
     where: { id: recipeId },
     data: {
-      rating: agg._avg.rating ?? 0,
-      reviewCount: agg._count,
+      rating: avgRating ?? 0,
+      reviewCount,
     },
   });
 

@@ -1,6 +1,8 @@
+/* eslint-disable no-alert */
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
 import StarRating from '@/app/recipe/components/StarRating';
 
@@ -19,7 +21,7 @@ export default function ReviewSection({ recipeId }: { recipeId: number }) {
   const [busy, setBusy] = useState(false);
 
   // Load all reviews for this recipe
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     try {
       const res = await fetch(`/api/recipes/${recipeId}/reviews`);
       if (res.ok) {
@@ -29,11 +31,11 @@ export default function ReviewSection({ recipeId }: { recipeId: number }) {
     } catch (error) {
       console.error('Error loading reviews:', error);
     }
-  };
+  }, [recipeId]);
 
   useEffect(() => {
     loadReviews();
-  }, [recipeId]);
+  }, [loadReviews]);
 
   // Submit review handler
   const handleSubmit = async (e: React.FormEvent) => {
