@@ -12,12 +12,12 @@ model User {
   email             String             @unique
   username          String             @unique
   password          String
-  image             String?
   bio               String?
+  image             String?
   houses            House[]
   recipes           Recipe[]
-  shoppingListItems ShoppingListItem[]
   reviews           Review[]
+  shoppingListItems ShoppingListItem[]
 }
 
 model House {
@@ -136,7 +136,6 @@ model Review {
   rating    Float
   comment   String?
   createdAt DateTime @default(now())
-
   recipe    Recipe   @relation(fields: [recipeId], references: [id])
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 

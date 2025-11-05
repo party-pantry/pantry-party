@@ -29,7 +29,7 @@ export default function Home() {
           id="home"
         >
           <div style={{ flex: '1 1 400px', minWidth: '300px', textAlign: 'left' }}>
-            <h1 style={{ marginBottom: '24px' }}>
+            <h1 className= 'gradient-text' style={{ marginBottom: '24px' }}>
               <strong>The Fun Way To Stock Your Pantry</strong>
             </h1>
             <h5 style={{ marginBottom: '24px' }}>
@@ -37,10 +37,12 @@ export default function Home() {
             </h5>
             {!currentUser && (
               <>
-                <Button variant="success" size="lg" onClick={() => setShowSignIn(true)} style={{ marginRight: '12px' }}>
+                <Button className= "front-button"
+                  size="lg" onClick={() => setShowSignIn(true)}
+                  style={{ marginRight: '12px' }}>
                   Sign In
                 </Button>
-                <Button variant="success" size="lg" onClick={() => setShowSignUp(true)}>
+                <Button className= "front-button" size="lg" onClick={() => setShowSignUp(true)}>
                   Sign Up
                 </Button>
               </>
