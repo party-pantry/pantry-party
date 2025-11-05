@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button, Form, Modal } from 'react-bootstrap';
+import { Alert, Button, Form, Modal, Spinner } from 'react-bootstrap';
 
 interface Props {
   show: boolean;
@@ -19,6 +19,9 @@ const EditHouseModal: React.FC<Props> = ({ show, onClose, onSave, house }) => {
     address: house?.address || '',
   });
   const [loading, setLoading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (show && house) {
@@ -49,10 +52,43 @@ const EditHouseModal: React.FC<Props> = ({ show, onClose, onSave, house }) => {
       }
 
       onSave(formData);
-    } catch (error) {
-      console.error('Error updating house:', error);
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    } catch (submitErr) {
+      console.error('Error updating house:', submitErr);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!house) return;
+    setError(null);
+    setDeleting(true);
+    try {
+      const res = await fetch(`/api/kitchen/houses/${house.houseId}`, {
+        method: 'DELETE',
+      });
+
+      if (!res.ok) {
+        try {
+          const body = await res.json();
+          setError(body?.error || 'Failed to delete house');
+        } catch (e) {
+          setError('Failed to delete house');
+        }
+        return;
+      }
+
+      // reuse onSave to close modal and let parent refresh list
+      onSave(formData);
+    } catch (err) {
+      // network or other
+      setError('Failed to delete house');
+      // eslint-disable-next-line no-console
+      console.error(err);
+    } finally {
+      setDeleting(false);
+      setShowConfirmDelete(false);
     }
   };
 
@@ -66,7 +102,8 @@ const EditHouseModal: React.FC<Props> = ({ show, onClose, onSave, house }) => {
         <Modal.Title>Edit House</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-      <Form onSubmit={handleSubmit}>
+        {error ? <Alert variant="danger">{error}</Alert> : null}
+        <Form onSubmit={handleSubmit}>
         <Form.Group controlId="formHouseName" className="mb-3">
           <Form.Label>Name</Form.Label>
           <Form.Control
@@ -86,13 +123,37 @@ const EditHouseModal: React.FC<Props> = ({ show, onClose, onSave, house }) => {
           />
         </Form.Group>
       </Form>
+        {showConfirmDelete ? (
+          <div className="mt-3">
+            <Alert variant="warning">
+              <div>
+                Are you sure you want to delete <strong>{house?.name}</strong>? This cannot be undone.
+              </div>
+              <div className="mt-2 d-flex">
+                <Button variant="danger" onClick={handleDelete} disabled={loading} className="me-2">
+                  {loading ? 'Deleting...' : 'Delete'}
+                </Button>
+                <Button variant="secondary" onClick={() => setShowConfirmDelete(false)} disabled={loading}>
+                  Cancel
+                </Button>
+              </div>
+            </Alert>
+          </div>
+        ) : null}
         </Modal.Body>
         <Modal.Footer>
-        <Button type="submit" onClick={handleSubmit} disabled={loading}>Save</Button>
-        <Button variant="secondary" onClick={onClose} disabled={loading}>
-          Cancel
-        </Button>
-      </Modal.Footer>
+          <Button variant="danger" onClick={() => setShowConfirmDelete(true)} disabled={deleting}>
+            {deleting ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+            {deleting ? ' Deleting...' : 'Delete House'}
+          </Button>
+          <Button type="submit" onClick={handleSubmit} disabled={loading}>
+            {loading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+            {loading ? ' Saving...' : 'Save Changes'}
+          </Button>
+          <Button variant="secondary" onClick={onClose} disabled={loading}>
+            Close
+          </Button>
+        </Modal.Footer>
     </Modal>
   );
 };
