@@ -4,9 +4,9 @@ import { updateStorage, deleteStorage } from '@/lib/dbFunctions';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { houseId: string; storageId: string } },
+  { params }: { params: Promise<{ houseId: string; storageId: string }> },
 ) {
-  const { houseId, storageId } = params;
+  const { houseId, storageId } = await params;
   const { name, type } = await request.json();
 
   if (!houseId || !storageId) {
@@ -24,9 +24,9 @@ export async function PATCH(
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { houseId: string; storageId: string } },
+  { params }: { params: Promise<{ houseId: string; storageId: string }> },
 ) {
-  const { houseId, storageId } = params;
+  const { houseId, storageId } = await params;
 
   if (!houseId || !storageId) {
     return new NextResponse(JSON.stringify({ error: 'Invalid house or storage ID' }), { status: 400 });
