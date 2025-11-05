@@ -87,7 +87,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
       <Row className="align-items-center">
         <Col className="d-flex align-items-center">
           <h5 className="mb-0 d-flex align-items-center">
-            {title}
+            <strong style={{ fontSize: '1.5rem' }}>{title}</strong>
 
             <Button
               variant="link"
@@ -104,6 +104,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
                 style={{
                   opacity: collapsed ? 0.8 : 0,
                   transition: 'opacity 0.9s ease',
+                  fontSize: '0.9rem',
                 }}>
                 ({itemsCount} items)
               </span>
@@ -117,7 +118,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
               style={{ cursor: 'pointer', userSelect: 'none' }}
               onClick={toggleCollapse}
           >
-              <span className="text-white me-2 small">
+              <span className="text-white me-2 small" style={{ fontSize: '0.9rem' }}>
                 {collapsed ? 'Expand' : 'Collapse'}
               </span>
               <BsChevronDown
