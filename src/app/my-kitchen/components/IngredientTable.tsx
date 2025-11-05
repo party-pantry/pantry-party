@@ -83,8 +83,8 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
 
   return (
     <div className="table-responsive">
-      <table className="table table-hover mb-0">
-        <thead className="table-light">
+      <table className="table table-hover mb-0 table-striped">
+        <thead className="table-success">
           <tr>
             <th style={{ width: '5%' }}>
               <input type="checkbox" />
