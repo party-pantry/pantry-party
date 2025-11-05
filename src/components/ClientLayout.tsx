@@ -9,8 +9,9 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
 
-  // Hide sidebar on auth pages (signin and signup)
+  // Hide sidebar and topbar on auth pages (signin and signup)
   const hidesSidebar = pathname === '/auth' || pathname === '/auth/signin';
+  const hidesTopBar = pathname === '/auth' || pathname === '/auth/signin';
 
   return (
     <div className="flex min-h-screen">
@@ -20,7 +21,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
           !hidesSidebar && (collapsed ? 'md:ml-[85px]' : 'md:ml-[200px]')
         }`}
       >
-        <TopBar />
+        {!hidesTopBar && <TopBar />}
         {children}
       </main>
     </div>
