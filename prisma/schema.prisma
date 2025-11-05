@@ -76,7 +76,8 @@ model Recipe {
   downTime     Int?
   servings     Int
   postDate     DateTime            @default(now()) @updatedAt
-  rating       Int
+  rating       Float               @default(0)
+  reviewCount  Int                 @default(0)
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]

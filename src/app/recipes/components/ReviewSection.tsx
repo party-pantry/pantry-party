@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { Button, Form, Card, Row, Col } from 'react-bootstrap';
-import StarRating from '@/components/recipes-components/StarRating';
+import StarRating from '@/app/recipe/components/StarRating';
 
 type Review = {
   id: number;
