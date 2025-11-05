@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "Stock" ADD COLUMN     "displayName" TEXT NOT NULL;
+ALTER TABLE "Stock" ADD COLUMN     "displayName" TEXT;
 
 -- AlterTable
 ALTER TABLE "User" ADD COLUMN     "bio" TEXT,
