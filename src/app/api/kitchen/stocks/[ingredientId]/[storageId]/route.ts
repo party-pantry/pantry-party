@@ -7,7 +7,7 @@ import { LocalUnit, LocalStatus } from '@/lib/Units';
 // eslint-disable-next-line import/prefer-default-export
 export async function PATCH(
   req: Request,
-  context: { params: Promise<{ ingredientId: number; storageId: number }> },
+  context: { params: Promise<{ ingredientId: string; storageId: string }> },
 ) {
   try {
     const { params } = context;
@@ -44,7 +44,7 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(req: Request, { params }: { params: Promise<{ ingredientId: number, storageId: number }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ ingredientId: string, storageId: string }> }) {
   try {
     const resolvedParams = await params;
     const ingredientId = Number(resolvedParams.ingredientId);
