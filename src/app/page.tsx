@@ -1,16 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { Container, Button } from 'react-bootstrap';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import FeaturesSection from '@/components/FeaturesSection';
-import SignInModal from '../components/auth-components/SignInModal';
-import SignUpModal from '../components/auth-components/SignUpModal';
 
 export default function Home() {
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
+  const router = useRouter();
   const { data: session } = useSession();
   const currentUser = session?.user;
 
@@ -38,11 +35,11 @@ export default function Home() {
             {!currentUser && (
               <>
                 <Button className= "front-button"
-                  size="lg" onClick={() => setShowSignIn(true)}
+                  size="lg" onClick={() => router.push('/auth')}
                   style={{ marginRight: '12px' }}>
                   Sign In
                 </Button>
-                <Button className= "front-button" size="lg" onClick={() => setShowSignUp(true)}>
+                <Button className= "front-button" size="lg" onClick={() => router.push('/auth')}>
                   Sign Up
                 </Button>
               </>
@@ -75,9 +72,6 @@ export default function Home() {
             </h1>
           <FeaturesSection />
         </div>
-
-        <SignInModal show={showSignIn} onHide={() => setShowSignIn(false)} />
-        <SignUpModal show={showSignUp} onHide={() => setShowSignUp(false)} />
       </Container>
     </>
   );
