@@ -41,18 +41,18 @@ const HomeTabSelection: React.FC<HomeTabSelectionProps> = ({
   const HoverBg = '#DCF4F0';
   const InactiveBg = '#ffffff';
 
-  const handleDeleteHouse = async (houseId: number) => {
-    try {
-      await fetch(`/api/kitchen/houses/${houseId}`, {
-        method: 'DELETE',
-      });
-      if (onHouseAdded) {
-        await onHouseAdded();
-      }
-    } catch (error) {
-      console.error('Error deleting house:', error);
-    }
-  };
+  // const handleDeleteHouse = async (houseId: number) => {
+  //   try {
+  //     await fetch(`/api/kitchen/houses/${houseId}`, {
+  //       method: 'DELETE',
+  //     });
+  //     if (onHouseAdded) {
+  //       await onHouseAdded();
+  //     }
+  //   } catch (error) {
+  //     console.error('Error deleting house:', error);
+  //   }
+  // };
 
   return (
     <>
