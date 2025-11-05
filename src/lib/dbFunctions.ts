@@ -302,15 +302,13 @@ export async function deleteHouse(houseId: number) {
   });
 }
 
-/* Create a new storage/pantry */
-export async function addStorage(data: { name: string; type: Category; houseId: number }) {
-  await prisma.storage.create({
-    data: {
-      name: data.name,
-      type: data.type,
-      houseId: data.houseId,
-    },
+/* Get storage name by id */
+export async function getStorageName(storageId: number) {
+  const storage = await prisma.storage.findUnique({
+    where: { id: storageId },
+    select: { name: true },
   });
+  return storage ? storage.name : null;
 }
 
 /* Edit storage by id */

@@ -1,8 +1,6 @@
-'use client';
-
 import { LocalStatus, LocalUnit } from '@/lib/Units';
 import { useState, useEffect } from 'react';
-import { Modal, Form, Button, Row, Col } from 'react-bootstrap';
+import { Modal, Form, Button, Row, Col, Spinner } from 'react-bootstrap';
 
 interface Props {
   show: boolean;
@@ -31,7 +29,8 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     unit: '' as LocalUnit,
     status: '' as LocalStatus,
   });
-  const [errors, setErrors] = useState<string[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
   // Populate form with item
@@ -43,11 +42,14 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
         unit: item.unit,
         status: item.status,
       });
+      setFieldErrors({});
+      setError(null);
     }
   }, [item, show]);
 
   const handleClose = () => {
-    setErrors([]);
+    setFieldErrors({});
+    setError(null);
     // Reset form data after closing
     setFormData({
       name: '',
@@ -61,30 +63,31 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
   const handleSave = async () => {
     if (!item) return;
 
-    setErrors([]);
+    setFieldErrors({});
+    setError(null);
     setLoading(true);
 
     // Error handling with missing form fields
-    const newErrors: string[] = [];
+    const newFieldErrors: Record<string, string> = {};
 
     const nameValue = String(formData.name ?? '').trim();
-    if (!nameValue) newErrors.push('Name is required');
+    if (!nameValue) newFieldErrors.name = 'Name is required.';
 
     const quantityValue = Number(formData.quantity);
     if (formData.quantity === null || formData.quantity <= 0) {
-      newErrors.push('Quantity must be greater than zero');
+      newFieldErrors.quantity = 'Quantity must be greater than zero.';
     }
 
     const statusValue = String(formData.status ?? '').trim();
-    if (!statusValue) newErrors.push('Status must be selected');
+    if (!statusValue) newFieldErrors.status = 'Status must be selected.';
 
     // Normalize the typed unit
     const unitValue = String(formData.unit ?? '').trim();
     const allowedUnits = Object.values(LocalUnit).map((u) => String(u));
-    if (!allowedUnits.includes(unitValue)) newErrors.push('Please choose a valid unit from the list');
+    if (!allowedUnits.includes(unitValue)) newFieldErrors.unit = 'Please choose a valid unit from the list.';
 
-    if (newErrors.length > 0) {
-      setErrors(newErrors);
+    if (Object.keys(newFieldErrors).length > 0) {
+      setFieldErrors(newFieldErrors);
       setLoading(false);
       return;
     }
@@ -102,7 +105,38 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update item');
+        // Try to parse API error body
+        let apiError: any = null;
+        try {
+          apiError = await response.json();
+        } catch (e) {
+          // ignore
+        }
+
+        const apiMessage = apiError?.error || apiError?.message || response.statusText || 'Unknown error from server';
+
+        if (response.status === 400) {
+          // missing required fields
+          const missing: Record<string, string> = {};
+          if (!nameValue) missing.name = 'Name is required.';
+          if (!quantityValue) missing.quantity = 'Quantity is required.';
+          if (!unitValue) missing.unit = 'Unit is required.';
+          if (!statusValue) missing.status = 'Status is required.';
+          setFieldErrors(missing);
+        } else if (response.status === 404) {
+          setError('Stock not found.');
+        } else if (response.status === 500) {
+          // Prefer storage name returned by API, otherwise fall back to storage id
+          const storageNameFromApi = apiError?.storageName;
+          const itemName = nameValue || 'Item';
+          const storageName = storageNameFromApi || (item?.storageId ? `storage ${item.storageId}` : 'unknown storage');
+          setError(`${itemName} is already in ${storageName}`);
+        } else {
+          setError(apiMessage);
+        }
+
+        setLoading(false);
+        return;
       }
 
       onUpdateItem({
@@ -113,8 +147,9 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
       });
 
       handleClose();
-    } catch (error) {
-      console.error('Error updating item:', error);
+    } catch (err) {
+      console.error('Error updating item:', err);
+      setError((err as Error)?.message || 'Network error. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -131,10 +166,7 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
     <Modal
       show={show}
       onHide={handleClose}
-      backdrop="static"
-      keyboard={true}
       centered
-      size="lg"
     >
       <Modal.Header closeButton>
         <Modal.Title>Edit Item</Modal.Title>
@@ -151,9 +183,14 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                placeholder={item?.name || 'Enter item name'}
                onChange={(e) => {
                  setFormData({ ...formData, name: e.target.value });
-                 setErrors([]);
+                 setFieldErrors({});
+                 setError(null);
                }}
+               isInvalid={!!fieldErrors.name}
               />
+              <Form.Control.Feedback type="invalid">
+                {fieldErrors.name}
+              </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col md={2}>
@@ -167,9 +204,14 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                     const { value } = e.target;
                     setFormData({ ...formData,
                       quantity: value === '' ? null : Number(value) });
-                    setErrors([]);
+                    setFieldErrors({});
+                    setError(null);
                   }}
+                  isInvalid={!!fieldErrors.quantity}
                 />
+                <Form.Control.Feedback type="invalid">
+                  {fieldErrors.quantity}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
             <Col md={3}>
@@ -177,9 +219,14 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 <Form.Label>Unit</Form.Label>
                 {/* dropdown: user can pick from suggestions */}
                 <Form.Select
+                  className="no-arrow"
                   value={formData.unit}
-                  onChange={(e) => setFormData({ ...formData, unit: e.target.value as LocalUnit })
-                  }
+                  onChange={(e) => {
+                    setFormData({ ...formData, unit: e.target.value as LocalUnit });
+                    setFieldErrors({});
+                    setError(null);
+                  }}
+                  isInvalid={!!fieldErrors.unit}
                 >
                   {Object.values(LocalUnit).map((unit) => (
                     <option key={unit} value={unit}>
@@ -187,6 +234,9 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                     </option>
                   ))}
                 </Form.Select>
+                <Form.Control.Feedback type="invalid">
+                  {fieldErrors.unit}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
@@ -202,11 +252,14 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                 >
                   <Form.Select
                     className="text-center bg-transparent border-0 focus:ring-0 focus:outline-none shadow-none"
+                    style={{ cursor: 'pointer' }}
                     value={formData.status}
                     onChange={(e) => {
                       setFormData({ ...formData, status: e.target.value as LocalStatus });
-                      setErrors([]);
+                      setFieldErrors({});
+                      setError(null);
                     }}
+                    isInvalid={!!fieldErrors.status}
                   >
                     {Object.values(LocalStatus).map((statusValue) => (
                       <option key={statusValue} value={statusValue}>
@@ -215,29 +268,31 @@ const EditItemModal: React.FC<Props> = ({ show, onHide, onUpdateItem, item }) =>
                     ))}
                   </Form.Select>
                 </div>
+                <Form.Control.Feedback type="invalid">
+                  {fieldErrors.status}
+                </Form.Control.Feedback>
               </Form.Group>
             </Col>
           </Row>
-          {/* display all validation errors below the last row */}
-          {errors.length > 0 && (
+          {/* server/global error */}
+          {error && (
             <Row className="mt-3">
               <Col>
-                <ul className="mb-0 text-danger">
-                  {errors.map((err, i) => (
-                    <li key={i}>{err}</li>
-                  ))}
-                </ul>
+                <div className="alert alert-danger" role="alert">
+                  {error}
+                </div>
               </Col>
             </Row>
           )}
         </Form>
       </Modal.Body>
-      <Modal.Footer className="border-0">
+      <Modal.Footer>
+        <Button variant="primary" onClick={handleSave} disabled={loading}>
+          {loading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+          {loading ? ' Saving Changes...' : 'Save Changes'}
+        </Button>
         <Button variant="secondary" onClick={handleClose} disabled={loading}>
           Close
-        </Button>
-        <Button variant="primary" onClick={handleSave} disabled={loading}>
-          Save Changes
         </Button>
       </Modal.Footer>
     </Modal>
