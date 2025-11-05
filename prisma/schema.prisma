@@ -53,11 +53,11 @@ model Ingredient {
 model Stock {
   ingredientId Int
   storageId    Int
-  displayName  String?
   quantity     Float
   unit         Unit
   last_updated DateTime   @default(now()) @updatedAt
   status       Status     @default(GOOD)
+  displayName  String?
   ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
   storage      Storage    @relation(fields: [storageId], references: [id], onDelete: Cascade)
 
