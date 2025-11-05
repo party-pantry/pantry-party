@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react';
 import React from 'react';
-import { Form, Modal } from 'react-bootstrap';
+import { Form, Modal, Spinner } from 'react-bootstrap';
 
 interface Props {
   show: boolean;
@@ -13,6 +13,7 @@ interface Props {
 const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
   const userId = (useSession().data?.user as { id: number }).id;
   const [error, setError] = React.useState<string | null>(null);
+  const [loading, setLoading] = React.useState(false);
 
   const [formData, setFormData] = React.useState<{ name: string; address?: string; userId: number }>({
     name: '',
@@ -22,6 +23,7 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     if (formData.name) {
       try {
         await fetch('/api/kitchen/houses', {
@@ -36,6 +38,8 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
       // eslint-disable-next-line @typescript-eslint/no-shadow
       } catch (error) {
         setError('Error adding house.');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -72,9 +76,11 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
           </Form.Group>
           <button
             className="btn btn-success"
+            style={{ margin: '0 auto', display: 'block' }}
             type="submit"
           >
-            Add House
+            {loading ? <Spinner animation="border" size="sm" className="me-2" /> : null}
+            {loading ? ' Adding...' : 'Add House'}
           </button>
         </Form>
       </Modal.Body>

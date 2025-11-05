@@ -191,6 +191,7 @@ body {
 
 .gradient-text {
   background: linear-gradient(90deg, #3A5B4F, #45a56b, #3A5B4F);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -309,6 +310,19 @@ body {
 #login-dropdown::after,
 #filter::after {
   display: none !important;
+}
+
+/* helper to remove the native select arrow when desired */
+.form-select.no-arrow {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none !important;
+  padding-right: 0.75rem !important;
+}
+
+.form-select.no-arrow::-ms-expand {
+  display: none;
 }
 
 /* Border thickness for cards */
@@ -516,4 +530,9 @@ h5 {
   height: 80px; 
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.highlight-on-hover:hover {
+  background-color: #f0f8f5;
+  transition: background-color 0.3s ease;
 }
