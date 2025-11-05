@@ -241,7 +241,7 @@ const RecipePage: React.FC = () => {
             <NutritionAccordion nutrition={recipe.nutrition} />
           </Col>
 
-          <Col>
+          {/* <Col>
             <h3 className="text-2xl font-semibold pt-4">Instructions</h3>
             <div className="flex flex-col gap-4 pt-2">
               {recipe.instructions
@@ -254,10 +254,10 @@ const RecipePage: React.FC = () => {
                     <p className="flex-1">{instruction.content}</p>
                   </div>
                 ))}
-              </div>
+              </div> */}
 
-              <h3 className="text-2xl font-semibold pt-4">Ingredients</h3>
-              <Row className="w-100">
+              {/* <h3 className="text-2xl font-semibold pt-4">Ingredients</h3> */}
+              {/* <Row className="w-100">
                 <Col md={6} sm={12}>
                   <div className="d-flex align-items-center gap-2 mb-2">
                     <h6 className="fw-semi-bold m-0">Available:</h6>
@@ -301,9 +301,9 @@ const RecipePage: React.FC = () => {
                     <p className="text-muted small fst-italic ps-0 m-0">N/A</p>
                   )}
                 </Col>
-              </Row>
+              </Row> */}
 
-              <Button
+              {/* <Button
                 className="mt-1 mb-2"
                 style={{ fontSize: '0.9rem', width: 300, height: 50 }}
                 variant="secondary"
@@ -311,11 +311,11 @@ const RecipePage: React.FC = () => {
                 Add Missing Ingredients to Shopping List
               </Button>
 
-              <NutritionAccordion nutrition={recipe.nutrition} />
-            </Col>
+              <NutritionAccordion nutrition={recipe.nutrition} /> */}
+            {/* </Col> */}
 
             <Col>
-              <h3 className="text-2xl font-semibold pt-4">Instructions</h3>
+              <h3 className="text-2xl font-semibold pb-4">Instructions</h3>
               <div className="flex flex-col gap-4 pt-2">
                 {recipe.instructions
                   .sort((a: any, b: any) => a.step - b.step)
