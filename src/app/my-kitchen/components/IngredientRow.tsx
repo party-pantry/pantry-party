@@ -2,13 +2,14 @@
 /* eslint-disable jsx-a11y/control-has-associated-label */
 
 import React from 'react';
+import { Badge, Button } from 'react-bootstrap';
+import { Pencil, Trash2 } from 'lucide-react';
 
 interface Props {
   id: number;
   ingredientId: number;
   storageId: number;
   name: string;
-  // image: string;
   quantity: string;
   updated: string;
   status: 'Good' | 'Low Stock' | 'Out of Stock' | 'Expired';
@@ -16,11 +17,19 @@ interface Props {
   onEdit: (ingredientId: number, storageId: number) => void;
 }
 
-const statusColors: Record<Props['status'], string> = {
-  Good: 'bg-green-100 text-green-700',
-  'Low Stock': 'bg-yellow-100 text-yellow-700',
-  'Out of Stock': 'bg-red-100 text-red-700',
-  Expired: 'bg-red-100 text-red-700',
+const getStatusVariant = (itemStatus: string) => {
+  switch (itemStatus) {
+    case 'Good':
+      return 'success';
+    case 'Low Stock':
+      return 'warning';
+    case 'Out of Stock':
+      return 'danger';
+    case 'Expired':
+      return 'secondary';
+    default:
+      return 'secondary';
+  }
 };
 
 const IngredientRow: React.FC<Props> = ({
@@ -28,44 +37,52 @@ const IngredientRow: React.FC<Props> = ({
   name,
   ingredientId,
   storageId,
-  // image,
   quantity,
   updated,
   status,
   onDelete,
   onEdit,
 }) => (
-  <tr key={id} className="border-b">
-    <td className="p-3 align-middle" style={{ width: '50px' }}>
+  <tr key={id}>
+    <td className="align-middle">
       <input type="checkbox" />
     </td>
-    <td className="p-3 align-middle" style={{ width: '30%' }}>
-      <div className="truncate" title={name}>
+    <td className="align-middle">
+      <div className="fw-semibold" title={name}>
         {name}
       </div>
     </td>
-    {/* <td className="p-3 align-middle text-xl">{image}</td> */}
-    <td className="p-3 align-middle" style={{ width: '20%' }}>{quantity}</td>
-    <td className="p-3 align-middle" style={{ width: '18%' }}>{updated}</td>
-    <td className="p-3 align-middle" style={{ width: '15%' }}>
-      <span className={`px-2 py-1 rounded text-sm whitespace-nowrap ${statusColors[status]}`}>
+    <td className="align-middle">{quantity}</td>
+    <td className="align-middle text-muted">{updated}</td>
+    <td className="align-middle">
+      <Badge
+        bg={getStatusVariant(status)}
+        className="px-2 py-1"
+        style={{ borderRadius: '0.5rem', fontSize: '0.75rem' }}
+      >
         {status}
-      </span>
+      </Badge>
     </td>
-    <td className="p-3 align-middle" style={{ width: '100px' }}>
-      <div className="flex gap-2">
-        <button
-          className="text-gray-600 hover:text-blue-600"
+    <td className="align-middle">
+      <div className="d-flex gap-2">
+        <Button
+          variant="link"
+          size="sm"
+          className="p-0 text-secondary"
           onClick={() => onEdit(ingredientId, storageId)}
+          title="Edit"
         >
-          ✏️
-        </button>
-        <button
-          className="text-gray-600 hover:text-red-600"
+          <Pencil size={16} />
+        </Button>
+        <Button
+          variant="link"
+          size="sm"
+          className="p-0 text-danger"
           onClick={() => onDelete(ingredientId, storageId)}
+          title="Delete"
         >
-          🗑️
-        </button>
+          <Trash2 size={16} />
+        </Button>
       </div>
     </td>
   </tr>

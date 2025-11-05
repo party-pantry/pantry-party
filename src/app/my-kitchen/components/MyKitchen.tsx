@@ -295,34 +295,66 @@ const MyKitchen = () => {
     return <KitchenSkeleton />;
   }
 
-  // const paginatedItems = itemsCount
-  // ? getDisplayedStocks(storage).slice(0, currentPage * PAGE_SIZE)
-  // : [];
+  const activeHouse = houses.find((house) => house.id === activeHouseId);
+  const allItems = activeHouse?.storages.flatMap((storage) => getDisplayedStocks(storage)) || [];
+
+  const totalItems = allItems.length;
+  const goodItems = allItems.filter((item) => item.status === 'Good').length;
+  const lowStockItems = allItems.filter((item) => item.status === 'Low Stock').length;
+  const expiredItems = allItems.filter((item) => item.status === 'Expired').length;
 
   return (
     <Container className="mb-12 min-h-screen mt-5">
-      <div
-        style={{
-          justifyContent: 'center',
-          alignItems: 'center',
-          flexDirection: 'column',
-          marginBottom: '50px',
-        }}
-      >
-        <div style={{ marginTop: '24px' }}>
-          {Array.isArray(houses)
-            && houses
-              .filter((house) => house.id === activeHouseId)
-              .map((house) => (
-                <HomeTabSelection
-                  key={house.id}
-                  id={house.id.toString()}
-                  houseArray={houses.map((h) => ({ houseId: h.id, name: h.name, address: h.address }))}
-                  activeHouseId={activeHouseId}
-                  selectActiveHouseId={setActiveHouseId}
-                  onHouseAdded={fetchHouses}
-                >
-                  <Row className="justify-content-end mb-3 pr-4">
+      <div className="mt-4">
+        {Array.isArray(houses)
+          && houses
+            .filter((house) => house.id === activeHouseId)
+            .map((house) => (
+              <HomeTabSelection
+                key={house.id}
+                id={house.id.toString()}
+                houseArray={houses.map((h) => ({ houseId: h.id, name: h.name, address: h.address }))}
+                activeHouseId={activeHouseId}
+                selectActiveHouseId={setActiveHouseId}
+                onHouseAdded={fetchHouses}
+              >
+                <Row className="mb-4">
+                  <Col md={3} sm={6} xs={12} className="mb-3">
+                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                      <Card.Body className="py-4">
+                        <h3 className="text-primary fs-2 mb-1 fw-bold">{totalItems}</h3>
+                        <Card.Text className="text-muted small mb-0 fw-medium">Total Items</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={3} sm={6} xs={12} className="mb-3">
+                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                      <Card.Body className="py-4">
+                        <h3 className="text-success fs-2 mb-1 fw-bold">{goodItems}</h3>
+                        <Card.Text className="text-muted small mb-0 fw-medium">Good</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={3} sm={6} xs={12} className="mb-3">
+                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                      <Card.Body className="py-4">
+                        <h3 className="text-warning fs-2 mb-1 fw-bold">{lowStockItems}</h3>
+                        <Card.Text className="text-muted small mb-0 fw-medium">Low Stock</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                  <Col md={3} sm={6} xs={12} className="mb-3">
+                    <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
+                      <Card.Body className="py-4">
+                        <h3 className="text-secondary fs-2 mb-1 fw-bold">{expiredItems}</h3>
+                        <Card.Text className="text-muted small mb-0 fw-medium">Expired</Card.Text>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                </Row>
+
+                <Row className="justify-content-end mb-3">
+                  <Col xs="auto" className="d-flex gap-2">
                     <KitchenFilterButton
                       onApply={(appliedFilters) =>
                         setFilters({
@@ -337,59 +369,48 @@ const MyKitchen = () => {
                     />
 
                     <Button
-                      style={{
-                        width: '125px',
-                        backgroundColor: '#3A5B4F',
-                        color: 'white',
-                      }}
-                      variant=""
+                      variant="success"
                       onClick={() => setShowAddModal(true)}
                     >
                       <strong>Add Item +</strong>
                     </Button>
-                  </Row>
+                  </Col>
+                </Row>
 
-                  {house.storages.map((storage) => (
-                    <StorageContainer
-                      key={storage.id}
-                      id={storage.id.toString()}
-                      title={storage.name}
-                      onUpdate={fetchHouses}
-                      feature={null}
-                      storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
-                      // itemsCount={getDisplayedStocks(storage).length}
-                      items={getDisplayedStocks(storage)}
-                      itemsCount={getDisplayedStocks(storage).length}
-                   >
-
-                      <IngredientTable
-                        items={getDisplayedStocks(storage)}
-                        onDelete={(ingredientId, storageId) => {
-                          handleDeleteItem(ingredientId, storageId);
-                          setShowDeleteItemModal(true);
-                        }}
-                        onEdit={(ingredientId, storageId) => {
-                          handleEditItem(ingredientId, storageId);
-                          setShowEditModal(true);
-                        }}
-                      />
-                    </StorageContainer>
-                  ))}
-
-                  <Button
-                    className="mt-1"
-                    style={{
-                      width: '150px',
-                      backgroundColor: '#3A5B4F',
-                      borderColor: '#3A5B4F',
-                    }}
-                    onClick={() => setShowPantryModal(true)}
+                {house.storages.map((storage) => (
+                  <StorageContainer
+                    key={storage.id}
+                    id={storage.id.toString()}
+                    title={storage.name}
+                    onUpdate={fetchHouses}
+                    feature={null}
+                    storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
+                    items={getDisplayedStocks(storage)}
+                    itemsCount={getDisplayedStocks(storage).length}
                   >
-                    <strong>Add Storage +</strong>
-                  </Button>
-                </HomeTabSelection>
-              ))}
-        </div>
+                    <IngredientTable
+                      items={getDisplayedStocks(storage)}
+                      onDelete={(ingredientId, storageId) => {
+                        handleDeleteItem(ingredientId, storageId);
+                        setShowDeleteItemModal(true);
+                      }}
+                      onEdit={(ingredientId, storageId) => {
+                        handleEditItem(ingredientId, storageId);
+                        setShowEditModal(true);
+                      }}
+                    />
+                  </StorageContainer>
+                ))}
+
+                <Button
+                  variant="success"
+                  className="mt-3"
+                  onClick={() => setShowPantryModal(true)}
+                >
+                  <strong>Add Storage +</strong>
+                </Button>
+              </HomeTabSelection>
+            ))}
       </div>
 
       <AddItemModal
