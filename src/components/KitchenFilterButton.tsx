@@ -2,45 +2,46 @@ import React, { useState } from 'react';
 import { DropdownButton, Form, Button } from 'react-bootstrap';
 import { Search, Filter } from 'lucide-react';
 
-const statusOptions = ["Good", "Low Stock", "Out of Stock", "Expired"];
+const statusOptions = ['Good', 'Low Stock', 'Out of Stock', 'Expired'];
 
-const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quantity: number, status: string[] }) => void }> = ({ onApply }) => {
-    const [quantity, setQuantity] = useState(25);
-    const [search, setSearch] = useState("");
-    const [status, setStatus] = useState<string[]>([]);
+const KitchenFilterButton: React.FC<{ onApply?:
+(filters:
+{ search: string, quantity: number, status: string[] })
+=> void }> = ({ onApply }) => {
+  const [quantity, setQuantity] = useState(25);
+  const [search, setSearch] = useState('');
+  const [status, setStatus] = useState<string[]>([]);
 
-    const handleStatusChange = (option: string) => {
-        // If option is selected, remove it from array, else add it
-        setStatus(prev =>
-            prev.includes(option)
-            ? prev.filter(s => s !== option)
-            : [...prev, option]
-        );
-    }
+  const handleStatusChange = (option: string) => {
+    // If option is selected, remove it from array, else add it
+    setStatus(prev => (prev.includes(option)
+      ? prev.filter(s => s !== option)
+      : [...prev, option]));
+  };
 
-    const handleReset = () => {
-        setSearch("");
-        setQuantity(25);
-        setStatus([]);
-        if (onApply) onApply({ search: "", quantity: 25, status: [] });
-    };
+  const handleReset = () => {
+    setSearch('');
+    setQuantity(25);
+    setStatus([]);
+    if (onApply) onApply({ search: '', quantity: 25, status: [] });
+  };
 
-    const handleApply = () => {
-        if (onApply) onApply({ search, quantity, status });
-    };
+  const handleApply = () => {
+    if (onApply) onApply({ search, quantity, status });
+  };
 
-    return (
+  return (
     <div style={{
-    display: "flex",
-    justifyContent: "flex-end",
-    padding: "20px",
-    marginRight: "120px", 
-    paddingTop: "5px",   
-    marginTop: "-10px", 
-  }}
+      display: 'flex',
+      justifyContent: 'flex-end',
+      padding: '20px',
+      marginRight: '120px',
+      paddingTop: '5px',
+      marginTop: '-10px',
+    }}
 >
       <div className="d-flex align-items-center gap-2">
-        <div className="position-relative" style={{ maxWidth: "250px" }}>
+        <div className="position-relative" style={{ maxWidth: '250px' }}>
                     <Search
                         size={18}
                         className="position-absolute top-50 translate-middle-y ms-2 text-muted"
@@ -49,14 +50,14 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
                         placeholder="Search..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        style={{ paddingLeft: "2rem" }}
+                        style={{ paddingLeft: '2rem' }}
                     />
                 </div>
             <DropdownButton
                 id="kitchen-filter-dropdown"
 
                 title={
-                    <div className="d-flex align-items-center gap-1"> 
+                    <div className="d-flex align-items-center gap-1">
                         <Filter size={18} />
                         <span>Filter</span>
                     </div>
@@ -66,7 +67,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
                 drop="down"
                 flip={false}
             >
-                <Form.Label className="d-block mt-2 mb-1">Quantity {"<="} {quantity}</Form.Label>
+                <Form.Label className="d-block mt-2 mb-1">Quantity {'<='} {quantity}</Form.Label>
                 <Form.Range
                     min={0}
                     max={50}
@@ -86,7 +87,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
                         className="mb-1"
                     />
                 ))}
-                <div className="mt-3 d-flex justify-content-between" style={{ gap: "10px" }}>
+                <div className="mt-3 d-flex justify-content-between" style={{ gap: '10px' }}>
                     <Button variant="danger" onClick={handleReset}>
                         Reset
                     </Button>
@@ -97,7 +98,7 @@ const KitchenFilterButton: React.FC<{ onApply?: (filters: { search: string, quan
             </DropdownButton>
         </div>
       </div>
-    );
+  );
 };
 
 export default KitchenFilterButton;
