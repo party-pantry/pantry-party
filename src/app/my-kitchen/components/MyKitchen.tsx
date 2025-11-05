@@ -361,7 +361,7 @@ const MyKitchen = () => {
                       items={getDisplayedStocks(storage)}
                       itemsCount={getDisplayedStocks(storage).length}
                    >
-                    
+
                       <IngredientTable
                         items={getDisplayedStocks(storage)}
                         onDelete={(ingredientId, storageId) => {

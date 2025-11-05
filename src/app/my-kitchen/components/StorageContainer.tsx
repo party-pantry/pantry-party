@@ -9,8 +9,6 @@ import { Button, Card, Col, Row } from 'react-bootstrap';
 import { BsPencilSquare, BsChevronDown } from 'react-icons/bs';
 import EditPantryModal, { StorageInfo } from './EditPantryModal';
 
-
-
 interface StorageContainerProps {
   // Might be good to have an id prop to keep track of containers
   // eslint-disable-next-line react/require-default-props
@@ -20,18 +18,16 @@ interface StorageContainerProps {
   feature: React.ReactNode;
   onUpdate: () => void;
   storageInfo: StorageInfo;
-  itemsCount?: number;  // to display the total number of items
+  itemsCount?: number; // to display the total number of items
   items?: any[];
 }
 
 // For pagination
 const PAGE_SIZE = 5;
 
-
-
-const StorageContainer: React.FC<StorageContainerProps> = ({ 
-    id, title, children, feature, onUpdate, storageInfo, itemsCount, items = [],
-  }) => {
+const StorageContainer: React.FC<StorageContainerProps> = ({
+  id, title, children, feature, onUpdate, storageInfo, itemsCount, items = [],
+}) => {
   const [showEditModal, setShowEditModal] = React.useState(false);
   // collapse state to collapse/expand the table within the storage container
   const [collapsed, setCollapsed] = React.useState(false);
@@ -39,7 +35,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
   const bodyRef = useRef<HTMLDivElement>(null);
   const [opacity, setOpacity] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   // Pagination calculations
   const totalPages = Math.ceil(items.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
@@ -70,6 +66,10 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
     }
   }, [children, collapsed]);
 
+  // Reset pagination whenever the filtered items change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [items]);
 
   return (
     <Card
@@ -92,7 +92,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
         <Col className="d-flex align-items-center">
           <h2 className="ml-4 mb-0 mt-2 d-flex align-items-center">
             {title}
-            
+
             <Button
               variant="link"
               className="text-white ms-2 p-0"
@@ -104,8 +104,8 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
               <BsPencilSquare size={18} />
             </Button>
             {collapsed && itemsCount !== undefined && (
-              <span className="text-white ms-3" 
-                style={{ 
+              <span className="text-white ms-3"
+                style={{
                   fontSize: '1.0rem',
                   opacity: collapsed ? 0.8 : 0,
                   transition: 'opacity 0.9s ease',
@@ -134,7 +134,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
                   collapsed ? 'rotate-0' : 'rotate-180'
                 } text-white`}
               />
-              
+
             </div>
         </Col>
       </Row>
@@ -148,7 +148,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
         padding: '1rem 1.5rem 1.5rem 2rem',
       }}
     >
-    
+
       <div
         ref={bodyRef}
         style={{
@@ -160,8 +160,8 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
           transitionProperty: 'max-height, opacity, padding',
         }}
       >
-        {children}
-        {/* {React.cloneElement(children as any, { items: displayedItems })}
+        {/* {children} */}
+        {React.cloneElement(children as any, { items: displayedItems })}
         {totalPages > 1 && (
         <div className="d-flex justify-content-center mt-3">
           <div className="btn-group">
@@ -180,9 +180,9 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
             ))}
           </div>
         </div>
-      )} */}
+        )}
       </div>
-      
+
     </Card.Body>
     <EditPantryModal
       show={showEditModal}
