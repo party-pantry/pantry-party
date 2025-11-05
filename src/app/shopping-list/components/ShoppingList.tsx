@@ -44,7 +44,7 @@ const getFoodColorClass = (cat: string) => {
 
   const getPriority = (priority: string) => {
     const colorMap: Record<string, string> = {
-      High: 'bg-red-300 text-white',
+      High: 'bg-red-400 text-white',
       Medium: 'bg-warning text-white',
       Low: 'bg-gray-300 text-white',
     };
