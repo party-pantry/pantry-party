@@ -74,7 +74,7 @@ const CookingPage: React.FC = () => {
 
   return (
     <>
-    <Container className='min-h-screen py-5'>
+    <Container className='min-h-screen py-5' style={{ width: '95%' }}>
         <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
         </div>
