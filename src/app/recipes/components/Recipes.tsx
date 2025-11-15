@@ -305,7 +305,7 @@ const Recipes: React.FC = () => {
   }
 
   return (
-      <Container className="mb-12 min-h-screen mt-5">
+      <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
         <Row className="mb-4">
           <Col xs={12}>
             <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">

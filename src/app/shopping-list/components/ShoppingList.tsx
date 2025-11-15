@@ -306,7 +306,7 @@ const ShoppingList: React.FC = () => {
   }, 0);
 
   return (
-    <Container className="mb-12 min-h-screen mt-5">
+    <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <h2 className="mb-0 fw-bold">Shopping List</h2>
