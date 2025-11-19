@@ -118,8 +118,9 @@ const EditHouseModal: React.FC<Props> = ({ show, onClose, onSave, house }) => {
           <Form.Control
             type="text"
             value={formData.address}
-            placeholder={house?.address || 'Enter house address (optional)'}
-            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              placeholder={house?.address || '2500 Campus Road...'}
+              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              required
           />
         </Form.Group>
       </Form>

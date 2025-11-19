@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { deleteHouse, updateHouse } from '@/lib/dbFunctions';
+import axios from 'axios';
+
+const { ORS_API_KEY, ORS_BASE_URL } = process.env;
 
 // eslint-disable-next-line import/prefer-default-export
 export async function DELETE(req: Request, { params }: { params: Promise<{ houseId: string }> }) {
@@ -29,7 +32,30 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ houseI
       return NextResponse.json({ error: 'Missing houseId' }, { status: 400 });
     }
 
-    const updatedHouse = await updateHouse(houseId, { name, address });
+    let latitude: number | undefined = undefined;
+    let longitude: number | undefined = undefined;
+
+    // If address is provided, attempt geocoding to get lat/lng
+    if (address) {
+      try {
+        const base = ORS_BASE_URL?.replace(/\/$/, '') || 'https://api.openrouteservice.org';
+        const geoRes = await axios.get(`${base}/geocode/search`, {
+          params: { api_key: ORS_API_KEY, text: address, size: 1 },
+        });
+        const feature = geoRes.data.features?.[0];
+        if (feature) {
+          const coords = feature.geometry?.coordinates || [];
+          latitude = coords[1];
+          longitude = coords[0];
+        }
+      } catch (err) {
+        // ignore geocoding errors
+        // eslint-disable-next-line no-console
+        console.error('Server geocoding error (PATCH)', err);
+      }
+    }
+
+    const updatedHouse = await updateHouse(houseId, { name, address, latitude, longitude });
 
     if (!updatedHouse) {
       return NextResponse.json({ error: 'House not found' }, { status: 404 });
