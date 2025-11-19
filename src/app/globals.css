@@ -518,6 +518,20 @@ h5 {
   transform: scale(1.5);
 }
 
+/* Shake animation for checkbox input selection */
+.shake {
+  animation: shake 0.9s ease-in-out;
+}
+
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-4px); }
+  40%  { transform: translateX(4px); }
+  60%  { transform: translateX(-4px); }
+  80%  { transform: translateX(4px); }
+  100% { transform: translateX(0); }
+}
+
 /* Checked animation — "pop" effect */
 @keyframes pop {
   0% { transform: scale(1); }
