@@ -181,6 +181,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                     )}
                 </div>
             </Sidebar>
+            </div>
 
             {isBreakpoint ? (
                 <Button
@@ -188,7 +189,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                     style={{
                       margin: '10px',
                       boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
-                      zIndex: 10,
+                      zIndex: toggled ? 999 : 1101,
                     }}
                     onClick={() => {
                       setToggled(!toggled);
@@ -203,7 +204,7 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                     style={{
                       left: collapsed ? '60px' : '175px',
                       transition: 'left 0.3s',
-                      zIndex: 10,
+                      zIndex: 1101,
                       boxShadow: '2px 0 4px rgba(0, 0, 0, 0.25)',
                     }}
                     onClick={() => handleCollapseChange(!collapsed)}
@@ -215,7 +216,6 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                     )}
                 </Button>
             )}
-            </div>
         </>
   );
 };
