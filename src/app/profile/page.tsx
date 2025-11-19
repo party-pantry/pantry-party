@@ -1,7 +1,8 @@
 import { getServerSession } from 'next-auth';
 import authOptions from '@/lib/authOptions';
 import { loggedInProtectedPage } from '@/lib/page-protection';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
+import UpdateBioForm from './profile-components/UpdateBioForm';
 import UpdateUsernameForm from './profile-components/UpdateUsernameForm';
 import UpdatePasswordForm from './profile-components/UpdatePasswordForm';
 import UpdateEmailForm from './profile-components/UpdateEmailForm';
@@ -18,29 +19,30 @@ const ProfilePage = async () => {
   );
 
   return (
-    <div className="d-flex justify-content-center align-items-center">
-      <Container className="py-5 mt-5 mb-5 bg-white rounded shadow" style={{ width: '90%' }}>
-        <Row>
-          <ProfilePictureUploader />
-        </Row>
-        <Row>
-          {/* Update email form */}
-          <UpdateEmailForm />
-        </Row>
-        <Row>
-          {/* Update username form */}
-          <UpdateUsernameForm />
-        </Row>
-        <Row>
-          {/* Update password form */}
-          <UpdatePasswordForm />
-        </Row>
-        <Row>
-          {/* displays all of the user's recipes */}
-          <ProfileRecipes />
-        </Row>
-      </Container>
-    </div>
+    <Container className="py-5 mb-5 bg-white rounded shadow" style={{ width: '90%' }}>
+      <Row>
+        <Col className="ps-5">
+          <div className="pb-5">
+            <ProfilePictureUploader />
+          </div>
+          <div className="pb-5">
+            <UpdateBioForm />
+          </div>
+        </Col>
+        <Col className="pe-5">
+          <div className="pb-5">
+            <UpdateUsernameForm />
+          </div>
+          <div className="pb-5">
+            <UpdateEmailForm />
+          </div>
+          <div className="pb-5">
+            <UpdatePasswordForm />
+          </div>
+        </Col>
+      </Row>
+      <ProfileRecipes />
+    </Container>
   );
 };
 
