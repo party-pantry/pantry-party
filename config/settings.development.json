@@ -503,6 +503,7 @@
       "cookTime": 10,
       "downTime": 0,
       "servings": 4,
+      "image": "https://itsmydish.com/wp-content/uploads/2015/06/scramble-egg-with-tomatos-final2.jpg",
       "ingredients": [
         { "ingredientId": 2, "name": "Eggs", "quantity": 4, "unit": "PIECE" },
         { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
@@ -538,6 +539,7 @@
       "cookTime": 15,
       "downTime": 0,
       "servings": 4,
+      "image": "https://tatyanaseverydayfood.com/wp-content/uploads/2016/02/Garlic-Chicken-Salad-3-768x1024.jpg",
       "ingredients": [
         { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
         { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
@@ -573,6 +575,7 @@
       "cookTime": 30,
       "downTime": 10,
       "servings": 4,
+      "image": "https://skinnyspatula.com/wp-content/uploads/2022/11/Chicken_Tomato_Pasta_1.jpg",
       "ingredients": [
         { "ingredientId": 4, "name": "Chicken Breast", "quantity": 200, "unit": "GRAM" },
         { "ingredientId": 14, "name": "Tomato", "quantity": 2, "unit": "PIECE" },
@@ -612,6 +615,7 @@
       "cookTime": 15,
       "downTime": 0,
       "servings": 4,
+      "image": "https://thebigmansworld.com/wp-content/uploads/2024/01/how-to-make-mediterranean-bowl4.jpg",
       "ingredients": [
         { "ingredientId": 2, "name": "Eggs", "quantity": 2, "unit": "PIECE" },
         { "ingredientId": 14, "name": "Tomato", "quantity": 1, "unit": "PIECE" },
@@ -648,6 +652,7 @@
       "cookTime": 60,
       "downTime": 30,
       "servings": 6,
+      "image": "https://static01.nyt.com/images/2019/12/13/dining/mc-beef-wellington/mc-beef-wellington-threeByTwoMediumAt2X-v2.jpg?quality=75&auto=webp",
       "ingredients": [
         { "ingredientId": 22, "name": "Beef Tenderloin", "quantity": 1, "unit": "PIECE" },
         { "ingredientId": 23, "name": "Puff Pastry", "quantity": 1, "unit": "PIECE" },
@@ -686,6 +691,7 @@
       "cookTime": 15,
       "downTime": 0,
       "servings": 2,
+      "image": "https://images.themodernproper.com/production/posts/2018/Garlic-Shrimp-Stir-Fry-14.jpg?w=800&q=82&auto=format&fit=crop&dm=1599770892&s=e061807b5d247d0516f933409f90a96e",
       "ingredients": [
         { "ingredientId": 29, "name": "Shrimp", "quantity": 200, "unit": "GRAM" },
         { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
@@ -722,6 +728,7 @@
       "cookTime": 5,
       "downTime": 0,
       "servings": 1,
+      "image": "https://breathingandcooking.com/wp-content/uploads/2024/02/eggs-on-top-of-kimchi-avocado-toast-on-white-plate.jpg",
       "ingredients": [
         { "ingredientId": 6, "name": "Bread", "quantity": 2, "unit": "SLICE" },
         { "ingredientId": 51, "name": "Avocado", "quantity": 1, "unit": "PIECE" },
@@ -756,6 +763,7 @@
       "cookTime": 10,
       "downTime": 0,
       "servings": 4,
+      "image": "https://www.connoisseurusveg.com/wp-content/uploads/2025/02/veggie-tacos-7.jpg",
       "ingredients": [
         { "ingredientId": 52, "name": "Tortilla", "quantity": 4, "unit": "PIECE" },
         { "ingredientId": 32, "name": "Carrots", "quantity": 1, "unit": "CUP" },
@@ -792,6 +800,7 @@
       "cookTime": 0,
       "downTime": 0,
       "servings": 2,
+      "image": "https://www.kikkoman.co.uk/fileadmin/_processed_/2/9/csm_942-recipe-page-smoked-salmon-and-avocado-roll_desktop_dba1a3c8d9.webp",
       "ingredients": [
         { "ingredientId": 60, "name": "Smoked Salmon", "quantity": 100, "unit": "GRAM" },
         { "ingredientId": 58, "name": "Cucumber", "quantity": 1, "unit": "PIECE" },
@@ -823,6 +832,7 @@
       "cookTime": 2,
       "downTime": 0,
       "servings": 1,
+      "image": "https://m.media-amazon.com/images/I/81sX1TP9kLL._SX679_.jpg",
       "ingredients": [
         { "ingredientId": 62, "name": "Instant Cup Noodles", "quantity": 1, "unit": "PACKAGE" }
       ],
@@ -851,6 +861,7 @@
       "cookTime": 40,
       "downTime": 5,
       "servings": 4,
+      "image": "https://i0.wp.com/www.foulmouthgourmet.com/wp-content/uploads/2025/01/IMG_2437.jpg?w=1560&ssl=1",
       "ingredients": [
         { "ingredientId": 63, "name": "Salmon Fillet", "quantity": 4, "unit": "PIECE" },
         { "ingredientId": 64, "name": "Asparagus", "quantity": 1, "unit": "BUNCH" },
@@ -890,6 +901,7 @@
       "cookTime": 35,
       "downTime": 10,
       "servings": 4,
+      "image": "https://asiliglam.com/wp-content/uploads/2023/02/IMG_4450-1440x1920.png",
       "ingredients": [
         { "ingredientId": 69, "name": "Linguine Pasta", "quantity": 1, "unit": "POUND" },
         { "ingredientId": 71, "name": "Lobster Tail", "quantity": 2, "unit": "PIECE" },
