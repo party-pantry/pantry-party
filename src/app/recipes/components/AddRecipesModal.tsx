@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe, addInstruction } from '@/lib/dbFunctions';
+import { addRecipe, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
 import { Difficulty } from '@prisma/client';
 
 interface Ingredient {
@@ -19,7 +19,7 @@ interface Instruction {
 
 interface Nutrition {
   name: string;
-  value: string;
+  amount: number;
   unit: string;
 }
 
@@ -67,6 +67,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
       console.log(result.id);
       await Promise.all(
         formData.instructions.map(instruction => addInstruction(result.id, instruction.step, instruction.content)),
+      );
+      await Promise.all(
+        formData.nutritions.map(nutrition => addRecipeNutrition(
+          result.id,
+          nutrition.name,
+          nutrition.amount,
+          nutrition.unit,
+        )),
       );
       onSubmit(result);
       onHide();
@@ -117,17 +125,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     const updatedInstructions = formData.instructions.filter((_, i) => i !== index);
     setFormData({ ...formData, instructions: updatedInstructions });
   };
-
-  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string) => {
+  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string | number) => {
     const updatedNutritions = [...formData.nutritions];
-    updatedNutritions[index][field] = value;
+    if (field === 'amount') {
+      updatedNutritions[index][field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+    } else {
+      updatedNutritions[index][field] = typeof value === 'number' ? value.toString() : value;
+    }
     setFormData({ ...formData, nutritions: updatedNutritions });
   };
 
   const handleAddNutrition = () => {
     setFormData({
       ...formData,
-      nutritions: [...formData.nutritions, { name: '', value: '', unit: '' }],
+      nutritions: [...formData.nutritions, { name: '', amount: 0, unit: '' }],
     });
   };
 
@@ -249,13 +260,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
 
           {/* INGREDIENTS */}
           <Form.Group controlId="ingredients">
-            <Form.Label>Ingredients</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Ingredients</Form.Label>
 
             {formData.ingredients.map((ingredient, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
                   type="text"
-                  placeholder="Ingredient name"
+                  placeholder="Name"
                   value={ingredient.name}
                   onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
                   required
@@ -274,19 +285,19 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                   onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
                   required
                 />
-                <Button variant="danger" onClick={() => handleRemoveIngredient(index)}>
-                  Remove
+                <Button variant="danger" className='fw-bold' onClick={() => handleRemoveIngredient(index)}>
+                  -
                 </Button>
               </div>
             ))}
 
-            <Button className="btn btn-success" type="button" onClick={handleAddIngredient}>
+            <Button className="btn btn-success fw-bold" type="button" onClick={handleAddIngredient}>
               +
             </Button>
           </Form.Group>
           {/* INSTRUCTIONS */}
           <Form.Group controlId="instructions">
-            <Form.Label>Instructions</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Instructions</Form.Label>
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
@@ -299,21 +310,22 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Button
                   variant="danger"
                   onClick={() => handleRemoveInstruction(index)}
+                  className='fw-bold'
                 >
-                  Remove
+                  -
                 </Button>
               </div>
             ))}
             <Button
-              className="btn btn-success"
+              className="btn btn-success fw-bold"
               onClick={() => handleAddInstruction()}
             >
-              Add Instruction
+              +
             </Button>
           </Form.Group>
            {/* NUTRITIONS */}
            <Form.Group controlId="nutritions">
-            <Form.Label>Nutrition Facts</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Nutrition Facts</Form.Label>
 
             {formData.nutritions.map((nutrition, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
@@ -327,8 +339,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Form.Control
                   type="text"
                   placeholder="Value"
-                  value={nutrition.value}
-                  onChange={(e) => handleNutritionChange(index, 'value', e.target.value)}
+                  value={nutrition.amount}
+                  onChange={(e) => handleNutritionChange(index, 'amount', e.target.value)}
                   required
                 />
                 <Form.Control
@@ -341,12 +353,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Button
                   variant="danger"
                   onClick={() => handleRemoveNutrition(index)}
+                  className='fw-bold'
                 >
-                  Remove
+                  -
                 </Button>
               </div>
             ))}
-            <Button className="btn btn-success" onClick={handleAddNutrition}>Add Nutrition</Button>
+            <Button className="btn btn-success fw-bold" onClick={handleAddNutrition}>+</Button>
           </Form.Group>
 
           <Button className="btn btn-success mt-3" type="submit">
