@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe, addInstruction } from '@/lib/dbFunctions';
+import { addRecipe, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
 import { Difficulty } from '@prisma/client';
 
 interface Ingredient {
@@ -19,7 +19,7 @@ interface Instruction {
 
 interface Nutrition {
   name: string;
-  value: string;
+  amount: number;
   unit: string;
 }
 
@@ -67,6 +67,14 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
       console.log(result.id);
       await Promise.all(
         formData.instructions.map(instruction => addInstruction(result.id, instruction.step, instruction.content)),
+      );
+      await Promise.all(
+        formData.nutritions.map(nutrition => addRecipeNutrition(
+          result.id,
+          nutrition.name,
+          nutrition.amount,
+          nutrition.unit,
+        )),
       );
       onSubmit(result);
       onHide();
@@ -117,17 +125,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     const updatedInstructions = formData.instructions.filter((_, i) => i !== index);
     setFormData({ ...formData, instructions: updatedInstructions });
   };
-
-  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string) => {
+  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string | number) => {
     const updatedNutritions = [...formData.nutritions];
-    updatedNutritions[index][field] = value;
+    if (field === 'amount') {
+      updatedNutritions[index][field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+    } else {
+      updatedNutritions[index][field] = typeof value === 'number' ? value.toString() : value;
+    }
     setFormData({ ...formData, nutritions: updatedNutritions });
   };
 
   const handleAddNutrition = () => {
     setFormData({
       ...formData,
-      nutritions: [...formData.nutritions, { name: '', value: '', unit: '' }],
+      nutritions: [...formData.nutritions, { name: '', amount: 0, unit: '' }],
     });
   };
 
@@ -327,8 +338,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Form.Control
                   type="text"
                   placeholder="Value"
-                  value={nutrition.value}
-                  onChange={(e) => handleNutritionChange(index, 'value', e.target.value)}
+                  value={nutrition.amount}
+                  onChange={(e) => handleNutritionChange(index, 'amount', e.target.value)}
                   required
                 />
                 <Form.Control

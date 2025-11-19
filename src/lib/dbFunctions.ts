@@ -438,6 +438,24 @@ export async function getShoppingListItems(userId: number) {
   return items;
 }
 
+export async function addRecipeNutrition(
+  recipeId: number,
+  name: string,
+  amount: number,
+  unit: string,
+) {
+  const nutrition = await prisma.recipeNutrition.create({
+    data: {
+      recipeId,
+      name,
+      amount,
+      unit,
+    },
+  });
+
+  return nutrition;
+}
+
 /* Update shopping list item */
 export async function updateShoppingListItem(
   itemId: number,
