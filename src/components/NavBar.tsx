@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Container, Navbar, Nav, NavDropdown } from 'react-bootstrap';
-
+import '../app/globals.css';
 import {
   Refrigerator,
   ListCheck,
@@ -48,7 +48,7 @@ const NavBar: React.FC = () => {
 
   return (
     <>
-      <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar">
+      <Navbar expand="lg" bg="primary" variant="dark" className="custom-navbar public-navbar">
         <Container>
           <Navbar.Brand as={Link} href="/">
             <Image

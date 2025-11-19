@@ -64,9 +64,6 @@ const TopBar: React.FC = () => {
                   <NavDropdown.Item href="/profile">
                     Profile
                   </NavDropdown.Item>
-                  {/* <NavDropdown.Item onClick={() => setShowChangePassword(true)}>
-                    Change Password
-                  </NavDropdown.Item> */}
                   <NavDropdown.Item onClick={() => setShowSignOut(true)}>
                     Sign Out
                   </NavDropdown.Item>
