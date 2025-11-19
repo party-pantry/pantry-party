@@ -13,6 +13,7 @@ import ToggleReceipesCanMake from './ToggleRecepiesCanMake';
 import ToggleFavorites from './ToggleFavorites';
 import RecipesSortButton from './RecipesSortButton';
 import AddRecipeModal from './AddRecipesModal';
+import RecommendedRecipes from './RecommendedRecipes';
 import { checkIngredients } from '../../../utils/recipeUtils';
 
 interface RecipeWithIngredients extends Recipe {
@@ -305,6 +306,8 @@ const Recipes: React.FC = () => {
   }
 
   return (
+      <>
+      <RecommendedRecipes />
       <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
         <Row className="mb-4">
           <Col xs={12}>
@@ -351,6 +354,7 @@ const Recipes: React.FC = () => {
           ))}
         </Row>
       </Container>
+      </>
   );
 };
 
