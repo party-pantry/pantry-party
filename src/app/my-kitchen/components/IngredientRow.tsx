@@ -1,7 +1,7 @@
 // /* eslint-disable react/button-has-type */
 // /* eslint-disable jsx-a11y/control-has-associated-label */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
@@ -54,8 +54,9 @@ const IngredientRow: React.FC<Props> = ({
   //   transition,
   // };
 
-  // State for checkbox
+  // State for checkbox and shake animations
   const [selected, setSelected] = useState(false);
+  const [shakeTrigger, setShakeTrigger] = useState(false);
   const isSelected = selected || headerSelected;
 
   // Proper drag + shrink + indent style
@@ -68,8 +69,26 @@ const IngredientRow: React.FC<Props> = ({
     overflow: 'hidden',
   };
 
+  useEffect(() => {
+    let interval: any;
+
+    if (isSelected) {
+      // Trigger shake immediately when checked
+      setShakeTrigger(prev => !prev);
+
+      // Trigger shake every 1.5 seconds
+      interval = setInterval(() => {
+        setShakeTrigger(prev => !prev);
+      }, 1500);
+    }
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [isSelected]);
+
   return (
-    <tr key={id} ref={setNodeRef}
+    <tr key={id} ref={setNodeRef} className={isSelected && shakeTrigger ? 'shake' : ''}
       style={
         rowStyle
         // padding: isSelected ? '0.25rem 0.5rem' : '0.5rem', // shrink vertically when selected
