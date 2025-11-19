@@ -341,7 +341,7 @@ const Recipes: React.FC = () => {
             ))}
           </Row>
         )}
-        
+
       </Container>
     </>
   );
