@@ -1,3 +1,4 @@
+/* eslint-disable import/prefer-default-export */
 import { prisma } from '@/lib/prisma';
 
 export const GET = async () => {
@@ -6,7 +7,7 @@ export const GET = async () => {
       where: {
         OR: [
           { rating: { gte: 4.0 } },
-          { reviewCount: { gte: 5 } },
+          { reviewCount: { gte: 2 } },
         ],
       },
       include: {

@@ -66,14 +66,12 @@ const RecommendedRecipes: React.FC = () => {
   const [userIngredientsId, setUserIngredientsId] = useState<Set<number>>(new Set());
 
   const handleToggleFavorite = (recipeId: number, newIsStarredStatus: boolean) => {
-    setRecipes((currentRecipes) =>
-      currentRecipes.map((recipe) => {
-        if (recipe.id === recipeId) {
-          return { ...recipe, isStarred: newIsStarredStatus };
-        }
-        return recipe;
-      }),
-    );
+    setRecipes((currentRecipes) => currentRecipes.map((recipe) => {
+      if (recipe.id === recipeId) {
+        return { ...recipe, isStarred: newIsStarredStatus };
+      }
+      return recipe;
+    }));
   };
 
   useEffect(() => {
