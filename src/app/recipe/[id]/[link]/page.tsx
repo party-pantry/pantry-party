@@ -22,6 +22,8 @@ const RecipePage: React.FC = () => {
   const [recipe, setRecipe] = useState<any>(null);
   const [userIngredients, setUserIngredients] = useState<Set<number>>(new Set());
   const [showCookingAlert, setShowCookingAlert] = useState<boolean>(false);
+  const [showAddedPopup, setShowAddedPopup] = useState(false);
+  const [addedMissing, setAddedMissing] = useState(false);
 
   const navigateToCooking = () => {
     router.push(`/cooking/${recipe.id}/${slugify(recipe.name, { lower: true, strict: true })}`);
@@ -104,29 +106,41 @@ const RecipePage: React.FC = () => {
     userIngredients,
   );
 
+  // compute button label without nested ternary to satisfy lint rule
+  let addButtonLabel = 'Add Missing Ingredients to Shopping List';
+  if (addedMissing) addButtonLabel = 'Ingredients Already Added';
+  else if (missingIngredients.length === 0) addButtonLabel = 'All Ingredients Available';
+
   const handleAddMissingToShoppingList = async () => {
     if (missingIngredients.length === 0) return;
 
     try {
-    // Get the full ingredient objects from the recipe
-      const missingIngredientDetails = recipe.ingredients.filter(
-        (ri: any) => !userIngredients.has(ri.ingredient.id),
-      );
+      const payload = recipe.ingredients
+        .filter((ri: any) => !userIngredients.has(ri.ingredient.id))
+        .map((ri: any) => ({
+          name: ri.ingredient.name,
+          quantity: String(ri.quantity ?? '1'),
+          unit: ri.unit ?? '',
+          category: ri.ingredient.category ?? 'Other',
+          priority: 'Medium',
+          source: 'Recipe',
+        }));
 
       const response = await fetch('/api/shopping-list/add-missing', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ingredients: missingIngredientDetails.map((ri: any) => ({
-            id: ri.ingredient.id,
-            name: ri.ingredient.name,
-            quantity: ri.quantity,
-            unit: ri.unit,
-          })),
-        }),
+        body: JSON.stringify({ ingredients: payload }),
       });
 
-      if (!response.ok) throw new Error('Failed to add missing ingredients.');
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error);
+      }
+      setAddedMissing(true);
+
+      setShowAddedPopup(true);
+
+      console.log('Missing ingredients added to shopping list');
     } catch (error) {
       console.error(error);
       console.error('Error adding missing ingredients to your shopping list.');
@@ -239,11 +253,9 @@ const RecipePage: React.FC = () => {
                 style={{ fontSize: '0.9rem', width: 300, height: 50 }}
                 variant="secondary"
                 onClick={handleAddMissingToShoppingList}
-                disabled={missingIngredients.length === 0}
+                disabled={missingIngredients.length === 0 || addedMissing}
               >
-                {missingIngredients.length === 0
-                  ? 'All Ingredients Available'
-                  : 'Add Missing Ingredients to Shopping List'}
+                {addButtonLabel}
               </Button>
 
               <NutritionAccordion nutrition={recipe.nutrition} />
@@ -277,6 +289,23 @@ const RecipePage: React.FC = () => {
           <ReviewSection recipeId={Number(params.id)} />
         </div>
       </Container>
+
+      {showAddedPopup && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none">
+          <div className="pointer-events-auto bg-white p-4 rounded-lg shadow-xl border border-gray-200">
+            <p className="text-base font-medium mb-3">
+              Missing ingredients added to shopping list!
+            </p>
+            <Button
+              variant="primary"
+              className="px-3 py-1.5"
+              onClick={() => setShowAddedPopup(false)}
+            >
+              Dismiss
+            </Button>
+          </div>
+        </div>
+      )}
 
       <CookingAlertModal
         show={showCookingAlert}
