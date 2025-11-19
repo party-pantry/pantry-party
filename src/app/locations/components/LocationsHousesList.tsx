@@ -56,7 +56,7 @@ const LocationsHousesList: React.FC<Props> = ({ onSelectResult }) => {
   }
 
   if (!houses || houses.length === 0) {
-    return <div className="text-muted">No houses found.</div>;
+    return <div className="text-muted">No houses found</div>;
   }
 
   return (

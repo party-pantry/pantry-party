@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import axios from 'axios';
+import { getServerSession } from 'next-auth/next';
+import authOptions from '@/lib/authOptions';
 
 const { ORS_API_KEY, ORS_BASE_URL } = process.env;
 
@@ -61,7 +63,19 @@ export async function GET(req: Request) {
     const url = new URL(req.url);
     const userIdParam = url.searchParams.get('userId');
     const where: any = {};
-    if (userIdParam) where.userId = Number(userIdParam);
+
+    if (userIdParam) {
+      where.userId = Number(userIdParam);
+    } else {
+      // If caller didn't provide a userId, try to infer from the authenticated session
+      const session = (await getServerSession(authOptions)) as any | null;
+      if (session?.user?.id) {
+        where.userId = Number(session.user.id);
+      } else {
+        // Not authenticated and no userId provided — don't return all houses
+        return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
+      }
+    }
 
     // return houses that have lat/lng if available
     const houses = await prisma.house.findMany({ where, select: { id: true, name: true, address: true, latitude: true, longitude: true, userId: true } });
