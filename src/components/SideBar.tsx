@@ -154,8 +154,8 @@ const SideBar: React.FC<SideBarProps> = ({ onCollapseChange }) => {
                             </>
                         )}
                         <MenuItem
-                            component={<Link href="/settings" />}
-                            active={pathname === '/settings'}
+                            component={<Link href="/profile" />}
+                            active={pathname === '/profile'}
                             icon={<Settings />}
                         >
                             Settings

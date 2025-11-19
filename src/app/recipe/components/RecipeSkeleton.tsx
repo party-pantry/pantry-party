@@ -3,8 +3,10 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 const RecipeSkeleton: React.FC = () => (
-    <Container className="min-h-screen py-10" style={{ width: '95%' }}>
+    <Container className="min-h-screen py-10 pt-0" style={{ width: '95%' }}>
       <div className="flex flex-col items-start gap-1">
+        {/* Back button */}
+        <div className="skeleton-box mb-4" style={{ width: '6%', height: '30px' }}></div>
         {/* Title and badges skeleton */}
         <div className="flex items-center gap-4 w-100">
           <div className="skeleton-box" style={{ width: '400px', height: '48px' }}></div>

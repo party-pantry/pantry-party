@@ -3,12 +3,13 @@
 import slugify from 'slugify';
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Container, Col, Row } from 'react-bootstrap';
+import { ArrowLeft } from 'lucide-react';
+import { Container, Col, Row, Button } from 'react-bootstrap';
 import CookingTimer from '@/app/cooking/components/CookingTimer';
 import CookingGuide from '@/app/cooking/components/CookingGuide';
 import CookingProgressBar from '@/app/cooking/components/CookingProgressBar';
 import CustomAlert from '@/app/cooking/components/CustomAlert';
-import Loading from '../../../../../archive/components/Loading';
+import CookingSkeleton from '../../components/CookingSkeleton';
 
 const CookingPage: React.FC = () => {
   const params = useParams();
@@ -59,7 +60,7 @@ const CookingPage: React.FC = () => {
   if (loading) {
     return (
         <div className='min-h-screen d-flex justify-content-center align-items-center'>
-            <Loading />
+            <CookingSkeleton />
         </div>
     );
   }
@@ -74,11 +75,21 @@ const CookingPage: React.FC = () => {
 
   return (
     <>
-    <Container className='min-h-screen py-5' style={{ width: '95%' }}>
-        <div className='mb-4 text-center'>
+    <Container className='min-h-screen py-5 pt-0' style={{ width: '95%' }}>
+      <div className='mb-1'>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={() => router.push(`/recipe/${recipe.id}/${slugify(recipe.name, { lower: true, strict: true })}`)}
+          className="d-flex align-items-center gap-1"
+        >
+          <ArrowLeft size={16} /> Back
+        </Button>
+      </div>
+      <div className='mb-4 text-center'>
           <h1 className='display-5'>{recipe.name}</h1>
-        </div>
-        <div className="mt-4 pt-5">
+      </div>
+        <div className="mt-4 pt-4">
           <CookingProgressBar currentStep={currentStep} totalInstructions={recipe.instructions.length} />
         </div>
         <Row className="gap-4 mt-2">
