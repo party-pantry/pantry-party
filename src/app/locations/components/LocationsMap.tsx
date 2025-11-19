@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 'use client';
 
 import React, { useEffect, useRef } from 'react';
 import L, { LatLngExpression } from 'leaflet';
-// import { geocodeAddress } from '@/services/openRouteService';
+// import { geocodeAddress } from '@/lib/openRouteService';
 import 'leaflet/dist/leaflet.css';
 import { createMapPinIcon } from '@/utils/locationsUtils';
 
@@ -37,7 +35,7 @@ const LocationsMap: React.FC<{
     });
 
     mapRef.current = map;
-  markersRef.current = L.layerGroup().addTo(map);
+    markersRef.current = L.layerGroup().addTo(map);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -47,7 +45,7 @@ const LocationsMap: React.FC<{
 
     const CustomControl = (L.Control as any).extend({
       options: { position: 'bottomright' },
-      onAdd: function () {
+      onAdd() {
         const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-group');
 
         const filterToolLink = L.DomUtil.create('a', 'leaflet-control-filter leaflet-bar-part leaflet-control-zoom-in', container) as HTMLAnchorElement;
@@ -64,7 +62,7 @@ const LocationsMap: React.FC<{
           .on(filterToolLink, 'click', () => {
             try {
               if (!mapRef.current) return;
-              const map = mapRef.current;
+              const mapInstance = mapRef.current;
 
               if (filterPanelRef.current) {
                 try {
@@ -72,15 +70,15 @@ const LocationsMap: React.FC<{
                   try {
                     if (markersRef.current) {
                       (markersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(map); } catch (e) { /* ignore */ }
+                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
                       });
                     }
                     markersByIdRef.current.forEach((marker) => {
-                      try { (marker as any).addTo(map); } catch (e) { /* ignore */ }
+                      try { (marker as any).addTo(mapInstance); } catch (e) { /* ignore */ }
                     });
                     if (houseMarkersRef.current) {
                       (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(map); } catch (e) { /* ignore */ }
+                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
                       });
                     }
                   } catch (e) {
@@ -93,7 +91,7 @@ const LocationsMap: React.FC<{
                 }
                 filterPanelRef.current = null;
                 if (filterCircleRef.current) {
-                  try { filterCircleRef.current.remove(); } catch (e) {}
+                  try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
                   filterCircleRef.current = null;
                 }
                 return;
@@ -131,7 +129,7 @@ const LocationsMap: React.FC<{
                 </div>
               `;
 
-              const mapContainerEl = map.getContainer();
+              const mapContainerEl = mapInstance.getContainer();
               panel.style.position = 'absolute';
               panel.style.zIndex = '1000';
               panel.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
@@ -174,14 +172,14 @@ const LocationsMap: React.FC<{
               if (radiusInput && radiusLabel) {
                 const milesToMeters = (m: number) => m * 1609.34;
                 const meters = milesToMeters(Number(radiusInput.value));
-                const initialCenter = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
+                const initialCenter = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
                 if (filterCircleRef.current) {
                   filterCircleRef.current.setRadius(meters);
-                  try { filterCircleRef.current.setLatLng(initialCenter); } catch (e) {}
+                  try { filterCircleRef.current.setLatLng(initialCenter); } catch (e) { /* ignore */ }
                 } else {
-                  filterCircleRef.current = L.circle(initialCenter, { radius: meters, color: '#007bff', weight: 1 }).addTo(map);
+                  filterCircleRef.current = L.circle(initialCenter, { radius: meters, color: '#007bff', weight: 1 }).addTo(mapInstance);
                 }
-                
+
                 // helper to apply current type + radius filters to existing markers
                 const applyFilters = (centerLatLng: L.LatLng, radiusMeters: number) => {
                   try {
@@ -194,15 +192,13 @@ const LocationsMap: React.FC<{
                         if (typeSelected === 'homes') {
                           // hide search markers when homes-only
                           (marker as any).remove();
+                        } else if (d <= radiusMeters) {
+                          (marker as any).addTo(map);
                         } else {
-                          if (d <= radiusMeters) {
-                            (marker as any).addTo(map);
-                          } else {
-                            (marker as any).remove();
-                          }
+                          (marker as any).remove();
                         }
                       } catch (e) {
-                        try { (marker as any).remove(); } catch (ee) {}
+                        try { (marker as any).remove(); } catch (ee) { /* ignore */ }
                       }
                     });
 
@@ -214,15 +210,13 @@ const LocationsMap: React.FC<{
                           const d = map.distance(latlng, centerLatLng);
                           if (typeSelected === 'stores') {
                             (layer as any).remove();
+                          } else if (d <= radiusMeters) {
+                            (layer as any).addTo(map);
                           } else {
-                            if (d <= radiusMeters) {
-                              (layer as any).addTo(map);
-                            } else {
-                              (layer as any).remove();
-                            }
+                            (layer as any).remove();
                           }
                         } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) {}
+                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
                         }
                       });
                     }
@@ -303,7 +297,7 @@ const LocationsMap: React.FC<{
                             (layer as any).remove();
                           }
                         } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) {}
+                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
                         }
                       };
 
@@ -317,24 +311,24 @@ const LocationsMap: React.FC<{
                             (layer as any).remove();
                           }
                         } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) {}
+                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
                         }
                       };
 
                       if (v === 'homes') {
                         // remove all search result markers
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) {}
+                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) { /* ignore */ }
                         // show only house markers within radius
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) {}
+                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) { /* ignore */ }
                       } else if (v === 'stores') {
                         // remove all house markers
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) {}
+                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) { /* ignore */ }
                         // show only store/search markers within radius
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) {}
+                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) { /* ignore */ }
                       } else {
                         // show both groups but only layers within radius
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) {}
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) {}
+                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) { /* ignore */ }
+                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) { /* ignore */ }
                       }
                     } catch (e) {
                       // ignore
@@ -363,12 +357,12 @@ const LocationsMap: React.FC<{
                       radiusLabel.textContent = '1 mile';
                       const milesToMeters = (m: number) => m * 1609.34;
                       const meters = milesToMeters(1);
-                      const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
+                      const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
                       if (filterCircleRef.current) {
-                        try { filterCircleRef.current.setLatLng(center); } catch (e) {}
+                        try { filterCircleRef.current.setLatLng(center); } catch (e) { /* ignore */ }
                         filterCircleRef.current.setRadius(meters);
                       } else {
-                        filterCircleRef.current = L.circle(center, { radius: meters, color: '#007bff', weight: 1 }).addTo(map);
+                        filterCircleRef.current = L.circle(center, { radius: meters, color: '#007bff', weight: 1 }).addTo(mapInstance);
                       }
 
                       // show both groups but only items within default radius
@@ -379,7 +373,7 @@ const LocationsMap: React.FC<{
                           try {
                             const d = map.distance(marker.getLatLng(), center);
                             if (d <= radius) { (marker as any).addTo(map); } else { (marker as any).remove(); }
-                          } catch (e) { try { (marker as any).remove(); } catch (ee) {} }
+                          } catch (e) { try { (marker as any).remove(); } catch (ee) { /* ignore */ } }
                         });
 
                         // house markers
@@ -388,7 +382,7 @@ const LocationsMap: React.FC<{
                             try {
                               const d = map.distance((layer as L.Marker).getLatLng(), center);
                               if (d <= radius) (layer as any).addTo(map); else (layer as any).remove();
-                            } catch (e) { try { (layer as any).remove(); } catch (ee) {} }
+                            } catch (e) { try { (layer as any).remove(); } catch (ee) { /* ignore */ } }
                           });
                         }
                       } catch (e) {
@@ -418,17 +412,17 @@ const LocationsMap: React.FC<{
                       });
                       if (houseMarkersRef.current) {
                         (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                          try { (layer as any).addTo(map); } catch (e) { /* ignore */ }
+                          try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
                         });
                       }
                     } catch (e) {
                       // ignore
                     }
 
-                    try { panel.remove(); } catch (e) {}
+                    try { panel.remove(); } catch (e) { /* ignore */ }
                     filterPanelRef.current = null;
                     if (filterCircleRef.current) {
-                      try { filterCircleRef.current.remove(); } catch (e) {}
+                      try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
                       filterCircleRef.current = null;
                     }
                   } catch (e) {
@@ -436,7 +430,6 @@ const LocationsMap: React.FC<{
                   }
                 });
               }
-
             } catch (e) {
               // ignore
             }
@@ -555,13 +548,14 @@ const LocationsMap: React.FC<{
         // ignore
       }
     }, 200);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // update markers when searchResults change
   useEffect(() => {
-    const map = mapRef.current;
+    const mapInstance = mapRef.current;
     const markersLayer = markersRef.current;
-    if (!map || !markersLayer) return;
+    if (!mapInstance || !markersLayer) return;
 
     markersLayer.clearLayers();
     markersByIdRef.current.clear();
@@ -601,20 +595,17 @@ const LocationsMap: React.FC<{
         }
       });
 
-
       m.addTo(markersLayer as L.LayerGroup);
       // apply active type filter (if panel open) and radius filter (if circle exists)
       try {
         const typeSelected = (document.querySelector('input[name="pp-filter-type"]:checked') as HTMLInputElement | null)?.value || 'all';
         if (typeSelected === 'homes') {
           (m as any).remove();
-        } else {
-          if (filterCircleRef.current) {
-            const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
-            const dist = map.distance(m.getLatLng(), center);
-            if (dist > filterCircleRef.current.getRadius()) {
-              (m as any).remove();
-            }
+        } else if (filterCircleRef.current) {
+          const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
+          const dist = mapInstance.distance(m.getLatLng(), center);
+          if (dist > filterCircleRef.current.getRadius()) {
+            (m as any).remove();
           }
         }
       } catch (e) {
@@ -623,7 +614,7 @@ const LocationsMap: React.FC<{
 
       if (s.id) markersByIdRef.current.set(s.id, m);
     });
-  }, [searchResults, selectedMarkerId]);
+  }, [searchResults, selectedMarkerId, onMarkerClick]);
 
   // when selectedMarkerId changes, ensure only that marker is yellow and others are red
   useEffect(() => {
@@ -634,7 +625,7 @@ const LocationsMap: React.FC<{
           marker.setIcon(createMapPinIcon({ pinColor: isSel ? 'yellow' : 'red', circleColor: 'white', size: isSel ? 36 : 30, strokeColor: 'black', strokeWidth: 1 }));
           if (isSel) {
             marker.openPopup();
-            try { (marker as any).bringToFront(); } catch (e) {}
+            try { (marker as any).bringToFront(); } catch (e) { /* ignore */ }
           }
         } catch (e) {
           // ignore per-marker errors
@@ -647,16 +638,16 @@ const LocationsMap: React.FC<{
 
   // fly to selected location when set
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !selectedLocation) return;
+    const mapInstance = mapRef.current;
+    if (!mapInstance || !selectedLocation) return;
     try {
-      map.flyTo([selectedLocation.latitude, selectedLocation.longitude], 15, { duration: 0.8 });
+      mapInstance.flyTo([selectedLocation.latitude, selectedLocation.longitude], 15, { duration: 0.8 });
       if (selectedMarkerId && markersByIdRef.current.has(selectedMarkerId)) {
         const m = markersByIdRef.current.get(selectedMarkerId)!;
         try {
           m.setIcon(createMapPinIcon({ pinColor: 'yellow', circleColor: 'white', size: 36, strokeColor: 'black', strokeWidth: 2 }));
           m.openPopup();
-          try { (m as any).bringToFront(); } catch (e) {}
+          try { (m as any).bringToFront(); } catch (e) { /* ignore */ }
         } catch (e) {
           // ignore
         }

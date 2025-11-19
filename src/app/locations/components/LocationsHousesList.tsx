@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
-"use client";
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { ListGroup, Button, Spinner } from 'react-bootstrap';
@@ -72,9 +70,17 @@ const LocationsHousesList: React.FC<Props> = ({ onSelectResult }) => {
           address: h.address || '',
         };
 
+        const itemKey = h.id || `${h.latitude}-${h.longitude}`;
         return (
-          <ListGroup.Item key={h.id || `${h.latitude}-${h.longitude}`} className="py-2 border-bottom d-flex justify-content-between align-items-center">
-            <Button variant="link" className="text-start p-0 flex-grow-1 text-wrap" onClick={() => onSelectResult?.(place)}>
+          <ListGroup.Item
+            key={itemKey}
+            className="py-2 border-bottom d-flex justify-content-between align-items-center"
+          >
+            <Button
+              variant="link"
+              className="text-start p-0 flex-grow-1 text-wrap"
+              onClick={() => onSelectResult?.(place)}
+            >
               <div className="fw-medium">{place.label}</div>
               <div className="text-muted small">{place.address}</div>
             </Button>
