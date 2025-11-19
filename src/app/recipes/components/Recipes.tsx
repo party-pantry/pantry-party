@@ -13,6 +13,7 @@ import ToggleReceipesCanMake from './ToggleRecepiesCanMake';
 import ToggleFavorites from './ToggleFavorites';
 import RecipesSortButton from './RecipesSortButton';
 import AddRecipeModal from './AddRecipesModal';
+import RecommendedRecipes from './RecommendedRecipes';
 import { checkIngredients } from '../../../utils/recipeUtils';
 
 interface RecipeWithIngredients extends Recipe {
