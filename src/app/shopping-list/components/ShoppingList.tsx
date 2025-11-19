@@ -55,7 +55,7 @@ const getPriority = (priority: string) => {
 
 // Loading Skeleton Component
 const ShoppingListSkeleton: React.FC = () => (
-  <Container className="mb-12 min-h-screen mt-5">
+  <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
     {/* Stats Cards Skeleton */}
     <Row className="mb-4">
       {[1, 2, 3, 4].map((i) => (

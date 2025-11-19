@@ -24,7 +24,7 @@ interface RecipeWithIngredients extends Recipe {
 
 // Loading Skeleton Component
 const RecipesSkeleton: React.FC = () => (
-  <Container className="mb-12 min-h-screen mt-5">
+  <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
     {/* Filter and Search Bar Skeleton */}
     <div className="d-flex justify-content-end align-items-center flex-wrap gap-2 mb-4">
       <Placeholder as="div" animation="glow" style={{ width: '250px' }}>

@@ -69,7 +69,7 @@ type House = {
 
 // Loading Skeleton Component
 const KitchenSkeleton: React.FC = () => (
-  <Container className="mb-12 min-h-screen mt-5">
+  <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
     <div className="mt-4">
       {/* House Tab Skeleton */}
       <div className="mb-4">

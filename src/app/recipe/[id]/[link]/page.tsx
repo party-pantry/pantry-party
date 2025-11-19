@@ -6,7 +6,7 @@ import slugify from 'slugify';
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Container, Badge, Button, Row, Col } from 'react-bootstrap';
-import { Check, X } from 'lucide-react';
+import { Check, X, ArrowLeft } from 'lucide-react';
 import StarRating from '@/app/recipe/components/StarRating';
 import NutritionAccordion from '@/app/recipe/components/NutritionAccordion';
 import CookingAlertModal from '@/app/cooking/components/CookingAlertModal';
@@ -135,8 +135,18 @@ const RecipePage: React.FC = () => {
 
   return (
     <>
-      <Container className="min-h-screen py-10" style={{ width: '95%' }}>
+      <Container className="min-h-screen py-10 pt-0" style={{ width: '95%' }}>
         <div className="flex flex-col items-start gap-1">
+          <div className='mb-4'>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => router.push('/recipes')}
+              className="d-flex align-items-center gap-1"
+            >
+              <ArrowLeft size={16} /> Back
+            </Button>
+          </div>
           <div className="flex items-center gap-4">
             <h1 className="text-5xl font-bold m-0">{recipe.name}</h1>
             <Badge className="fs-6 py-1 px-3" bg={difficulty.variant}>{difficulty.label}</Badge>
