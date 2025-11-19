@@ -260,13 +260,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
 
           {/* INGREDIENTS */}
           <Form.Group controlId="ingredients">
-            <Form.Label>Ingredients</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Ingredients</Form.Label>
 
             {formData.ingredients.map((ingredient, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
                   type="text"
-                  placeholder="Ingredient name"
+                  placeholder="Name"
                   value={ingredient.name}
                   onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
                   required
@@ -285,19 +285,19 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                   onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
                   required
                 />
-                <Button variant="danger" onClick={() => handleRemoveIngredient(index)}>
-                  Remove
+                <Button variant="danger" className='fw-bold' onClick={() => handleRemoveIngredient(index)}>
+                  -
                 </Button>
               </div>
             ))}
 
-            <Button className="btn btn-success" type="button" onClick={handleAddIngredient}>
+            <Button className="btn btn-success fw-bold" type="button" onClick={handleAddIngredient}>
               +
             </Button>
           </Form.Group>
           {/* INSTRUCTIONS */}
           <Form.Group controlId="instructions">
-            <Form.Label>Instructions</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Instructions</Form.Label>
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
@@ -310,21 +310,22 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Button
                   variant="danger"
                   onClick={() => handleRemoveInstruction(index)}
+                  className='fw-bold'
                 >
-                  Remove
+                  -
                 </Button>
               </div>
             ))}
             <Button
-              className="btn btn-success"
+              className="btn btn-success fw-bold"
               onClick={() => handleAddInstruction()}
             >
-              Add Instruction
+              +
             </Button>
           </Form.Group>
            {/* NUTRITIONS */}
            <Form.Group controlId="nutritions">
-            <Form.Label>Nutrition Facts</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Nutrition Facts</Form.Label>
 
             {formData.nutritions.map((nutrition, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
@@ -352,12 +353,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Button
                   variant="danger"
                   onClick={() => handleRemoveNutrition(index)}
+                  className='fw-bold'
                 >
-                  Remove
+                  -
                 </Button>
               </div>
             ))}
-            <Button className="btn btn-success" onClick={handleAddNutrition}>Add Nutrition</Button>
+            <Button className="btn btn-success fw-bold" onClick={handleAddNutrition}>+</Button>
           </Form.Group>
 
           <Button className="btn btn-success mt-3" type="submit">
