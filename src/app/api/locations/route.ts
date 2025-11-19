@@ -28,7 +28,6 @@ export async function GET(req: NextRequest) {
       return new Response(JSON.stringify({ error: 'No results found' }), { status: 404 });
     }
 
-    return new Response(JSON.stringify({ latitude: coords[1], longitude: coords[0] }), { status: 200 });
     const suggestions = features.map((feature: any) => {
       const coords = feature.geometry?.coordinates || [];
       const props = feature.properties || {};
