@@ -272,23 +272,27 @@ export async function deleteStock(ingredientId: number, storageId: number) {
 }
 
 /* Create a new house */
-export async function addHouse(data: { name: string; address?: string; userId: number }) {
+export async function addHouse(data: { name: string; address?: string; userId: number; latitude?: number; longitude?: number }) {
   await prisma.house.create({
     data: {
       name: data.name,
       address: data.address,
       userId: Number(data.userId),
+      latitude: data.latitude ?? undefined,
+      longitude: data.longitude ?? undefined,
     },
   });
 }
 
 /* Edit house by id */
-export async function updateHouse(houseId: number, data: { name: string, address?: string }) {
+export async function updateHouse(houseId: number, data: { name: string, address?: string, latitude?: number, longitude?: number }) {
   const updatedHouse = await prisma.house.update({
     where: { id: houseId },
     data: {
       name: data.name,
       address: data.address,
+      latitude: data.latitude ?? undefined,
+      longitude: data.longitude ?? undefined,
     },
   });
 
