@@ -55,3 +55,20 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Failed to create house' }, { status: 500 });
   }
 }
+
+export async function GET(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const userIdParam = url.searchParams.get('userId');
+    const where: any = {};
+    if (userIdParam) where.userId = Number(userIdParam);
+
+    // return houses that have lat/lng if available
+    const houses = await prisma.house.findMany({ where, select: { id: true, name: true, address: true, latitude: true, longitude: true, userId: true } });
+    return NextResponse.json(houses, { status: 200 });
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.error('Error fetching houses', err);
+    return NextResponse.json({ error: 'Failed to fetch houses' }, { status: 500 });
+  }
+}
