@@ -4,11 +4,21 @@ import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
 import { addRecipe } from '@/lib/dbFunctions';
-import { Difficulty } from '@prisma/client';
+import { Difficulty, RecipeIngredient, RecipeInstruction, RecipeNutrition } from '@prisma/client';
 
 interface Ingredient {
   name: string;
   quantity: string;
+  unit: string;
+}
+
+interface Instruction {
+  step: string;
+}
+
+interface Nutrition {
+  name: string;
+  value: string;
   unit: string;
 }
 
@@ -34,6 +44,8 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     rating: '',
     image: '',
     ingredients: [] as Ingredient[],
+    instructions: [] as Instruction[],
+    nutritions: [] as Nutrition[],
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,6 +82,47 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
       ...formData,
       ingredients: [...formData.ingredients, { name: '', quantity: '', unit: '' }],
     });
+  };
+
+  const handleRemoveIngredient = (index: number) => {
+    const updatedIngredients = formData.ingredients.filter((_, i) => i !== index);
+    setFormData({ ...formData, ingredients: updatedIngredients });
+  };
+
+  const handleInstructionChange = (index: number, value: string) => {
+    const updatedInstructions = [...formData.instructions];
+    updatedInstructions[index].step = value;
+    setFormData({ ...formData, instructions: updatedInstructions });
+  };
+
+  const handleAddInstruction = () => {
+    setFormData({
+      ...formData,
+      instructions: [...formData.instructions, { step: '' }],
+    });
+  };
+
+  const handleRemoveInstruction = (index: number) => {
+    const updatedInstructions = formData.instructions.filter((_, i) => i !== index);
+    setFormData({ ...formData, instructions: updatedInstructions });
+  };
+
+  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string) => {
+    const updatedNutritions = [...formData.nutritions];
+    updatedNutritions[index][field] = value;
+    setFormData({ ...formData, nutritions: updatedNutritions });
+  };
+
+  const handleAddNutrition = () => {
+    setFormData({
+      ...formData,
+      nutritions: [...formData.nutritions, { name: '', value: '', unit: '' }],
+    });
+  };
+
+  const handleRemoveNutrition = (index: number) => {
+    const updatedNutritions = formData.nutritions.filter((_, i) => i !== index);
+    setFormData({ ...formData, nutritions: updatedNutritions });
   };
 
   return (
@@ -210,12 +263,75 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                   onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
                   required
                 />
+                <Button variant="danger" onClick={() => handleRemoveIngredient(index)}>
+                  Remove
+                </Button>
               </div>
             ))}
 
             <Button className="btn btn-success" type="button" onClick={handleAddIngredient}>
               +
             </Button>
+          </Form.Group>
+          {/* INSTRUCTIONS */}
+          <Form.Group controlId="instructions">
+            <Form.Label>Instructions</Form.Label>
+
+            {formData.instructions.map((instruction, index) => (
+              <div key={index} className="d-flex gap-2 mb-2">
+                <Form.Control
+                  as="textarea"
+                  placeholder={`Step ${index + 1}`}
+                  value={instruction.step}
+                  onChange={(e) => handleInstructionChange(index, e.target.value)}
+                  required
+                />
+                <Button
+                  variant="danger"
+                  onClick={() => handleRemoveInstruction(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+            <Button className="btn btn-success" onClick={handleAddInstruction}>Add Instruction</Button>
+          </Form.Group>
+           {/* NUTRITIONS */}
+           <Form.Group controlId="nutritions">
+            <Form.Label>Nutrition Facts</Form.Label>
+
+            {formData.nutritions.map((nutrition, index) => (
+              <div key={index} className="d-flex gap-2 mb-2">
+                <Form.Control
+                  type="text"
+                  placeholder="Nutrition name"
+                  value={nutrition.name}
+                  onChange={(e) => handleNutritionChange(index, 'name', e.target.value)}
+                  required
+                />
+                <Form.Control
+                  type="text"
+                  placeholder="Value"
+                  value={nutrition.value}
+                  onChange={(e) => handleNutritionChange(index, 'value', e.target.value)}
+                  required
+                />
+                <Form.Control
+                  type="text"
+                  placeholder="Unit"
+                  value={nutrition.unit}
+                  onChange={(e) => handleNutritionChange(index, 'unit', e.target.value)}
+                  required
+                />
+                <Button
+                  variant="danger"
+                  onClick={() => handleRemoveNutrition(index)}
+                >
+                  Remove
+                </Button>
+              </div>
+            ))}
+            <Button className="btn btn-success" onClick={handleAddNutrition}>Add Nutrition</Button>
           </Form.Group>
 
           <Button className="btn btn-success mt-3" type="submit">
