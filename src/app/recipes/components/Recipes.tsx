@@ -288,58 +288,62 @@ const Recipes: React.FC = () => {
   }
 
   return (
-    <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
-      <Row className="mb-4">
-        <Col xs={12}>
-          <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
-            <div className="d-flex align-items-center flex-wrap gap-4">
-              <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-              <RecipesFilterButton onApply={setFilters} />
-              <RecipesSortButton onSort={handleSort}/>
+    <>
+      <RecommendedRecipes />
+      <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
+        <Row className="mb-4">
+          <Col xs={12}>
+            <div className="d-flex justify-content-between align-items-center flex-wrap gap-3">
+              <div className="d-flex align-items-center flex-wrap gap-4">
+                <RecipesSearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+                <RecipesFilterButton onApply={setFilters} />
+                <RecipesSortButton onSort={handleSort}/>
+              </div>
+              <div className="d-flex align-items-center flex-wrap gap-2">
+                <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
+                <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
+                <button className="btn btn-success" onClick={handleShowModal}>
+                  Add Recipe +
+                </button>
+                <AddRecipeModal
+                  show={showAddRecipeModal}
+                  onHide={handleHideModal}
+                  onSubmit={(recipe) => {
+                    console.log('Recipe submitted:', recipe); // Debugging
+                    if (recipe) {
+                      // Handle the recipe submission (e.g., update state or send to API)
+                      console.log('Handling recipe submission...');
+                    } else {
+                      console.error('No recipe data received!');
+                    }
+                    handleHideModal(); // Close the modal
+                  }}
+                />
+              </div>
             </div>
-            <div className="d-flex align-items-center flex-wrap gap-2">
-              <ToggleFavorites onToggleFavorites={setShowFavoritesOnly} />
-              <ToggleReceipesCanMake onToggleCanMake={setCanMakeOnly} />
-              <button className="btn btn-success" onClick={handleShowModal}>
-                Add Recipe +
-              </button>
-              <AddRecipeModal
-                show={showAddRecipeModal}
-                onHide={handleHideModal}
-                onSubmit={(recipe) => {
-                  console.log('Recipe submitted:', recipe); // Debugging
-                  if (recipe) {
-                    // Handle the recipe submission (e.g., update state or send to API)
-                    console.log('Handling recipe submission...');
-                  } else {
-                    console.error('No recipe data received!');
-                  }
-                  handleHideModal(); // Close the modal
-                }}
-              />
-            </div>
-          </div>
-        </Col>
-      </Row>
-      {filteredAndSortedRecipes.length === 0 ? (
-        <div className="min-h-screen d-flex justify-content-center align-items-center">
-          <p>No recipes found matching your search. Please modify your filter.</p>
-        </div>
-      ) : (
-        <Row className="g-4 justify-content-center">
-          {filteredAndSortedRecipes.map(recipe => (
-            <Col key={recipe.id} md={4} sm={6} xs={12} className="justify-content-center">
-              <RecipeCard
-                recipe={recipe}
-                userIngredientsId={userIngredientsId}
-                searchTerm={searchTerm}
-                onToggleFavorite={handleToggleFavorite}
-              />
-            </Col>
-          ))}
+          </Col>
         </Row>
-      )}
-    </Container>
+        {filteredAndSortedRecipes.length === 0 ? (
+          <div className="min-h-screen d-flex justify-content-center align-items-center">
+            <p>No recipes found matching your search. Please modify your filter.</p>
+          </div>
+        ) : (
+          <Row className="g-4 justify-content-center">
+            {filteredAndSortedRecipes.map(recipe => (
+              <Col key={recipe.id} md={4} sm={6} xs={12} className="justify-content-center">
+                <RecipeCard
+                  recipe={recipe}
+                  userIngredientsId={userIngredientsId}
+                  searchTerm={searchTerm}
+                  onToggleFavorite={handleToggleFavorite}
+                />
+              </Col>
+            ))}
+          </Row>
+        )}
+        
+      </Container>
+    </>
   );
 };
 

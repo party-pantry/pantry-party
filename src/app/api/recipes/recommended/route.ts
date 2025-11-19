@@ -26,7 +26,7 @@ export const GET = async () => {
         { rating: 'desc' },
         { reviewCount: 'desc' },
       ],
-      take: 6,
+      take: 3,
     });
 
     return new Response(JSON.stringify({ recipes }), {
