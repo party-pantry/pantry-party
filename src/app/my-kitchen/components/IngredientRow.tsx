@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { Pencil, Trash2, GripVertical } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
-// import { CSS } from '@dnd-kit/utilities';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
   id: number;
@@ -47,7 +47,7 @@ const IngredientRow: React.FC<Props> = ({
   onEdit,
   headerSelected,
 }) => {
-  const { attributes, listeners, setNodeRef } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   // const style = {
   //   transform: CSS.Transform.toString(transform),
@@ -58,92 +58,105 @@ const IngredientRow: React.FC<Props> = ({
   const [selected, setSelected] = useState(false);
   const isSelected = selected || headerSelected;
 
+  // Proper drag + shrink + indent style
+  const rowStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition: transition || 'all 0.3s ease',
+    padding: isSelected ? '0.25rem 0.5rem' : '0.5rem',
+    paddingLeft: isSelected ? '20px' : '0px',
+    height: isSelected ? '30px' : '60px',
+    overflow: 'hidden',
+  };
+
   return (
     <tr key={id} ref={setNodeRef}
-      style={{
-        padding: isSelected ? '0.25rem 0.5rem' : '0.5rem', // shrink vertically when selected
-        paddingLeft: isSelected ? '20px' : '0px',
-        height: isSelected ? '30px' : '60px', // optional, controls row shrink
-        overflow: 'hidden',
-        transition: 'all 0.3s ease',
-      }}
+      style={
+        rowStyle
+        // padding: isSelected ? '0.25rem 0.5rem' : '0.5rem', // shrink vertically when selected
+        // paddingLeft: isSelected ? '20px' : '0px',
+        // height: isSelected ? '30px' : '60px', // optional, controls row shrink
+        // overflow: 'hidden',
+        // transition: 'all 0.3s ease',
+      }
     >
-      {/* <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          padding: selected ? '0.25rem 0.5rem' : '0.5rem', // shrink vertically when selected
-          height: selected ? '30px' : '60px', // optional, controls row shrink
-          overflow: 'hidden',
-          transition: 'all 0.3s ease' }}
-      > */}
-        <td className="align-middle">
-          {/* Drag handle */}
-          <div
-            style={{
-              paddingLeft: selected ? '20px' : '0px',
-              transition: 'padding-left 0.3s ease',
-              display: 'flex',
-              alignItems: 'center',
-            }}
+      <td className="align-middle">
+        {/* Drag handle */}
+        <div
+          // style={{
+          //   paddingLeft: isSelected ? '20px' : '0px',
+          //   transition: 'padding-left 0.3s ease',
+          //   display: 'flex',
+          //   alignItems: 'center',
+          // }}
+          style={{
+            transform: isSelected ? 'translateX(20px)' : 'translateX(0px)',
+            transition: 'transform 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+        >
+          <span
+            {...attributes}
+            {...listeners}
+            style={{ cursor: 'grab' }}
           >
-            <span
-              {...attributes}
-              {...listeners}
-              style={{ cursor: 'grab' }}
-            >
-              <GripVertical size={18} />
-            </span>
-          </div>
-        </td>
-        <td className="align-middle">
-          <div className="custom-checkbox">
-            <input
-              type="checkbox"
-              checked={isSelected}
-              onChange={() => setSelected(!selected)} />
-          </div>
-        </td>
-        <td className="align-middle">
-          <div className="fw-semibold" title={name}>
-            {name}
-          </div>
-        </td>
-        <td className="align-middle">{quantity}</td>
-        <td className="align-middle text-muted">{updated}</td>
-        <td className="align-middle">
-          <Badge
-            bg={getStatusVariant(status)}
-            className="px-2 py-1"
-            style={{ borderRadius: '0.5rem', fontSize: '0.75rem' }}
+            <GripVertical size={18} />
+          </span>
+        </div>
+      </td>
+      <td className="align-middle">
+        <div className="custom-checkbox"
+          style={{
+            transform: isSelected ? 'translateX(20px)' : 'translateX(0px)',
+            transition: 'transform 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+          }}
           >
-            {status}
-          </Badge>
-        </td>
-        <td className="align-middle">
-          <div className="d-flex gap-2">
-            <Button
-              variant="link"
-              size="sm"
-              className="p-0 text-secondary"
-              onClick={() => onEdit(ingredientId, storageId)}
-              title="Edit"
-            >
-              <Pencil size={16} />
-            </Button>
-            <Button
-              variant="link"
-              size="sm"
-              className="p-0 text-danger"
-              onClick={() => onDelete(ingredientId, storageId)}
-              title="Delete"
-            >
-              <Trash2 size={16} />
-            </Button>
-          </div>
-        </td>
-      {/* </div> */}
+          <input
+            type="checkbox"
+            checked={isSelected}
+            onChange={() => setSelected(!selected)} />
+        </div>
+      </td>
+      <td className="align-middle">
+        <div className="fw-semibold" title={name}>
+          {name}
+        </div>
+      </td>
+      <td className="align-middle">{quantity}</td>
+      <td className="align-middle text-muted">{updated}</td>
+      <td className="align-middle">
+        <Badge
+          bg={getStatusVariant(status)}
+          className="px-2 py-1"
+          style={{ borderRadius: '0.5rem', fontSize: '0.75rem' }}
+        >
+          {status}
+        </Badge>
+      </td>
+      <td className="align-middle">
+        <div className="d-flex gap-2">
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 text-secondary"
+            onClick={() => onEdit(ingredientId, storageId)}
+            title="Edit"
+          >
+            <Pencil size={16} />
+          </Button>
+          <Button
+            variant="link"
+            size="sm"
+            className="p-0 text-danger"
+            onClick={() => onDelete(ingredientId, storageId)}
+            title="Delete"
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
+      </td>
     </tr>
   );
 };

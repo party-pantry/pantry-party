@@ -116,7 +116,7 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
     return rule ? rule.direction : null;
   };
 
-  const displayedItems = sortRules.length > 0 ? sortedItems : localItems;
+  const displayedItems = sortRules.length >= 0 ? sortedItems : localItems;
   return (
     <div className="table-responsive">
       <DndContext
@@ -180,7 +180,7 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
           </tr>
         </thead>
         <SortableContext
-            items={localItems.map(item => item.id)}
+            items={displayedItems.map(item => item.id)}
             strategy={verticalListSortingStrategy}
           >
             <tbody>
