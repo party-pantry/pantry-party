@@ -3,8 +3,8 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe } from '@/lib/dbFunctions';
-import { Difficulty, RecipeIngredient, RecipeInstruction, RecipeNutrition } from '@prisma/client';
+import { addRecipe, addInstruction } from '@/lib/dbFunctions';
+import { Difficulty } from '@prisma/client';
 
 interface Ingredient {
   name: string;
@@ -13,7 +13,8 @@ interface Ingredient {
 }
 
 interface Instruction {
-  step: string;
+  step: number;
+  content: string;
 }
 
 interface Nutrition {
@@ -64,6 +65,9 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
       });
 
       console.log(result.id);
+      await Promise.all(
+        formData.instructions.map(instruction => addInstruction(result.id, instruction.step, instruction.content)),
+      );
       onSubmit(result);
       onHide();
     } catch (error) {
@@ -89,16 +93,23 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     setFormData({ ...formData, ingredients: updatedIngredients });
   };
 
-  const handleInstructionChange = (index: number, value: string) => {
+  const handleInstructionChange = (index: number, field: 'step' | 'content', value: string | number) => {
     const updatedInstructions = [...formData.instructions];
-    updatedInstructions[index].step = value;
+    updatedInstructions[index] = {
+      ...updatedInstructions[index],
+      [field]: value,
+    };
     setFormData({ ...formData, instructions: updatedInstructions });
   };
 
   const handleAddInstruction = () => {
+    const newStep = formData.instructions.length + 1;
     setFormData({
       ...formData,
-      instructions: [...formData.instructions, { step: '' }],
+      instructions: [
+        ...formData.instructions,
+        { step: newStep, content: '' },
+      ],
     });
   };
 
@@ -276,14 +287,13 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
           {/* INSTRUCTIONS */}
           <Form.Group controlId="instructions">
             <Form.Label>Instructions</Form.Label>
-
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
                   as="textarea"
-                  placeholder={`Step ${index + 1}`}
-                  value={instruction.step}
-                  onChange={(e) => handleInstructionChange(index, e.target.value)}
+                  placeholder={`Step ${instruction.step}`}
+                  value={instruction.content}
+                  onChange={(e) => handleInstructionChange(index, 'content', e.target.value)}
                   required
                 />
                 <Button
@@ -294,7 +304,12 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 </Button>
               </div>
             ))}
-            <Button className="btn btn-success" onClick={handleAddInstruction}>Add Instruction</Button>
+            <Button
+              className="btn btn-success"
+              onClick={() => handleAddInstruction()}
+            >
+              Add Instruction
+            </Button>
           </Form.Group>
            {/* NUTRITIONS */}
            <Form.Group controlId="nutritions">
