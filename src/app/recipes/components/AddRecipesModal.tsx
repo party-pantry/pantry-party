@@ -48,7 +48,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
         cookTime: parseInt(formData.cookTime, 10) || 0,
         downTime: parseInt(formData.downTime, 10) || 0,
         servings: parseInt(formData.servings, 10) || 0,
-        rating: parseInt(formData.rating, 10) || 0,
+        rating: parseFloat(formData.rating) || 0,
       });
 
       console.log(result.id);

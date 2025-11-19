@@ -92,10 +92,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     userIngredientsId,
   );
 
-  const rawRating =
-    typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
-      ? recipe.rating
-      : 0;
+  const rawRating = typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
+    ? recipe.rating
+    : 0;
 
   const rating = Math.min(Math.max(rawRating, 0), 5);
 
@@ -105,14 +104,13 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     const regex = new RegExp(`(${term})`, 'gi');
     const parts = text.split(regex);
 
-    return parts.map((part, index) =>
-      (part.toLowerCase() === term.toLowerCase() ? (
+    return parts.map((part, index) => (part.toLowerCase() === term.toLowerCase() ? (
         <span key={index} className="highlight">
           {part}
         </span>
-      ) : (
-        part
-      )));
+    ) : (
+      part
+    )));
   };
 
   return (
@@ -140,11 +138,9 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
             fill={isStarred ? 'red' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
             onClick={toggleFavorite}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.transform = 'scale(1.1)')
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')
             }
-            onMouseLeave={(e) =>
-              (e.currentTarget.style.transform = 'scale(1)')
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')
             }
           />
         </div>
