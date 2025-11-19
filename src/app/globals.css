@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-
 :root {
   --background: #E5E5E3;
   --foreground: #171717;
@@ -558,4 +557,39 @@ h5 {
 .highlight-on-hover:hover {
   background-color: #f0f8f5;
   transition: background-color 0.3s ease;
+}
+
+/* styling for logged out users (public) */
+
+.public-navbar {
+  background-color: #3A5B4F !important;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.public-navbar .nav-link {
+  color: #ffffff;
+  margin-left: 16px;
+  text-decoration: none;
+}
+
+.public-navbar .nav-link:hover {
+  text-decoration: underline;
+}
+
+.public-navbar .dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #ffffff;
+  color: #000000;
+  min-width: 160px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: none; /* will toggle with JS */
+}
+
+.public-navbar .dropdown-menu.show {
+  display: block;
 }
