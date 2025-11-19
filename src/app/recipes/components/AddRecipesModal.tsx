@@ -260,7 +260,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
 
           {/* INGREDIENTS */}
           <Form.Group controlId="ingredients">
-            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Ingredients</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '2.1rem' }}>Ingredients</Form.Label>
 
             {formData.ingredients.map((ingredient, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
@@ -297,7 +297,7 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
           </Form.Group>
           {/* INSTRUCTIONS */}
           <Form.Group controlId="instructions">
-            <Form.Label className="fw-bold" style={{ paddingRight: '0.5rem' }}>Instructions</Form.Label>
+            <Form.Label className="fw-bold" style={{ paddingRight: '1.8rem' }}>Instructions</Form.Label>
             {formData.instructions.map((instruction, index) => (
               <div key={index} className="d-flex gap-2 mb-2">
                 <Form.Control
