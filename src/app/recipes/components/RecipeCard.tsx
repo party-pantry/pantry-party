@@ -92,13 +92,12 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     userIngredientsId,
   );
 
-  // Safely clamp rating to [0, 5] and default to 0 if missing/NaN
   const rawRating = typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
     ? recipe.rating
     : 0;
+
   const rating = Math.min(Math.max(rawRating, 0), 5);
 
-  // Highlight searched words in recipe name and description
   const highlightText = (text: string, term: string = '') => {
     if (!term.trim()) return text;
 
@@ -116,6 +115,20 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
 
   return (
     <Card className="recipe-card h-100">
+
+      {recipe.image && (
+        <Card.Img
+          variant="top"
+          src={recipe.image}
+          alt={recipe.name}
+          style={{
+            height: '200px',
+            objectFit: 'cover',
+            width: '100%',
+          }}
+        />
+      )}
+
       <CardBody>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
@@ -151,7 +164,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
               color: getMatchPercentColor(matchPercent),
             },
             {
-              // 👇 dynamic label that shows how many reviews exist
               label:
                 recipe.reviewCount && recipe.reviewCount > 0
                   ? `Rating (${recipe.reviewCount})`

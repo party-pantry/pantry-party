@@ -78,6 +78,7 @@ model Recipe {
   postDate     DateTime            @default(now()) @updatedAt
   rating       Float               @default(0)
   reviewCount  Int                 @default(0)
+  image        String?
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]

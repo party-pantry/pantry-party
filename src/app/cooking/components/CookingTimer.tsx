@@ -15,10 +15,16 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
   const [isActive, setIsActive] = useState<boolean>(false);
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const alarmRef = useRef<HTMLAudioElement | null>(null);
 
   const totalTime = prepTime + cookTime + (downTime || 0);
 
   const memoizedOnTimerFinish = useCallback(() => {
+    // Play alarm sound
+    if (alarmRef.current) {
+      alarmRef.current.currentTime = 0;
+      alarmRef.current.play();
+    }
     if (onTimerFinish) {
       setTimeout(() => {
         onTimerFinish();
@@ -36,6 +42,12 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
     if (timeLeft > 0) {
       setIsActive(true);
       setIsPaused(false);
+      // Unlock audio context for alarm (required for Chrome/Edge/Safari)
+      if (alarmRef.current) {
+        alarmRef.current.play().catch(() => {});
+        alarmRef.current.pause();
+        alarmRef.current.currentTime = 0;
+      }
     }
   };
 
@@ -102,6 +114,8 @@ const CookingTimer: React.FC<CookingTimerProps> = ({ prepTime, cookTime, downTim
 
   return (
       <div className='flex flex-col items-center p-6 bg-white rounded-2xl shadow-md'>
+        {/* Hidden audio element for alarm sound */}
+        <audio ref={alarmRef} src="/alarm2.mp3" preload="auto" style={{ display: 'none' }} />
         <div className='relative mb-6'>
           <div className='relative w-48 h-48'>
             <CircularProgressbar

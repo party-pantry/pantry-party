@@ -37,7 +37,7 @@ const TopBar: React.FC = () => {
 
   return (
     <>
-      <Navbar className="sticky top-0 w-full bg-transparent z-5">
+      <Navbar className="sticky-top top-0 w-full bg-transparent z-5">
         <Container>
           <Nav className="ms-auto flex items-center gap-3">
             {/* TODO: IMPLEMENT NOTIFICATIONS FUNCTIONALITY */}
