@@ -62,7 +62,7 @@ export default function ReviewSection({ recipeId }: { recipeId: number }) {
       setComment('');
       setRating(5);
       await loadReviews();
-      window.location.reload(); // refresh recipe avg/count
+      // window.location.reload(); // refresh recipe avg/count
     } catch (err: any) {
       alert(err.message);
     } finally {
