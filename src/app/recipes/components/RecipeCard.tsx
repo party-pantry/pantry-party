@@ -92,30 +92,45 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
     userIngredientsId,
   );
 
-  // Safely clamp rating to [0, 5] and default to 0 if missing/NaN
-  const rawRating = typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
-    ? recipe.rating
-    : 0;
+  const rawRating =
+    typeof recipe.rating === 'number' && !Number.isNaN(recipe.rating)
+      ? recipe.rating
+      : 0;
+
   const rating = Math.min(Math.max(rawRating, 0), 5);
 
-  // Highlight searched words in recipe name and description
   const highlightText = (text: string, term: string = '') => {
     if (!term.trim()) return text;
 
     const regex = new RegExp(`(${term})`, 'gi');
     const parts = text.split(regex);
 
-    return parts.map((part, index) => (part.toLowerCase() === term.toLowerCase() ? (
+    return parts.map((part, index) =>
+      (part.toLowerCase() === term.toLowerCase() ? (
         <span key={index} className="highlight">
           {part}
         </span>
-    ) : (
-      part
-    )));
+      ) : (
+        part
+      )));
   };
 
   return (
     <Card className="recipe-card h-100">
+
+      {recipe.image && (
+        <Card.Img
+          variant="top"
+          src={recipe.image}
+          alt={recipe.name}
+          style={{
+            height: '200px',
+            objectFit: 'cover',
+            width: '100%',
+          }}
+        />
+      )}
+
       <CardBody>
         <div className="d-flex justify-content-between align-items-center mb-2">
           <Badge bg={difficulty.variant}>{difficulty.label}</Badge>
@@ -125,9 +140,11 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
             fill={isStarred ? 'red' : 'none'}
             style={{ cursor: 'pointer', transition: 'transform 0.1s ease' }}
             onClick={toggleFavorite}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = 'scale(1.1)')
             }
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.transform = 'scale(1)')
             }
           />
         </div>
@@ -151,7 +168,6 @@ const RecipeCard: React.FC<RecipeCardProps> = ({
               color: getMatchPercentColor(matchPercent),
             },
             {
-              // 👇 dynamic label that shows how many reviews exist
               label:
                 recipe.reviewCount && recipe.reviewCount > 0
                   ? `Rating (${recipe.reviewCount})`
