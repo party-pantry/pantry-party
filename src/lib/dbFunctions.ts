@@ -407,6 +407,22 @@ export async function addRecipe(data: {
   return recipe;
 }
 
+export async function addInstruction(
+  recipeId: number,
+  step: number,
+  content: string,
+) {
+  const instruction = await prisma.recipeInstruction.create({
+    data: {
+      recipeId,
+      step,
+      content,
+    },
+  });
+
+  return instruction;
+}
+
 /* Get all shopping list items for a user */
 export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
