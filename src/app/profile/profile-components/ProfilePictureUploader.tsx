@@ -11,15 +11,16 @@ import { Link } from 'lucide-react';
 import { changeProfileImageUrl, fetchProfileImageUrl } from '@/lib/dbProfileFunctions';
 
 type UpdateImageFormData = {
-  newImageUrl: string;
+  newImageUrl: string | null;
 };
 
 const validationSchema = Yup.object().shape({
   newImageUrl: Yup.string()
-    .required('Image URL is required')
-    .url('Must be a valid URL')
+    .notRequired()
+    .transform((value) => (value === '' ? null : value))
+    .url('Must be a valid URL if provided')
     .matches(/\.(jpeg|jpg|gif|png|webp)$/, {
-      message: 'URL image must end in .jpeg, .jpg, .gif, .png, or .webp',
+      message: 'URL image must end in .jpeg, .jpg, .gif, .png, or .webp if provided',
       excludeEmptyString: true,
     }),
 });
@@ -28,7 +29,7 @@ const DEFAULT_PHOTO_URL = '/defaultProfileImage.png';
 
 const ProfilePictureUploader: React.FC = () => {
   const { data: session, update } = useSession();
-  const userId = parseInt(session?.user?.id as string, 10);
+  const userId = session?.user?.id ? parseInt(session.user.id, 10) : NaN;
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string>('');
 
   const {
@@ -39,7 +40,7 @@ const ProfilePictureUploader: React.FC = () => {
     formState: { errors },
   } = useForm<UpdateImageFormData>({
     resolver: yupResolver(validationSchema),
-    defaultValues: { newImageUrl: '' },
+    defaultValues: { newImageUrl: null },
     mode: 'onTouched',
   });
 
@@ -49,8 +50,9 @@ const ProfilePictureUploader: React.FC = () => {
       if (!userId) return;
       try {
         const imageUrl = await fetchProfileImageUrl({ id: userId });
+        const finalUrl = imageUrl || '';
         setCurrentPhotoUrl(imageUrl || '');
-        reset({ newImageUrl: imageUrl || '' });
+        reset({ newImageUrl: finalUrl });
       } catch (err) {
         console.error('Failed to fetch profile image:', err);
       }
@@ -71,15 +73,16 @@ const ProfilePictureUploader: React.FC = () => {
   const displayUrl = inputUrl || currentPhotoUrl || DEFAULT_PHOTO_URL;
 
   const onSubmit = async (data: UpdateImageFormData) => {
-    const urlToSave = data.newImageUrl || null;
+    const urlToSave = data.newImageUrl === '' ? null : data.newImageUrl;
+
     try {
       await changeProfileImageUrl({ id: userId, newImage: urlToSave });
       await update({ image: urlToSave, unstable_revalidate: true });
 
-      setCurrentPhotoUrl(data.newImageUrl);
-      await swal('Profile image updated', 'Profile image has been updated', 'success', { timer: 2000 });
+      setCurrentPhotoUrl(urlToSave || '');
+      await swal('Success', 'Your profile image has been updated.', 'success', { timer: 2000 });
 
-      reset({ newImageUrl: data.newImageUrl });
+      reset({ newImageUrl: urlToSave || '' });
     } catch (error) {
       console.error('Error saving URL:', error);
       swal('Error', 'Failed to save image URL.', 'error');
@@ -87,11 +90,10 @@ const ProfilePictureUploader: React.FC = () => {
   };
 
   return (
-    <Container className="p-4" style={{ width: '50%' }}>
+    <Container style={{ width: '80%' }}>
       <h5 className="text-center mb-4">
         <strong>Change Profile Icon</strong>
       </h5>
-
       {/* Image Preview Area */}
       <div className="d-flex justify-content-center mb-4">
         <BootstrapImage
@@ -109,7 +111,6 @@ const ProfilePictureUploader: React.FC = () => {
           }}
         />
       </div>
-
       {/* Form */}
       <Form onSubmit={handleSubmit(onSubmit)}>
         <InputGroup className="mt-4 mb-3 custom-input-group">
@@ -124,7 +125,7 @@ const ProfilePictureUploader: React.FC = () => {
           />
           <div className="invalid-feedback d-block">{errors.newImageUrl?.message}</div>
         </InputGroup>
-
+        {/* Save Button */}
         <div className="d-flex justify-content-center mt-4">
           <Button variant="success" type="submit">
             <strong>Save Profile Image</strong>

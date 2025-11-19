@@ -5,21 +5,22 @@ import { useSession } from 'next-auth/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import swal from 'sweetalert';
-import { Form, Button, InputGroup, Container } from 'react-bootstrap';
+import { useEffect } from 'react';
 import { User } from 'lucide-react';
-import { changeUsername } from '@/lib/dbActions';
+import { InputGroup, Form, Button, Container } from 'react-bootstrap';
+import { changeUsername, fetchUsername } from '@/lib/dbProfileFunctions';
 
 type UpdateUsernameFormData = {
   newUsername: string;
 };
 
+const validationSchema = Yup.object().shape({
+  newUsername: Yup.string().required('Username is required'),
+});
+
 const UpdateUsernameForm: React.FC = () => {
   const { data: session, update } = useSession();
   const userId = parseInt(session?.user?.id, 10);
-
-  const validationSchema = Yup.object().shape({
-    newUsername: Yup.string().required('Username is required'),
-  });
 
   const {
     register,
@@ -28,20 +29,46 @@ const UpdateUsernameForm: React.FC = () => {
     formState: { errors },
   } = useForm<UpdateUsernameFormData>({
     resolver: yupResolver(validationSchema),
+    defaultValues: { newUsername: '' },
     mode: 'onTouched', // Show errors on blur/touch
   });
 
+  useEffect(() => {
+    async function loadUsername() {
+      if (!userId) return;
+      try {
+        const UsernameText = await fetchUsername({ id: userId });
+        reset({ newUsername: UsernameText! });
+      } catch (error) {
+        console.error('Failed to fetch username', error);
+      }
+    }
+    loadUsername();
+  }, [userId, reset]);
+
+  // Sync when session updates
+  useEffect(() => {
+    if (session?.user?.username !== undefined) {
+      const usernameFromSession = session.user.username;
+      reset({ newUsername: usernameFromSession });
+    }
+  }, [session?.user?.username, reset]);
+
   const onSubmit = async (data: UpdateUsernameFormData) => {
-    await changeUsername({ id: userId, newUsername: data.newUsername });
+    try {
+      await changeUsername({ id: userId, newUsername: data.newUsername });
 
-    await update({ email: data.newUsername });
+      await update({ username: data.newUsername });
 
-    await swal('Username Changed', 'Username has been changed', 'success', { timer: 2000 });
-    reset();
+      await swal('Success', 'Your username has been updated.', 'success', { timer: 2500 });
+    } catch (error) {
+      console.error('Error saving username:', error);
+      swal('Error', 'Failed to save username.', 'error');
+    }
   };
 
   return (
-    <Container className="p-4" style={{ width: '50%' }}>
+    <Container style={{ width: '80%' }}>
         <h5 className="text-center mb-4">
             <strong>Change Username</strong>
         </h5>
@@ -52,7 +79,7 @@ const UpdateUsernameForm: React.FC = () => {
                     <User size={20} />
                 </InputGroup.Text>
                 <Form.Control
-                    placeholder="New Username"
+                    placeholder="New username"
                     className={`form-control ${errors.newUsername ? 'is-invalid' : ''}`}
                     type="text"
                     {...register('newUsername')}
