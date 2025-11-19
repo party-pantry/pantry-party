@@ -34,9 +34,9 @@ export async function POST(req: Request) {
         });
         const feature = geoRes.data.features?.[0];
         if (feature) {
-          const coords = feature.geometry?.coordinates || [];
-          lat = coords[1];
-          lng = coords[0];
+          const [lngFromGeo, latFromGeo] = feature.geometry?.coordinates || [];
+          lat = latFromGeo;
+          lng = lngFromGeo;
         }
       } catch (err) {
         // ignore geocoding errors here — we'll still create the house with address only

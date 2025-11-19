@@ -135,8 +135,8 @@ const AddHouseModal: React.FC<Props> = ({ show, onHide, onAddHouse }) => {
         return;
       }
 
-  const created = await res.json();
-  onAddHouse(created || formData);
+      const created = await res.json();
+      onAddHouse(created || formData);
       // close and reset
       handleClose();
     } catch (err) {

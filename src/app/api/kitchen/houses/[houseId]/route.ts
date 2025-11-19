@@ -32,8 +32,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ houseI
       return NextResponse.json({ error: 'Missing houseId' }, { status: 400 });
     }
 
-    let latitude: number | undefined = undefined;
-    let longitude: number | undefined = undefined;
+    let latitude: number | undefined;
+    let longitude: number | undefined;
 
     // If address is provided, attempt geocoding to get lat/lng
     if (address) {
@@ -44,9 +44,9 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ houseI
         });
         const feature = geoRes.data.features?.[0];
         if (feature) {
-          const coords = feature.geometry?.coordinates || [];
-          latitude = coords[1];
-          longitude = coords[0];
+          const [lngFromGeo, latFromGeo] = feature.geometry?.coordinates || [];
+          latitude = latFromGeo;
+          longitude = lngFromGeo;
         }
       } catch (err) {
         // ignore geocoding errors

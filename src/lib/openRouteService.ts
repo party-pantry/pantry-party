@@ -7,7 +7,6 @@
  * @returns An array of geocoding suggestions
  */
 export const geocodeAddress = async (address: string, size = 5) => {
-
   const res = await fetch(`/api/locations?address=${encodeURIComponent(address)}&size=${size}`);
 
   if (!res.ok) throw new Error('Failed to fetch geocoding data');
