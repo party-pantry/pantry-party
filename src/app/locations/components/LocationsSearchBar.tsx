@@ -75,31 +75,6 @@ const LocationsSearch: React.FC<LocationsSearchProps> = ({ searchTerm, setSearch
                     aria-label="Search places"
                 />
 
-                {loading && (
-                    <div style={{ position: 'absolute', right: '0.5rem', top: '50%', transform: 'translateY(-50%)' }}>
-                        <Spinner animation="border" size="sm" role="status" aria-hidden="true" />
-                    </div>
-                )}
-
-                {isFocused && searchTerm && searchTerm.trim().length > 0 && suggestions && suggestions.length > 0 && (
-                    <ul className="list-group position-absolute mt-1" style={{ zIndex: 2000, left: 0, right: 0, top: '100%', maxHeight: 280, overflowY: 'auto' }}>
-                        {suggestions.map((s) => (
-                            <li
-                                key={s.id || `${s.label}-${s.latitude ?? 'na'}-${s.longitude ?? 'na'}`}
-                                className={'list-group-item list-group-item-action'}
-                                role="button"
-                                onClick={() => {
-                                  setSearchTerm(s.label);
-                                  onSelectSuggestion?.(s);
-                                  setIsFocused(false);
-                                }}
-                            >
-                                <div className="fw-medium">{s.label}</div>
-                                <div className="small text-muted">{s.address || `${(s.latitude ?? 0).toFixed(5)}, ${(s.longitude ?? 0).toFixed(5)}`}</div>
-                            </li>
-                        ))}
-                    </ul>
-                )}
             </div>
         </div>
   );

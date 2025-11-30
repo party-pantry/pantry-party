@@ -32,7 +32,8 @@ const LocationsSavedList: React.FC<Props> = ({ saved = [], onSelectResult, onRem
           : '');
         return (
         <ListGroup.Item key={itemKey} className="py-2 border-bottom d-flex justify-content-between align-items-center">
-          <Button variant="link" className="text-start p-0 flex-grow-1 text-wrap" onClick={() => onSelectResult?.(p)}>
+          {/* Viewing saved locations is intentionally disabled — clicking will not focus the map */}
+          <Button variant="link" className="text-start p-0 flex-grow-1 text-wrap" onClick={() => { /* no-op */ }}>
             <div className="fw-medium">{p.label}</div>
             <div className="text-muted small">{addressDisplay}</div>
           </Button>

@@ -21,9 +21,11 @@ interface Place {
 
 interface Props {
   onSelectResult?: (r: Place) => void;
+  saved?: Place[];
+  onSave?: (p: Place) => void;
 }
 
-const LocationsHousesList: React.FC<Props> = ({ onSelectResult }) => {
+const LocationsHousesList: React.FC<Props> = ({ onSelectResult, saved, onSave }) => {
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -71,6 +73,8 @@ const LocationsHousesList: React.FC<Props> = ({ onSelectResult }) => {
         };
 
         const itemKey = h.id || `${h.latitude}-${h.longitude}`;
+        const isSaved = place.id ? (saved ?? []).some((s) => s.id === place.id) : false;
+
         return (
           <ListGroup.Item
             key={itemKey}
@@ -85,9 +89,11 @@ const LocationsHousesList: React.FC<Props> = ({ onSelectResult }) => {
               <div className="text-muted small">{place.address}</div>
             </Button>
             <div className="ms-2">
-              <Button size="sm" variant="primary" onClick={() => onSelectResult && onSelectResult(place)}>
-                View
-              </Button>
+              {!isSaved && (
+                <Button size="sm" variant="primary" onClick={() => onSave?.(place)}>
+                  Save
+                </Button>
+              )}
             </div>
           </ListGroup.Item>
         );

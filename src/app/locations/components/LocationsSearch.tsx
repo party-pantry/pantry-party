@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { Tabs, Tab } from 'react-bootstrap';
-import LocationsSearch from './LocationsSearchBar';
+// Removed the inline search bar per design — the map drives visible shops.
 import LocationsResults from './LocationsResults';
 import LocationsSavedList from './LocationsSavedList';
 import LocationsHousesList from './LocationsHousesList';
@@ -42,30 +42,19 @@ const LocationsFilter: React.FC<Props> = ({
   const saved = savedPlaces ?? [];
 
   return (
-        <div className="p-3">
-            <Tabs defaultActiveKey="results" id="locations-filter-tabs" className="mb-3 medium">
-                <Tab eventKey="results" title={<span className="medium px-1">Search</span>}>
-                    <div className="mb-3">
-                        <LocationsSearch
-                            searchTerm={searchTerm}
-                            setSearchTerm={setSearchTerm}
-                            onSearch={(t) => onSearch?.(t)}
-                            loading={loading}
-                            suggestions={suggestions}
-                            onSelectSuggestion={onSelectSuggestion}
-                        />
-                    </div>
-
-                    <LocationsResults loading={loading} suggestions={suggestions} saved={saved} onSelectResult={onSelectResult} onSave={onSave} />
-                </Tab>
-                <Tab eventKey="saved" title={<span className="medium px-1">Saved</span>}>
-                    <LocationsSavedList saved={saved} onSelectResult={onSelectResult} onRemoveSaved={onRemoveSaved} />
-                </Tab>
-                <Tab eventKey="houses" title={<span className="medium px-1">Houses</span>}>
-                    <LocationsHousesList onSelectResult={onSelectResult} />
-                </Tab>
-            </Tabs>
-        </div>
+    <div className="p-3">
+      <Tabs defaultActiveKey="shops" id="locations-filter-tabs" className="mb-3 medium">
+        <Tab eventKey="shops" title={<span className="medium px-1">Shops</span>}>
+          <LocationsResults loading={loading} suggestions={suggestions} saved={saved} onSelectResult={onSelectResult} onSave={onSave} />
+        </Tab>
+        <Tab eventKey="houses" title={<span className="medium px-1">Houses</span>}>
+          <LocationsHousesList onSelectResult={onSelectResult} saved={saved} onSave={onSave} />
+        </Tab>
+        <Tab eventKey="saved" title={<span className="medium px-1">Saved</span>}>
+          <LocationsSavedList saved={saved} onSelectResult={onSelectResult} onRemoveSaved={onRemoveSaved} />
+        </Tab>
+      </Tabs>
+    </div>
   );
 };
 

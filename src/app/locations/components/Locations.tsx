@@ -12,9 +12,10 @@ const Locations = () => {
   const [searchResults, setSearchResults] = useState<Array<{ id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string; distance?: number }>>([]);
   const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number } | null>(null);
   const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const [selectedDetails, setSelectedDetails] = useState<{ id?: string; label?: string; address?: string } | null>(null);
   const [savedPlaces, setSavedPlaces] = useState<Array<{ id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string }>>([]);
-
-  const [loading, setLoading] = useState(false);
+  const [mapCenter, setMapCenter] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [mapRadius, setMapRadius] = useState<number>(1000);
 
   // TODO: Replace local storage with actual database persistence
   const SAVED_KEY = 'pp_saved_places_v1';
@@ -39,60 +40,56 @@ const Locations = () => {
     }
   };
 
-  // TODO: Replace with actual API call and remove mock results
   const handleSearch = (term: string) => {
+
+    const doSetResults = (shops: any[]) => {
+      const mapped = shops.map((s) => ({ id: s.id, label: s.label || s.name || '', latitude: s.latitude, longitude: s.longitude, address: s.properties?.address || '' }));
+      setSearchResults(mapped);
+    };
+
+    // if no term, fetch shops for current map center/radius and display all
     if (!term || term.trim().length < 1) {
-      setSearchResults([]);
+      if (!mapCenter) {
+        setSearchResults([]);
+        return;
+      }
+      fetch('/api/shops', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude: mapCenter.latitude, longitude: mapCenter.longitude, buffer: mapRadius ?? 1000 }),
+      })
+        .then((r) => r.ok ? r.json() : Promise.reject(r))
+        .then((j) => doSetResults(j?.shops || []))
+        .catch(() => { setSearchResults([]); });
       return;
     }
 
-    setLoading(true);
+    // search term present: if we already have results, filter by name; otherwise fetch then filter
+    const filterAndSet = (shops: any[]) => {
+      const q = term.trim().toLowerCase();
+      const filtered = shops.filter((s) => (s.label || s.properties?.name || '').toLowerCase().includes(q));
+      doSetResults(filtered);
+    };
 
-    const mockResults = [
-      {
-        id: 'the-market',
-        label: 'The Market',
-        latitude: 21.294423278944713,
-        longitude: -157.81309753901127,
-        address: '2585 Dole St, Honolulu, HI 96822',
-      },
-      {
-        id: 'foodland',
-        label: 'Foodland',
-        latitude: 21.289202387992074,
-        longitude: -157.8136890852824,
-        address: '2939 Harding Ave, Honolulu, HI 96816',
-      },
-      {
-        id: 'safeway',
-        label: 'Safeway',
-        latitude: 21.285084964092764,
-        longitude: -157.81459295407825,
-        address: '888 Kapahulu Ave, Honolulu, HI 96816',
-      },
-      {
-        id: 'nijiya',
-        label: 'Nijiya Market University Store',
-        latitude: 21.29283310586927,
-        longitude: -157.8199242525803,
-        address: '1009 University Ave #101, Honolulu, HI 96826',
-      },
-      {
-        id: 'target',
-        label: 'Target',
-        latitude: 21.278859851385334,
-        longitude: -157.82521383553157,
-        address: '2345 Kūhiō Ave., Honolulu, HI 96815',
-      },
-    ];
+    const fetchAndFilter = () => {
+      if (!mapCenter) { setSearchResults([]); return; }
+      fetch('/api/shops', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ latitude: mapCenter.latitude, longitude: mapCenter.longitude, buffer: mapRadius ?? 1000 }),
+      })
+    .then((r) => r.ok ? r.json() : Promise.reject(r))
+    .then((j) => filterAndSet(j?.shops || []))
+    .catch(() => { setSearchResults([]); });
+    };
 
-    setSearchResults(mockResults);
-    setLoading(false);
+    fetchAndFilter();
   };
 
   const handleSelectResult = (r: { id?: string; latitude?: number | null; longitude?: number | null }) => {
     if (r.latitude == null || r.longitude == null) return;
     if (r.id) setSelectedMarkerId(r.id);
+    setSelectedDetails({ id: r.id, label: (r as any).label, address: (r as any).address });
     setSelectedLocation({ latitude: r.latitude, longitude: r.longitude });
     setShowFilter(false);
   };
@@ -117,26 +114,36 @@ const Locations = () => {
     persistSaved(next);
   };
 
+  // NOTE: visible suggestions are driven by the map component (onVisibleShops) so
+  // we do not perform a separate client-side distance filter here. The map is the
+  // authoritative source of which shops are within the active radius.
+
   return (
         <main style={{ position: 'relative', width: '100%', height: '100%' }}>
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
                 <LocationsMap
                     onOpenFilters={() => setShowFilter(true)}
                     searchResults={searchResults}
+                    onVisibleShops={(shops: any[]) => {
+                      try { setSearchResults(shops || []); } catch (e) { /* ignore */ }
+                    }}
                     selectedLocation={selectedLocation}
                     selectedMarkerId={selectedMarkerId}
+                    selectedDetails={selectedDetails}
                     onMarkerClick={(id, lat, lon) => handleMarkerClick(id, lat, lon)}
+                    onMapStateChange={(center, radius) => {
+                      try { setMapCenter(center); setMapRadius(Math.max(0, Math.min(2000, Number(radius || 1000)))); } catch (e) { /* ignore */ }
+                    }}
                 />
             </div>
 
             <Offcanvas show={showFilter} onHide={() => setShowFilter(false)} placement="end">
                 <Offcanvas.Body>
-                    <LocationsFilter
-                        onSearch={handleSearch}
-                        loading={loading}
-                        suggestions={searchResults}
-                        onSelectSuggestion={(s) => handleSelectResult(s)}
-                        onSelectResult={(r) => handleSelectResult(r)}
+          <LocationsFilter
+            onSearch={handleSearch}
+            suggestions={searchResults}
+            onSelectSuggestion={(s) => handleSelectResult(s)}
+            onSelectResult={(r) => handleSelectResult(r)}
                         savedPlaces={savedPlaces}
                         onSave={(p) => handleSave(p)}
                         onRemoveSaved={(id) => handleRemoveSaved(id)}

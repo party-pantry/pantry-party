@@ -31,7 +31,7 @@ const LocationsResults: React.FC<Props> = ({ loading, suggestions, saved = [], o
   }
 
   if (!suggestions || suggestions.length === 0) {
-    return <div className="text-muted">Try searching for an address or place</div>;
+    return <div className="text-muted">Try modifying your filters</div>;
   }
 
   return (
