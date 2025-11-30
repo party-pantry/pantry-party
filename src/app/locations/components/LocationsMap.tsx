@@ -24,6 +24,8 @@ const LocationsMap: React.FC<{
   const userMarkerRef = useRef<L.Marker | null>(null);
   const filterCircleRef = useRef<L.Circle | null>(null);
   const filterPanelRef = useRef<HTMLElement | null>(null);
+  const currentRadiusRef = useRef<number>(1000);
+  const currentTypeRef = useRef<string>('all');
 
   useEffect(() => {
     if (mapRef.current) return;
@@ -36,6 +38,43 @@ const LocationsMap: React.FC<{
 
     mapRef.current = map;
     markersRef.current = L.layerGroup().addTo(map);
+
+    const applyRadiusFilter = (centerLatLng: L.LatLng, radiusMeters: number) => {
+      try {
+        // filter markers tracked by id
+        markersByIdRef.current.forEach((marker) => {
+          try {
+            const d = map.distance(marker.getLatLng(), centerLatLng);
+            if (d <= radiusMeters) {
+              (marker as any).addTo(map);
+            } else {
+              (marker as any).remove();
+            }
+          } catch (e) {
+            try { (marker as any).remove(); } catch (ee) { /* ignore */ }
+          }
+        });
+
+        // filter house markers
+        if (houseMarkersRef.current) {
+          (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
+            try {
+              const latlng = (layer as L.Marker).getLatLng();
+              const d = map.distance(latlng, centerLatLng);
+              if (d <= radiusMeters) {
+                (layer as any).addTo(map);
+              } else {
+                (layer as any).remove();
+              }
+            } catch (e) {
+              try { (layer as any).remove(); } catch (ee) { /* ignore */ }
+            }
+          });
+        }
+      } catch (e) {
+        // ignore
+      }
+    };
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -66,34 +105,11 @@ const LocationsMap: React.FC<{
 
               if (filterPanelRef.current) {
                 try {
-                  // reveal all markers when toggling the filter button closed
-                  try {
-                    if (markersRef.current) {
-                      (markersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                      });
-                    }
-                    markersByIdRef.current.forEach((marker) => {
-                      try { (marker as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                    });
-                    if (houseMarkersRef.current) {
-                      (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                      });
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-
-                  filterPanelRef.current.remove();
+                  try { filterPanelRef.current.remove(); } catch (e) { /* ignore */ }
                 } catch (e) {
                   // ignore
                 }
                 filterPanelRef.current = null;
-                if (filterCircleRef.current) {
-                  try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
-                  filterCircleRef.current = null;
-                }
                 return;
               }
 
@@ -118,12 +134,12 @@ const LocationsMap: React.FC<{
                       <label class="form-check-label" for="pp-filter-stores">Stores</label>
                     </div>
                   </div>
-                  <div class="mb-2"><label class="form-label mb-1">Radius (miles)</label>
-                    <input type="range" min="0" max="25" step="0.1" value="1" id="pp-filter-radius" class="form-range" />
-                    <div class="text-muted small" id="pp-filter-radius-label">1 mile</div>
+                  <div class="mb-2"><label class="form-label mb-1">Radius</label>
+                    <input type="range" min="0" max="2000" step="10" value="1000" id="pp-filter-radius" class="form-range" />
+                    <div class="text-muted small" id="pp-filter-radius-label">1000 meters</div>
                   </div>
                   <div class="d-flex justify-content-end gap-2">
-                    <button class="btn btn-sm btn-outline-secondary" id="pp-filter-reset">Clear</button>
+                    <button class="btn btn-sm btn-danger" id="pp-filter-reset">Reset</button>
                     <button class="btn btn-sm btn-secondary" id="pp-filter-close">Close</button>
                   </div>
                 </div>
@@ -170,8 +186,15 @@ const LocationsMap: React.FC<{
               const typeInputs = panel.querySelectorAll('input[name="pp-filter-type"]') as NodeListOf<HTMLInputElement> | null;
 
               if (radiusInput && radiusLabel) {
-                const milesToMeters = (m: number) => m * 1609.34;
-                const meters = milesToMeters(Number(radiusInput.value));
+                // initialize radius input from persisted value (meters)
+                try {
+                  // clamp persisted value to allowed range
+                  const persisted = Number(currentRadiusRef.current ?? 1000);
+                  const clamped = Math.max(0, Math.min(2000, persisted));
+                  radiusInput.value = String(clamped);
+                  radiusLabel.textContent = (clamped === 1 ? '1 meter' : `${clamped} meters`);
+                } catch (e) { /* ignore */ }
+                const meters = Number(radiusInput.value);
                 const initialCenter = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
                 if (filterCircleRef.current) {
                   filterCircleRef.current.setRadius(meters);
@@ -233,10 +256,14 @@ const LocationsMap: React.FC<{
                 }
 
                 radiusInput.addEventListener('input', (e) => {
-                  const rawVal = Number((e.target as HTMLInputElement).value);
-                  const val = Math.round(rawVal * 10) / 10; // one decimal precision
-                  if (radiusLabel) radiusLabel.textContent = (val === 1 ? '1 mile' : `${val} miles`);
-                  const m = milesToMeters(val);
+                  let rawVal = Number((e.target as HTMLInputElement).value);
+                  // clamp to allowed range
+                  rawVal = Math.max(0, Math.min(2000, rawVal));
+                  const val = Math.round(rawVal); // integer meters
+                  // persist current radius
+                  try { currentRadiusRef.current = val; } catch (ee) { /* ignore */ }
+                  if (radiusLabel) radiusLabel.textContent = (val === 1 ? '1 meter' : `${val} meters`);
+                  const m = val;
                   if (filterCircleRef.current) filterCircleRef.current.setRadius(m);
 
                   // filter markers by distance to user (if available) otherwise map center
@@ -279,9 +306,17 @@ const LocationsMap: React.FC<{
               }
 
               if (typeInputs) {
+                // initialize type radios from persisted value
+                try {
+                  typeInputs.forEach((inp) => {
+                    try { if (inp.value === currentTypeRef.current) inp.checked = true; } catch (e) { /* ignore */ }
+                  });
+                } catch (e) { /* ignore */ }
+
                 typeInputs.forEach((inp) => {
                   inp.addEventListener('change', (ev) => {
                     const v = (ev.target as HTMLInputElement).value;
+                    try { currentTypeRef.current = v; } catch (ee) { /* ignore */ }
                     try {
                       if (!houseMarkersRef.current || !markersRef.current) return;
                       const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
@@ -350,13 +385,14 @@ const LocationsMap: React.FC<{
                     if (allRadio) allRadio.checked = true;
                     if (homesRadio) homesRadio.checked = false;
                     if (storesRadio) storesRadio.checked = false;
+                    try { currentTypeRef.current = 'all'; } catch (ee) { /* ignore */ }
 
-                    // reset radius UI to 1 and apply the default radius filter (1 mile)
+                    // reset radius UI to default and apply the default radius filter (1000 m)
                     if (radiusInput && radiusLabel) {
-                      radiusInput.value = '1';
-                      radiusLabel.textContent = '1 mile';
-                      const milesToMeters = (m: number) => m * 1609.34;
-                      const meters = milesToMeters(1);
+                      radiusInput.value = '1000';
+                      radiusLabel.textContent = '1000 meters';
+                      try { currentRadiusRef.current = 1000; } catch (ee) { /* ignore */ }
+                      const meters = 1000;
                       const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
                       if (filterCircleRef.current) {
                         try { filterCircleRef.current.setLatLng(center); } catch (e) { /* ignore */ }
@@ -399,32 +435,9 @@ const LocationsMap: React.FC<{
                 closeBtn.addEventListener('click', () => {
                   if (!mapRef.current) return;
                   try {
-                    // reveal all markers when panel closes
-                    try {
-                      if (markersRef.current) {
-                        (markersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                          try { (layer as any).addTo(map); } catch (e) { /* ignore */ }
-                        });
-                      }
-                      // also ensure markers tracked by id are added
-                      markersByIdRef.current.forEach((marker) => {
-                        try { (marker as any).addTo(map); } catch (e) { /* ignore */ }
-                      });
-                      if (houseMarkersRef.current) {
-                        (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                          try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                        });
-                      }
-                    } catch (e) {
-                      // ignore
-                    }
-
+                    // close the panel but preserve the filter circle and current filtering
                     try { panel.remove(); } catch (e) { /* ignore */ }
                     filterPanelRef.current = null;
-                    if (filterCircleRef.current) {
-                      try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
-                      filterCircleRef.current = null;
-                    }
                   } catch (e) {
                     // ignore
                   }
@@ -507,6 +520,23 @@ const LocationsMap: React.FC<{
       }
     })();
 
+    // create an initial filter circle and apply radius filtering immediately (radius in meters)
+    try {
+      const initialCenter = map.getCenter();
+      const defaultMeters = Math.max(0, Math.min(2000, currentRadiusRef.current || 1000));
+      currentRadiusRef.current = defaultMeters;
+      const meters = defaultMeters;
+      if (filterCircleRef.current) {
+        try { filterCircleRef.current.setLatLng(initialCenter); } catch (e) { /* ignore */ }
+        filterCircleRef.current.setRadius(meters);
+      } else {
+        filterCircleRef.current = L.circle(initialCenter, { radius: meters, color: '#007bff', weight: 1 }).addTo(map);
+      }
+      try { applyRadiusFilter(initialCenter, meters); } catch (e) { /* ignore */ }
+    } catch (e) {
+      // ignore
+    }
+
     map.on('locationfound', (e: L.LocationEvent) => {
       if (!mapRef.current) return;
       try {
@@ -528,6 +558,11 @@ const LocationsMap: React.FC<{
         try {
           if (filterCircleRef.current) {
             filterCircleRef.current.setLatLng([e.latlng.lat, e.latlng.lng]);
+            try {
+              const center = filterCircleRef.current.getLatLng();
+              const radius = filterCircleRef.current.getRadius();
+              applyRadiusFilter(center, radius);
+            } catch (ee) { /* ignore */ }
           }
         } catch (err) {
           // ignore
@@ -598,7 +633,8 @@ const LocationsMap: React.FC<{
       m.addTo(markersLayer as L.LayerGroup);
       // apply active type filter (if panel open) and radius filter (if circle exists)
       try {
-        const typeSelected = (document.querySelector('input[name="pp-filter-type"]:checked') as HTMLInputElement | null)?.value || 'all';
+  const radio = (document.querySelector('input[name="pp-filter-type"]:checked') as HTMLInputElement | null);
+  const typeSelected = (radio && radio.value) || currentTypeRef.current || 'all';
         if (typeSelected === 'homes') {
           (m as any).remove();
         } else if (filterCircleRef.current) {
