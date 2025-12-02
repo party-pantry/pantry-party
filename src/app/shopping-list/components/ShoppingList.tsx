@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Container, Card, Row, Col, Button, Form, Placeholder } from 'react-bootstrap';
+import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
 import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
 // import { parse } from 'path';
 import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './ShoppingItemCard';
 import PurchasedItemCard from './PurchasedItemCard';
 import SuggestedItemsSection from './SuggestedItemsSection';
+import ShoppingListSkeleton from './ShoppingListSkeleton';
 
 interface SuggestedItem {
   ingredientId: number;
@@ -52,106 +53,6 @@ const getPriority = (priority: string) => {
   // Direct lookup, fallback to Low
   return colorMap[priority] ?? colorMap.Medium;
 };
-
-// Loading Skeleton Component
-const ShoppingListSkeleton: React.FC = () => (
-  <Container className="mb-12 min-h-screen mt-5" style={{ width: '95%' }}>
-    {/* Stats Cards Skeleton */}
-    <Row className="mb-4">
-      {[1, 2, 3, 4].map((i) => (
-        <Col key={i} md={3}>
-          <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-            <Card.Body>
-              <Placeholder as="h3" animation="glow">
-                <Placeholder xs={6} className="fs-2 mb-1" />
-              </Placeholder>
-              <Placeholder as={Card.Text} animation="glow">
-                <Placeholder xs={8} size="sm" />
-              </Placeholder>
-            </Card.Body>
-          </Card>
-        </Col>
-      ))}
-    </Row>
-
-    {/* Control Bar Skeleton */}
-    <div className="d-flex justify-content-between align-items-center mb-4">
-      <Placeholder as="h4" animation="glow">
-        <Placeholder xs={3} />
-      </Placeholder>
-      <div className="d-flex gap-2">
-        <Placeholder.Button variant="outline-secondary" size="sm" xs={2} />
-        <Placeholder.Button variant="success" xs={2} />
-      </div>
-    </div>
-
-    {/* Shopping Items Grid Skeleton */}
-    <Row className="g-3 mb-4">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <Col key={i} md={4} sm={6} xs={12}>
-          <Card className="shopping-item-card h-100 shadow-sm border-0">
-            <Card.Body>
-              <div className="d-flex justify-content-between mb-2">
-                <div className="d-flex gap-2">
-                  <Placeholder as="span" animation="glow">
-                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
-                  </Placeholder>
-                  <Placeholder as="span" animation="glow">
-                    <Placeholder xs={6} className="rounded-pill" style={{ height: '20px', width: '60px' }} />
-                  </Placeholder>
-                </div>
-                <Placeholder as="div" animation="glow">
-                  <Placeholder style={{ width: '20px', height: '20px', borderRadius: '4px' }} />
-                </Placeholder>
-              </div>
-              <Placeholder as="h6" animation="glow">
-                <Placeholder xs={8} className="mb-1" />
-              </Placeholder>
-              <Placeholder as="p" animation="glow" className="mb-2">
-                <Placeholder xs={5} size="sm" />
-              </Placeholder>
-              <div className="d-flex justify-content-between">
-                <Placeholder as="span" animation="glow">
-                  <Placeholder xs={4} />
-                </Placeholder>
-                <Placeholder as="div" animation="glow">
-                  <Placeholder style={{ width: '32px', height: '32px', borderRadius: '50%' }} />
-                </Placeholder>
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      ))}
-    </Row>
-
-    {/* Suggestions Section Skeleton */}
-    <Card className="shadow-sm border-0" style={{ borderRadius: '1rem' }}>
-      <Card.Header>
-        <Placeholder as="h4" animation="glow">
-          <Placeholder xs={6} />
-        </Placeholder>
-      </Card.Header>
-      <Card.Body>
-        <Row className="g-3">
-          {[1, 2, 3].map((i) => (
-            <Col md={4} key={i}>
-              <Card className="border-0 shadow-sm" style={{ borderRadius: '1rem' }}>
-                <Card.Body>
-                  <Placeholder as="div" animation="glow">
-                    <Placeholder xs={9} className="mb-2" />
-                    <Placeholder xs={7} size="sm" className="mb-2" />
-                    <Placeholder xs={8} size="sm" className="mb-3" />
-                    <Placeholder.Button variant="primary" xs={12} />
-                  </Placeholder>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Card.Body>
-    </Card>
-  </Container>
-);
 
 const ShoppingList: React.FC = () => {
   const { data: session } = useSession();
