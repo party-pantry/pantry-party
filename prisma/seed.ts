@@ -183,6 +183,27 @@ async function main() {
     });
   }
 
+  // Seed UserHouse (multiple users to a house)
+  for (const user of config.defaultUsers) {
+    for (const houseId of user.houses) {
+      console.log(`Seeding link between: User ${user.id} and House ${houseId}`);
+
+      await prisma.userHouse.upsert({
+        where: {
+          userId_houseId: {
+            userId: user.id,
+            houseId,
+          },
+        },
+        update: {},
+        create: {
+          userId: user.id,
+          houseId,
+        },
+      });
+    }
+  }
+
   // Seed Storages
   for (const storage of config.defaultStorages) {
     console.log(`Seeding Storage: ${storage.name} (ID: ${storage.id}, HouseID: ${storage.houseId}, Type: ${storage.type})`);
