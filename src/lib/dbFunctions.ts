@@ -389,7 +389,6 @@ export async function addRecipe(data: {
   downTime?: number;
   servings?: number;
   rating?: number;
-  image?: string;
 }) {
   const recipe = await prisma.recipe.create({
     data: {
@@ -404,7 +403,6 @@ export async function addRecipe(data: {
       servings: data.servings ?? 1,
       postDate: new Date(),
       rating: data.rating ?? 0,
-      image: data.image ?? null,
     },
   });
 
@@ -502,6 +500,31 @@ export async function deleteShoppingListItem(itemId: number) {
   await prisma.shoppingListItem.delete({
     where: { id: itemId },
   });
+}
+
+/* Mark multiple shopping list items as purchased (bulk) */
+export async function markShoppingListItemsBoughtBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.updateMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+    data: { purchased: true },
+  });
+
+  return result;
+}
+
+/* Delete multiple shopping list items (bulk) */
+export async function deleteShoppingListItemsBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.deleteMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+  });
+
+  return result;
 }
 
 /* Get suggested items based on low/out of stock inventory */
