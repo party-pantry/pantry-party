@@ -14,10 +14,10 @@ model User {
   password          String
   bio               String?
   image             String?
-  houses            House[]
   recipes           Recipe[]
   reviews           Review[]
   shoppingListItems ShoppingListItem[]
+  houses            UserHouse[]
 }
 
 model House {
@@ -27,8 +27,18 @@ model House {
   address   String?
   latitude  Float?
   longitude Float?
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  users     UserHouse[]
   storages  Storage[]
+}
+
+model UserHouse {
+  userId  Int
+  houseId Int
+
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  house   House @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  @@id([userId, houseId])
 }
 
 model Storage {
