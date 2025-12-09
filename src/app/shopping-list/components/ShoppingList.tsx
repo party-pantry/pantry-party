@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { Container, Card, Row, Col, Button, Form } from 'react-bootstrap';
-import { ShoppingItem } from '@/utils/shoppingListUtils';
+import { ShoppingItem, sortItemsByPriority } from '@/utils/shoppingListUtils';
+// import { parse } from 'path';
 import { LocalFoodCategory } from '@/lib/Units';
 import ShoppingItemCard from './ShoppingItemCard';
 import PurchasedItemCard from './PurchasedItemCard';
@@ -67,9 +68,6 @@ const ShoppingList: React.FC = () => {
     category: 'Other' as ShoppingItem['category'],
     priority: 'Medium' as ShoppingItem['priority'],
   });
-  // multi-select state
-  const [multiSelectMode, setMultiSelectMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const fetchShoppingList = async () => {
     try {
@@ -193,47 +191,6 @@ const ShoppingList: React.FC = () => {
     }
   };
 
-  const markItemsBoughtBulk = async (ids: number[]): Promise<void> => {
-    try {
-      const response = await fetch('/api/shopping-list/bulk', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'mark-bought', ids }),
-      });
-
-      if (response.ok) {
-        setSelectedIds([]);
-        setMultiSelectMode(false);
-        await fetchShoppingList();
-      }
-    } catch (error) {
-      console.error('Error marking items bought in bulk:', error);
-    }
-  };
-
-  const removeItemsBulk = async (ids: number[]): Promise<void> => {
-    try {
-      const response = await fetch('/api/shopping-list/bulk', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ids }),
-      });
-
-      if (response.ok) {
-        setSelectedIds([]);
-        setMultiSelectMode(false);
-        await fetchShoppingList();
-        await fetchSuggestions();
-      }
-    } catch (error) {
-      console.error('Error removing items in bulk:', error);
-    }
-  };
-
-  const toggleSelect = (id: number) => {
-    setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
-  };
-
   // Show skeleton while loading
   if (loading) {
     return <ShoppingListSkeleton />;
@@ -254,7 +211,7 @@ const ShoppingList: React.FC = () => {
       {/* Header Section */}
       <div className="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
         <h2 className="mb-0 fw-bold">Shopping List</h2>
-        <div className="d-flex gap-2 align-items-center">
+        <div className="d-flex gap-2">
           <Button
             variant={showPurchased ? 'primary' : 'secondary'}
             onClick={() => setShowPurchased(!showPurchased)}
@@ -271,38 +228,7 @@ const ShoppingList: React.FC = () => {
           >
             <strong>{showAddForm ? 'Cancel' : 'Add Item +'}</strong>
           </Button>
-          <Button
-            variant={multiSelectMode ? 'outline-secondary' : 'outline-primary'}
-            onClick={() => {
-              setMultiSelectMode(!multiSelectMode);
-              if (multiSelectMode) setSelectedIds([]);
-            }}
-            className="px-3"
-            size="sm"
-          >
-            {multiSelectMode ? 'Exit Select' : 'Multi-select'}
-          </Button>
         </div>
-        {multiSelectMode && (
-          <div className="d-flex gap-2 ms-3">
-            <Button
-              variant="success"
-              size="sm"
-              onClick={() => markItemsBoughtBulk(selectedIds)}
-              disabled={selectedIds.length === 0}
-            >
-              Mark as Bought
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={() => removeItemsBulk(selectedIds)}
-              disabled={selectedIds.length === 0}
-            >
-              Remove Items
-            </Button>
-          </div>
-        )}
       </div>
 
       {/* Stats Section */}
@@ -483,16 +409,12 @@ const ShoppingList: React.FC = () => {
         <>
           <h4 className="mt-5 mb-3 fw-bold">Your List</h4>
           <Row className="g-4 mb-4">
-            {unpurchasedItems.map((item) => (
-              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center">
+            {sortItemsByPriority(unpurchasedItems).map((item) => (
+              <Col key={item.id} md={4} sm={6} xs={12} className="justify-content-center ">
                 <ShoppingItemCard
                   item={item}
+                  onTogglePurchased={togglePurchased}
                   onRemove={removeItem}
-                  // only show checkbox when multi-select mode is active
-                  selectable={multiSelectMode}
-                  selected={selectedIds.includes(item.id)}
-                  onSelectToggle={toggleSelect}
-                  onMarkBought={(id: number) => markItemsBoughtBulk([id])}
                 />
               </Col>
             ))}
