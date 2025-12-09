@@ -19,8 +19,10 @@ const ReceiptScannerPage = async () => {
       <h1 className="text-2xl font-bold mb-4">Scan Your Receipt:</h1>
       <Row>
 
-        <Col md={6} className="mb-4">
+        <Col md={5} className="mb-4 ">
           <ReceiptCamera />
+        </Col>
+        <Col md={1} className="mb-4">
         </Col>
         <Col md={6} className="mb-4">
           <ReceiptUpload />

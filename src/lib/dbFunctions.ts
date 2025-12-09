@@ -389,6 +389,7 @@ export async function addRecipe(data: {
   downTime?: number;
   servings?: number;
   rating?: number;
+  image?: string;
 }) {
   const recipe = await prisma.recipe.create({
     data: {
@@ -403,6 +404,7 @@ export async function addRecipe(data: {
       servings: data.servings ?? 1,
       postDate: new Date(),
       rating: data.rating ?? 0,
+      image: data.image ?? null,
     },
   });
 
