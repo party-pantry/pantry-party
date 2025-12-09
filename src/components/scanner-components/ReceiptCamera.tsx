@@ -120,6 +120,7 @@ const ReceiptCamera = () => {
     setOpenModal(false);
 
     // Optionally show a success message or reset form
+    // eslint-disable-next-line no-alert
     alert('Items saved!');
   };
 
