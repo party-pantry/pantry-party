@@ -117,11 +117,11 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
   };
 
   const displayedItems = sortRules.length >= 0 ? sortedItems : localItems;
-  
+
   // Calculate empty rows needed to reach minimum of 5 rows
   const MIN_ROWS = 5;
   const emptyRowsCount = Math.max(0, MIN_ROWS - displayedItems.length);
-  
+
   return (
     <div className="table-responsive">
       <DndContext
