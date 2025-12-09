@@ -117,6 +117,11 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
   };
 
   const displayedItems = sortRules.length >= 0 ? sortedItems : localItems;
+  
+  // Calculate empty rows needed to reach minimum of 5 rows
+  const MIN_ROWS = 5;
+  const emptyRowsCount = Math.max(0, MIN_ROWS - displayedItems.length);
+  
   return (
     <div className="table-responsive">
       <DndContext
@@ -185,21 +190,35 @@ const IngredientTable: React.FC<Props> = ({ items, onDelete, onEdit }) => {
           >
             <tbody>
               {displayedItems.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="text-center py-5 text-muted">
-                    No items found.
-                  </td>
-                </tr>
+                <>
+                  <tr>
+                    <td colSpan={7} className="text-center py-5 text-muted">
+                      No items found.
+                    </td>
+                  </tr>
+                  {Array.from({ length: MIN_ROWS - 1 }).map((_, index) => (
+                    <tr key={`empty-${index}`}>
+                      <td colSpan={7} style={{ height: '60px' }}>&nbsp;</td>
+                    </tr>
+                  ))}
+                </>
               ) : (
-                displayedItems.map(item => (
-                  <IngredientRow
-                    key={item.id}
-                    {...item}
-                    onDelete={onDelete}
-                    onEdit={onEdit}
-                    headerSelected={headerSeclected}
-                  />
-                ))
+                <>
+                  {displayedItems.map(item => (
+                    <IngredientRow
+                      key={item.id}
+                      {...item}
+                      onDelete={onDelete}
+                      onEdit={onEdit}
+                      headerSelected={headerSeclected}
+                    />
+                  ))}
+                  {Array.from({ length: emptyRowsCount }).map((_, index) => (
+                    <tr key={`empty-${index}`}>
+                      <td colSpan={7} style={{ height: '60px' }}>&nbsp;</td>
+                    </tr>
+                  ))}
+                </>
               )}
             </tbody>
           </SortableContext>
