@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category, Difficulty } from '@prisma/client';
+import { Unit, Status, Category, Difficulty, FoodCategory } from '@prisma/client';
 import pluralize from 'pluralize';
 import { prisma } from './prisma';
 import { isNormalizedCloseMatch } from './fuzzyHelpers';
@@ -376,6 +376,67 @@ export async function addRecipeInstruction(data: {
   });
 
   return instruction;
+}
+
+export async function addRecipeIngredient(
+  recipeId: number,
+  ingredientId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+): Promise<number | null> {
+  try {
+    const recipeIngredient = await prisma.recipeIngredient.create({
+      data: {
+        recipeId,
+        ingredientId,
+        quantity,
+        unit,
+        name,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return recipeIngredient.id;
+  } catch (error) {
+    console.error('Error adding recipe ingredient:', error);
+    return null;
+  }
+}
+
+export async function findIngredientByName(name: string): Promise<number | null> {
+  const ingredient = await prisma.ingredient.findFirst({
+    where: { name },
+    select: { id: true },
+  });
+
+  return ingredient ? ingredient.id : null;
+}
+
+export async function addIngredient(data: {
+  name: string;
+  price?: number;
+  foodCategory: FoodCategory;
+}): Promise<number | null> {
+  try {
+    const ingredient = await prisma.ingredient.create({
+      data: {
+        name: data.name,
+        price: data.price || 0, // Default price to 0 if not provided
+        foodCategory: data.foodCategory || 'OTHER',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return ingredient.id;
+  } catch (error) {
+    console.error('Error adding ingredient:', error);
+    return null;
+  }
 }
 
 /* Add a new recipe */
