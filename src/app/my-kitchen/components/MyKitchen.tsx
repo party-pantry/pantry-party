@@ -200,6 +200,7 @@ const MyKitchen = () => {
   const [itemToEdit, setItemToEdit] = useState<EditItem | null>(null);
   const [itemToDelete, setItemToDelete] = useState<BaseItem | undefined>(undefined);
   const [loading, setLoading] = useState(true);
+  const [collapsedMap, setCollapsedMap] = useState<Record<number, boolean>>({});
 
   const userId = (useSession().data?.user as { id?: number })?.id;
 
@@ -208,6 +209,8 @@ const MyKitchen = () => {
     quantity: undefined,
     status: [],
   });
+
+  const activeHouse = houses.find((house) => house.id === activeHouseId);
 
   const fetchHouses = useCallback(async () => {
     if (!userId) return;
@@ -230,6 +233,16 @@ const MyKitchen = () => {
       setLoading(false);
     }
   }, [userId]);
+
+  useEffect(() => {
+    if (activeHouse) {
+      const initialMap: Record<number, boolean> = {};
+      activeHouse.storages.forEach((s) => {
+        initialMap[s.id] = false; // default: expanded
+      });
+      setCollapsedMap(initialMap);
+    }
+  }, [activeHouse]);
 
   useEffect(() => {
     fetchHouses();
@@ -324,7 +337,6 @@ const MyKitchen = () => {
     return <KitchenSkeleton />;
   }
 
-  const activeHouse = houses.find((house) => house.id === activeHouseId);
   const allItems = activeHouse?.storages.flatMap((storage) => getDisplayedStocks(storage)) || [];
 
   const totalItems = allItems.length;
@@ -387,7 +399,7 @@ const MyKitchen = () => {
                 </Col>
               </Row>
 
-              <Row className="mb-4">
+              <Row className="mb-2">
                 <Col md={3} sm={6} xs={12} className="mb-3">
                   <Card className="text-center shadow-sm border-0" style={{ borderRadius: '1rem' }}>
                     <Card.Body className="py-4">
@@ -422,6 +434,25 @@ const MyKitchen = () => {
                 </Col>
               </Row>
 
+               {/* Collapse and Expand buttons */}
+                <Row className="mb-1 justify-content-end align-items-center">
+                  <Col md={2} className="text-end">
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        // const shouldCollapse = Object.values(collapsedMap).some(v => !v); // if any is expanded, collapse all
+                        const allCollapsed = Object.values(collapsedMap).every(v => v);
+                        const newState = !allCollapsed; // if all collapsed, expand all, else collapse all
+                        const newMap = Object.fromEntries(
+                          Object.keys(collapsedMap).map(k => [k, newState]),
+                        );
+                        setCollapsedMap(newMap);
+                      }}
+                    >
+                      {Object.values(collapsedMap).every(v => v) ? 'Expand All' : 'Collapse All'}
+                    </Button>
+                  </Col>
+                </Row>
               {house.storages.map((storage) => (
                 <StorageContainer
                   key={storage.id}
@@ -432,6 +463,13 @@ const MyKitchen = () => {
                   storageInfo={{ name: storage.name, type: storage.type, storageId: storage.id, houseId: activeHouseId }}
                   items={getDisplayedStocks(storage)}
                   itemsCount={getDisplayedStocks(storage).length}
+                  allCollapsed={collapsedMap[storage.id]}
+                  onCollapseToggle={(collapsed) => {
+                    setCollapsedMap((prev) => ({
+                      ...prev,
+                      [storage.id]: collapsed,
+                    }));
+                  }}
                 >
                   <IngredientTable
                     items={getDisplayedStocks(storage)}
