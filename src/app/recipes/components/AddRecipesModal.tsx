@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
-import { Difficulty } from '@prisma/client';
+import { addRecipe, addInstruction, addRecipeNutrition, findIngredientByName } from '@/lib/dbFunctions';
+import { Difficulty, Unit } from '@prisma/client';
 
 interface Ingredient {
   name: string;
   quantity: string;
-  unit: string;
+  unit: Unit;
 }
 
 interface Instruction {
@@ -83,16 +83,16 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     }
   };
 
-  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string) => {
+  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | Unit) => {
     const updatedIngredients = [...formData.ingredients];
-    updatedIngredients[index][field] = value;
+    updatedIngredients[index][field] = value as any; // Cast to `any` to handle both string and Unit types
     setFormData({ ...formData, ingredients: updatedIngredients });
   };
 
   const handleAddIngredient = () => {
     setFormData({
       ...formData,
-      ingredients: [...formData.ingredients, { name: '', quantity: '', unit: '' }],
+      ingredients: [...formData.ingredients, { name: '', quantity: '', unit: '' as Unit }],
     });
   };
 
@@ -278,13 +278,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                   onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
                   required
                 />
-                <Form.Control
-                  type="text"
-                  placeholder="Unit"
+                <Form.Select
                   value={ingredient.unit}
-                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value as Unit)}
                   required
-                />
+                >
+                  <option value="" disabled>
+                    Select Unit
+                  </option>
+                  {Object.values(Unit).map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit.replace('_', ' ').toLowerCase()}
+                    </option>
+                  ))}
+                </Form.Select>
                 <Button variant="danger" className='fw-bold' onClick={() => handleRemoveIngredient(index)}>
                   -
                 </Button>

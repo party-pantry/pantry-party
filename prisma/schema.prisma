@@ -21,22 +21,21 @@ model User {
 }
 
 model House {
-  id        Int       @id @default(autoincrement())
+  id        Int         @id @default(autoincrement())
   userId    Int
   name      String
   address   String?
   latitude  Float?
   longitude Float?
-  users     UserHouse[]
   storages  Storage[]
+  users     UserHouse[]
 }
 
 model UserHouse {
   userId  Int
   houseId Int
-
-  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
   house   House @relation(fields: [houseId], references: [id], onDelete: Cascade)
+  user    User  @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@id([userId, houseId])
 }
@@ -87,8 +86,8 @@ model Recipe {
   servings     Int
   postDate     DateTime            @default(now()) @updatedAt
   rating       Float               @default(0)
-  reviewCount  Int                 @default(0)
   image        String?
+  reviewCount  Int                 @default(0)
   user         User                @relation(fields: [userId], references: [id])
   ingredients  RecipeIngredient[]
   instructions RecipeInstruction[]

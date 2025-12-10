@@ -194,7 +194,7 @@ export async function updateStock(data: {
   if (currentStock.ingredient.name !== sterilizedItemName) {
     // Try to find existing ingredient with the new name
     let targetIngredient = await prisma.ingredient.findFirst({
-      where: { name: sterilizedItemName },
+      where: { id: data.ingredientId }, // Use the ingredientId to find the ingredient
     });
 
     // If ingredient doesn't exist, create it
@@ -378,6 +378,19 @@ export async function addRecipeInstruction(data: {
   return instruction;
 }
 
+export async function findIngredientByName(name: string): Promise<number | null> {
+  const ingredient = await prisma.ingredient.findUnique({
+    where: {
+      name,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return ingredient ? ingredient.id : null;
+}
+
 /* Add a new recipe */
 export async function addRecipe(data: {
   userId: number;
@@ -388,6 +401,7 @@ export async function addRecipe(data: {
   cookTime?: number;
   downTime?: number;
   servings?: number;
+  image?: string;
   rating?: number;
   image?: string;
 }) {
@@ -402,6 +416,7 @@ export async function addRecipe(data: {
       cookTime: data.cookTime ?? 0,
       downTime: data.downTime ?? 0,
       servings: data.servings ?? 1,
+      image: data.image ?? null,
       postDate: new Date(),
       rating: data.rating ?? 0,
       image: data.image ?? null,
