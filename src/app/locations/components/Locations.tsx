@@ -113,11 +113,6 @@ const Locations = () => {
     const next = savedPlaces.filter((s) => s.id !== id);
     persistSaved(next);
   };
-
-  // NOTE: visible suggestions are driven by the map component (onVisibleShops) so
-  // we do not perform a separate client-side distance filter here. The map is the
-  // authoritative source of which shops are within the active radius.
-
   return (
         <main style={{ position: 'relative', width: '100%', height: '100%' }}>
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
