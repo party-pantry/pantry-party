@@ -56,77 +56,79 @@ export async function POST(req: Request) {
     }
     const buffer = Math.max(0, Math.min(MAX_BUFFER, Number(body.buffer || 1000)));
 
-    const ORS_POI_URL = `${process.env.ORS_BASE_URL || 'https://api.openrouteservice.org'}/pois`;
-    const ORS_API_KEY = process.env.ORS_API_KEY;
-    if (!ORS_API_KEY) return NextResponse.json({ error: 'ORS API key not configured' }, { status: 500 });
+    const radiusInMeters = buffer;
+    const overpassQuery = `
+      [out:json][timeout:10];
+      (
+        node["shop"~"supermarket|grocery|convenience|greengrocer|butcher|seafood|bakery|deli|dairy|cheese|beverages|spices|organic"](around:${radiusInMeters},${body.latitude},${body.longitude});
+        way["shop"~"supermarket|grocery|convenience|greengrocer|butcher|seafood|bakery|deli|dairy|cheese|beverages|spices|organic"](around:${radiusInMeters},${body.latitude},${body.longitude});
+      );
+      out center tags;
+    `;
 
-    const payload = {
-      request: 'pois',
-      geometry: {
-        geojson: { type: 'Point', coordinates: [body.longitude, body.latitude] },
-        buffer,
-      },
-      limit: 500,
-    };
-
-    const resp = await fetch(ORS_POI_URL, {
+    const resp = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: ORS_API_KEY,
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `data=${encodeURIComponent(overpassQuery)}`,
+      signal: AbortSignal.timeout(12000), // 12 second timeout
     });
 
-    const respText = await resp.text().catch(() => null);
     if (!resp.ok) {
-      console.error('ORS error', { status: resp.status, sample: respText?.slice?.(0, MAX_SAMPLE) });
-      return NextResponse.json({ error: 'ORS request failed', details: respText }, { status: resp.status });
-    }
-
-    const sanitized = sanitizeORSResponseText(respText);
-    let data: any;
-    try {
-      data = sanitized ? JSON.parse(sanitized) : {};
-    } catch (parseErr) {
-      console.error('Parse error', { parseErr: String(parseErr), sample: respText?.slice?.(0, MAX_SAMPLE) });
-      return NextResponse.json({ error: 'Invalid ORS response' }, { status: 502 });
-    }
-
-    const features = Array.isArray(data.features) ? data.features : [];
-
-    const filtered = features.filter((f: any) => {
-      // ORS category information can appear in different shapes; check all sensible places
-      const catId = f?.properties?.category?.id ?? f?.properties?.category_id;
-      if (typeof catId === 'number' && SHOP_CATEGORY_IDS.has(catId)) return true;
-      const catMap = f?.properties?.category_ids;
-      if (catMap && typeof catMap === 'object') {
-        return Object.keys(catMap).some((k) => {
-          const n = Number(k);
-          return !Number.isNaN(n) && SHOP_CATEGORY_IDS.has(n);
-        });
+      console.error('Overpass API error', { status: resp.status });
+      
+      // Return empty results on timeout instead of erroring
+      if (resp.status === 504 || resp.status === 429) {
+        console.warn('Overpass API timeout/rate limit, returning empty results');
+        return NextResponse.json({ count: 0, shops: [] }, { status: 200 });
       }
-      return false;
-    });
+      
+      return NextResponse.json({ error: 'Failed to fetch shops' }, { status: resp.status });
+    }
 
-    const shops = filtered
-      .map((f: any, idx: number) => {
-        const coords = f?.geometry?.coordinates ?? [];
-        const lon = coords[0] ?? null;
-        const lat = coords[1] ?? null;
+    const data: any = await resp.json();
+    const elements = Array.isArray(data.elements) ? data.elements : [];
+    console.log('[DEBUG] Overpass returned', elements.length, 'elements');
+
+    const shops = elements
+      .map((el: any, idx: number) => {
+        const lat = el.lat ?? el.center?.lat ?? null;
+        const lon = el.lon ?? el.center?.lon ?? null;
+        const name = el.tags?.name ?? el.tags?.brand ?? `Shop ${idx + 1}`;
+        const shopType = el.tags?.shop ?? 'shop';
+        const addrFull = el.tags?.['addr:full'];
+        const addrNumber = el.tags?.['addr:housenumber'] ?? '';
+        const addrStreet = el.tags?.['addr:street'] ?? '';
+        const addressStr = `${addrNumber} ${addrStreet}`.trim();
+        const address = addrFull ?? (addressStr || null);
+        
         return {
-          id: f?.properties?.id ?? f?.id ?? `ors-${idx}`,
-          label: f?.properties?.name ?? f?.properties?.label ?? f?.properties?.osm_tags?.name ?? null,
+          id: `osm-${el.type}-${el.id}`,
+          label: name,
           latitude: lat,
           longitude: lon,
-          properties: f.properties ?? {},
+          properties: {
+            name,
+            address,
+            category: { label: shopType, id: 0 },
+            osm_type: el.type,
+            osm_id: el.id,
+            ...el.tags,
+          },
         };
       })
       .filter((p: any) => p.latitude != null && p.longitude != null);
 
+    console.log('[DEBUG] Returning', shops.length, 'shops');
     return NextResponse.json({ shops, count: shops.length });
   } catch (err: any) {
     console.error('Handler error', err?.message || String(err));
+    
+    // Return empty results on timeout instead of error
+    if (err?.name === 'AbortError' || err?.message?.includes('timeout')) {
+      console.warn('Request timeout, returning empty results');
+      return NextResponse.json({ count: 0, shops: [] }, { status: 200 });
+    }
+    
     return NextResponse.json({ error: err?.message || String(err) }, { status: 500 });
   }
 }
