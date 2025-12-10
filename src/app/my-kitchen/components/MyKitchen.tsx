@@ -337,7 +337,6 @@ const MyKitchen = () => {
     return <KitchenSkeleton />;
   }
 
-  
   const allItems = activeHouse?.storages.flatMap((storage) => getDisplayedStocks(storage)) || [];
 
   const totalItems = allItems.length;
@@ -434,7 +433,7 @@ const MyKitchen = () => {
                   </Card>
                 </Col>
               </Row>
-              
+
                {/* Collapse and Expand buttons */}
                 <Row className="mb-1 justify-content-end align-items-center">
                   <Col md={2} className="text-end">
@@ -443,9 +442,9 @@ const MyKitchen = () => {
                       onClick={() => {
                         // const shouldCollapse = Object.values(collapsedMap).some(v => !v); // if any is expanded, collapse all
                         const allCollapsed = Object.values(collapsedMap).every(v => v);
-                        const newState = allCollapsed ? false : true; // if all collapsed, expand all, else collapse all
+                        const newState = !allCollapsed; // if all collapsed, expand all, else collapse all
                         const newMap = Object.fromEntries(
-                          Object.keys(collapsedMap).map(k => [k, newState])
+                          Object.keys(collapsedMap).map(k => [k, newState]),
                         );
                         setCollapsedMap(newMap);
                       }}

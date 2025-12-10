@@ -65,17 +65,15 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
             requestAnimationFrame(() => setMaxHeight(0));
             setOpacity(0);
           }
-        } else {
+        } else if (bodyRef.current) {
           // expand
-          if (bodyRef.current) {
-            setMaxHeight(bodyRef.current.scrollHeight);
-            requestAnimationFrame(() => setOpacity(1));
-          }
+          setMaxHeight(bodyRef.current.scrollHeight);
+          requestAnimationFrame(() => setOpacity(1));
         }
-        setCollapsed(collapsedProp);
       }
+      setCollapsed(collapsedProp);
     }
-  }, [collapsedProp]);
+  }, [collapsedProp, collapsed]);
 
   // const toggleCollapseParent = () => {
   //   const newState = !collapsed;
