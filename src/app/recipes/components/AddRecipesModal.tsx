@@ -3,13 +3,13 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
-import { Difficulty } from '@prisma/client';
+import { addRecipe, addInstruction, addRecipeNutrition, findIngredientByName, addRecipeIngredient, addIngredient } from '@/lib/dbFunctions';
+import { Difficulty, Unit } from '@prisma/client';
 
 interface Ingredient {
   name: string;
   quantity: string;
-  unit: string;
+  unit: Unit;
 }
 
 interface Instruction {
@@ -76,6 +76,30 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
           nutrition.unit,
         )),
       );
+      await Promise.all(
+        formData.ingredients.map(async ingredient => {
+          let ingredientId = await findIngredientByName(ingredient.name);
+          if (!ingredientId) {
+            // If ingredient is not found, add it to the database
+            ingredientId = await addIngredient({
+              name: ingredient.name,
+              price: 5, // Default price, adjust as needed
+              foodCategory: 'OTHER', // Default category, adjust as needed
+            });
+            if (!ingredientId) {
+              console.error(`Failed to add ingredient: ${ingredient.name}`);
+              return;
+            }
+          }
+          await addRecipeIngredient(
+            result.id,
+            ingredientId,
+            parseFloat(ingredient.quantity),
+            ingredient.unit,
+            ingredient.name,
+          );
+        }),
+      );
       onSubmit(result);
       onHide();
     } catch (error) {
@@ -83,16 +107,23 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     }
   };
 
-  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string) => {
+  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | Unit) => {
     const updatedIngredients = [...formData.ingredients];
-    updatedIngredients[index][field] = value;
+    if (field === 'unit') {
+      updatedIngredients[index][field] = value as Unit;
+    } else {
+      updatedIngredients[index][field] = value;
+    }
     setFormData({ ...formData, ingredients: updatedIngredients });
   };
 
   const handleAddIngredient = () => {
     setFormData({
       ...formData,
-      ingredients: [...formData.ingredients, { name: '', quantity: '', unit: '' }],
+      ingredients: [
+        ...formData.ingredients,
+        { name: '', quantity: '', unit: Unit.GRAM }, // Default unit set to Unit.GRAM
+      ],
     });
   };
 
@@ -278,13 +309,20 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                   onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
                   required
                 />
-                <Form.Control
-                  type="text"
-                  placeholder="Unit"
+                <Form.Select
                   value={ingredient.unit}
-                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
+                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value as Unit)}
                   required
-                />
+                >
+                  <option value="" disabled>
+                    Select Unit
+                  </option>
+                  {Object.values(Unit).map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit.replace('_', ' ').toLowerCase()}
+                    </option>
+                  ))}
+                </Form.Select>
                 <Button variant="danger" className='fw-bold' onClick={() => handleRemoveIngredient(index)}>
                   -
                 </Button>
