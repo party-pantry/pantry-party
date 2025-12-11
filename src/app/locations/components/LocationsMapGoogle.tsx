@@ -53,7 +53,6 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
   const map = useMap();
   const [openInfoWindowId, setOpenInfoWindowId] = useState<string | null>(null);
   const [houseMarkers] = useState<Suggestion[]>([]); // TODO: Load from API
-  const [selectedStoreForDirections, setSelectedStoreForDirections] = useState<string | null>(null);
   const [hasInitializedUserLocation, setHasInitializedUserLocation] = useState(false);
 
   // Center map on user location when first detected
@@ -87,7 +86,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
       }
       setOpenInfoWindowId(suggestion.id || null);
     },
-    [onMarkerClick]
+    [onMarkerClick],
   );
 
   // Calculate distance between two points (Haversine formula)
@@ -95,12 +94,11 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
     const R = 6371000; // Earth's radius in meters
     const dLat = ((lat2 - lat1) * Math.PI) / 180;
     const dLng = ((lng2 - lng1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2)
+      + Math.cos((lat1 * Math.PI) / 180)
+        * Math.cos((lat2 * Math.PI) / 180)
+        * Math.sin(dLng / 2)
+        * Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -110,11 +108,14 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
     const center = userLocation || defaultCenter;
     const radiusMeters = radiusMiles * 1609.34;
 
-    const allMarkers = filterType === 'stores' 
-      ? groceryStores 
-      : filterType === 'homes' 
-      ? houseMarkers 
-      : [...searchResults, ...houseMarkers, ...groceryStores];
+    let allMarkers: Suggestion[];
+    if (filterType === 'stores') {
+      allMarkers = groceryStores;
+    } else if (filterType === 'homes') {
+      allMarkers = houseMarkers;
+    } else {
+      allMarkers = [...searchResults, ...houseMarkers, ...groceryStores];
+    }
 
     if (!showFilterPanel && filterType === 'all') {
       return allMarkers;
@@ -127,7 +128,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
           center.lat,
           center.lng,
           marker.latitude,
-          marker.longitude
+          marker.longitude,
         );
         return distance <= radiusMeters;
       }
@@ -144,8 +145,8 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
 
     const fetchNearbyStores = async () => {
       try {
-        const { Place } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
-        
+        const { Place } = await google.maps.importLibrary('places') as google.maps.PlacesLibrary;
+
         const request = {
           fields: ['displayName', 'location', 'formattedAddress', 'id'],
           includedTypes: ['supermarket'],
@@ -164,7 +165,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
             const lat = place.location?.lat() || null;
             const lng = place.location?.lng() || null;
             const uniqueId = place.id || `store-${lat}-${lng}-${index}`;
-            
+
             return {
               id: uniqueId,
               label: place.displayName || 'Unknown Store',
@@ -177,7 +178,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
                 : undefined,
             };
           });
-          
+
           // Sort by distance
           stores.sort((a, b) => (a.distance || 0) - (b.distance || 0));
           setGroceryStores(stores);
@@ -191,7 +192,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
     };
 
     fetchNearbyStores();
-  }, [userLocation, filterType, radiusMiles]);
+  }, [userLocation, filterType, radiusMiles, setGroceryStores]);
 
   // Function to get directions
   const getDirections = useCallback((store: Suggestion) => {
@@ -200,7 +201,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
     const origin = `${userLocation.lat},${userLocation.lng}`;
     const destination = `${store.latitude},${store.longitude}`;
     const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
-    
+
     window.open(url, '_blank');
   }, [userLocation]);
 
@@ -224,7 +225,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
         const isSelected = selectedMarkerId === marker.id;
         const isHouse = houseMarkers.includes(marker);
         const isGroceryStore = groceryStores.includes(marker);
-        
+
         // Ensure unique key even if marker.id is missing
         const markerKey = marker.id || `marker-${marker.latitude}-${marker.longitude}-${index}`;
 
@@ -235,8 +236,18 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
               onClick={() => handleMarkerClick(marker)}
             >
               <Pin
-                background={isSelected ? '#FFD700' : isGroceryStore ? '#34A853' : isHouse ? '#4285F4' : '#EA4335'}
-                borderColor={isSelected ? '#FFA500' : isGroceryStore ? '#2D8E47' : isHouse ? '#1967D2' : '#C5221F'}
+                background={(() => {
+                  if (isSelected) return '#FFD700';
+                  if (isGroceryStore) return '#34A853';
+                  if (isHouse) return '#4285F4';
+                  return '#EA4335';
+                })()}
+                borderColor={(() => {
+                  if (isSelected) return '#FFA500';
+                  if (isGroceryStore) return '#2D8E47';
+                  if (isHouse) return '#1967D2';
+                  return '#C5221F';
+                })()}
                 glyphColor="#fff"
                 scale={isSelected ? 1.3 : 1}
               />
@@ -284,7 +295,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
                 map.setZoom(14);
               }
             }}
-            className="btn btn-light shadow-sm mb-2 location-btn"
+            className="btn btn-light shadow-sm location-btn"
             title="Center on my location"
             aria-label="Center on my location"
           >
@@ -307,7 +318,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
         {/* Filter Button */}
         <button
           onClick={() => setShowFilterPanel(!showFilterPanel)}
-          className="btn btn-light shadow-sm mb-2 filter-btn"
+          className="btn btn-light shadow-sm filter-btn"
           title="Filter"
           aria-label="Toggle filter panel"
         >
@@ -434,6 +445,9 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
           bottom: 20px;
           right: 10px;
           z-index: 1000;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
         }
 
         .filter-btn, .location-btn {
@@ -444,6 +458,7 @@ const MapContent: React.FC<Omit<LocationsMapGoogleProps, 'onOpenFilters'> & {
           align-items: center;
           justify-content: center;
           border-radius: 2px;
+          margin-bottom: 0 !important;
         }
 
         .filter-panel {
@@ -537,7 +552,7 @@ const LocationsMapGoogle: React.FC<LocationsMapGoogleProps> = ({
           enableHighAccuracy: true,
           timeout: 10000,
           maximumAge: 0,
-        }
+        },
       );
     } else {
       setLocationError('Geolocation is not supported by your browser.');
