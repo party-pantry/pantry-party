@@ -10,6 +10,9 @@ export interface House {
   longitude: number;
 }
 
+/**
+ * Hook to fetch user's houses from the kitchen API
+ */
 export function useHouses() {
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState(false);
@@ -24,7 +27,7 @@ export function useHouses() {
           setHouses(data || []);
         }
       } catch (error) {
-        console.error('Failed to fetch houses:', error);
+        // Failed to fetch houses, will retry on next mount
       } finally {
         setLoading(false);
       }

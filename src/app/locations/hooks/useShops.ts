@@ -20,42 +20,20 @@ export interface Shop {
 
 const CACHE_KEY = 'pantry_party_shops_cache';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
-const MAX_RADIUS = 2000; // Always fetch max radius and filter client-side
+const MAX_RADIUS = 2000; // Fetch maximum radius from API
 
-export function useShops(center: { lat: number; lng: number }, radius: number) {
+/**
+ * Hook to fetch and cache shops from the API
+ * Returns all shops within MAX_RADIUS - filtering by radius is done in the map component
+ */
+export function useShops(center: { lat: number; lng: number }) {
   const [allShops, setAllShops] = useState<Shop[]>([]);
-  const [shops, setShops] = useState<Shop[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Filter shops based on radius
-  useEffect(() => {
-    if (!allShops.length || !center) {
-      setShops([]);
-      return;
-    }
-
-    const filtered = allShops.filter((shop) => {
-      const lat1 = center.lat * Math.PI / 180;
-      const lat2 = shop.latitude * Math.PI / 180;
-      const deltaLat = (shop.latitude - center.lat) * Math.PI / 180;
-      const deltaLng = (shop.longitude - center.lng) * Math.PI / 180;
-
-      const a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
-                Math.cos(lat1) * Math.cos(lat2) *
-                Math.sin(deltaLng / 2) * Math.sin(deltaLng / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distance = 6371000 * c; // Earth radius in meters
-
-      return distance <= radius;
-    });
-
-    setShops(filtered);
-  }, [allShops, center, radius]);
-
   const fetchShops = useCallback(async () => {
-    if (!center) return;
-    
+    if (!center || !center.lat || !center.lng) return;
+
     // Check cache first
     try {
       const cached = localStorage.getItem(CACHE_KEY);
@@ -65,19 +43,19 @@ export function useShops(center: { lat: number; lng: number }, radius: number) {
         const timeDiff = Date.now() - timestamp;
         const latDiff = Math.abs(lat - center.lat);
         const lngDiff = Math.abs(lng - center.lng);
-        
+
         if (timeDiff < CACHE_DURATION && latDiff < 0.05 && lngDiff < 0.05) {
           setAllShops(data);
           return;
         }
       }
     } catch (e) {
-      console.warn('Failed to read cache:', e);
+      // Cache read failed, will fetch fresh data
     }
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/shops', {
         method: 'POST',
@@ -96,7 +74,7 @@ export function useShops(center: { lat: number; lng: number }, radius: number) {
       const data = await response.json();
       const fetchedShops = data.shops || [];
       setAllShops(fetchedShops);
-      
+
       // Cache the results
       try {
         localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -106,7 +84,7 @@ export function useShops(center: { lat: number; lng: number }, radius: number) {
           lng: center.lng,
         }));
       } catch (e) {
-        console.warn('Failed to cache shops:', e);
+        // Cache write failed, continue without caching
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch shops');
@@ -114,11 +92,15 @@ export function useShops(center: { lat: number; lng: number }, radius: number) {
     } finally {
       setLoading(false);
     }
-  }, [center?.lat, center?.lng]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [center.lat, center.lng]);
 
   useEffect(() => {
-    fetchShops();
-  }, [fetchShops]);
+    if (center && center.lat && center.lng) {
+      fetchShops();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchShops, center]);
 
-  return { shops, loading, error, refetch: fetchShops };
+  return { shops: allShops, loading, error, refetch: fetchShops };
 }

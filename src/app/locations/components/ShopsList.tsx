@@ -1,6 +1,8 @@
 'use client';
 
 import React from 'react';
+import { ListGroup, Spinner, Button } from 'react-bootstrap';
+import { Plus, Check } from 'lucide-react';
 import type { Shop } from '../hooks/useShops';
 
 interface Props {
@@ -9,15 +11,17 @@ interface Props {
   onSelect?: (shop: Shop) => void;
   onSave?: (shop: Shop) => void;
   savedIds?: Set<string>;
+  emptyTitle?: string;
+  emptyHint?: string;
 }
 
-export default function ShopsList({ shops, loading, onSelect, onSave, savedIds }: Props) {
+export default function ShopsList({ shops, loading, onSelect, onSave, savedIds, emptyTitle, emptyHint }: Props) {
   if (loading) {
     return (
       <div className="text-center py-4">
-        <div className="spinner-border text-primary" role="status">
+        <Spinner animation="border" variant="primary" role="status">
           <span className="visually-hidden">Loading shops...</span>
-        </div>
+        </Spinner>
       </div>
     );
   }
@@ -25,46 +29,56 @@ export default function ShopsList({ shops, loading, onSelect, onSave, savedIds }
   if (shops.length === 0) {
     return (
       <div className="text-center py-4 text-muted">
-        <p>No shops found in this area.</p>
-        <small>Try adjusting the map or radius filter.</small>
+        <p>{emptyTitle || 'No shops found in this area.'}</p>
+        <small>{emptyHint || 'Try adjusting the map or radius filter.'}</small>
       </div>
     );
   }
 
   return (
-    <div className="list-group list-group-flush">
+    <ListGroup variant="flush" as="div" className="list-group-flush">
       {shops.map((shop) => {
         const isSaved = savedIds?.has(shop.id);
         const { name, category } = shop.properties;
+        const fullName = typeof name === 'string' ? name : '';
 
         return (
-          <div
+          <ListGroup.Item
             key={shop.id}
-            className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-            style={{ cursor: 'pointer' }}
+            className="d-flex justify-content-between align-items-center"
+            style={{ cursor: 'pointer', border: '1px solid rgba(0,0,0,.125)', marginBottom: '-1px' }}
             onClick={() => onSelect?.(shop)}
           >
-            <div>
-              <div className="fw-bold">{name}</div>
+            <div style={{ overflow: 'hidden' }}>
+              <div
+                className="fw-bold"
+                title={fullName}
+                style={{ maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              >
+                {fullName}
+              </div>
               <div className="text-muted small">
                 {category?.label || 'Store'}
               </div>
             </div>
-            
+
             {onSave && (
-              <button
-                className={`btn btn-sm ${isSaved ? 'btn-success' : 'btn-outline-primary'}`}
-                onClick={(e) => {
+              <Button
+                size="sm"
+                variant={isSaved ? 'success' : 'outline-primary'}
+                onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   onSave(shop);
                 }}
+                aria-label={isSaved ? 'Unsave shop' : 'Save shop'}
+                title={isSaved ? 'Unsave' : 'Save'}
               >
-                {isSaved ? '✓' : '+'}
-              </button>
+                {isSaved ? <Check size={16} aria-hidden="true" /> : <Plus size={16} aria-hidden="true" />}
+              </Button>
             )}
-          </div>
+          </ListGroup.Item>
         );
       })}
-    </div>
+    </ListGroup>
   );
 }
