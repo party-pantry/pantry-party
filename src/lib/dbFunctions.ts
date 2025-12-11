@@ -382,14 +382,14 @@ export async function addRecipeInstruction(data: {
 export async function addRecipe(data: {
   userId: number;
   name: string;
-  description: string;
+  description?: string;
   difficulty: Difficulty;
   prepTime?: number;
   cookTime?: number;
   downTime?: number;
   servings?: number;
   rating?: number;
-  image?: string;
+  image?: string | null;
 }) {
   const recipe = await prisma.recipe.create({
     data: {
@@ -411,6 +411,23 @@ export async function addRecipe(data: {
   return recipe;
 }
 
+export async function addIngredient(
+  recipeId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+) {
+  const ingredient = await prisma.recipeIngredient.create({
+    data: {
+      recipeId,
+      quantity,
+      unit,
+      name,
+    },
+  });
+  return ingredient;
+}
+
 export async function addInstruction(
   recipeId: number,
   step: number,
@@ -423,7 +440,6 @@ export async function addInstruction(
       content,
     },
   });
-
   return instruction;
 }
 
@@ -456,7 +472,6 @@ export async function addRecipeNutrition(
       unit,
     },
   });
-
   return nutrition;
 }
 
