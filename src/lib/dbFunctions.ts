@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category, Difficulty, FoodCategory } from '@prisma/client';
+import { Unit, Status, Category, Difficulty } from '@prisma/client';
 import pluralize from 'pluralize';
 import { prisma } from './prisma';
 import { isNormalizedCloseMatch } from './fuzzyHelpers';
