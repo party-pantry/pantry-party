@@ -393,6 +393,11 @@ export async function addRecipeIngredient(
         quantity,
         unit,
         name,
+        ingredient: {
+          connect: {
+            id: ingredientId,
+          },
+        },
       },
       select: {
         id: true,
@@ -413,30 +418,6 @@ export async function findIngredientByName(name: string): Promise<number | null>
   });
 
   return ingredient ? ingredient.id : null;
-}
-
-export async function addIngredient(data: {
-  name: string;
-  price?: number;
-  foodCategory: FoodCategory;
-}): Promise<number | null> {
-  try {
-    const ingredient = await prisma.ingredient.create({
-      data: {
-        name: data.name,
-        price: data.price || 0, // Default price to 0 if not provided
-        foodCategory: data.foodCategory || 'OTHER',
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    return ingredient.id;
-  } catch (error) {
-    console.error('Error adding ingredient:', error);
-    return null;
-  }
 }
 
 /* Add a new recipe */
