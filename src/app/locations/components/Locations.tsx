@@ -1,11 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import dynamic from 'next/dynamic';
 import Offcanvas from 'react-bootstrap/Offcanvas';
 import LocationsFilter from './LocationsSearch';
-
-const LocationsMap = dynamic(() => import('@/app/locations/components/LocationsMap'), { ssr: false });
+import LocationsMapGoogle from './LocationsMapGoogle';
 
 const Locations = () => {
   const [showFilter, setShowFilter] = useState(false);
@@ -118,32 +116,47 @@ const Locations = () => {
   };
 
   return (
-        <main style={{ position: 'relative', width: '100%', height: '100%' }}>
-            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
-                <LocationsMap
-                    onOpenFilters={() => setShowFilter(true)}
-                    searchResults={searchResults}
-                    selectedLocation={selectedLocation}
-                    selectedMarkerId={selectedMarkerId}
-                    onMarkerClick={(id, lat, lon) => handleMarkerClick(id, lat, lon)}
-                />
-            </div>
+    <div className="locations-page-container">
+      <div className="locations-map-wrapper">
+        <LocationsMapGoogle
+          onOpenFilters={() => setShowFilter(true)}
+          searchResults={searchResults}
+          selectedLocation={selectedLocation}
+          selectedMarkerId={selectedMarkerId}
+          onMarkerClick={(id, lat, lon) => handleMarkerClick(id, lat, lon)}
+        />
+      </div>
 
-            <Offcanvas show={showFilter} onHide={() => setShowFilter(false)} placement="end">
-                <Offcanvas.Body>
-                    <LocationsFilter
-                        onSearch={handleSearch}
-                        loading={loading}
-                        suggestions={searchResults}
-                        onSelectSuggestion={(s) => handleSelectResult(s)}
-                        onSelectResult={(r) => handleSelectResult(r)}
-                        savedPlaces={savedPlaces}
-                        onSave={(p) => handleSave(p)}
-                        onRemoveSaved={(id) => handleRemoveSaved(id)}
-                    />
-                </Offcanvas.Body>
-            </Offcanvas>
-        </main>
+      <Offcanvas show={showFilter} onHide={() => setShowFilter(false)} placement="end">
+        <Offcanvas.Body>
+          <LocationsFilter
+            onSearch={handleSearch}
+            loading={loading}
+            suggestions={searchResults}
+            onSelectSuggestion={(s) => handleSelectResult(s)}
+            onSelectResult={(r) => handleSelectResult(r)}
+            savedPlaces={savedPlaces}
+            onSave={(p) => handleSave(p)}
+            onRemoveSaved={(id) => handleRemoveSaved(id)}
+          />
+        </Offcanvas.Body>
+      </Offcanvas>
+
+      <style jsx>{`
+        .locations-page-container {
+          width: 100%;
+          height: 100vh;
+          position: relative;
+          overflow: hidden;
+        }
+
+        .locations-map-wrapper {
+          width: 100%;
+          height: 100%;
+          position: relative;
+        }
+      `}</style>
+    </div>
   );
 };
 

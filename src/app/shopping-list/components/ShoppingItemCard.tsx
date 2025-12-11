@@ -9,14 +9,21 @@ import {
 
 interface ShoppingItemCardProps {
   item: ShoppingItem;
-  onTogglePurchased: (id: number) => void;
   onRemove: (id: number) => void;
+  // new props for multi-select
+  selectable?: boolean;
+  selected?: boolean;
+  onSelectToggle?: (id: number) => void;
+  onMarkBought?: (id: number) => void;
 }
 
 const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
   item,
-  onTogglePurchased,
   onRemove,
+  selectable = true,
+  selected = false,
+  onSelectToggle,
+  onMarkBought,
 }) => (
   <Card className="shopping-item-card h-100">
     <CardBody>
@@ -29,21 +36,23 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
             {item.priority}
           </Badge>
         </div>
-        <Form.Check
-          type="checkbox"
-          checked={item.purchased}
-          onChange={() => onTogglePurchased(item.id)}
-          style={{ transform: 'scale(1.3)' }}
-          className="custom-checkbox"
-        />
+        {selectable && (
+          <Form.Check
+            type="checkbox"
+            checked={selected}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              e.stopPropagation();
+              e.preventDefault();
+              if (onSelectToggle) {
+                onSelectToggle(item.id);
+              }
+            }}
+            style={{ transform: 'scale(1.3)' }}
+            className="custom-checkbox"
+          />
+        )}
       </div>
-      {/* Option 1: To justify quantity at the end of the row */}
-      {/* <div className="d-flex align-items-center justify-content-between mb-3">
-        <h4 className="fw-bold text-dark mb-0 me-2">{item.name}</h4>
-        <p className="text-muted fw-medium mb-0">({item.quantity})</p>
-      </div> */}
 
-      {/* Option 2: To place quantity next to the item name */}
       <div className="d-flex align-items-center mb-4 pb-4 pt-1">
         <h3 className="fw-bold text-dark mb-0 me-3 ps-1">{item.name}</h3>
         <p className="text-muted fw-medium mb-0">({item.quantity})</p>
@@ -63,7 +72,19 @@ const ShoppingItemCard: React.FC<ShoppingItemCardProps> = ({
         ))}
       </div>
 
-      <div className="d-flex justify-content-center pt-2">
+      <div className="d-flex justify-content-center gap-2 pt-2">
+        {/* Mark as Bought button (per-item) */}
+        <Button
+          variant="outline-success"
+          size="sm"
+          onClick={() => onMarkBought && onMarkBought(item.id)}
+          className="px-3 py-2 fw-semibold"
+          style={{ borderRadius: '0.5rem' }}
+          disabled={item.purchased}
+        >
+          Mark as Bought
+        </Button>
+
         <Button
           variant="outline-danger"
           size="sm"

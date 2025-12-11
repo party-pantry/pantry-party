@@ -3,14 +3,21 @@
 import React from 'react';
 import { Modal, Form, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { useForm, useFieldArray, Resolver } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as Yup from 'yup';
-import { addRecipe, addIngredient, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
-import { Unit, Difficulty } from '@prisma/client';
-import { LocalUnit } from '@/lib/Units';
+import { addRecipe, addInstruction, addRecipeNutrition, findIngredientByName, addRecipeIngredient, addIngredient } from '@/lib/dbFunctions';
+import { Difficulty, Unit } from '@prisma/client';
 
-interface RecipeFormData {
+interface Ingredient {
+  name: string;
+  quantity: string;
+  unit: Unit;
+}
+
+interface Instruction {
+  step: number;
+  content: string;
+}
+
+interface Nutrition {
   name: string;
   description?: string;
   difficulty: Difficulty;
@@ -177,12 +184,106 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
           nutrition.unit,
         )),
       );
-
+      await Promise.all(
+        formData.ingredients.map(async ingredient => {
+          let ingredientId = await findIngredientByName(ingredient.name);
+          if (!ingredientId) {
+            // If ingredient is not found, add it to the database
+            ingredientId = await addIngredient({
+              name: ingredient.name,
+              price: 5, // Default price, adjust as needed
+              foodCategory: 'OTHER', // Default category, adjust as needed
+            });
+            if (!ingredientId) {
+              console.error(`Failed to add ingredient: ${ingredient.name}`);
+              return;
+            }
+          }
+          await addRecipeIngredient(
+            result.id,
+            ingredientId,
+            parseFloat(ingredient.quantity),
+            ingredient.unit,
+            ingredient.name,
+          );
+        }),
+      );
       onSubmit(result);
       onHide();
     } catch (error) {
       console.error('Error adding recipe:', error);
     }
+  };
+
+  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | Unit) => {
+    const updatedIngredients = [...formData.ingredients];
+    if (field === 'unit') {
+      updatedIngredients[index][field] = value as Unit;
+    } else {
+      updatedIngredients[index][field] = value;
+    }
+    setFormData({ ...formData, ingredients: updatedIngredients });
+  };
+
+  const handleAddIngredient = () => {
+    setFormData({
+      ...formData,
+      ingredients: [
+        ...formData.ingredients,
+        { name: '', quantity: '', unit: Unit.GRAM }, // Default unit set to Unit.GRAM
+      ],
+    });
+  };
+
+  const handleRemoveIngredient = (index: number) => {
+    const updatedIngredients = formData.ingredients.filter((_, i) => i !== index);
+    setFormData({ ...formData, ingredients: updatedIngredients });
+  };
+
+  const handleInstructionChange = (index: number, field: 'step' | 'content', value: string | number) => {
+    const updatedInstructions = [...formData.instructions];
+    updatedInstructions[index] = {
+      ...updatedInstructions[index],
+      [field]: value,
+    };
+    setFormData({ ...formData, instructions: updatedInstructions });
+  };
+
+  const handleAddInstruction = () => {
+    const newStep = formData.instructions.length + 1;
+    setFormData({
+      ...formData,
+      instructions: [
+        ...formData.instructions,
+        { step: newStep, content: '' },
+      ],
+    });
+  };
+
+  const handleRemoveInstruction = (index: number) => {
+    const updatedInstructions = formData.instructions.filter((_, i) => i !== index);
+    setFormData({ ...formData, instructions: updatedInstructions });
+  };
+  const handleNutritionChange = (index: number, field: keyof Nutrition, value: string | number) => {
+    const updatedNutritions = [...formData.nutritions];
+    if (field === 'amount') {
+      updatedNutritions[index][field] = typeof value === 'string' ? parseFloat(value) || 0 : value;
+    } else {
+      updatedNutritions[index][field] = typeof value === 'number' ? value.toString() : value;
+    }
+    setFormData({ ...formData, nutritions: updatedNutritions });
+  };
+
+  const handleAddNutrition = () => {
+    setFormData({
+      ...formData,
+      nutritions: [...formData.nutritions, { name: '', amount: 0, unit: '' }],
+    });
+  };
+
+  const handleRemoveNutrition = (index: number) => {
+    const updatedNutritions = formData.nutritions.filter((_, i) => i !== index);
+    setFormData({ ...formData, nutritions: updatedNutritions });
   };
 
   return (
@@ -347,22 +448,25 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
                 <Form.Control
                   type="text"
                   placeholder="Quantity"
-                  isInvalid={!!errors.ingredients?.[index]?.quantity}
-                  {...register(`ingredients.${index}.quantity`)}
+                  value={ingredient.quantity}
+                  onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
+                  required
                 />
-                {/* Ingredient units */}
                 <Form.Select
-                  isInvalid={!!errors.ingredients?.[index]?.unit}
-                  {...register(`ingredients.${index}.unit`)}
+                  value={ingredient.unit}
+                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value as Unit)}
+                  required
                 >
-                  {Object.entries(LocalUnit).map(([key, value]) => (
-                    <option key={key} value={key}>
-                      {value}
+                  <option value="" disabled>
+                    Select Unit
+                  </option>
+                  {Object.values(Unit).map((unit) => (
+                    <option key={unit} value={unit}>
+                      {unit.replace('_', ' ').toLowerCase()}
                     </option>
                   ))}
                 </Form.Select>
-
-                <Button variant="danger" className='fw-bold' onClick={() => removeIngredient(index)}>
+                <Button variant="danger" className='fw-bold' onClick={() => handleRemoveIngredient(index)}>
                   -
                 </Button>
               </div>

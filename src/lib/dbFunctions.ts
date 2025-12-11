@@ -6,7 +6,7 @@
 // eslint-disable-next-line import/prefer-default-export
 
 import { hash } from 'bcryptjs';
-import { Unit, Status, Category, Difficulty } from '@prisma/client';
+import { Unit, Status, Category, Difficulty, FoodCategory } from '@prisma/client';
 import pluralize from 'pluralize';
 import { prisma } from './prisma';
 import { isNormalizedCloseMatch } from './fuzzyHelpers';
@@ -378,6 +378,67 @@ export async function addRecipeInstruction(data: {
   return instruction;
 }
 
+export async function addRecipeIngredient(
+  recipeId: number,
+  ingredientId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+): Promise<number | null> {
+  try {
+    const recipeIngredient = await prisma.recipeIngredient.create({
+      data: {
+        recipeId,
+        ingredientId,
+        quantity,
+        unit,
+        name,
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return recipeIngredient.id;
+  } catch (error) {
+    console.error('Error adding recipe ingredient:', error);
+    return null;
+  }
+}
+
+export async function findIngredientByName(name: string): Promise<number | null> {
+  const ingredient = await prisma.ingredient.findFirst({
+    where: { name },
+    select: { id: true },
+  });
+
+  return ingredient ? ingredient.id : null;
+}
+
+export async function addIngredient(data: {
+  name: string;
+  price?: number;
+  foodCategory: FoodCategory;
+}): Promise<number | null> {
+  try {
+    const ingredient = await prisma.ingredient.create({
+      data: {
+        name: data.name,
+        price: data.price || 0, // Default price to 0 if not provided
+        foodCategory: data.foodCategory || 'OTHER',
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return ingredient.id;
+  } catch (error) {
+    console.error('Error adding ingredient:', error);
+    return null;
+  }
+}
+
 /* Add a new recipe */
 export async function addRecipe(data: {
   userId: number;
@@ -517,6 +578,31 @@ export async function deleteShoppingListItem(itemId: number) {
   await prisma.shoppingListItem.delete({
     where: { id: itemId },
   });
+}
+
+/* Mark multiple shopping list items as purchased (bulk) */
+export async function markShoppingListItemsBoughtBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.updateMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+    data: { purchased: true },
+  });
+
+  return result;
+}
+
+/* Delete multiple shopping list items (bulk) */
+export async function deleteShoppingListItemsBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.deleteMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+  });
+
+  return result;
 }
 
 /* Get suggested items based on low/out of stock inventory */
