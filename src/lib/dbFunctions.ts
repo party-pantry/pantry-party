@@ -393,6 +393,11 @@ export async function addRecipeIngredient(
         quantity,
         unit,
         name,
+        ingredient: {
+          connect: {
+            id: ingredientId,
+          },
+        },
       },
       select: {
         id: true,
@@ -415,42 +420,18 @@ export async function findIngredientByName(name: string): Promise<number | null>
   return ingredient ? ingredient.id : null;
 }
 
-export async function addIngredient(data: {
-  name: string;
-  price?: number;
-  foodCategory: FoodCategory;
-}): Promise<number | null> {
-  try {
-    const ingredient = await prisma.ingredient.create({
-      data: {
-        name: data.name,
-        price: data.price || 0, // Default price to 0 if not provided
-        foodCategory: data.foodCategory || 'OTHER',
-      },
-      select: {
-        id: true,
-      },
-    });
-
-    return ingredient.id;
-  } catch (error) {
-    console.error('Error adding ingredient:', error);
-    return null;
-  }
-}
-
 /* Add a new recipe */
 export async function addRecipe(data: {
   userId: number;
   name: string;
-  description: string;
+  description?: string;
   difficulty: Difficulty;
   prepTime?: number;
   cookTime?: number;
   downTime?: number;
   servings?: number;
   rating?: number;
-  image?: string;
+  image?: string | null;
 }) {
   const recipe = await prisma.recipe.create({
     data: {
@@ -472,6 +453,23 @@ export async function addRecipe(data: {
   return recipe;
 }
 
+export async function addIngredient(
+  recipeId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+) {
+  const ingredient = await prisma.recipeIngredient.create({
+    data: {
+      recipeId,
+      quantity,
+      unit,
+      name,
+    },
+  });
+  return ingredient;
+}
+
 export async function addInstruction(
   recipeId: number,
   step: number,
@@ -484,7 +482,6 @@ export async function addInstruction(
       content,
     },
   });
-
   return instruction;
 }
 
@@ -517,7 +514,6 @@ export async function addRecipeNutrition(
       unit,
     },
   });
-
   return nutrition;
 }
 
