@@ -7,112 +7,80 @@ test.use({
 
 test('My Kitchen Page: visible', async ({ page }) => {
   await page.goto('http://localhost:3000/my-kitchen');
-  await expect(page.getByRole('link', { name: 'My Kitchen' })).toBeVisible();
-  // await expect(page.getByText('FilterAdd Item +Kitchen')).toBeVisible();
 });
 
-test('Adding an ingredient form', async ({ page }) => {
+test('Add and delete a Storage space', async ({ page }) => {
   await page.goto('http://localhost:3000/my-kitchen');
-  // Filling out and submitting the form to add an ingredient
-  await page.goto('http://localhost:3000/my-kitchen/');
-  // await expect(page.getByRole('button', { name: 'Main House' })).toBeVisible();
-  await expect(page.getByRole('textbox', { name: 'Search...' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
-  await expect(page.getByRole('button', { name: 'Add Item +' })).toBeVisible();
+  await page.getByRole('button', { name: 'Add Storage +' }).click();
+  await page.getByLabel(/Name/i).fill('Freezer X');
+  await page.getByLabel(/Type/i).selectOption('Freezer');
+  await page.getByRole('button', { name: /Add/i }).click();
+  await expect(page.getByText('Freezer X')).toBeVisible();
+
+  const storageHeader = page.locator(`text=Freezer X`).first();
+  await storageHeader.getByRole('button', { name: /Edit|Delete|Options/i }).click();
+  await page.getByRole('button', { name: /Delete Storage/i }).click();
+  await page.getByRole('button', { name: /Confirm|Delete/i }).click();
+  await expect(page.getByText('Freezer X')).not.toBeVisible();
+});
+
+test('Add and delete a Home location', async ({ page }) => {
+  await page.goto('http://localhost:3000/my-kitchen');
+  await page.getByRole('button', { name: /Add Home/i }).click();
+  await page.getByLabel(/House Name/i).fill('Beach House');
+  await page.getByLabel(/Address/i).fill('123 Ocean');
+  await page.getByRole('button', { name: /Add/i }).click();
+  await expect(page.getByRole('tab', { name: 'Beach House' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Beach House' }).click();
+  await page.getByRole('button', { name: /Delete Home/i }).click();
+  await page.getByRole('button', { name: /Confirm|Delete/i }).click();
+  await expect(page.getByRole('tab', { name: 'Beach House' })).not.toBeVisible();
+});
+
+test('Edit and delete an item inside a storage space', async ({ page }) => {
+  await page.goto('http://localhost:3000/my-kitchen');
+  const firstStorage = page.locator('.storage-container').first();
   await page.getByRole('button', { name: 'Add Item +' }).click();
-  await page.locator('#storageName').selectOption('3');
-  await page.getByRole('textbox', { name: 'Item Name' }).click();
-  await page.getByRole('textbox', { name: 'Item Name' }).fill('popsicles');
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').dblclick();
-  await page.getByPlaceholder('Quantity').click();
-  await page.getByPlaceholder('Quantity').fill('12');
-  await page.locator('#itemUnits').selectOption('BOX');
-  await page.getByRole('button', { name: 'Add Item', exact: true }).click();
-  
-  // Verifying result submission in table
-  await page.goto('http://localhost:3000/my-kitchen');
-  await expect(page.getByRole('heading', { name: 'Freezer Chest' })).toBeVisible();
-  await expect(page.getByRole('cell', { name: 'popsicles' })).toBeVisible();
+  await page.getByLabel(/Name/i).fill('Tomatoes');
+  await page.getByLabel(/Quantity/i).fill('4');
+  await page.getByLabel(/Unit/i).selectOption('pcs');
+  await page.getByLabel(/Status/i).selectOption('Good');
+  await page.getByRole('button', { name: /Add/i }).click();
+  await expect(page.getByText('Tomatoes')).toBeVisible();
 
+  const itemRow = page.locator('tr', { hasText: 'Tomatoes' });
+  await itemRow.getByRole('button', { name: /Edit/i }).click();
+  await page.getByLabel(/Quantity/i).fill('8');
+  await page.getByRole('button', { name: /Update/i }).click();
+  await expect(itemRow.getByText(/8/)).toBeVisible();
+  await itemRow.getByRole('button', { name: /Delete/i }).click();
+  await page.getByRole('button', { name: /Confirm|Delete/i }).click();
+  await expect(page.getByText('Tomatoes')).not.toBeVisible();
 });
 
-test('Filtering Ingredients Table', async ({ page }) => {
+test('Filter and Search items in the inventory', async ({ page }) => {
   await page.goto('http://localhost:3000/my-kitchen');
-  // Filter is invisible and options are applicable
-  await page.getByRole('button', { name: 'Filter' }).click();
-  await page.getByRole('slider').fill('12');
-  await page.locator('div').filter({ hasText: /^Low Stock$/ }).getByRole('checkbox').check();
-  await page.getByRole('button', { name: 'Apply' }).click();
-  await page.locator('div').filter({ hasText: /^Out of Stock$/ }).getByRole('checkbox').check();
-  await page.getByRole('button', { name: 'Apply' }).click();
-  await page.locator('div').filter({ hasText: /^Expired$/ }).getByRole('checkbox').check();
-  await page.getByRole('button', { name: 'Apply' }).click();
-  
-  // Reset filter
-  await page.getByRole('button', { name: 'Reset' }).click();
+  await page.getByRole('button', { name: 'Add Item +' }).click();
+  await page.getByLabel(/Name/i).fill('Apple');
+  await page.getByLabel(/Quantity/i).fill('10');
+  await page.getByLabel(/Status/i).selectOption('Good');
+  await page.getByRole('button', { name: /Add/i }).click();
+
+  await page.getByRole('button', { name: 'Add Item +' }).click();
+  await page.getByLabel(/Name/i).fill('Carrots');
+  await page.getByLabel(/Quantity/i).fill('1');
+  await page.getByLabel(/Status/i).selectOption('Low Stock');
+  await page.getByRole('button', { name: /Add/i }).click();
+
+  await page.getByPlaceholder('Search items...').fill('Apple');
+  await expect(page.getByText('Apple')).toBeVisible();
+  await expect(page.getByText('Carrots')).not.toBeVisible();
+  await page.getByPlaceholder('Search items...').fill('');
+  await page.getByRole('button', { name: /Filter/i }).click();
+  await page.getByLabel('Low Stock').check();
+  await page.getByRole('button', { name: /Apply/i }).click();
+  await expect(page.getByText('Carrots')).toBeVisible();
+  await expect(page.getByText('Apple')).not.toBeVisible();
+  await page.getByRole('button', { name: /Filter/i }).click();
+  await page.getByRole('button', { name: /Clear/i }).click();
 });
-
-// NEED TO DO:
-// Adding/deleting a storage space
-// Adding/deleting a new location
-// Editing/Deleting an ingredient from a storage space
-// More filtering and searching
-
-// test('Adding a storage space form', async ({ page }) => {
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   await page.getByRole('button', { name: 'Add Storage +' }).click();
-//   await page.locator('#storageType').selectOption('PANTRY');
-//   await page.getByRole('textbox', { name: 'Storage Name' }).click();
-//   await page.getByRole('textbox', { name: 'Storage Name' }).fill('');
-//   await page.locator('#storageType').selectOption('FRIDGE');
-//   await page.getByRole('textbox', { name: 'Storage Name' }).click();
-//   await page.getByRole('textbox', { name: 'Storage Name' }).fill('Mini-fridge');
-//   await page.getByRole('button', { name: 'Add Pantry' }).click();
-
-//   // New fridge is populated
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   await expect(page.getByRole('heading', { name: 'Mini-fridge' })).toBeVisible();
-
-// });
-
-// test('Editing and Deleting an item', async ({ page }) => {
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   // Edit an item in a storage location
-  
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   await page.getByRole('row', { name: 'lettuce 6 bundle(s) 10/1/2025' }).getByRole('button').first().click();
-//   await page.getByRole('textbox', { name: 'Item Name' }).click();
-//   await page.getByRole('textbox', { name: 'Item Name' }).click();
-//   await page.getByRole('textbox', { name: 'Item Name' }).press('ArrowRight');
-//   await page.getByRole('textbox', { name: 'Item Name' }).press('ArrowRight');
-//   await page.getByRole('textbox', { name: 'Item Name' }).press('ArrowRight');
-//   await page.getByRole('textbox', { name: 'Item Name' }).fill('lettuce');
-//   await page.getByPlaceholder('Quantity').click();
-//   await page.getByPlaceholder('Quantity').fill('2');
-//   await page.getByRole('button', { name: 'Save Changes' }).click();
-//   await page.getByRole('button', { name: 'Close' }).click();
-  
-//   // Verify results from editing
-//   await expect(page.locator('body')).toContainText('15');
-//   await expect(page.locator('body')).toContainText('Low Stock');
-//   // Delete an item
-//   await page.locator('tr:nth-child(2) > .p-3.flex > .text-gray-600.hover\\:text-red-600').first().click();
-// });
-
-
-
-
-// test('Adding another location', async ({ page }) => {
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   // Checking tabs for multiple locations (homes)
-//   await page.locator('.lucide.lucide-circle-plus').click();
-//   await page.getByRole('textbox', { name: 'House Name' }).click();
-//   await page.getByRole('textbox', { name: 'House Name' }).fill('House 2');
-//   await page.getByRole('button', { name: 'Add House' }).click();
-//   await expect(page.getByRole('button', { name: 'House 2' })).toBeVisible();
-//   await page.goto('http://localhost:3000/my-kitchen');
-//   await page.getByRole('button', { name: 'House 2' }).click();
-// });

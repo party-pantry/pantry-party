@@ -61,7 +61,7 @@
     "@eslint/config-array": "^0.21.1",
     "@eslint/eslintrc": "^3",
     "@eslint/object-schema": "^2.1.7",
-    "@playwright/test": "^1.55.0",
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
     "@types/geojson": "^7946.0.16",
