@@ -18,7 +18,7 @@ export interface Shop {
   };
 }
 
-const CACHE_KEY = 'pantry_party_shops_cache';
+const CACHE_KEY = 'pantry_party_overpass_24hr_cache';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
 const MAX_RADIUS = 2000; // Fetch maximum radius from API
 

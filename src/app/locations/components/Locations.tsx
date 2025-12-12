@@ -10,8 +10,8 @@ import HousesList from './HousesList';
 
 const LocationsMap = dynamic(() => import('./LocationsMap'), { ssr: false });
 
-const SAVED_SHOPS_KEY = 'pp_saved_shops';
-const CACHED_SHOPS_KEY = 'pp_cached_shops';
+const SAVED_SHOPS_KEY = 'pantry_party_saved_shops';
+const CACHED_SHOPS_KEY = 'pantry_party_cached_shops';
 
 /**
  * Calculate distance between two geographic coordinates using Haversine formula
