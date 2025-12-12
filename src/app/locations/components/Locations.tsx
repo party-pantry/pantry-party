@@ -1,163 +1,185 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import Offcanvas from 'react-bootstrap/Offcanvas';
-import LocationsFilter from './LocationsSearch';
-import LocationsMapGoogle from './LocationsMapGoogle';
+import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { Offcanvas, Tabs, Tab } from 'react-bootstrap';
+import { useShops } from '../hooks/useShops';
+import { useHouses } from '../hooks/useHouses';
+import ShopsList from './ShopsList';
+import HousesList from './HousesList';
 
-const Locations = () => {
-  const [showFilter, setShowFilter] = useState(false);
-  const [searchResults, setSearchResults] = useState<Array<{ id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string; distance?: number }>>([]);
-  const [selectedLocation, setSelectedLocation] = useState<{ latitude: number; longitude: number } | null>(null);
-  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
-  const [savedPlaces, setSavedPlaces] = useState<Array<{ id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string }>>([]);
+const LocationsMap = dynamic(() => import('./LocationsMap'), { ssr: false });
 
-  const [loading, setLoading] = useState(false);
+const SAVED_SHOPS_KEY = 'pantry_party_saved_shops';
+const CACHED_SHOPS_KEY = 'pantry_party_cached_shops';
 
-  // TODO: Replace local storage with actual database persistence
-  const SAVED_KEY = 'pp_saved_places_v1';
+/**
+ * Calculate distance between two geographic coordinates using Haversine formula
+ * @returns Distance in meters
+ */
+function calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000;
+  const φ1 = (lat1 * Math.PI) / 180;
+  const φ2 = (lat2 * Math.PI) / 180;
+  const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+  const Δλ = ((lng2 - lng1) * Math.PI) / 180;
 
-  useEffect(() => {
+  const a = (Math.sin(Δφ / 2) * Math.sin(Δφ / 2))
+            + (Math.cos(φ1) * Math.cos(φ2)
+            * Math.sin(Δλ / 2) * Math.sin(Δλ / 2));
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+export default function Locations() {
+  const [showFilters, setShowFilters] = useState(false);
+  const [mapCenter, setMapCenter] = useState({ lat: 21.3099, lng: -157.8581 });
+  const [radius, setRadius] = useState(1000);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [mapFlyTo, setMapFlyTo] = useState<((lat: number, lng: number) => void) | null>(null);
+  const [forcedLocation, setForcedLocation] = useState<{ id: string; latitude: number; longitude: number; type: 'shop' | 'house' } | null>(null);
+  const [savedShopIds, setSavedShopIds] = useState<Set<string>>(() => {
+    if (typeof window === 'undefined') return new Set();
     try {
-      const raw = localStorage.getItem(SAVED_KEY);
-      if (raw) {
-        setSavedPlaces(JSON.parse(raw));
+      const saved = localStorage.getItem(SAVED_SHOPS_KEY);
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+  const [cachedShopsMap, setCachedShopsMap] = useState<Map<string, any>>(() => {
+    if (typeof window === 'undefined') return new Map();
+    try {
+      const cached = localStorage.getItem(CACHED_SHOPS_KEY);
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return new Map(Object.entries(parsed));
       }
-    } catch (e) {
-      // ignore
+      return new Map();
+    } catch {
+      return new Map();
     }
-  }, []);
+  });
 
-  const persistSaved = (next: typeof savedPlaces) => {
-    setSavedPlaces(next);
-    try {
-      localStorage.setItem(SAVED_KEY, JSON.stringify(next));
-    } catch (e) {
-      // ignore
+  const { shops: allShops, loading: shopsLoading } = useShops(mapCenter);
+  const { houses, loading: housesLoading } = useHouses();
+
+  const handleMapMove = (center: { lat: number; lng: number }, newRadius: number) => {
+    setMapCenter(center);
+    setRadius(newRadius);
+  };
+
+  const handleSelectShop = (shop: { id: string; latitude: number; longitude: number }) => {
+    setSelectedId(shop.id);
+    setForcedLocation({ id: shop.id, latitude: shop.latitude, longitude: shop.longitude, type: 'shop' });
+    setShowFilters(false);
+
+    // Fly to the selected shop location
+    if (mapFlyTo) {
+      mapFlyTo(shop.latitude, shop.longitude);
     }
   };
 
-  // TODO: Replace with actual API call and remove mock results
-  const handleSearch = (term: string) => {
-    if (!term || term.trim().length < 1) {
-      setSearchResults([]);
-      return;
+  const handleSelectHouse = (house: { id: string; latitude: number; longitude: number }) => {
+    setSelectedId(house.id);
+    setForcedLocation({ id: house.id, latitude: house.latitude, longitude: house.longitude, type: 'house' });
+    setShowFilters(false);
+
+    // Fly to the selected house location
+    if (mapFlyTo) {
+      mapFlyTo(house.latitude, house.longitude);
+    }
+  };
+
+  const handleSaveShop = (shop: any) => {
+    const newSaved = new Set(savedShopIds);
+    const newCached = new Map(cachedShopsMap);
+
+    if (newSaved.has(shop.id)) {
+      newSaved.delete(shop.id);
+    } else {
+      // Cache the full shop data so it persists even when out of API range
+      newSaved.add(shop.id);
+      newCached.set(shop.id, shop);
     }
 
-    setLoading(true);
-
-    const mockResults = [
-      {
-        id: 'the-market',
-        label: 'The Market',
-        latitude: 21.294423278944713,
-        longitude: -157.81309753901127,
-        address: '2585 Dole St, Honolulu, HI 96822',
-      },
-      {
-        id: 'foodland',
-        label: 'Foodland',
-        latitude: 21.289202387992074,
-        longitude: -157.8136890852824,
-        address: '2939 Harding Ave, Honolulu, HI 96816',
-      },
-      {
-        id: 'safeway',
-        label: 'Safeway',
-        latitude: 21.285084964092764,
-        longitude: -157.81459295407825,
-        address: '888 Kapahulu Ave, Honolulu, HI 96816',
-      },
-      {
-        id: 'nijiya',
-        label: 'Nijiya Market University Store',
-        latitude: 21.29283310586927,
-        longitude: -157.8199242525803,
-        address: '1009 University Ave #101, Honolulu, HI 96826',
-      },
-      {
-        id: 'target',
-        label: 'Target',
-        latitude: 21.278859851385334,
-        longitude: -157.82521383553157,
-        address: '2345 Kūhiō Ave., Honolulu, HI 96815',
-      },
-    ];
-
-    setSearchResults(mockResults);
-    setLoading(false);
+    setSavedShopIds(newSaved);
+    setCachedShopsMap(newCached);
+    localStorage.setItem(SAVED_SHOPS_KEY, JSON.stringify([...newSaved]));
+    localStorage.setItem(CACHED_SHOPS_KEY, JSON.stringify(Object.fromEntries(newCached)));
   };
 
-  const handleSelectResult = (r: { id?: string; latitude?: number | null; longitude?: number | null }) => {
-    if (r.latitude == null || r.longitude == null) return;
-    if (r.id) setSelectedMarkerId(r.id);
-    setSelectedLocation({ latitude: r.latitude, longitude: r.longitude });
-    setShowFilter(false);
-  };
+  // Merge API shops with cached saved shops to ensure saved shops are always available
+  const allShopsMap = new Map<string, any>();
+  allShops.forEach(shop => allShopsMap.set(shop.id, shop));
+  cachedShopsMap.forEach((shop, id) => {
+    if (savedShopIds.has(id) && !allShopsMap.has(id)) {
+      allShopsMap.set(id, shop);
+    }
+  });
+  const mergedShops = Array.from(allShopsMap.values());
 
-  const handleMarkerClick = (id: string | undefined, lat?: number | null, lon?: number | null) => {
-    if (!id) return;
-    setSelectedMarkerId(id);
-    if (lat != null && lon != null) setSelectedLocation({ latitude: lat, longitude: lon });
-    setShowFilter(false);
-  };
+  // Filter shops by current map radius for display in the shops list
+  const visibleShops = mergedShops.filter((shop) => {
+    const distance = calculateDistance(
+      mapCenter.lat,
+      mapCenter.lng,
+      shop.latitude,
+      shop.longitude,
+    );
+    return distance <= radius;
+  });
 
-  const handleSave = (p?: { id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string }) => {
-    if (!p || !p.id) return;
-    if (savedPlaces.find((s) => s.id === p.id)) return;
-    const next = [...savedPlaces, p];
-    persistSaved(next);
-  };
-
-  const handleRemoveSaved = (id?: string) => {
-    if (!id) return;
-    const next = savedPlaces.filter((s) => s.id !== id);
-    persistSaved(next);
-  };
+  const savedShops = mergedShops.filter((shop) => savedShopIds.has(shop.id));
 
   return (
-    <div className="locations-page-container">
-      <div className="locations-map-wrapper">
-        <LocationsMapGoogle
-          onOpenFilters={() => setShowFilter(true)}
-          searchResults={searchResults}
-          selectedLocation={selectedLocation}
-          selectedMarkerId={selectedMarkerId}
-          onMarkerClick={(id, lat, lon) => handleMarkerClick(id, lat, lon)}
+    <main style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+        <LocationsMap
+          shops={mergedShops}
+          houses={houses}
+          onMapMove={handleMapMove}
+          onOpenFilters={() => setShowFilters(true)}
+          selectedId={selectedId}
+          onMapReady={(flyTo) => setMapFlyTo(() => flyTo)}
+          forcedLocation={forcedLocation}
+          onClearForced={() => setForcedLocation(null)}
         />
       </div>
 
-      <Offcanvas show={showFilter} onHide={() => setShowFilter(false)} placement="end">
+      <Offcanvas show={showFilters} onHide={() => setShowFilters(false)} placement="end">
         <Offcanvas.Body>
-          <LocationsFilter
-            onSearch={handleSearch}
-            loading={loading}
-            suggestions={searchResults}
-            onSelectSuggestion={(s) => handleSelectResult(s)}
-            onSelectResult={(r) => handleSelectResult(r)}
-            savedPlaces={savedPlaces}
-            onSave={(p) => handleSave(p)}
-            onRemoveSaved={(id) => handleRemoveSaved(id)}
-          />
+          <Tabs defaultActiveKey="shops" className="mb-3">
+            <Tab eventKey="shops" title={`Shops (${visibleShops.length})`}>
+              <ShopsList
+                shops={visibleShops}
+                loading={shopsLoading}
+                onSelect={handleSelectShop}
+                onSave={handleSaveShop}
+                savedIds={savedShopIds}
+              />
+            </Tab>
+            <Tab eventKey="houses" title={`Houses (${houses.length})`}>
+              <HousesList
+                houses={houses}
+                loading={housesLoading}
+                onSelect={handleSelectHouse}
+              />
+            </Tab>
+            <Tab eventKey="saved" title={`Saved (${savedShops.length})`}>
+              <ShopsList
+                shops={savedShops}
+                onSelect={handleSelectShop}
+                onSave={handleSaveShop}
+                savedIds={savedShopIds}
+                emptyTitle={'No shops saved.'}
+                emptyHint={'Try saving shops to find it here.'}
+              />
+            </Tab>
+          </Tabs>
         </Offcanvas.Body>
       </Offcanvas>
-
-      <style jsx>{`
-        .locations-page-container {
-          width: 100%;
-          height: 100vh;
-          position: relative;
-          overflow: hidden;
-        }
-
-        .locations-map-wrapper {
-          width: 100%;
-          height: 100%;
-          position: relative;
-        }
-      `}</style>
-    </div>
+    </main>
   );
-};
-
-export default Locations;
+}

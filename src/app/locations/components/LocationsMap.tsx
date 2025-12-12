@@ -1,482 +1,268 @@
+/* eslint-disable @typescript-eslint/no-shadow, consistent-return, no-underscore-dangle */
+
 'use client';
 
-import React, { useEffect, useRef } from 'react';
-import L, { LatLngExpression } from 'leaflet';
-// import { geocodeAddress } from '@/lib/openRouteService';
+import React, { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { createMapPinIcon } from '@/utils/locationsUtils';
+import type { Shop } from '../hooks/useShops';
+import type { House } from '../hooks/useHouses';
 
-const defaultView: LatLngExpression = [20.7, -157.5];
+const DEFAULT_CENTER: L.LatLngExpression = [21.3099, -157.8581];
+const DEFAULT_ZOOM = 13;
 
-type Suggestion = { id?: string; label: string; latitude?: number | null; longitude?: number | null; address?: string };
-
-const LocationsMap: React.FC<{
+interface Props {
+  shops: Shop[];
+  houses: House[];
+  onMapMove?: (center: { lat: number; lng: number }, radius: number) => void;
   onOpenFilters?: () => void;
-  searchResults?: Suggestion[];
-  selectedLocation?: { latitude: number; longitude: number } | null;
-  selectedMarkerId?: string | null;
-  onMarkerClick?: (id?: string, lat?: number | null, lon?: number | null) => void;
-}> = ({ onOpenFilters, searchResults = [], selectedLocation = null, selectedMarkerId = null, onMarkerClick }) => {
+  selectedId?: string | null;
+  onMapReady?: (flyTo: (lat: number, lng: number) => void) => void;
+  forcedLocation?: { id: string; latitude: number; longitude: number; type: 'shop' | 'house' } | null;
+  onClearForced?: () => void;
+}
+
+export default function LocationsMap({ shops, houses, onMapMove, onOpenFilters, selectedId, onMapReady, forcedLocation, onClearForced }: Props) {
   const mapRef = useRef<L.Map | null>(null);
-  const markersRef = useRef<L.LayerGroup | null>(null);
-  const houseMarkersRef = useRef<L.LayerGroup | null>(null);
-  const markersByIdRef = useRef<Map<string, L.Marker>>(new Map());
   const userMarkerRef = useRef<L.Marker | null>(null);
   const filterCircleRef = useRef<L.Circle | null>(null);
   const filterPanelRef = useRef<HTMLElement | null>(null);
+  const [currentRadius, setCurrentRadius] = useState(1000);
+  const [currentType, setCurrentType] = useState<'all' | 'houses' | 'shops'>('all');
+  const [mapReady, setMapReady] = useState(false);
 
+  // Initialize map
   useEffect(() => {
     if (mapRef.current) return;
 
+    const container = document.getElementById('map');
+    // eslint-disable-next-line no-underscore-dangle
+    if (!container || (container as any)._leaflet_id) {
+      return;
+    }
+
+    // Create map instance
     const map = L.map('map', {
-      center: defaultView,
-      zoom: 7.5,
+      center: DEFAULT_CENTER,
+      zoom: DEFAULT_ZOOM,
       zoomControl: false,
     });
-
-    mapRef.current = map;
-    markersRef.current = L.layerGroup().addTo(map);
-
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map);
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-    const CustomControl = (L.Control as any).extend({
+    // Create custom control group with filter, search, and locate buttons
+    const ControlGroup = (L.Control as any).extend({
       options: { position: 'bottomright' },
       onAdd() {
-        const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-group');
+        const controlContainer = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
 
-        const filterToolLink = L.DomUtil.create('a', 'leaflet-control-filter leaflet-bar-part leaflet-control-zoom-in', container) as HTMLAnchorElement;
-        filterToolLink.href = '#';
-        filterToolLink.role = 'button';
-        filterToolLink.title = 'Filter';
-        filterToolLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>';
-        filterToolLink.style.display = 'flex';
-        filterToolLink.style.alignItems = 'center';
-        filterToolLink.style.justifyContent = 'center';
-        filterToolLink.style.padding = '0';
-        L.DomEvent.on(filterToolLink, 'click', L.DomEvent.stopPropagation)
-          .on(filterToolLink, 'click', L.DomEvent.preventDefault)
-          .on(filterToolLink, 'click', () => {
-            try {
-              if (!mapRef.current) return;
-              const mapInstance = mapRef.current;
+        // Filter button
+        const filterBtn = L.DomUtil.create('a', 'leaflet-control-filter leaflet-bar-part leaflet-control-zoom-in', controlContainer) as HTMLAnchorElement;
+        filterBtn.href = '#';
+        filterBtn.role = 'button';
+        filterBtn.title = 'Filter';
+        filterBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-funnel-icon lucide-funnel"><path d="M10 20a1 1 0 0 0 .553.895l2 1A1 1 0 0 0 14 21v-7a2 2 0 0 1 .517-1.341L21.74 4.67A1 1 0 0 0 21 3H3a1 1 0 0 0-.742 1.67l7.225 7.989A2 2 0 0 1 10 14z"/></svg>';
+        filterBtn.style.display = 'flex';
+        filterBtn.style.alignItems = 'center';
+        filterBtn.style.justifyContent = 'center';
+        filterBtn.style.padding = '0';
+        L.DomEvent.on(filterBtn, 'click', L.DomEvent.stopPropagation)
+          .on(filterBtn, 'click', L.DomEvent.preventDefault)
+          .on(filterBtn, 'click', (e) => {
+            L.DomEvent.preventDefault(e);
 
-              if (filterPanelRef.current) {
-                try {
-                  // reveal all markers when toggling the filter button closed
-                  try {
-                    if (markersRef.current) {
-                      (markersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                      });
-                    }
-                    markersByIdRef.current.forEach((marker) => {
-                      try { (marker as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                    });
-                    if (houseMarkersRef.current) {
-                      (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                      });
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-
-                  filterPanelRef.current.remove();
-                } catch (e) {
-                  // ignore
-                }
-                filterPanelRef.current = null;
-                if (filterCircleRef.current) {
-                  try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
-                  filterCircleRef.current = null;
-                }
-                return;
-              }
-
-              // create panel element and attach to map container
-              const panel = document.createElement('div');
-              panel.className = 'pp-filter-panel leaflet-control-panel';
-              panel.setAttribute('role', 'dialog');
-              panel.innerHTML = `
-                <div style="min-width:220px;padding:8px;">
-                  <div class="mb-2"><strong>Filter markers</strong></div>
-                  <div class="mb-2">
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-all" value="all" checked>
-                      <label class="form-check-label" for="pp-filter-all">All</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-homes" value="homes">
-                      <label class="form-check-label" for="pp-filter-homes">Homes</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                      <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-stores" value="stores">
-                      <label class="form-check-label" for="pp-filter-stores">Stores</label>
-                    </div>
-                  </div>
-                  <div class="mb-2"><label class="form-label mb-1">Radius (miles)</label>
-                    <input type="range" min="0" max="25" step="0.1" value="1" id="pp-filter-radius" class="form-range" />
-                    <div class="text-muted small" id="pp-filter-radius-label">1 mile</div>
-                  </div>
-                  <div class="d-flex justify-content-end gap-2">
-                    <button class="btn btn-sm btn-outline-secondary" id="pp-filter-reset">Clear</button>
-                    <button class="btn btn-sm btn-secondary" id="pp-filter-close">Close</button>
-                  </div>
-                </div>
-              `;
-
-              const mapContainerEl = mapInstance.getContainer();
-              panel.style.position = 'absolute';
-              panel.style.zIndex = '1000';
-              panel.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
-              panel.style.background = 'white';
-              panel.style.borderRadius = '6px';
-              panel.style.padding = '0';
-
-              // position panel near the filter button
-              try {
-                const btnRect = filterToolLink.getBoundingClientRect();
-                const containerRect = mapContainerEl.getBoundingClientRect();
-                const right = containerRect.right - btnRect.right + 8; // pixels from right edge
-                const bottom = containerRect.bottom - btnRect.top + 8; // place above or below depending
-                // prefer positioning above button if space
-                panel.style.right = `${right}px`;
-                panel.style.bottom = `${bottom}px`;
-              } catch (e) {
-                // fallback
-                panel.style.right = '10px';
-                panel.style.bottom = '60px';
-              }
-
-              mapContainerEl.appendChild(panel);
-              filterPanelRef.current = panel;
-
-              // prevent interactions inside the panel from propagating to the map
-              try {
-                L.DomEvent.disableClickPropagation(panel);
-                L.DomEvent.disableScrollPropagation(panel);
-              } catch (e) {
-                // ignore
-              }
-
-              // attach handlers immediately
-              const closeBtn = panel.querySelector('#pp-filter-close') as HTMLButtonElement | null;
-              const radiusInput = panel.querySelector('#pp-filter-radius') as HTMLInputElement | null;
-              const radiusLabel = panel.querySelector('#pp-filter-radius-label') as HTMLElement | null;
-              const typeInputs = panel.querySelectorAll('input[name="pp-filter-type"]') as NodeListOf<HTMLInputElement> | null;
-
-              if (radiusInput && radiusLabel) {
-                const milesToMeters = (m: number) => m * 1609.34;
-                const meters = milesToMeters(Number(radiusInput.value));
-                const initialCenter = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
-                if (filterCircleRef.current) {
-                  filterCircleRef.current.setRadius(meters);
-                  try { filterCircleRef.current.setLatLng(initialCenter); } catch (e) { /* ignore */ }
-                } else {
-                  filterCircleRef.current = L.circle(initialCenter, { radius: meters, color: '#007bff', weight: 1 }).addTo(mapInstance);
-                }
-
-                // helper to apply current type + radius filters to existing markers
-                const applyFilters = (centerLatLng: L.LatLng, radiusMeters: number) => {
-                  try {
-                    const typeSelected = (panel.querySelector('input[name="pp-filter-type"]:checked') as HTMLInputElement | null)?.value || 'all';
-
-                    // search result markers (markersByIdRef)
-                    markersByIdRef.current.forEach((marker) => {
-                      try {
-                        const d = map.distance(marker.getLatLng(), centerLatLng);
-                        if (typeSelected === 'homes') {
-                          // hide search markers when homes-only
-                          (marker as any).remove();
-                        } else if (d <= radiusMeters) {
-                          (marker as any).addTo(map);
-                        } else {
-                          (marker as any).remove();
-                        }
-                      } catch (e) {
-                        try { (marker as any).remove(); } catch (ee) { /* ignore */ }
-                      }
-                    });
-
-                    // house markers
-                    if (houseMarkersRef.current) {
-                      (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try {
-                          const latlng = (layer as L.Marker).getLatLng();
-                          const d = map.distance(latlng, centerLatLng);
-                          if (typeSelected === 'stores') {
-                            (layer as any).remove();
-                          } else if (d <= radiusMeters) {
-                            (layer as any).addTo(map);
-                          } else {
-                            (layer as any).remove();
-                          }
-                        } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
-                        }
-                      });
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-                };
-
-                // apply filters immediately when panel opens so existing search results are honored
-                try {
-                  applyFilters(initialCenter, meters);
-                } catch (e) {
-                  // ignore
-                }
-
-                radiusInput.addEventListener('input', (e) => {
-                  const rawVal = Number((e.target as HTMLInputElement).value);
-                  const val = Math.round(rawVal * 10) / 10; // one decimal precision
-                  if (radiusLabel) radiusLabel.textContent = (val === 1 ? '1 mile' : `${val} miles`);
-                  const m = milesToMeters(val);
-                  if (filterCircleRef.current) filterCircleRef.current.setRadius(m);
-
-                  // filter markers by distance to user (if available) otherwise map center
-                  try {
-                    const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
-                    // filter search result markers
-                    markersByIdRef.current.forEach((marker) => {
-                      try {
-                        const d = map.distance(marker.getLatLng(), center);
-                        if (d <= m) {
-                          (marker as any).addTo(map);
-                        } else {
-                          (marker as any).remove();
-                        }
-                      } catch (err) {
-                        // ignore per-marker issues
-                      }
-                    });
-
-                    // filter house markers
-                    if (houseMarkersRef.current) {
-                      (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                        try {
-                          const latlng = (layer as L.Marker).getLatLng();
-                          const d = map.distance(latlng, center);
-                          if (d <= m) {
-                            (layer as any).addTo(map);
-                          } else {
-                            (layer as any).remove();
-                          }
-                        } catch (err) {
-                          // ignore
-                        }
-                      });
-                    }
-                  } catch (err) {
-                    // ignore
-                  }
-                });
-              }
-
-              if (typeInputs) {
-                typeInputs.forEach((inp) => {
-                  inp.addEventListener('change', (ev) => {
-                    const v = (ev.target as HTMLInputElement).value;
-                    try {
-                      if (!houseMarkersRef.current || !markersRef.current) return;
-                      const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : map.getCenter();
-                      const radius = filterCircleRef.current ? filterCircleRef.current.getRadius() : Infinity;
-
-                      const showHouseIfInRadius = (layer: any) => {
-                        try {
-                          const latlng = (layer as L.Marker).getLatLng();
-                          const d = map.distance(latlng, center);
-                          if (d <= radius) {
-                            (layer as any).addTo(map);
-                          } else {
-                            (layer as any).remove();
-                          }
-                        } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
-                        }
-                      };
-
-                      const showStoreIfInRadius = (layer: any) => {
-                        try {
-                          const latlng = (layer as L.Marker).getLatLng();
-                          const d = map.distance(latlng, center);
-                          if (d <= radius) {
-                            (layer as any).addTo(map);
-                          } else {
-                            (layer as any).remove();
-                          }
-                        } catch (e) {
-                          try { (layer as any).remove(); } catch (ee) { /* ignore */ }
-                        }
-                      };
-
-                      if (v === 'homes') {
-                        // remove all search result markers
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) { /* ignore */ }
-                        // show only house markers within radius
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) { /* ignore */ }
-                      } else if (v === 'stores') {
-                        // remove all house markers
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { (layer as any).remove(); }); } catch (e) { /* ignore */ }
-                        // show only store/search markers within radius
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) { /* ignore */ }
-                      } else {
-                        // show both groups but only layers within radius
-                        try { (markersRef.current as L.LayerGroup).eachLayer((layer: any) => { showStoreIfInRadius(layer); }); } catch (e) { /* ignore */ }
-                        try { (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => { showHouseIfInRadius(layer); }); } catch (e) { /* ignore */ }
-                      }
-                    } catch (e) {
-                      // ignore
-                    }
-                  });
-                });
-              }
-
-              const resetBtn = panel.querySelector('#pp-filter-reset') as HTMLButtonElement | null;
-
-              if (resetBtn) {
-                resetBtn.addEventListener('click', () => {
-                  try {
-                    if (!mapRef.current) return;
-                    // reset radios to All
-                    const allRadio = panel.querySelector('#pp-filter-all') as HTMLInputElement | null;
-                    const homesRadio = panel.querySelector('#pp-filter-homes') as HTMLInputElement | null;
-                    const storesRadio = panel.querySelector('#pp-filter-stores') as HTMLInputElement | null;
-                    if (allRadio) allRadio.checked = true;
-                    if (homesRadio) homesRadio.checked = false;
-                    if (storesRadio) storesRadio.checked = false;
-
-                    // reset radius UI to 1 and apply the default radius filter (1 mile)
-                    if (radiusInput && radiusLabel) {
-                      radiusInput.value = '1';
-                      radiusLabel.textContent = '1 mile';
-                      const milesToMeters = (m: number) => m * 1609.34;
-                      const meters = milesToMeters(1);
-                      const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
-                      if (filterCircleRef.current) {
-                        try { filterCircleRef.current.setLatLng(center); } catch (e) { /* ignore */ }
-                        filterCircleRef.current.setRadius(meters);
-                      } else {
-                        filterCircleRef.current = L.circle(center, { radius: meters, color: '#007bff', weight: 1 }).addTo(mapInstance);
-                      }
-
-                      // show both groups but only items within default radius
-                      try {
-                        const radius = filterCircleRef.current.getRadius();
-                        // search markers (markersByIdRef)
-                        markersByIdRef.current.forEach((marker) => {
-                          try {
-                            const d = map.distance(marker.getLatLng(), center);
-                            if (d <= radius) { (marker as any).addTo(map); } else { (marker as any).remove(); }
-                          } catch (e) { try { (marker as any).remove(); } catch (ee) { /* ignore */ } }
-                        });
-
-                        // house markers
-                        if (houseMarkersRef.current) {
-                          (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                            try {
-                              const d = map.distance((layer as L.Marker).getLatLng(), center);
-                              if (d <= radius) (layer as any).addTo(map); else (layer as any).remove();
-                            } catch (e) { try { (layer as any).remove(); } catch (ee) { /* ignore */ } }
-                          });
-                        }
-                      } catch (e) {
-                        // ignore
-                      }
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-                });
-              }
-
-              if (closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                  if (!mapRef.current) return;
-                  try {
-                    // reveal all markers when panel closes
-                    try {
-                      if (markersRef.current) {
-                        (markersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                          try { (layer as any).addTo(map); } catch (e) { /* ignore */ }
-                        });
-                      }
-                      // also ensure markers tracked by id are added
-                      markersByIdRef.current.forEach((marker) => {
-                        try { (marker as any).addTo(map); } catch (e) { /* ignore */ }
-                      });
-                      if (houseMarkersRef.current) {
-                        (houseMarkersRef.current as L.LayerGroup).eachLayer((layer: any) => {
-                          try { (layer as any).addTo(mapInstance); } catch (e) { /* ignore */ }
-                        });
-                      }
-                    } catch (e) {
-                      // ignore
-                    }
-
-                    try { panel.remove(); } catch (e) { /* ignore */ }
-                    filterPanelRef.current = null;
-                    if (filterCircleRef.current) {
-                      try { filterCircleRef.current.remove(); } catch (e) { /* ignore */ }
-                      filterCircleRef.current = null;
-                    }
-                  } catch (e) {
-                    // ignore
-                  }
-                });
-              }
-            } catch (e) {
-              // ignore
+            if (filterPanelRef.current) {
+              filterPanelRef.current.remove();
+              filterPanelRef.current = null;
+              return;
             }
-          });
-        L.DomEvent.disableClickPropagation(filterToolLink);
-        L.DomEvent.disableScrollPropagation(filterToolLink);
+            const panel = document.createElement('div');
+            panel.className = 'pp-filter-panel leaflet-control-panel';
+            panel.innerHTML = `
+            <div style="min-width:220px;padding:12px;">
+              <div style="margin-bottom:12px;font-weight:600;">Filter markers</div>
+              <div style="margin-bottom:12px;">
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-all" value="all" checked>
+                  <label class="form-check-label" for="pp-filter-all">All</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-houses" value="houses">
+                  <label class="form-check-label" for="pp-filter-houses">Houses</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input class="form-check-input" type="radio" name="pp-filter-type" id="pp-filter-shops" value="shops">
+                  <label class="form-check-label" for="pp-filter-shops">Shops</label>
+                </div>
+              </div>
+              <div style="margin-bottom:12px;">
+                <label class="form-label" style="margin-bottom:4px;">Radius</label>
+                <input type="range" min="0" max="2000" step="10" value="${currentRadius}" id="pp-filter-radius" class="form-range" />
+                <div class="text-muted small" id="pp-filter-radius-label">${currentRadius} meters</div>
+              </div>
+              <div class="d-flex justify-content-end gap-2">
+                <button class="btn btn-sm btn-danger" id="pp-filter-reset">Reset</button>
+                <button class="btn btn-sm btn-secondary" id="pp-filter-close">Close</button>
+              </div>
+            </div>
+          `;
 
-        const searchLink = L.DomUtil.create('a', 'leaflet-control-search leaflet-bar-part leaflet-control-zoom-in', container) as HTMLAnchorElement;
-        searchLink.href = '#';
-        searchLink.role = 'button';
-        searchLink.title = 'Search';
-        searchLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>';
-        searchLink.style.display = 'flex';
-        searchLink.style.alignItems = 'center';
-        searchLink.style.justifyContent = 'center';
-        searchLink.style.padding = '0';
-        L.DomEvent.on(searchLink, 'click', L.DomEvent.stopPropagation)
-          .on(searchLink, 'click', L.DomEvent.preventDefault)
-          .on(searchLink, 'click', () => {
+            const mapContainer = map.getContainer();
+            panel.style.position = 'absolute';
+            panel.style.zIndex = '1000';
+            panel.style.boxShadow = '0 2px 8px rgba(0,0,0,0.15)';
+            panel.style.background = 'white';
+            panel.style.borderRadius = '6px';
+            panel.style.padding = '0';
+
+            try {
+              const btnRect = filterBtn.getBoundingClientRect();
+              const containerRect = mapContainer.getBoundingClientRect();
+              const right = containerRect.right - btnRect.right;
+              const bottom = containerRect.bottom - btnRect.top + btnRect.height + 8;
+              panel.style.right = `${right}px`;
+              panel.style.bottom = `${bottom}px`;
+            } catch (e) {
+              panel.style.right = '10px';
+              panel.style.bottom = '120px';
+            }
+
+            mapContainer.appendChild(panel);
+            filterPanelRef.current = panel;
+
+            // Prevent map interactions on panel
+            L.DomEvent.disableClickPropagation(panel);
+            L.DomEvent.disableScrollPropagation(panel);
+
+            // Attach event handlers
+            const radiusInput = panel.querySelector('#pp-filter-radius') as HTMLInputElement;
+            const radiusLabel = panel.querySelector('#pp-filter-radius-label') as HTMLElement;
+            const typeInputs = panel.querySelectorAll('input[name="pp-filter-type"]') as NodeListOf<HTMLInputElement>;
+            const resetBtn = panel.querySelector('#pp-filter-reset') as HTMLButtonElement;
+            const closeBtn = panel.querySelector('#pp-filter-close') as HTMLButtonElement;
+
+            // Radius change handler
+            radiusInput.addEventListener('input', (event) => {
+              const newRadius = Number((event.target as HTMLInputElement).value);
+              setCurrentRadius(newRadius);
+              radiusLabel.textContent = `${newRadius} meters`;
+
+              if (filterCircleRef.current) {
+                filterCircleRef.current.setRadius(newRadius);
+              }
+
+              const center = filterCircleRef.current?.getLatLng() || map.getCenter();
+              onMapMove?.(
+                { lat: center.lat, lng: center.lng },
+                newRadius,
+              );
+            });
+
+            // Type change handler
+            typeInputs.forEach((input) => {
+              input.addEventListener('change', (event) => {
+                const value = (event.target as HTMLInputElement).value as 'all' | 'houses' | 'shops';
+                setCurrentType(value);
+              });
+            });
+
+            // Reset handler
+            resetBtn.addEventListener('click', () => {
+              const allRadio = panel.querySelector('#pp-filter-all') as HTMLInputElement;
+              allRadio.checked = true;
+              setCurrentType('all');
+
+              radiusInput.value = '1000';
+              radiusLabel.textContent = '1000 meters';
+              setCurrentRadius(1000);
+
+              if (filterCircleRef.current) {
+                filterCircleRef.current.setRadius(1000);
+              }
+
+              const center = filterCircleRef.current?.getLatLng() || map.getCenter();
+              onMapMove?.(
+                { lat: center.lat, lng: center.lng },
+                1000,
+              );
+            });
+
+            // Close handler
+            closeBtn.addEventListener('click', () => {
+              panel.remove();
+              filterPanelRef.current = null;
+            });
+          });
+        L.DomEvent.disableClickPropagation(filterBtn);
+        L.DomEvent.disableScrollPropagation(filterBtn);
+
+        // Search button - opens sidebar
+        const searchBtn = L.DomUtil.create('a', 'leaflet-control-search leaflet-bar-part leaflet-control-zoom-in', controlContainer) as HTMLAnchorElement;
+        searchBtn.href = '#';
+        searchBtn.role = 'button';
+        searchBtn.title = 'Search';
+        searchBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search"><path d="m21 21-4.34-4.34"/><circle cx="11" cy="11" r="8"/></svg>';
+        searchBtn.style.display = 'flex';
+        searchBtn.style.alignItems = 'center';
+        searchBtn.style.justifyContent = 'center';
+        searchBtn.style.padding = '0';
+        L.DomEvent.on(searchBtn, 'click', L.DomEvent.stopPropagation)
+          .on(searchBtn, 'click', L.DomEvent.preventDefault)
+          .on(searchBtn, 'click', () => {
             if (onOpenFilters) onOpenFilters();
           });
-        L.DomEvent.disableClickPropagation(searchLink);
-        L.DomEvent.disableScrollPropagation(searchLink);
+        L.DomEvent.disableClickPropagation(searchBtn);
+        L.DomEvent.disableScrollPropagation(searchBtn);
 
-        const locateLink = L.DomUtil.create('a', 'leaflet-control-filter leaflet-bar-part leaflet-control-zoom-in', container) as HTMLAnchorElement;
-        locateLink.href = '#';
-        locateLink.role = 'button';
-        locateLink.title = 'Locate me';
-        locateLink.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-locate-fixed-icon lucide-locate-fixed"><line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg>';
-        locateLink.style.display = 'flex';
-        locateLink.style.alignItems = 'center';
-        locateLink.style.justifyContent = 'center';
-        locateLink.style.padding = '0';
-        L.DomEvent.on(locateLink, 'click', L.DomEvent.stopPropagation)
-          .on(locateLink, 'click', L.DomEvent.preventDefault)
-          .on(locateLink, 'click', () => {
-            map.locate({ setView: true, maxZoom: 15 });
+        // Locate button
+        const locateBtn = L.DomUtil.create('a', 'leaflet-control-filter leaflet-bar-part leaflet-control-zoom-in', controlContainer) as HTMLAnchorElement;
+        locateBtn.href = '#';
+        locateBtn.role = 'button';
+        locateBtn.title = 'Locate me';
+        locateBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-locate-fixed-icon lucide-locate-fixed"><line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></svg>';
+        locateBtn.style.display = 'flex';
+        locateBtn.style.alignItems = 'center';
+        locateBtn.style.justifyContent = 'center';
+        locateBtn.style.padding = '0';
+        L.DomEvent.on(locateBtn, 'click', L.DomEvent.stopPropagation)
+          .on(locateBtn, 'click', L.DomEvent.preventDefault)
+          .on(locateBtn, 'click', () => {
+            if (userMarkerRef.current) {
+              // If we already have user location, just fly to it
+              const latlng = userMarkerRef.current.getLatLng();
+              map.flyTo(latlng, 15, { duration: 0.8 });
+              userMarkerRef.current.openPopup();
+
+              // Update filter circle to user's position and preserve current radius
+              if (filterCircleRef.current) {
+                filterCircleRef.current.setLatLng(latlng);
+                filterCircleRef.current.setRadius(currentRadius);
+              }
+
+              // Notify parent of updated position with preserved radius
+              onMapMove?.(
+                { lat: latlng.lat, lng: latlng.lng },
+                currentRadius,
+              );
+            } else {
+              // Request location for the first time
+              map.locate({ setView: true, maxZoom: 15 });
+            }
           });
-        L.DomEvent.disableClickPropagation(locateLink);
-        L.DomEvent.disableScrollPropagation(locateLink);
+        L.DomEvent.disableClickPropagation(locateBtn);
+        L.DomEvent.disableScrollPropagation(locateBtn);
 
-        return container;
+        return controlContainer;
       },
     });
 
-    (map as any).addControl(new CustomControl());
+    map.addControl(new ControlGroup());
 
+    // Position control group before zoom controls
     const mapContainer = map.getContainer();
     const groupEl = mapContainer.querySelector('.leaflet-control-group') as HTMLElement | null;
     const zoomEl = mapContainer.querySelector('.leaflet-control-zoom') as HTMLElement | null;
@@ -484,185 +270,246 @@ const LocationsMap: React.FC<{
       zoomEl.parentNode.insertBefore(groupEl, zoomEl);
     }
 
-    map.locate({ setView: true, maxZoom: 15 });
-
-    // fetch houses immediately so house markers are visible on load
-    (async () => {
-      try {
-        const res = await fetch('/api/kitchen/houses');
-        if (!res.ok) return;
-        const houses = await res.json();
-        if (!houseMarkersRef.current) houseMarkersRef.current = L.layerGroup().addTo(map);
-        (houseMarkersRef.current as L.LayerGroup).clearLayers();
-        houses.forEach((h: any) => {
-          if (h.latitude == null || h.longitude == null) return;
-          const hm = L.marker([h.latitude, h.longitude], {
-            icon: createMapPinIcon({ pinColor: 'blue', circleColor: 'white', size: 28, strokeColor: 'black', strokeWidth: 1 }),
-          });
-          hm.bindPopup(`<div style="font-weight:600">${h.name}</div><div class="text-muted small">${h.address || ''}</div>`);
-          hm.addTo(houseMarkersRef.current as L.LayerGroup);
-        });
-      } catch (e) {
-        // ignore
-      }
-    })();
-
+    // Handle location found
     map.on('locationfound', (e: L.LocationEvent) => {
       if (!mapRef.current) return;
-      try {
-        if (userMarkerRef.current) {
-          userMarkerRef.current.setLatLng([e.latlng.lat, e.latlng.lng]);
-        } else {
-          userMarkerRef.current = L.marker([e.latlng.lat, e.latlng.lng], {
-            icon: createMapPinIcon({
-              pinColor: 'red',
-              circleColor: 'white',
-              size: 35,
-              strokeColor: 'black',
-              strokeWidth: 2,
-            }),
-          }).addTo(map);
-        }
-        userMarkerRef.current.bindPopup('You are here').openPopup();
-        // if a filter circle exists, recenter it on the user's location
-        try {
-          if (filterCircleRef.current) {
-            filterCircleRef.current.setLatLng([e.latlng.lat, e.latlng.lng]);
-          }
-        } catch (err) {
-          // ignore
-        }
-      } catch (err) {
-        // ignore
+
+      const { latlng } = e;
+
+      // Add or update user marker
+      if (userMarkerRef.current) {
+        userMarkerRef.current.setLatLng(latlng);
+      } else {
+        userMarkerRef.current = L.marker(latlng, {
+          icon: createMapPinIcon({
+            pinColor: 'red',
+            circleColor: 'white',
+            size: 35,
+            strokeColor: 'black',
+            strokeWidth: 2,
+          }),
+        }).addTo(map);
       }
+
+      userMarkerRef.current.bindPopup('You are here').openPopup();
+
+      // Always center filter circle on user's actual location
+      if (filterCircleRef.current) {
+        filterCircleRef.current.setLatLng(latlng);
+      } else {
+        filterCircleRef.current = L.circle(latlng, {
+          radius: currentRadius,
+          color: '#007bff',
+          weight: 2,
+          fillOpacity: 0.1,
+        }).addTo(map);
+      }
+
+      onMapMove?.(
+        { lat: latlng.lat, lng: latlng.lng },
+        currentRadius,
+      );
     });
+
     map.on('locationerror', () => {
-      // eslint-disable-next-line no-alert
-      alert('Could not get your location');
-    });
-    // ensure Leaflet recalculates size after container fills the viewport
-    setTimeout(() => {
-      try {
-        map.invalidateSize();
-      } catch (e) {
-        // ignore
+      const center = map.getCenter();
+      if (!filterCircleRef.current) {
+        filterCircleRef.current = L.circle(center, {
+          radius: currentRadius,
+          color: '#007bff',
+          weight: 2,
+          fillOpacity: 0.1,
+        }).addTo(map);
       }
+    });
+
+    // Initialize filter circle at map center
+    const center = map.getCenter();
+    filterCircleRef.current = L.circle(center, {
+      radius: currentRadius,
+      color: '#007bff',
+      weight: 2,
+      fillOpacity: 0.1,
+    }).addTo(map);
+
+    // Notify parent of initial position
+    onMapMove?.(
+      { lat: center.lat, lng: center.lng },
+      currentRadius,
+    );
+
+    mapRef.current = map;
+    // mark map as ready so other effects can safely add layers/icons
+    setMapReady(true);
+
+    // Expose flyTo method to parent component
+    if (onMapReady) {
+      onMapReady((lat: number, lng: number) => {
+        if (mapRef.current) {
+          mapRef.current.flyTo([lat, lng], 16, { duration: 1 });
+        }
+      });
+    }
+
+    // Recalculate map size after layout stabilizes
+    setTimeout(() => {
+      map.invalidateSize();
     }, 200);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+
+    // Request user location after map is ready
+    setTimeout(() => {
+      if (mapRef.current) {
+        mapRef.current.locate({ setView: true, maxZoom: 15 });
+      }
+    }, 500);
+
+    return () => {
+      const currentMap = mapRef.current;
+      if (currentMap && currentMap === map) {
+        currentMap.off();
+        currentMap.remove();
+        mapRef.current = null;
+      }
+      setMapReady(false);
+      return undefined;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // update markers when searchResults change
+  // Render shop markers based on current filter settings
   useEffect(() => {
-    const mapInstance = mapRef.current;
-    const markersLayer = markersRef.current;
-    if (!mapInstance || !markersLayer) return;
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
 
-    markersLayer.clearLayers();
-    markersByIdRef.current.clear();
+    const panes = (map as any)._panes;
+    if (!panes || !panes.markerPane) return;
 
-    searchResults.forEach((s) => {
-      if (s.latitude == null || s.longitude == null) return;
-      const isSelected = s.id != null && selectedMarkerId === s.id;
-      const m = L.marker([s.latitude, s.longitude], {
-        icon: createMapPinIcon({
-          pinColor: isSelected ? 'yellow' : 'red',
-          circleColor: 'white',
-          size: isSelected ? 36 : 30,
-          strokeColor: 'black',
-          strokeWidth: 1,
-        }),
-      });
+    const markers: L.Marker[] = [];
 
-      // popup HTML: show place details
-      const popupHtml = `
-        <div>
-          <div style="font-weight:600;margin-bottom:6px;">${s.label}</div>
-          <div style="font-size:90%;color:#666;margin-bottom:8px;">${s.address || ''}</div>
-        </div>
-      `;
+    // Render shops when filter includes them
+    if (currentType === 'all' || currentType === 'shops') {
+      shops.forEach((shop) => {
+        // Check if this is a forced location that should bypass filters
+        const isForcedLocation = forcedLocation?.id === shop.id && forcedLocation?.type === 'shop';
 
-      m.bindPopup(popupHtml, { autoClose: false, closeOnClick: false });
+        // Check if shop is within radius
+        const filterCenter = filterCircleRef.current?.getLatLng() || map.getCenter();
+        const distance = map.distance([shop.latitude, shop.longitude], filterCenter);
 
-      // click: notify parent (which will set selectedMarkerId) and open popup
-      m.on('click', () => {
-        try {
-          if (onMarkerClick) onMarkerClick(s.id, s.latitude, s.longitude);
-          m.setIcon(createMapPinIcon({ pinColor: 'yellow', circleColor: 'white', size: 36, strokeColor: 'black', strokeWidth: 1 }));
-          m.openPopup();
-          try { (m as any).bringToFront(); } catch (e) { /* ignore */ }
-        } catch (e) {
-          // ignore
-        }
-      });
+        if (distance <= currentRadius || isForcedLocation) {
+          const marker = L.marker([shop.latitude, shop.longitude], {
+            icon: createMapPinIcon({ pinColor: 'green', circleColor: 'white', size: 30 }),
+          });
 
-      m.addTo(markersLayer as L.LayerGroup);
-      // apply active type filter (if panel open) and radius filter (if circle exists)
-      try {
-        const typeSelected = (document.querySelector('input[name="pp-filter-type"]:checked') as HTMLInputElement | null)?.value || 'all';
-        if (typeSelected === 'homes') {
-          (m as any).remove();
-        } else if (filterCircleRef.current) {
-          const center = userMarkerRef.current ? userMarkerRef.current.getLatLng() : mapInstance.getCenter();
-          const dist = mapInstance.distance(m.getLatLng(), center);
-          if (dist > filterCircleRef.current.getRadius()) {
-            (m as any).remove();
-          }
-        }
-      } catch (e) {
-        // ignore
-      }
+          const { name, address, opening_hours: openingHours, phone, website, category } = shop.properties;
 
-      if (s.id) markersByIdRef.current.set(s.id, m);
-    });
-  }, [searchResults, selectedMarkerId, onMarkerClick]);
+          const popupContent = `
+            <div style="min-width: 200px;">
+              <h6 style="margin: 0 0 8px 0; font-weight: 600;">${name}</h6>
+              <div style="color: #666; font-size: 0.85em; margin-bottom: 8px;">${category?.label || 'N/A'}</div>
+              <div style="margin-bottom: 4px;"><strong>Address:</strong> ${address || 'N/A'}</div>
+              <div style="margin-bottom: 4px;"><strong>Hours:</strong> ${openingHours || 'N/A'}</div>
+              <div style="margin-bottom: 4px;"><strong>Phone:</strong> ${phone ? `<a href="tel:${phone}">${phone}</a>` : 'N/A'}</div>
+              <div style="margin-bottom: 8px;"><strong>Website:</strong> ${website ? `<a href="${website}" target="_blank" rel="noopener noreferrer">Visit</a>` : 'N/A'}</div>
+              <div style="margin-top: 8px;">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${shop.latitude},${shop.longitude}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="font-weight: 600; color: #007bff;">
+                  Get Directions →
+                </a>
+              </div>
+            </div>
+          `;
 
-  // when selectedMarkerId changes, ensure only that marker is yellow and others are red
-  useEffect(() => {
-    try {
-      markersByIdRef.current.forEach((marker, key) => {
-        const isSel = selectedMarkerId != null && key === selectedMarkerId;
-        try {
-          marker.setIcon(createMapPinIcon({ pinColor: isSel ? 'yellow' : 'red', circleColor: 'white', size: isSel ? 36 : 30, strokeColor: 'black', strokeWidth: 1 }));
-          if (isSel) {
+          marker.bindPopup(popupContent);
+          marker.addTo(map);
+          markers.push(marker);
+
+          // Clear forced location when popup is closed
+          marker.on('popupclose', () => {
+            if (onClearForced) {
+              onClearForced();
+            }
+          });
+
+          // Open popup if this is the selected shop
+          if (selectedId === shop.id) {
             marker.openPopup();
-            try { (marker as any).bringToFront(); } catch (e) { /* ignore */ }
           }
-        } catch (e) {
-          // ignore per-marker errors
         }
       });
-    } catch (e) {
-      // ignore
     }
-  }, [selectedMarkerId]);
 
-  // fly to selected location when set
+    return () => {
+      markers.forEach((m) => m.remove());
+    };
+  }, [shops, selectedId, currentType, currentRadius, mapReady, forcedLocation, onClearForced]);
+
+  // Render house markers based on current filter settings
   useEffect(() => {
-    const mapInstance = mapRef.current;
-    if (!mapInstance || !selectedLocation) return;
-    try {
-      mapInstance.flyTo([selectedLocation.latitude, selectedLocation.longitude], 15, { duration: 0.8 });
-      if (selectedMarkerId && markersByIdRef.current.has(selectedMarkerId)) {
-        const m = markersByIdRef.current.get(selectedMarkerId)!;
-        try {
-          m.setIcon(createMapPinIcon({ pinColor: 'yellow', circleColor: 'white', size: 36, strokeColor: 'black', strokeWidth: 2 }));
-          m.openPopup();
-          try { (m as any).bringToFront(); } catch (e) { /* ignore */ }
-        } catch (e) {
-          // ignore
+    const map = mapRef.current;
+    if (!map || !mapReady) return undefined;
+
+    // eslint-disable-next-line no-underscore-dangle
+    const panes = (map as any)._panes;
+    if (!panes || !panes.markerPane) return undefined;
+
+    const markers: L.Marker[] = [];
+
+    // Render houses when filter includes them
+    if (currentType === 'all' || currentType === 'houses') {
+      houses.forEach((house) => {
+        // Check if this is a forced location that should bypass filters
+        const isForcedLocation = forcedLocation?.id === house.id && forcedLocation?.type === 'house';
+
+        // Check if house is within radius
+        const filterCenter = filterCircleRef.current?.getLatLng() || map.getCenter();
+        const distance = map.distance([house.latitude, house.longitude], filterCenter);
+
+        if (distance <= currentRadius || isForcedLocation) {
+          const marker = L.marker([house.latitude, house.longitude], {
+            icon: createMapPinIcon({ pinColor: 'blue', circleColor: 'white', size: 28 }),
+          });
+
+          const popupContent = `
+            <div style="min-width: 150px;">
+              <h6 style="margin: 0 0 8px 0; font-weight: 600;">${house.name}</h6>
+              ${house.address ? `<div style="margin-bottom: 8px;">${house.address}</div>` : ''}
+              <div style="margin-top: 8px;">
+                <a href="https://www.google.com/maps/dir/?api=1&destination=${house.latitude},${house.longitude}" 
+                   target="_blank" 
+                   rel="noopener noreferrer"
+                   style="font-weight: 600; color: #007bff;">
+                  Get Directions →
+                </a>
+              </div>
+            </div>
+          `;
+
+          marker.bindPopup(popupContent);
+          marker.addTo(map);
+          markers.push(marker);
+
+          // Clear forced location when popup is closed
+          marker.on('popupclose', () => {
+            if (onClearForced) {
+              onClearForced();
+            }
+          });
+
+          // Open popup if this is the selected house
+          if (selectedId === house.id) {
+            marker.openPopup();
+          }
         }
-      }
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to flyTo selected location', e);
+      });
     }
-  }, [selectedLocation, selectedMarkerId]);
 
-  return (
-    <div style={{ width: '100%', height: '100%' }}>
-      <div id="map" style={{ width: '100%', height: '100%' }} />
-    </div>
-  );
-};
+    return () => {
+      markers.forEach((m) => m.remove());
+    };
+  }, [houses, selectedId, currentType, currentRadius, mapReady, forcedLocation, onClearForced]);
 
-export default LocationsMap;
+  return <div id="map" style={{ width: '100%', height: '100%' }} />;
+}

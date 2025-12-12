@@ -41,6 +41,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${lato.variable} ${nunitoSans.variable} antialiased`}
+        suppressHydrationWarning
       >
         <SessionProviderWrapper>
           <MainLayoutSwitcher>{children}</MainLayoutSwitcher>
