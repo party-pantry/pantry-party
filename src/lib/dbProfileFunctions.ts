@@ -44,3 +44,87 @@ export async function fetchUsernameByEmail(data: { email: string }) {
   });
   return user ? user.username : '';
 }
+
+/**
+ * Changes the bio of an existing user in the database.
+ * @param data, an object with the following properties: email, newBio.
+ */
+export async function changeBio(data: { id: number; newBio: string | null }) {
+  await prisma.user.update({
+    where: { id: data.id },
+    data: {
+      bio: data.newBio,
+    },
+  });
+}
+
+/**
+ * Fetches the bio of a user based on their id
+ * @param data, an object with the following properties: id.
+ * @returns A string of the bio or null if none
+ */
+export async function fetchBio(data: { id: number }) {
+  const bio = await prisma.user.findUnique({
+    where: { id: data.id },
+    select: {
+      bio: true,
+    },
+  });
+  return bio ? bio.bio : null;
+}
+
+/**
+ * Changes the username of an existing user in the database.
+ * @param data, an object with the following properties: email, newUsername.
+ */
+export async function changeUsername(data: { id: number; newUsername: string }) {
+  await prisma.user.update({
+    where: { id: data.id },
+    data: {
+      username: data.newUsername,
+    },
+  });
+}
+
+/**
+ * Fetches the username of a user based on their id
+ * @param data, an object with the following properties: id.
+ * @returns The username
+ */
+export async function fetchUsername(data: { id: number }) {
+  const username = await prisma.user.findUnique({
+    where: { id: data.id },
+    select: {
+      username: true,
+    },
+  });
+  return username ? username.username : null;
+}
+
+/**
+ * Changes the email of an existing user in the database.
+ * @param data, an object with the following properties: id, newEmail.
+ */
+export async function changeEmail(data: { id: number; newEmail: string }) {
+  await prisma.user.update({
+    where: { id: data.id },
+    data: {
+      email: data.newEmail,
+    },
+  });
+}
+
+/**
+ * Fetches the email of a user based on their id
+ * @param data, an object with the following properties: id.
+ * @returns The email
+ */
+export async function fetchEmail(data: { id: number }) {
+  const email = await prisma.user.findUnique({
+    where: { id: data.id },
+    select: {
+      email: true,
+    },
+  });
+  return email ? email.email : null;
+}

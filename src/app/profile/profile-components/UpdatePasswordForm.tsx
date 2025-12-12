@@ -50,12 +50,12 @@ const UpdatePasswordForm: React.FC = () => {
 
   const onSubmit = async (data: UpdatePasswordFormData) => {
     await changePassword({ email, ...data });
-    await swal('Password Changed', 'Your password has been changed', 'success', { timer: 2000 });
+    await swal('Success', 'Your password has been changed', 'success', { timer: 2500 });
     reset();
   };
 
   return (
-    <Container className="p-4" style={{ width: '50%' }}>
+    <Container style={{ width: '80%' }}>
         <h5 className="text-center mb-4">
             <strong>Change Password</strong>
         </h5>

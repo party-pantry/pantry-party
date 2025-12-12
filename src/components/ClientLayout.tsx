@@ -11,7 +11,7 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
 
   // Hide sidebar and topbar on auth pages (signin and signup)
   const hidesSidebar = pathname === '/auth' || pathname === '/auth/signin';
-  const hidesTopBar = pathname === '/auth' || pathname === '/auth/signin';
+  const hidesTopBar = pathname === '/auth' || pathname === '/auth/signin' || pathname === '/locations';
 
   return (
     <div className="flex min-h-screen">

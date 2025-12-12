@@ -1,15 +1,38 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
+import React from 'react';
+import { Modal, Form, Button, Alert, Container, Row, Col } from 'react-bootstrap';
 import { useSession } from 'next-auth/react';
-import { addRecipe } from '@/lib/dbFunctions';
-import { Difficulty } from '@prisma/client';
+import { useForm, useFieldArray, Resolver } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
+import { addRecipe, addIngredient, addInstruction, addRecipeNutrition } from '@/lib/dbFunctions';
+import { Unit, Difficulty } from '@prisma/client';
+import { LocalUnit } from '@/lib/Units';
 
-interface Ingredient {
+interface RecipeFormData {
   name: string;
-  quantity: string;
-  unit: string;
+  description?: string;
+  difficulty: Difficulty;
+  prepTime?: number;
+  cookTime?: number;
+  downTime?: number;
+  servings: number;
+  rating?: number;
+  image?: string | null;
+  ingredients: {
+    name: string;
+    quantity: string;
+    unit: Unit;
+  }[];
+  instructions: {
+    content: string;
+  }[];
+  nutritions?: {
+    name: string;
+    amount: number;
+    unit: string;
+  }[];
 }
 
 interface AddRecipeModalProps {
@@ -18,40 +41,143 @@ interface AddRecipeModalProps {
   onSubmit: (recipeData: any) => void;
 }
 
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required('Recipe name is mandatory.'),
+  description: Yup.string().optional(),
+  image: Yup.string().url('Must be a valid URL').optional().nullable(),
+  difficulty: Yup.mixed<Difficulty>()
+    .oneOf(Object.values(Difficulty), 'Invalid difficulty level')
+    .required('Difficulty is required'),
+  // not negative checks
+  prepTime: Yup.number()
+    .typeError('Prep Time must be a number.')
+    .min(0, 'Prep Time cannot be negative.'),
+  cookTime: Yup.number()
+    .typeError('Cook Time must be a number.')
+    .min(0, 'Cook Time cannot be negative.'),
+  downTime: Yup.number()
+    .typeError('Down Time must be a number.')
+    .min(0, 'Down Time cannot be negative.')
+    .optional(),
+  servings: Yup.number()
+    .typeError('Servings must be a number.')
+    .min(1, 'Servings must be at least 1.')
+    .integer('Servings must be a whole number.'),
+  rating: Yup.number()
+    .typeError('Rating must be a number.')
+    .min(0, 'Rating cannot be negative.')
+    .max(5, 'Rating cannot exceed 5.')
+    .optional(),
+  // array validation
+  ingredients: Yup.array()
+    .min(1, 'At least one ingredient is required.')
+    .of(
+      Yup.object().shape({
+        name: Yup.string().required('Name is required.'),
+        quantity: Yup.string().required('Quantity is required.'),
+        unit: Yup.mixed<Unit>().oneOf(Object.values(Unit), 'Invalid Unit').required('Unit is required.'),
+      }),
+    ).required('Ingredients are required.'),
+  instructions: Yup.array()
+    .min(1, 'At least one instruction is required.')
+    .of(
+      Yup.object().shape({
+        content: Yup.string().required('Instruction step content is required.'),
+      }),
+    ).required('Instructions are required.'),
+  nutritions: Yup.array()
+    .of(
+      Yup.object().shape({
+        name: Yup.string().required('Name is required.'),
+        amount: Yup.number()
+          .typeError('Amount must be a number.')
+          .min(0, 'Amount cannot be negative.')
+          .required('Amount is required.'),
+        unit: Yup.string().required('Unit is required.'),
+      }),
+    ).optional(),
+});
+
 const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit }) => {
   const { data: session } = useSession();
   const userID = Number((session?.user as { id: number | string }).id);
 
-  const [formData, setFormData] = useState({
-    userId: userID,
+  const defaultValues: RecipeFormData = {
     name: '',
     description: '',
-    difficulty: 'EASY',
-    prepTime: '',
-    cookTime: '',
-    downTime: '',
-    servings: '',
-    rating: '',
+    difficulty: Difficulty.EASY,
+    prepTime: 0,
+    cookTime: 0,
+    downTime: 0,
+    servings: 0,
+    rating: 0,
     image: '',
-    ingredients: [] as Ingredient[],
+    ingredients: [
+      { name: '', quantity: '', unit: Unit.OUNCE },
+    ],
+    instructions: [],
+    nutritions: [],
+  };
+
+  const {
+    register,
+    handleSubmit,
+    control, // For useFieldArray
+    formState: { errors, isSubmitting },
+  } = useForm<RecipeFormData>({
+    resolver: yupResolver(validationSchema) as unknown as Resolver<RecipeFormData, any>,
+    defaultValues,
+    mode: 'onTouched',
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const { fields: ingredientFields, append: appendIngredient, remove: removeIngredient } = useFieldArray({
+    control,
+    name: 'ingredients',
+  });
+  const { fields: instructionFields, append: appendInstruction, remove: removeInstruction } = useFieldArray({
+    control,
+    name: 'instructions',
+  });
+  const { fields: nutritionFields, append: appendNutrition, remove: removeNutrition } = useFieldArray({
+    control,
+    name: 'nutritions',
+  });
 
+  const onSubmitHandler = async (data: RecipeFormData) => {
     try {
-      console.log('Submitting recipe...');
-      const result = await addRecipe({
-        ...formData,
-        difficulty: formData.difficulty as Difficulty,
-        prepTime: parseInt(formData.prepTime, 10) || 0,
-        cookTime: parseInt(formData.cookTime, 10) || 0,
-        downTime: parseInt(formData.downTime, 10) || 0,
-        servings: parseInt(formData.servings, 10) || 0,
-        rating: parseFloat(formData.rating) || 0,
-      });
+      const recipeData = {
+        ...data,
+        userId: userID,
+        prepTime: data.prepTime ? Number(data.prepTime) : 0,
+        cookTime: data.cookTime ? Number(data.cookTime) : 0,
+        downTime: data.downTime ? Number(data.downTime) : 0,
+        servings: data.servings ? Number(data.servings) : 0,
+        rating: data.rating ? Number(data.rating) : 0,
+      };
+      const result = await addRecipe(recipeData);
 
-      console.log(result.id);
+      await Promise.all(
+        data.ingredients.map((ingredient) => addIngredient(
+          result.id,
+          Number(ingredient.quantity),
+          ingredient.unit,
+          ingredient.name,
+        )),
+      );
+
+      await Promise.all(
+        data.instructions.map((instruction, index) => addInstruction(result.id, index + 1, instruction.content)),
+      );
+
+      await Promise.all(
+        (data.nutritions || []).map(nutrition => addRecipeNutrition(
+          result.id,
+          nutrition.name,
+          Number(nutrition.amount),
+          nutrition.unit,
+        )),
+      );
+
       onSubmit(result);
       onHide();
     } catch (error) {
@@ -59,168 +185,271 @@ const AddRecipeModal: React.FC<AddRecipeModalProps> = ({ show, onHide, onSubmit 
     }
   };
 
-  const handleIngredientChange = (index: number, field: keyof Ingredient, value: string) => {
-    const updatedIngredients = [...formData.ingredients];
-    updatedIngredients[index][field] = value;
-    setFormData({ ...formData, ingredients: updatedIngredients });
-  };
-
-  const handleAddIngredient = () => {
-    setFormData({
-      ...formData,
-      ingredients: [...formData.ingredients, { name: '', quantity: '', unit: '' }],
-    });
-  };
-
   return (
-    <Modal show={show} onHide={onHide} centered>
+    <Modal show={show} onHide={onHide} size="lg" centered >
       <Modal.Header closeButton>
         <Modal.Title>Add Recipe</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <Form onSubmit={handleSubmit}>
+        {errors.root && <Alert variant="danger">{errors.root.message}</Alert>}
+        <Form onSubmit={handleSubmit(onSubmitHandler)} noValidate>
+          <Container>
+            <Row>
+              <Col>
+                {/* Recipe Name */}
+                <Form.Group controlId="name" className="mb-3">
+                  <Form.Label>Recipe Name <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Enter recipe name"
+                    isInvalid={!!errors.name}
+                    {...register('name')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.name?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-          {/* NAME */}
-          <Form.Group controlId="name">
-            <Form.Label>Recipe Name</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Enter recipe name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </Form.Group>
+                {/* Description */}
+                <Form.Group controlId="description" className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    placeholder="Enter recipe description"
+                    isInvalid={!!errors.description}
+                    {...register('description')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
 
-          {/* DESCRIPTION */}
-          <Form.Group controlId="description">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Enter recipe description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            />
-          </Form.Group>
+              <Col>
+                {/* Image URL */}
+                <Form.Group controlId="image" className="mb-3">
+                  <Form.Label>Image URL</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Paste image URL"
+                    isInvalid={!!errors.image}
+                    {...register('image')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.image?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-          {/* IMAGE URL */}
-          <Form.Group controlId="image">
-            <Form.Label>Image URL</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="Paste image URL"
-              value={formData.image}
-              onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-            />
-          </Form.Group>
+                {/* Difficulty */}
+                <Form.Group controlId="difficulty" className="mb-3">
+                  <Form.Label>Difficulty</Form.Label>
+                  <Form.Select
+                    isInvalid={!!errors.difficulty}
+                    {...register('difficulty')}
+                  >
+                    <option value={Difficulty.EASY}>Easy</option>
+                    <option value={Difficulty.MEDIUM}>Medium</option>
+                    <option value={Difficulty.HARD}>Hard</option>
+                  </Form.Select>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.difficulty?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+            </Row>
 
-          {/* DIFFICULTY */}
-          <Form.Group controlId="difficulty">
-            <Form.Label>Difficulty</Form.Label>
-            <Form.Select
-              value={formData.difficulty}
-              onChange={(e) => {
-                const value = e.target.value as Difficulty;
-                if (value === Difficulty.EASY || value === Difficulty.MEDIUM || value === Difficulty.HARD) {
-                  setFormData({ ...formData, difficulty: value });
-                }
-              }}
-            >
-              <option value={Difficulty.EASY}>Easy</option>
-              <option value={Difficulty.MEDIUM}>Medium</option>
-              <option value={Difficulty.HARD}>Hard</option>
-            </Form.Select>
-          </Form.Group>
+            <Row>
+              <Col>
+                {/* Prep Time */}
+                <Form.Group controlId="prepTime" className="mb-3">
+                  <Form.Label>Prep Time (minutes)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Enter preparation time"
+                    isInvalid={!!errors.prepTime}
+                    min="0"
+                    {...register('prepTime')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.prepTime?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-          {/* TIMES, SERVINGS, RATING */}
-          <Form.Group controlId="prepTime">
-            <Form.Label>Prep Time</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter preparation time"
-              value={formData.prepTime}
-              onChange={(e) => setFormData({ ...formData, prepTime: e.target.value })}
-            />
-          </Form.Group>
+                {/* Servings */}
+                <Form.Group controlId="servings" className="mb-3">
+                  <Form.Label>Servings <span className="text-danger">*</span></Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Enter number of servings"
+                    isInvalid={!!errors.servings}
+                    min="1"
+                    {...register('servings')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.servings?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
 
-          <Form.Group controlId="cookTime">
-            <Form.Label>Cook Time</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter cooking time"
-              value={formData.cookTime}
-              onChange={(e) => setFormData({ ...formData, cookTime: e.target.value })}
-            />
-          </Form.Group>
+              <Col>
+                {/* Cook Time */}
+                <Form.Group controlId="cookTime" className="mb-3">
+                  <Form.Label>Cook Time (minutes)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    placeholder="Enter cooking time"
+                    isInvalid={!!errors.cookTime}
+                    min="0"
+                    {...register('cookTime')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.cookTime?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
 
-          <Form.Group controlId="downTime">
-            <Form.Label>Down Time</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter down time"
-              value={formData.downTime}
-              onChange={(e) => setFormData({ ...formData, downTime: e.target.value })}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="servings">
-            <Form.Label>Servings</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter number of servings"
-              value={formData.servings}
-              onChange={(e) => setFormData({ ...formData, servings: e.target.value })}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="rating">
-            <Form.Label>Rating</Form.Label>
-            <Form.Control
-              type="number"
-              placeholder="Enter rating"
-              value={formData.rating}
-              onChange={(e) => setFormData({ ...formData, rating: e.target.value })}
-            />
-          </Form.Group>
+                {/* Rating */}
+                <Form.Group controlId="rating" className="mb-3">
+                  <Form.Label>Rating (0-5)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    step="0.1"
+                    placeholder="Enter rating"
+                    isInvalid={!!errors.rating}
+                    min="0"
+                    max="5"
+                    {...register('rating')}
+                  />
+                  <Form.Control.Feedback type="invalid">
+                    {errors.rating?.message}
+                  </Form.Control.Feedback>
+                </Form.Group>
+              </Col>
+          </Row>
 
           {/* INGREDIENTS */}
-          <Form.Group controlId="ingredients">
-            <Form.Label>Ingredients</Form.Label>
-
-            {formData.ingredients.map((ingredient, index) => (
-              <div key={index} className="d-flex gap-2 mb-2">
+          <Form.Group controlId="ingredients" className="mb-3 p-3 border rounded">
+            <Form.Label className="fw-bold">Ingredients <span className="text-danger">*</span></Form.Label>
+            {errors.ingredients && (
+                <Alert variant="danger" className="py-2">
+                    {errors.ingredients.message || 'Missing required fields.'}
+                </Alert>
+            )}
+            {ingredientFields.map((field, index) => (
+              <div key={field.id} className="d-flex gap-2 mb-2">
+                {/* ingredient name */}
                 <Form.Control
                   type="text"
-                  placeholder="Ingredient name"
-                  value={ingredient.name}
-                  onChange={(e) => handleIngredientChange(index, 'name', e.target.value)}
-                  required
+                  placeholder="Name"
+                  isInvalid={!!errors.ingredients?.[index]?.name}
+                  {...register(`ingredients.${index}.name`)}
                 />
+                {/* ingredient quantity */}
                 <Form.Control
                   type="text"
                   placeholder="Quantity"
-                  value={ingredient.quantity}
-                  onChange={(e) => handleIngredientChange(index, 'quantity', e.target.value)}
-                  required
+                  isInvalid={!!errors.ingredients?.[index]?.quantity}
+                  {...register(`ingredients.${index}.quantity`)}
+                />
+                {/* Ingredient units */}
+                <Form.Select
+                  isInvalid={!!errors.ingredients?.[index]?.unit}
+                  {...register(`ingredients.${index}.unit`)}
+                >
+                  {Object.entries(LocalUnit).map(([key, value]) => (
+                    <option key={key} value={key}>
+                      {value}
+                    </option>
+                  ))}
+                </Form.Select>
+
+                <Button variant="danger" className='fw-bold' onClick={() => removeIngredient(index)}>
+                  -
+                </Button>
+              </div>
+            ))}
+
+            <Button className="btn btn-success fw-bold mt-2 d-block" type="button" onClick={() => appendIngredient({ name: '', quantity: '', unit: Unit.OUNCE })}>
+              + Add Ingredient
+            </Button>
+          </Form.Group>
+          {/* INSTRUCTIONS */}
+          <Form.Group controlId="instructions" className="mb-3 p-3 border rounded">
+            <Form.Label className="fw-bold">Instructions <span className="text-danger">*</span></Form.Label>
+            {errors.instructions && (
+                <Alert variant="danger" className="py-2">
+                    {errors.instructions.message || 'Missing required fields.'}
+                </Alert>
+            )}
+            {instructionFields.map((field, index) => (
+              <div key={field.id} className="d-flex gap-2 mb-2 align-items-center">
+                <span className="fw-bold">Step {index + 1}:</span>
+                <Form.Control
+                  as="textarea"
+                  placeholder={`Content for Step ${index + 1}`}
+                  isInvalid={!!errors.instructions?.[index]?.content}
+                  {...register(`instructions.${index}.content`)}
+                />
+                <Button
+                  variant="danger"
+                  onClick={() => removeInstruction(index)}
+                  className='fw-bold'
+                >
+                  -
+                </Button>
+              </div>
+            ))}
+            <Button
+              className="btn btn-success fw-bold mt-2 d-block"
+              onClick={() => appendInstruction({ content: '' })}
+            >
+              + Add Instruction
+            </Button>
+          </Form.Group>
+
+           {/* NUTRITIONS */}
+           <Form.Group controlId="nutritions" className="mb-3 p-3 border rounded">
+            <Form.Label className="fw-bold">Nutrition Facts</Form.Label>
+            {nutritionFields.map((field, index) => (
+              <div key={field.id} className="d-flex gap-2 mb-2">
+                <Form.Control
+                  type="text"
+                  placeholder="Nutrition name"
+                  isInvalid={!!errors.nutritions?.[index]?.name}
+                  {...register(`nutritions.${index}.name`)}
+                />
+                <Form.Control
+                  type="number"
+                  step="0.01"
+                  placeholder="Value"
+                  isInvalid={!!errors.nutritions?.[index]?.amount}
+                  min="0"
+                  {...register(`nutritions.${index}.amount`)}
                 />
                 <Form.Control
                   type="text"
                   placeholder="Unit"
-                  value={ingredient.unit}
-                  onChange={(e) => handleIngredientChange(index, 'unit', e.target.value)}
-                  required
+                  isInvalid={!!errors.nutritions?.[index]?.unit}
+                  {...register(`nutritions.${index}.unit`)}
                 />
+                <Button
+                  variant="danger"
+                  onClick={() => removeNutrition(index)}
+                  className='fw-bold'
+                >
+                  -
+                </Button>
+                <Form.Control.Feedback type="invalid" className="d-block">
+                    {errors.nutritions?.[index]?.amount?.message}
+                </Form.Control.Feedback>
               </div>
             ))}
-
-            <Button className="btn btn-success" type="button" onClick={handleAddIngredient}>
-              +
-            </Button>
+            <Button className="btn btn-success fw-bold mt-2 d-block" onClick={() => appendNutrition({ name: '', amount: 0, unit: '' })}>+ Add Nutrition</Button>
           </Form.Group>
 
-          <Button className="btn btn-success mt-3" type="submit">
-            Submit Recipe
+          <Button className="btn btn-success mt-3" type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Recipe'}
           </Button>
+          </Container>
         </Form>
       </Modal.Body>
     </Modal>

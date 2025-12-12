@@ -5,22 +5,22 @@ import { useSession } from 'next-auth/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as Yup from 'yup';
 import swal from 'sweetalert';
+import { useEffect } from 'react';
 import { Form, Button, InputGroup, Container } from 'react-bootstrap';
 import { Mail } from 'lucide-react';
-import { changeEmail } from '@/lib/dbActions';
+import { changeEmail, fetchEmail } from '@/lib/dbProfileFunctions';
 
 type UpdateEmailFormData = {
   newEmail: string;
 };
 
+const validationSchema = Yup.object().shape({
+  newEmail: Yup.string().required('New Email is required').email('Email is invalid'),
+});
+
 const UpdateEmailForm: React.FC = () => {
   const { data: session, update } = useSession();
   const userId = parseInt(session?.user?.id, 10);
-  const currentEmail = session?.user?.email;
-
-  const validationSchema = Yup.object().shape({
-    newEmail: Yup.string().required('New Email is required').email('Email is invalid'),
-  });
 
   const {
     register,
@@ -29,20 +29,45 @@ const UpdateEmailForm: React.FC = () => {
     formState: { errors },
   } = useForm<UpdateEmailFormData>({
     resolver: yupResolver(validationSchema),
+    defaultValues: { newEmail: '' },
     mode: 'onTouched', // Show errors on blur/touch
   });
 
+  useEffect(() => {
+    async function loadEmail() {
+      if (!userId) return;
+      try {
+        const fetchedEmail = await fetchEmail({ id: userId });
+        reset({ newEmail: fetchedEmail! });
+      } catch (error) {
+        console.error('Failed to fetch email', error);
+      }
+    }
+    loadEmail();
+  }, [userId, reset]);
+
+  // Sync when session updates
+  useEffect(() => {
+    if (session?.user?.email !== undefined) {
+      const emailFromSession = session.user.email;
+      reset({ newEmail: emailFromSession });
+    }
+  }, [session?.user?.email, reset]);
+
   const onSubmit = async (data: UpdateEmailFormData) => {
-    await changeEmail({ id: userId, newEmail: data.newEmail });
+    try {
+      await changeEmail({ id: userId, newEmail: data.newEmail });
 
-    await update({ email: data.newEmail });
+      await update({ email: data.newEmail });
 
-    await swal('Email Changed', 'Email has been changed', 'success', { timer: 2000 });
-    reset();
+      await swal('Success', 'Your username has been updated.', 'success', { timer: 2500 });
+    } catch (error) {
+      swal('Error', 'Failed to save email.', 'error');
+    }
   };
 
   return (
-    <Container className="p-4" style={{ width: '50%' }}>
+    <Container style={{ width: '80%' }}>
         <h5 className="text-center mb-4">
             <strong>Change Email</strong>
         </h5>
@@ -53,7 +78,8 @@ const UpdateEmailForm: React.FC = () => {
                     <Mail size={18} />
                 </InputGroup.Text>
                 <Form.Control
-                    defaultValue={currentEmail}
+                    // defaultValue={currentEmail}
+                    placeholder="New email"
                     className={`form-control ${errors.newEmail ? 'is-invalid' : ''}`}
                     type="text"
                     {...register('newEmail')}

@@ -378,18 +378,60 @@ export async function addRecipeInstruction(data: {
   return instruction;
 }
 
+export async function addRecipeIngredient(
+  recipeId: number,
+  ingredientId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+): Promise<number | null> {
+  try {
+    const recipeIngredient = await prisma.recipeIngredient.create({
+      data: {
+        recipeId,
+        ingredientId,
+        quantity,
+        unit,
+        name,
+        ingredient: {
+          connect: {
+            id: ingredientId,
+          },
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+
+    return recipeIngredient.id;
+  } catch (error) {
+    console.error('Error adding recipe ingredient:', error);
+    return null;
+  }
+}
+
+export async function findIngredientByName(name: string): Promise<number | null> {
+  const ingredient = await prisma.ingredient.findFirst({
+    where: { name },
+    select: { id: true },
+  });
+
+  return ingredient ? ingredient.id : null;
+}
+
 /* Add a new recipe */
 export async function addRecipe(data: {
   userId: number;
   name: string;
-  description: string;
+  description?: string;
   difficulty: Difficulty;
   prepTime?: number;
   cookTime?: number;
   downTime?: number;
   servings?: number;
   rating?: number;
-  image?: string;
+  image?: string | null;
 }) {
   const recipe = await prisma.recipe.create({
     data: {
@@ -411,6 +453,38 @@ export async function addRecipe(data: {
   return recipe;
 }
 
+export async function addIngredient(
+  recipeId: number,
+  quantity: number,
+  unit: Unit,
+  name: string,
+) {
+  const ingredient = await prisma.recipeIngredient.create({
+    data: {
+      recipeId,
+      quantity,
+      unit,
+      name,
+    },
+  });
+  return ingredient;
+}
+
+export async function addInstruction(
+  recipeId: number,
+  step: number,
+  content: string,
+) {
+  const instruction = await prisma.recipeInstruction.create({
+    data: {
+      recipeId,
+      step,
+      content,
+    },
+  });
+  return instruction;
+}
+
 /* Get all shopping list items for a user */
 export async function getShoppingListItems(userId: number) {
   const items = await prisma.shoppingListItem.findMany({
@@ -424,6 +498,23 @@ export async function getShoppingListItems(userId: number) {
   });
 
   return items;
+}
+
+export async function addRecipeNutrition(
+  recipeId: number,
+  name: string,
+  amount: number,
+  unit: string,
+) {
+  const nutrition = await prisma.recipeNutrition.create({
+    data: {
+      recipeId,
+      name,
+      amount,
+      unit,
+    },
+  });
+  return nutrition;
 }
 
 /* Update shopping list item */
@@ -468,6 +559,31 @@ export async function deleteShoppingListItem(itemId: number) {
   await prisma.shoppingListItem.delete({
     where: { id: itemId },
   });
+}
+
+/* Mark multiple shopping list items as purchased (bulk) */
+export async function markShoppingListItemsBoughtBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.updateMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+    data: { purchased: true },
+  });
+
+  return result;
+}
+
+/* Delete multiple shopping list items (bulk) */
+export async function deleteShoppingListItemsBulk(userId: number, ids: number[]) {
+  const result = await prisma.shoppingListItem.deleteMany({
+    where: {
+      id: { in: ids },
+      userId,
+    },
+  });
+
+  return result;
 }
 
 /* Get suggested items based on low/out of stock inventory */

@@ -12,11 +12,7 @@ const LocationsPage = async () => {
     } | null,
   );
 
-  return (
-    <main>
-      <Locations />
-    </main>
-  );
+  return <Locations />;
 };
 
 export default LocationsPage;

@@ -20,6 +20,8 @@ interface StorageContainerProps {
   storageInfo: StorageInfo;
   itemsCount?: number; // to display the total number of items
   items?: any[];
+  allCollapsed?: boolean;
+  onCollapseToggle?: (collapsed: boolean) => void;
 }
 
 // For pagination
@@ -27,35 +29,110 @@ const PAGE_SIZE = 5;
 
 const StorageContainer: React.FC<StorageContainerProps> = ({
   id, title, children, feature, onUpdate, storageInfo, itemsCount, items = [],
+  allCollapsed: collapsedProp, onCollapseToggle,
 }) => {
   const [showEditModal, setShowEditModal] = React.useState(false);
   // collapse state to collapse/expand the table within the storage container
-  const [collapsed, setCollapsed] = React.useState(false);
+  // const [collapsed, setCollapsed] = React.useState(false);
   const [maxHeight, setMaxHeight] = useState<number | null>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const [opacity, setOpacity] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
+  // All collapsable containers controlled by a parent component
+  const [collapsed, setCollapsed] = useState(collapsedProp ?? false);
 
   // Pagination calculations
   const totalPages = Math.ceil(items.length / PAGE_SIZE);
   const startIndex = (currentPage - 1) * PAGE_SIZE;
   const displayedItems = items.slice(startIndex, startIndex + PAGE_SIZE);
 
-  const toggleCollapse = () => {
-    if (!bodyRef.current) return;
+  // Sync local state if parent controls it
+  useEffect(() => {
+    if (typeof collapsedProp === 'boolean') {
+      setCollapsed(collapsedProp);
+    }
+  }, [collapsedProp]);
 
-    if (!collapsed) {
-      // Collapsing:  set height first, then animate opacity
+  // sync with parent collapse state
+  useEffect(() => {
+    if (typeof collapsedProp === 'boolean') {
+      if (collapsedProp !== collapsed) {
+        // trigger animation
+        if (collapsedProp) {
+          // collapse
+          if (bodyRef.current) {
+            setMaxHeight(bodyRef.current.scrollHeight);
+            requestAnimationFrame(() => setMaxHeight(0));
+            setOpacity(0);
+          }
+        } else if (bodyRef.current) {
+          // expand
+          setMaxHeight(bodyRef.current.scrollHeight);
+          requestAnimationFrame(() => setOpacity(1));
+        }
+      }
+      setCollapsed(collapsedProp);
+    }
+  }, [collapsedProp, collapsed]);
+
+  // const toggleCollapseParent = () => {
+  //   const newState = !collapsed;
+  //   if (onCollapseToggle) onCollapseToggle(newState); // notify parent
+  //   setCollapsed(newState); // update local state
+  //   if (!bodyRef.current) return;
+
+  //   if (!newState) {
+  //     // expanding
+  //     setMaxHeight(bodyRef.current.scrollHeight);
+  //     requestAnimationFrame(() => setOpacity(1));
+  //   } else {
+  //     // collapsing
+  //     setMaxHeight(bodyRef.current.scrollHeight);
+  //     requestAnimationFrame(() => setMaxHeight(0));
+  //     setOpacity(0);
+  //   }
+  // };
+
+  // const toggleCollapse = () => {
+  //   if (!bodyRef.current) return;
+
+  //   if (!collapsed) {
+  //     // Collapsing:  set height first, then animate opacity
+  //     setMaxHeight(bodyRef.current.scrollHeight);
+  //     // Shrink and fade out
+  //     requestAnimationFrame(() => setMaxHeight(0));
+  //     setOpacity(0);
+  //   } else {
+  //     // Expanding: set maxHeight to scrollHeight first, then fade in
+  //     setMaxHeight(bodyRef.current.scrollHeight);
+  //     requestAnimationFrame(() => setOpacity(1)); // fade in
+  //   }
+  //   setCollapsed(!collapsed);
+  // };
+
+  const handleToggle = () => {
+    if (!bodyRef.current) return;
+    const newState = !collapsed; // new collapsed value
+
+    // animate depending on newState
+    if (newState) {
+      // collapsing
       setMaxHeight(bodyRef.current.scrollHeight);
-      // Shrink and fade out
+      // let browser paint then shrink
       requestAnimationFrame(() => setMaxHeight(0));
       setOpacity(0);
     } else {
-      // Expanding: set maxHeight to scrollHeight first, then fade in
+      // expanding
       setMaxHeight(bodyRef.current.scrollHeight);
-      requestAnimationFrame(() => setOpacity(1)); // fade in
+      requestAnimationFrame(() => setOpacity(1));
     }
-    setCollapsed(!collapsed);
+
+    setCollapsed(newState);
+
+    // notify parent about the change so collapsedMap stays correct
+    if (onCollapseToggle) {
+      onCollapseToggle(newState);
+    }
   };
 
   // Update maxHeight dynamically if table content changes while expanded
@@ -116,7 +193,7 @@ const StorageContainer: React.FC<StorageContainerProps> = ({
           <div
               className="d-flex align-items-center ms-2"
               style={{ cursor: 'pointer', userSelect: 'none' }}
-              onClick={toggleCollapse}
+              onClick={handleToggle}
           >
               <span className="text-white me-2 small" style={{ fontSize: '0.9rem' }}>
                 {collapsed ? 'Expand' : 'Collapse'}
